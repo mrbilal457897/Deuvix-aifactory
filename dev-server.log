@@ -1,0 +1,1070 @@
+
+> nexusai-website@0.1.0 dev
+> next dev
+
+▲ Next.js 16.2.10 (Turbopack)
+- Local:         http://localhost:3000
+- Network:       http://192.168.100.202:3000
+- Environments: .env.local
+✓ Ready in 2.4s
+⚠ The "middleware" file convention is deprecated. Please use "proxy" instead. Learn more: https://nextjs.org/docs/messages/middleware-to-proxy
+
+○ Compiling /contact ...
+ GET / 200 in 32.7s (next.js: 25.7s, application-code: 7.0s)
+ GET / 200 in 32.5s (next.js: 26.0s, application-code: 6.5s)
+ GET / 200 in 13.3s (next.js: 7.0s, application-code: 6.3s)
+ GET /projects 200 in 32.8s (next.js: 29.1s, application-code: 3.6s)
+ GET /about 200 in 31.1s (next.js: 27.7s, application-code: 3.5s)
+ GET /contact 200 in 32.4s (next.js: 29.4s, application-code: 3.1s)
+ GET /login 200 in 32.9s (next.js: 30.2s, application-code: 2.7s)
+ GET /contact 200 in 5.2s (next.js: 3.1s, application-code: 2.1s)
+ GET /projects 200 in 6.9s (next.js: 3.5s, application-code: 3.4s)
+ GET / 200 in 7.0s (next.js: 2.5s, application-code: 4.5s)
+ GET / 200 in 7.0s (next.js: 3.0s, application-code: 4.1s)
+ GET /contact 200 in 1136ms (next.js: 298ms, application-code: 838ms)
+○ Compiling /api/site-config ...
+ GET /contact 200 in 2.2s (next.js: 19ms, application-code: 2.2s)
+ GET /api/projects 200 in 7.8s (next.js: 7.6s, proxy.ts: 12ms, application-code: 124ms)
+ GET /api/site-config 200 in 16.6s (next.js: 13.7s, proxy.ts: 2.2s, application-code: 747ms)
+ GET /api/site-config 200 in 9.2s (next.js: 8.4s, proxy.ts: 351ms, application-code: 527ms)
+ GET /api/projects 200 in 269ms (next.js: 58ms, proxy.ts: 48ms, application-code: 163ms)
+ GET /api/site-config 200 in 292ms (next.js: 116ms, proxy.ts: 49ms, application-code: 127ms)
+ GET /api/site-config 200 in 425ms (next.js: 136ms, proxy.ts: 172ms, application-code: 118ms)
+ GET /api/site-config 200 in 196ms (next.js: 135ms, proxy.ts: 14ms, application-code: 47ms)
+ GET /api/site-config 200 in 153ms (next.js: 28ms, proxy.ts: 52ms, application-code: 72ms)
+ GET /api/site-config 200 in 125ms (next.js: 53ms, proxy.ts: 13ms, application-code: 58ms)
+ GET /api/site-config 200 in 107ms (next.js: 30ms, proxy.ts: 30ms, application-code: 47ms)
+ GET /api/site-config 200 in 52ms (next.js: 14ms, proxy.ts: 11ms, application-code: 28ms)
+ GET /api/site-config 200 in 53ms (next.js: 15ms, proxy.ts: 15ms, application-code: 23ms)
+ GET /api/site-config 200 in 90ms (next.js: 49ms, proxy.ts: 10ms, application-code: 31ms)
+ GET /api/site-config 200 in 162ms (next.js: 68ms, proxy.ts: 13ms, application-code: 81ms)
+ GET /api/site-config 200 in 257ms (next.js: 20ms, proxy.ts: 16ms, application-code: 221ms)
+ GET /api/site-config 200 in 641ms (next.js: 159ms, proxy.ts: 11ms, application-code: 471ms)
+ GET /api/site-config 200 in 130ms (next.js: 58ms, proxy.ts: 9ms, application-code: 63ms)
+ GET /api/site-config 200 in 57ms (next.js: 23ms, proxy.ts: 6ms, application-code: 28ms)
+ GET /api/site-config 200 in 51ms (next.js: 20ms, proxy.ts: 8ms, application-code: 24ms)
+ GET /contact 200 in 995ms (next.js: 33ms, application-code: 962ms)
+ GET /api/site-config 200 in 55ms (next.js: 17ms, proxy.ts: 11ms, application-code: 27ms)
+ GET /api/auth/session 200 in 16.5s (next.js: 16.0s, proxy.ts: 366ms, application-code: 97ms)
+ POST /api/auth/_log 200 in 1980ms (next.js: 1790ms, proxy.ts: 49ms, application-code: 141ms)
+ GET /api/auth/session 200 in 21.8s (next.js: 21.4s, proxy.ts: 202ms, application-code: 178ms)
+ GET /api/auth/session 200 in 180ms (next.js: 90ms, proxy.ts: 34ms, application-code: 56ms)
+ GET /api/auth/session 200 in 279ms (next.js: 35ms, proxy.ts: 13ms, application-code: 231ms)
+ GET /api/auth/session 200 in 67ms (next.js: 18ms, proxy.ts: 6ms, application-code: 43ms)
+ GET /api/auth/session 200 in 49ms (next.js: 20ms, proxy.ts: 7ms, application-code: 22ms)
+ GET /api/auth/session 200 in 66ms (next.js: 31ms, proxy.ts: 10ms, application-code: 24ms)
+ GET /api/auth/session 200 in 82ms (next.js: 38ms, proxy.ts: 12ms, application-code: 32ms)
+ GET /api/auth/session 200 in 71ms (next.js: 32ms, proxy.ts: 7ms, application-code: 32ms)
+ GET /api/auth/session 200 in 84ms (next.js: 38ms, proxy.ts: 8ms, application-code: 38ms)
+ GET /api/auth/session 200 in 68ms (next.js: 20ms, proxy.ts: 8ms, application-code: 40ms)
+ GET /api/auth/session 200 in 72ms (next.js: 24ms, proxy.ts: 8ms, application-code: 40ms)
+ GET /api/auth/session 200 in 56ms (next.js: 24ms, proxy.ts: 6ms, application-code: 26ms)
+ GET /api/auth/session 200 in 71ms (next.js: 20ms, proxy.ts: 10ms, application-code: 41ms)
+ GET /api/auth/session 200 in 56ms (next.js: 20ms, proxy.ts: 6ms, application-code: 29ms)
+ GET /api/auth/session 200 in 52ms (next.js: 22ms, proxy.ts: 6ms, application-code: 24ms)
+ GET /api/auth/session 200 in 65ms (next.js: 15ms, proxy.ts: 9ms, application-code: 41ms)
+ GET /api/auth/session 200 in 59ms (next.js: 29ms, proxy.ts: 7ms, application-code: 23ms)
+ GET /api/auth/session 200 in 69ms (next.js: 24ms, proxy.ts: 6ms, application-code: 39ms)
+ GET /api/auth/session 200 in 67ms (next.js: 28ms, proxy.ts: 5ms, application-code: 34ms)
+ GET /api/auth/session 200 in 83ms (next.js: 34ms, proxy.ts: 8ms, application-code: 40ms)
+ GET /api/auth/session 200 in 76ms (next.js: 27ms, proxy.ts: 10ms, application-code: 39ms)
+ GET /api/auth/session 200 in 73ms (next.js: 29ms, proxy.ts: 7ms, application-code: 38ms)
+ GET /api/auth/session 200 in 50ms (next.js: 17ms, proxy.ts: 6ms, application-code: 27ms)
+ GET /api/auth/session 200 in 49ms (next.js: 21ms, proxy.ts: 6ms, application-code: 21ms)
+ GET /api/auth/session 200 in 63ms (next.js: 17ms, proxy.ts: 9ms, application-code: 38ms)
+ GET /api/auth/session 200 in 73ms (next.js: 22ms, proxy.ts: 9ms, application-code: 42ms)
+ GET /api/auth/session 200 in 62ms (next.js: 22ms, proxy.ts: 8ms, application-code: 32ms)
+ GET /api/auth/session 200 in 62ms (next.js: 20ms, proxy.ts: 9ms, application-code: 33ms)
+ GET /api/auth/session 200 in 57ms (next.js: 26ms, proxy.ts: 7ms, application-code: 25ms)
+ GET /api/auth/session 200 in 67ms (next.js: 24ms, proxy.ts: 10ms, application-code: 33ms)
+ GET /api/auth/session 200 in 66ms (next.js: 20ms, proxy.ts: 6ms, application-code: 40ms)
+ GET /api/auth/session 200 in 58ms (next.js: 23ms, proxy.ts: 9ms, application-code: 26ms)
+ GET /api/auth/session 200 in 65ms (next.js: 23ms, proxy.ts: 10ms, application-code: 32ms)
+ GET / 200 in 544ms (next.js: 15ms, application-code: 529ms)
+ GET /api/site-config 200 in 143ms (next.js: 62ms, proxy.ts: 9ms, application-code: 72ms)
+ GET /api/auth/session 200 in 270ms (next.js: 103ms, proxy.ts: 39ms, application-code: 127ms)
+ GET /api/site-config 200 in 413ms (next.js: 203ms, proxy.ts: 63ms, application-code: 147ms)
+ GET /api/auth/session 200 in 546ms (next.js: 180ms, proxy.ts: 199ms, application-code: 167ms)
+ GET /api/site-config 200 in 250ms (next.js: 96ms, proxy.ts: 30ms, application-code: 123ms)
+ GET /api/auth/session 200 in 416ms (next.js: 316ms, proxy.ts: 30ms, application-code: 70ms)
+ GET /api/auth/session 200 in 50ms (next.js: 18ms, proxy.ts: 12ms, application-code: 21ms)
+ GET /api/auth/session 200 in 219ms (next.js: 27ms, proxy.ts: 8ms, application-code: 184ms)
+ GET /api/auth/session 200 in 84ms (next.js: 50ms, proxy.ts: 9ms, application-code: 25ms)
+ GET /api/auth/session 200 in 81ms (next.js: 35ms, proxy.ts: 8ms, application-code: 38ms)
+ GET /api/auth/session 200 in 74ms (next.js: 33ms, proxy.ts: 5ms, application-code: 35ms)
+ GET /api/auth/session 200 in 84ms (next.js: 30ms, proxy.ts: 6ms, application-code: 48ms)
+[browser] Uncaught TypeError: Cannot read properties of null (reading 'tagName')
+    at <unknown> (<anonymous>:1:610)
+ GET / 200 in 552ms (next.js: 19ms, application-code: 533ms)
+[browser] Image with src "/images/asad.jpg" was detected as the Largest Contentful Paint (LCP). Please add the `loading="eager"` property if this image is above the fold.
+Read more: https://nextjs.org/docs/app/api-reference/components/image#loading (file://F:/Web Opencode/nexusai-website/.next/dev/static/chunks/node_modules_next_dist_1ybzpk2._.js:2477:13)
+[browser] Image with src "/images/bilal.jpg" was detected as the Largest Contentful Paint (LCP). Please add the `loading="eager"` property if this image is above the fold.
+Read more: https://nextjs.org/docs/app/api-reference/components/image#loading (file://F:/Web Opencode/nexusai-website/.next/dev/static/chunks/node_modules_next_dist_1ybzpk2._.js:2477:13)
+ GET /api/site-config 200 in 50ms (next.js: 9ms, proxy.ts: 18ms, application-code: 23ms)
+ GET /api/site-config 200 in 56ms (next.js: 22ms, proxy.ts: 9ms, application-code: 24ms)
+ GET /api/auth/session 200 in 347ms (next.js: 91ms, proxy.ts: 35ms, application-code: 221ms)
+ GET /api/site-config 200 in 675ms (next.js: 206ms, proxy.ts: 153ms, application-code: 316ms)
+ GET / 200 in 410ms (next.js: 17ms, application-code: 393ms)
+[browser] Image with src "/images/bilal.jpg" was detected as the Largest Contentful Paint (LCP). Please add the `loading="eager"` property if this image is above the fold.
+Read more: https://nextjs.org/docs/app/api-reference/components/image#loading (file://F:/Web Opencode/nexusai-website/.next/dev/static/chunks/node_modules_next_dist_1ybzpk2._.js:2477:13)
+ GET /api/site-config 200 in 64ms (next.js: 22ms, proxy.ts: 17ms, application-code: 25ms)
+ GET /api/site-config 200 in 65ms (next.js: 11ms, proxy.ts: 12ms, application-code: 42ms)
+ GET /api/auth/session 200 in 175ms (next.js: 68ms, proxy.ts: 16ms, application-code: 91ms)
+ GET /api/site-config 200 in 219ms (next.js: 170ms, proxy.ts: 12ms, application-code: 37ms)
+ GET /api/auth/session 200 in 776ms (next.js: 737ms, proxy.ts: 12ms, application-code: 27ms)
+ GET /api/auth/session 200 in 193ms (next.js: 34ms, proxy.ts: 12ms, application-code: 146ms)
+ GET / 200 in 873ms (next.js: 12ms, application-code: 861ms)
+ GET /api/site-config 200 in 98ms (next.js: 32ms, proxy.ts: 10ms, application-code: 55ms)
+ GET /api/site-config 200 in 105ms (next.js: 54ms, proxy.ts: 15ms, application-code: 37ms)
+ GET /api/auth/session 200 in 321ms (next.js: 258ms, proxy.ts: 10ms, application-code: 53ms)
+ GET /api/site-config 200 in 1189ms (next.js: 54ms, proxy.ts: 232ms, application-code: 903ms)
+ GET /api/auth/session 200 in 701ms (next.js: 202ms, proxy.ts: 132ms, application-code: 367ms)
+ GET /api/auth/session 200 in 102ms (next.js: 50ms, proxy.ts: 5ms, application-code: 47ms)
+ GET /api/auth/session 200 in 369ms (next.js: 344ms, proxy.ts: 6ms, application-code: 18ms)
+ GET /api/auth/session 200 in 593ms (next.js: 194ms, proxy.ts: 360ms, application-code: 39ms)
+ GET /api/auth/session 200 in 1490ms (next.js: 69ms, proxy.ts: 1389ms, application-code: 32ms)
+ GET /api/auth/session 200 in 1528ms (next.js: 69ms, proxy.ts: 358ms, application-code: 1102ms)
+ GET /api/auth/session 200 in 60ms (next.js: 27ms, proxy.ts: 9ms, application-code: 24ms)
+ GET /api/auth/session 200 in 73ms (next.js: 30ms, proxy.ts: 9ms, application-code: 35ms)
+✓ Compiled in 1441ms
+ GET / 200 in 1534ms (next.js: 383ms, application-code: 1151ms)
+ GET / 200 in 1524ms (next.js: 499ms, application-code: 1024ms)
+ GET /about 200 in 1525ms (next.js: 606ms, application-code: 920ms)
+ GET /projects 200 in 1018ms (next.js: 440ms, application-code: 579ms)
+ GET / 200 in 609ms (next.js: 23ms, application-code: 585ms)
+ GET /login 200 in 1504ms (next.js: 379ms, application-code: 1125ms)
+ GET /projects 200 in 1099ms (next.js: 178ms, application-code: 920ms)
+ GET / 200 in 796ms (next.js: 27ms, application-code: 769ms)
+ GET / 200 in 804ms (next.js: 126ms, application-code: 678ms)
+ GET / 200 in 547ms (next.js: 38ms, application-code: 510ms)
+✓ Compiled in 1882ms
+ GET / 200 in 1765ms (next.js: 512ms, application-code: 1253ms)
+ GET /about 200 in 1759ms (next.js: 759ms, application-code: 999ms)
+ GET /projects 200 in 1769ms (next.js: 1064ms, application-code: 705ms)
+ GET / 200 in 747ms (next.js: 49ms, application-code: 698ms)
+ GET / 200 in 764ms (next.js: 145ms, application-code: 619ms)
+ GET /login 200 in 1909ms (next.js: 918ms, application-code: 990ms)
+ GET / 200 in 682ms (next.js: 262ms, application-code: 420ms)
+ GET / 200 in 677ms (next.js: 346ms, application-code: 331ms)
+ GET / 200 in 678ms (next.js: 445ms, application-code: 233ms)
+ GET /projects 200 in 692ms (next.js: 555ms, application-code: 136ms)
+ GET / 200 in 2.2s (next.js: 16ms, application-code: 2.1s)
+ GET /api/auth/session 200 in 748ms (next.js: 510ms, proxy.ts: 9ms, application-code: 229ms)
+ GET /api/site-config 200 in 909ms (next.js: 227ms, proxy.ts: 155ms, application-code: 527ms)
+ GET /api/site-config 200 in 54ms (next.js: 28ms, proxy.ts: 5ms, application-code: 21ms)
+ GET /api/auth/session 200 in 133ms (next.js: 19ms, proxy.ts: 7ms, application-code: 107ms)
+ GET /api/site-config 200 in 292ms (next.js: 138ms, proxy.ts: 39ms, application-code: 115ms)
+ GET /api/auth/session 200 in 278ms (next.js: 157ms, proxy.ts: 58ms, application-code: 63ms)
+ GET /api/auth/session 200 in 119ms (next.js: 43ms, proxy.ts: 18ms, application-code: 59ms)
+ GET /api/auth/session 200 in 70ms (next.js: 28ms, proxy.ts: 5ms, application-code: 37ms)
+ GET /api/auth/session 200 in 284ms (next.js: 130ms, proxy.ts: 8ms, application-code: 146ms)
+ GET /api/auth/session 200 in 83ms (next.js: 31ms, proxy.ts: 5ms, application-code: 47ms)
+ GET /api/auth/session 200 in 54ms (next.js: 19ms, proxy.ts: 5ms, application-code: 29ms)
+ GET /api/auth/session 200 in 49ms (next.js: 22ms, proxy.ts: 9ms, application-code: 17ms)
+ GET /about 200 in 368ms (next.js: 15ms, application-code: 353ms)
+ GET /api/site-config 200 in 59ms (next.js: 9ms, proxy.ts: 10ms, application-code: 39ms)
+ GET /api/auth/session 200 in 134ms (next.js: 88ms, proxy.ts: 8ms, application-code: 38ms)
+ GET /api/auth/session 200 in 64ms (next.js: 26ms, proxy.ts: 8ms, application-code: 30ms)
+ GET /api/auth/session 200 in 90ms (next.js: 22ms, proxy.ts: 15ms, application-code: 52ms)
+ GET /api/auth/session 200 in 55ms (next.js: 17ms, proxy.ts: 7ms, application-code: 31ms)
+ GET /api/auth/session 200 in 158ms (next.js: 113ms, proxy.ts: 6ms, application-code: 39ms)
+ GET /api/auth/session 200 in 161ms (next.js: 101ms, proxy.ts: 12ms, application-code: 48ms)
+ GET /api/auth/session 200 in 55ms (next.js: 22ms, proxy.ts: 8ms, application-code: 25ms)
+ GET /api/auth/session 200 in 194ms (next.js: 146ms, proxy.ts: 11ms, application-code: 36ms)
+ GET /api/auth/session 200 in 59ms (next.js: 23ms, proxy.ts: 6ms, application-code: 30ms)
+ GET /products 200 in 2.1s (next.js: 1888ms, application-code: 234ms)
+ GET /api/site-config 200 in 58ms (next.js: 28ms, proxy.ts: 9ms, application-code: 21ms)
+ GET /api/auth/session 200 in 66ms (next.js: 41ms, proxy.ts: 5ms, application-code: 21ms)
+ GET /api/auth/session 200 in 61ms (next.js: 13ms, proxy.ts: 5ms, application-code: 43ms)
+ GET /api/auth/session 200 in 46ms (next.js: 12ms, proxy.ts: 4ms, application-code: 30ms)
+ GET /api/auth/session 200 in 44ms (next.js: 12ms, proxy.ts: 7ms, application-code: 25ms)
+ GET /api/auth/session 200 in 54ms (next.js: 25ms, proxy.ts: 6ms, application-code: 23ms)
+ GET /api/auth/session 200 in 73ms (next.js: 31ms, proxy.ts: 5ms, application-code: 36ms)
+ GET /api/auth/session 200 in 82ms (next.js: 33ms, proxy.ts: 5ms, application-code: 44ms)
+ GET /api/auth/session 200 in 90ms (next.js: 51ms, proxy.ts: 5ms, application-code: 33ms)
+ GET /api/auth/session 200 in 138ms (next.js: 80ms, proxy.ts: 6ms, application-code: 52ms)
+ GET /projects 200 in 262ms (next.js: 19ms, application-code: 242ms)
+ GET /api/projects 200 in 153ms (next.js: 90ms, proxy.ts: 16ms, application-code: 47ms)
+ GET /api/auth/session 200 in 221ms (next.js: 185ms, proxy.ts: 14ms, application-code: 21ms)
+ GET /api/auth/session 200 in 74ms (next.js: 33ms, proxy.ts: 5ms, application-code: 35ms)
+[browser] Image with src "/api/proxy-image?url=https%3A%2F%2Fimage.thum.io%2Fget%2Fwidth%2F800%2Fcrop%2F500%2Fhttps%3A%2F%2Fb-treasure-ecommerce-web.vercel.app%2F" was detected as the Largest Contentful Paint (LCP). Please add the `loading="eager"` property if this image is above the fold.
+Read more: https://nextjs.org/docs/app/api-reference/components/image#loading (file://F:/Web Opencode/nexusai-website/.next/dev/static/chunks/node_modules_next_dist_1ybzpk2._.js:2477:13)
+ GET /api/auth/session 200 in 554ms (next.js: 155ms, proxy.ts: 8ms, application-code: 391ms)
+ GET /api/auth/session 200 in 62ms (next.js: 16ms, proxy.ts: 9ms, application-code: 37ms)
+ GET /api/auth/session 200 in 50ms (next.js: 16ms, proxy.ts: 5ms, application-code: 29ms)
+ GET /api/auth/session 200 in 54ms (next.js: 19ms, proxy.ts: 6ms, application-code: 29ms)
+ GET /api/auth/session 200 in 79ms (next.js: 37ms, proxy.ts: 9ms, application-code: 32ms)
+ GET /api/auth/session 200 in 43ms (next.js: 15ms, proxy.ts: 7ms, application-code: 21ms)
+ GET /api/auth/session 200 in 56ms (next.js: 18ms, proxy.ts: 7ms, application-code: 30ms)
+ GET /blog 200 in 1908ms (next.js: 1535ms, application-code: 373ms)
+ GET /api/auth/session 200 in 493ms (next.js: 144ms, proxy.ts: 150ms, application-code: 200ms)
+ GET /api/auth/session 200 in 239ms (next.js: 83ms, proxy.ts: 12ms, application-code: 145ms)
+ GET /api/auth/session 200 in 746ms (next.js: 624ms, proxy.ts: 41ms, application-code: 81ms)
+ GET /api/auth/session 200 in 68ms (next.js: 16ms, proxy.ts: 17ms, application-code: 35ms)
+ GET /api/auth/session 200 in 50ms (next.js: 21ms, proxy.ts: 8ms, application-code: 21ms)
+ GET /api/auth/session 200 in 65ms (next.js: 22ms, proxy.ts: 7ms, application-code: 36ms)
+ GET /api/auth/session 200 in 64ms (next.js: 17ms, proxy.ts: 6ms, application-code: 41ms)
+ GET /api/auth/session 200 in 70ms (next.js: 17ms, proxy.ts: 8ms, application-code: 45ms)
+ GET /api/auth/session 200 in 55ms (next.js: 16ms, proxy.ts: 6ms, application-code: 33ms)
+ GET /blog/building-digital-fte 200 in 4.2s (next.js: 3.8s, generate-params: 1224ms, application-code: 438ms)
+ GET /api/auth/session 200 in 316ms (next.js: 171ms, proxy.ts: 6ms, application-code: 138ms)
+ GET /api/auth/session 200 in 147ms (next.js: 106ms, proxy.ts: 8ms, application-code: 32ms)
+ GET /api/auth/session 200 in 39ms (next.js: 16ms, proxy.ts: 6ms, application-code: 18ms)
+ GET /api/auth/session 200 in 64ms (next.js: 27ms, proxy.ts: 6ms, application-code: 31ms)
+ GET /api/auth/session 200 in 69ms (next.js: 23ms, proxy.ts: 5ms, application-code: 41ms)
+ GET /api/auth/session 200 in 61ms (next.js: 30ms, proxy.ts: 10ms, application-code: 21ms)
+ GET /api/auth/session 200 in 54ms (next.js: 14ms, proxy.ts: 6ms, application-code: 34ms)
+ GET /api/auth/session 200 in 58ms (next.js: 21ms, proxy.ts: 5ms, application-code: 32ms)
+ GET /api/auth/session 200 in 70ms (next.js: 38ms, proxy.ts: 5ms, application-code: 27ms)
+⨯ upstream image response timed out for https://images.pexels.com/photos/8849287/pexels-photo-8849287.jpeg?auto=compress&cs=tinysrgb&w=800
+ GET /api/auth/session 200 in 111ms (next.js: 26ms, proxy.ts: 19ms, application-code: 67ms)
+ GET /projects 200 in 86ms (next.js: 13ms, application-code: 73ms)
+ GET /api/projects 200 in 69ms (next.js: 30ms, proxy.ts: 15ms, application-code: 24ms)
+ GET /api/projects 200 in 87ms (next.js: 18ms, proxy.ts: 17ms, application-code: 52ms)
+ GET /api/auth/session 200 in 146ms (next.js: 70ms, proxy.ts: 16ms, application-code: 60ms)
+ GET / 200 in 68ms (next.js: 18ms, application-code: 50ms)
+ GET /api/site-config 200 in 101ms (next.js: 36ms, proxy.ts: 14ms, application-code: 51ms)
+ GET /api/site-config 200 in 50ms (next.js: 16ms, proxy.ts: 14ms, application-code: 20ms)
+ GET /api/site-config 200 in 59ms (next.js: 25ms, proxy.ts: 12ms, application-code: 22ms)
+ GET /api/site-config 200 in 49ms (next.js: 15ms, proxy.ts: 8ms, application-code: 27ms)
+ GET /api/site-config 200 in 60ms (next.js: 17ms, proxy.ts: 14ms, application-code: 29ms)
+ GET /api/site-config 200 in 199ms (next.js: 76ms, proxy.ts: 86ms, application-code: 37ms)
+ GET /contact 200 in 1143ms (next.js: 138ms, application-code: 1006ms)
+ GET /api/site-config 200 in 179ms (next.js: 14ms, proxy.ts: 12ms, application-code: 153ms)
+ GET /api/auth/session 200 in 205ms (next.js: 77ms, proxy.ts: 13ms, application-code: 115ms)
+ GET /api/auth/session 200 in 79ms (next.js: 21ms, proxy.ts: 8ms, application-code: 50ms)
+ GET /api/auth/session 200 in 184ms (next.js: 92ms, proxy.ts: 9ms, application-code: 82ms)
+ GET /api/auth/session 200 in 46ms (next.js: 18ms, proxy.ts: 6ms, application-code: 21ms)
+ GET /api/auth/session 200 in 60ms (next.js: 19ms, proxy.ts: 5ms, application-code: 36ms)
+ GET /api/auth/session 200 in 70ms (next.js: 21ms, proxy.ts: 5ms, application-code: 43ms)
+ GET /api/auth/session 200 in 72ms (next.js: 33ms, proxy.ts: 5ms, application-code: 33ms)
+ GET /api/auth/session 200 in 64ms (next.js: 18ms, proxy.ts: 5ms, application-code: 41ms)
+ GET /api/auth/session 200 in 80ms (next.js: 50ms, proxy.ts: 8ms, application-code: 23ms)
+ GET /api/auth/session 200 in 266ms (next.js: 111ms, proxy.ts: 38ms, application-code: 118ms)
+ GET /api/auth/session 200 in 83ms (next.js: 22ms, proxy.ts: 16ms, application-code: 45ms)
+ GET /login 200 in 367ms (next.js: 15ms, application-code: 352ms)
+ GET /api/auth/session 200 in 158ms (next.js: 108ms, proxy.ts: 12ms, application-code: 38ms)
+ GET /api/auth/session 200 in 88ms (next.js: 41ms, proxy.ts: 6ms, application-code: 42ms)
+ GET /api/auth/session 200 in 66ms (next.js: 24ms, proxy.ts: 8ms, application-code: 34ms)
+ GET /api/auth/session 200 in 76ms (next.js: 33ms, proxy.ts: 16ms, application-code: 27ms)
+ GET /api/auth/session 200 in 68ms (next.js: 24ms, proxy.ts: 5ms, application-code: 39ms)
+ GET /api/auth/session 200 in 49ms (next.js: 14ms, proxy.ts: 7ms, application-code: 27ms)
+ GET /api/auth/session 200 in 51ms (next.js: 18ms, proxy.ts: 6ms, application-code: 28ms)
+ GET /api/auth/session 200 in 84ms (next.js: 28ms, proxy.ts: 7ms, application-code: 49ms)
+ GET /api/auth/session 200 in 55ms (next.js: 17ms, proxy.ts: 6ms, application-code: 32ms)
+ GET /api/auth/session 200 in 69ms (next.js: 28ms, proxy.ts: 11ms, application-code: 29ms)
+ GET /login 200 in 552ms (next.js: 29ms, application-code: 523ms)
+ GET /api/auth/session 200 in 82ms (next.js: 34ms, proxy.ts: 13ms, application-code: 35ms)
+ GET /api/auth/session 200 in 73ms (next.js: 35ms, proxy.ts: 6ms, application-code: 32ms)
+ GET /api/auth/session 200 in 73ms (next.js: 26ms, proxy.ts: 8ms, application-code: 39ms)
+ GET /api/auth/session 200 in 172ms (next.js: 91ms, proxy.ts: 18ms, application-code: 64ms)
+ GET /api/auth/session 200 in 69ms (next.js: 28ms, proxy.ts: 6ms, application-code: 35ms)
+ GET /api/auth/session 200 in 76ms (next.js: 16ms, proxy.ts: 8ms, application-code: 51ms)
+ GET /api/auth/session 200 in 102ms (next.js: 54ms, proxy.ts: 12ms, application-code: 36ms)
+ GET /api/auth/session 200 in 59ms (next.js: 19ms, proxy.ts: 6ms, application-code: 34ms)
+ GET /api/auth/session 200 in 60ms (next.js: 17ms, proxy.ts: 6ms, application-code: 38ms)
+ GET / 200 in 447ms (next.js: 15ms, application-code: 431ms)
+ GET /api/site-config 200 in 38ms (next.js: 10ms, proxy.ts: 7ms, application-code: 21ms)
+ GET /api/site-config 200 in 58ms (next.js: 29ms, proxy.ts: 8ms, application-code: 20ms)
+ GET /api/auth/session 200 in 196ms (next.js: 47ms, proxy.ts: 13ms, application-code: 136ms)
+ GET /api/site-config 200 in 850ms (next.js: 289ms, proxy.ts: 33ms, application-code: 528ms)
+ GET /api/auth/session 200 in 1407ms (next.js: 334ms, proxy.ts: 688ms, application-code: 385ms)
+ GET /api/auth/session 200 in 61ms (next.js: 18ms, proxy.ts: 10ms, application-code: 33ms)
+ GET /api/auth/session 200 in 62ms (next.js: 22ms, proxy.ts: 7ms, application-code: 33ms)
+ GET /api/auth/session 200 in 61ms (next.js: 22ms, proxy.ts: 7ms, application-code: 33ms)
+ GET /api/auth/session 200 in 69ms (next.js: 27ms, proxy.ts: 9ms, application-code: 34ms)
+ GET /api/auth/session 200 in 139ms (next.js: 42ms, proxy.ts: 13ms, application-code: 84ms)
+ GET /api/auth/session 200 in 105ms (next.js: 37ms, proxy.ts: 6ms, application-code: 62ms)
+ GET /api/auth/session 200 in 48ms (next.js: 22ms, proxy.ts: 7ms, application-code: 19ms)
+ GET /products 200 in 131ms (next.js: 23ms, application-code: 108ms)
+ GET /api/site-config 200 in 82ms (next.js: 19ms, proxy.ts: 14ms, application-code: 49ms)
+ GET /api/site-config 200 in 245ms (next.js: 54ms, proxy.ts: 31ms, application-code: 161ms)
+ GET /projects 200 in 211ms (next.js: 17ms, application-code: 194ms)
+ GET /api/projects 200 in 54ms (next.js: 13ms, proxy.ts: 20ms, application-code: 20ms)
+ GET /api/projects 200 in 113ms (next.js: 34ms, proxy.ts: 33ms, application-code: 46ms)
+ GET /about 200 in 121ms (next.js: 19ms, application-code: 101ms)
+ GET /api/site-config 200 in 154ms (next.js: 74ms, proxy.ts: 47ms, application-code: 33ms)
+ GET /api/site-config 200 in 67ms (next.js: 21ms, proxy.ts: 23ms, application-code: 24ms)
+ GET /blog 200 in 100ms (next.js: 15ms, application-code: 85ms)
+ GET /contact 200 in 95ms (next.js: 15ms, application-code: 79ms)
+ GET /api/site-config 200 in 122ms (next.js: 34ms, proxy.ts: 63ms, application-code: 25ms)
+ GET /api/site-config 200 in 55ms (next.js: 17ms, proxy.ts: 15ms, application-code: 22ms)
+ GET / 200 in 85ms (next.js: 15ms, application-code: 71ms)
+ GET /api/site-config 200 in 64ms (next.js: 30ms, proxy.ts: 12ms, application-code: 22ms)
+ GET /api/site-config 200 in 47ms (next.js: 9ms, proxy.ts: 15ms, application-code: 24ms)
+ GET /api/site-config 200 in 162ms (next.js: 32ms, proxy.ts: 18ms, application-code: 111ms)
+ GET /api/site-config 200 in 354ms (next.js: 70ms, proxy.ts: 150ms, application-code: 134ms)
+ GET /api/site-config 200 in 26ms (next.js: 8ms, proxy.ts: 5ms, application-code: 12ms)
+ GET /api/site-config 200 in 32ms (next.js: 8ms, proxy.ts: 9ms, application-code: 15ms)
+✓ Compiled in 760ms
+ GET / 200 in 2.3s (next.js: 836ms, application-code: 1485ms)
+ GET /about 200 in 1409ms (next.js: 95ms, application-code: 1314ms)
+ GET /projects 200 in 1408ms (next.js: 498ms, application-code: 910ms)
+ GET / 200 in 1405ms (next.js: 667ms, application-code: 739ms)
+ GET / 200 in 1405ms (next.js: 801ms, application-code: 604ms)
+ GET /login 200 in 2.4s (next.js: 274ms, application-code: 2.1s)
+ GET /projects 200 in 1502ms (next.js: 28ms, application-code: 1474ms)
+ GET / 200 in 2.1s (next.js: 430ms, application-code: 1703ms)
+ GET / 200 in 1883ms (next.js: 335ms, application-code: 1547ms)
+ GET / 200 in 1789ms (next.js: 324ms, application-code: 1465ms)
+ GET / 200 in 1375ms (next.js: 51ms, application-code: 1324ms)
+ GET /api/site-config 200 in 1616ms (next.js: 873ms, proxy.ts: 547ms, application-code: 195ms)
+ GET /api/auth/session 200 in 1793ms (next.js: 1517ms, proxy.ts: 91ms, application-code: 184ms)
+ GET /api/site-config 200 in 315ms (next.js: 81ms, proxy.ts: 64ms, application-code: 170ms)
+ GET /api/auth/session 200 in 358ms (next.js: 201ms, proxy.ts: 121ms, application-code: 36ms)
+ GET /api/site-config 200 in 175ms (next.js: 64ms, proxy.ts: 16ms, application-code: 96ms)
+ GET /api/auth/session 200 in 105ms (next.js: 63ms, proxy.ts: 9ms, application-code: 32ms)
+ GET /api/auth/session 200 in 66ms (next.js: 17ms, proxy.ts: 7ms, application-code: 42ms)
+ GET /api/auth/session 200 in 69ms (next.js: 19ms, proxy.ts: 7ms, application-code: 43ms)
+ GET /api/auth/session 200 in 59ms (next.js: 22ms, proxy.ts: 11ms, application-code: 26ms)
+ GET /api/auth/session 200 in 52ms (next.js: 22ms, proxy.ts: 8ms, application-code: 22ms)
+ GET /api/auth/session 200 in 50ms (next.js: 21ms, proxy.ts: 6ms, application-code: 22ms)
+ GET /api/auth/session 200 in 69ms (next.js: 29ms, proxy.ts: 9ms, application-code: 31ms)
+ GET /api/auth/session 200 in 105ms (next.js: 36ms, proxy.ts: 11ms, application-code: 59ms)
+ GET /about 200 in 506ms (next.js: 27ms, application-code: 479ms)
+ GET /api/site-config 200 in 74ms (next.js: 23ms, proxy.ts: 11ms, application-code: 41ms)
+ GET /api/auth/session 200 in 222ms (next.js: 157ms, proxy.ts: 18ms, application-code: 48ms)
+ GET /api/auth/session 200 in 128ms (next.js: 49ms, proxy.ts: 14ms, application-code: 65ms)
+ GET /api/auth/session 200 in 390ms (next.js: 117ms, proxy.ts: 100ms, application-code: 172ms)
+ GET /api/auth/session 200 in 137ms (next.js: 63ms, proxy.ts: 6ms, application-code: 68ms)
+ GET /api/auth/session 200 in 202ms (next.js: 111ms, proxy.ts: 39ms, application-code: 52ms)
+ GET /api/auth/session 200 in 110ms (next.js: 60ms, proxy.ts: 9ms, application-code: 41ms)
+ GET /api/auth/session 200 in 65ms (next.js: 18ms, proxy.ts: 7ms, application-code: 40ms)
+ GET /api/auth/session 200 in 55ms (next.js: 17ms, proxy.ts: 9ms, application-code: 29ms)
+ GET /api/auth/session 200 in 56ms (next.js: 15ms, proxy.ts: 6ms, application-code: 35ms)
+ GET /products 200 in 276ms (next.js: 49ms, application-code: 227ms)
+ GET /api/auth/session 200 in 117ms (next.js: 88ms, proxy.ts: 8ms, application-code: 21ms)
+ GET /api/site-config 200 in 142ms (next.js: 54ms, proxy.ts: 10ms, application-code: 78ms)
+ GET /api/auth/session 200 in 76ms (next.js: 34ms, proxy.ts: 14ms, application-code: 28ms)
+ GET /api/auth/session 200 in 75ms (next.js: 17ms, proxy.ts: 8ms, application-code: 50ms)
+ GET /api/auth/session 200 in 215ms (next.js: 51ms, proxy.ts: 17ms, application-code: 147ms)
+ GET /api/auth/session 200 in 506ms (next.js: 464ms, proxy.ts: 7ms, application-code: 35ms)
+ GET /contact 200 in 557ms (next.js: 189ms, application-code: 367ms)
+ GET /api/auth/session 200 in 208ms (next.js: 71ms, proxy.ts: 9ms, application-code: 128ms)
+ GET /api/site-config 200 in 287ms (next.js: 69ms, proxy.ts: 83ms, application-code: 135ms)
+ GET /api/auth/session 200 in 511ms (next.js: 460ms, proxy.ts: 9ms, application-code: 42ms)
+ GET /api/site-config 200 in 134ms (next.js: 20ms, proxy.ts: 43ms, application-code: 71ms)
+ GET /api/auth/session 200 in 112ms (next.js: 66ms, proxy.ts: 12ms, application-code: 35ms)
+ GET /api/auth/session 200 in 55ms (next.js: 21ms, proxy.ts: 8ms, application-code: 25ms)
+ GET / 200 in 64ms (next.js: 12ms, application-code: 52ms)
+ GET /api/site-config 200 in 64ms (next.js: 23ms, proxy.ts: 14ms, application-code: 28ms)
+ GET /api/site-config 200 in 65ms (next.js: 16ms, proxy.ts: 14ms, application-code: 35ms)
+ GET /api/site-config 200 in 84ms (next.js: 36ms, proxy.ts: 16ms, application-code: 33ms)
+ GET /api/site-config 200 in 134ms (next.js: 32ms, proxy.ts: 15ms, application-code: 88ms)
+ GET /api/site-config 200 in 132ms (next.js: 22ms, proxy.ts: 33ms, application-code: 78ms)
+ GET /api/site-config 200 in 55ms (next.js: 14ms, proxy.ts: 16ms, application-code: 25ms)
+ GET /projects 200 in 227ms (next.js: 20ms, application-code: 207ms)
+ GET /api/auth/session 200 in 206ms (next.js: 54ms, proxy.ts: 13ms, application-code: 138ms)
+ GET /api/projects 200 in 228ms (next.js: 169ms, proxy.ts: 13ms, application-code: 46ms)
+ GET /api/auth/session 200 in 41ms (next.js: 15ms, proxy.ts: 6ms, application-code: 20ms)
+[browser] Image with src "/api/proxy-image?url=https%3A%2F%2Fimage.thum.io%2Fget%2Fwidth%2F800%2Fcrop%2F500%2Fhttps%3A%2F%2Fb-treasure-ecommerce-web.vercel.app%2F" was detected as the Largest Contentful Paint (LCP). Please add the `loading="eager"` property if this image is above the fold.
+Read more: https://nextjs.org/docs/app/api-reference/components/image#loading (file://F:/Web Opencode/nexusai-website/.next/dev/static/chunks/node_modules_next_dist_1ybzpk2._.js:2477:13)
+ GET /api/auth/session 200 in 53ms (next.js: 17ms, proxy.ts: 9ms, application-code: 27ms)
+ GET /api/auth/session 200 in 67ms (next.js: 20ms, proxy.ts: 7ms, application-code: 40ms)
+ GET /api/auth/session 200 in 54ms (next.js: 16ms, proxy.ts: 7ms, application-code: 32ms)
+ GET /api/auth/session 200 in 66ms (next.js: 25ms, proxy.ts: 7ms, application-code: 35ms)
+ GET /api/auth/session 200 in 51ms (next.js: 14ms, proxy.ts: 5ms, application-code: 32ms)
+ GET /api/auth/session 200 in 72ms (next.js: 30ms, proxy.ts: 6ms, application-code: 36ms)
+ GET /api/auth/session 200 in 61ms (next.js: 21ms, proxy.ts: 6ms, application-code: 34ms)
+ GET /api/auth/session 200 in 94ms (next.js: 35ms, proxy.ts: 11ms, application-code: 48ms)
+ GET /blog 200 in 338ms (next.js: 46ms, application-code: 292ms)
+ GET /api/auth/session 200 in 160ms (next.js: 49ms, proxy.ts: 9ms, application-code: 102ms)
+ GET /api/auth/session 200 in 79ms (next.js: 32ms, proxy.ts: 7ms, application-code: 40ms)
+ GET /api/auth/session 200 in 68ms (next.js: 25ms, proxy.ts: 7ms, application-code: 36ms)
+ GET /api/auth/session 200 in 62ms (next.js: 27ms, proxy.ts: 6ms, application-code: 30ms)
+ GET /api/auth/session 200 in 81ms (next.js: 30ms, proxy.ts: 11ms, application-code: 40ms)
+ GET /api/auth/session 200 in 77ms (next.js: 22ms, proxy.ts: 12ms, application-code: 43ms)
+ GET /api/auth/session 200 in 70ms (next.js: 24ms, proxy.ts: 9ms, application-code: 37ms)
+ GET /api/auth/session 200 in 66ms (next.js: 19ms, proxy.ts: 6ms, application-code: 40ms)
+ GET /api/auth/session 200 in 68ms (next.js: 28ms, proxy.ts: 6ms, application-code: 34ms)
+ GET /contact 200 in 264ms (next.js: 15ms, application-code: 249ms)
+ GET /api/site-config 200 in 61ms (next.js: 20ms, proxy.ts: 8ms, application-code: 33ms)
+ GET /api/auth/session 200 in 124ms (next.js: 72ms, proxy.ts: 8ms, application-code: 45ms)
+ GET /api/auth/session 200 in 56ms (next.js: 17ms, proxy.ts: 8ms, application-code: 31ms)
+ GET /api/auth/session 200 in 65ms (next.js: 18ms, proxy.ts: 9ms, application-code: 39ms)
+ GET /api/auth/session 200 in 64ms (next.js: 22ms, proxy.ts: 7ms, application-code: 35ms)
+ GET /api/auth/session 200 in 59ms (next.js: 17ms, proxy.ts: 7ms, application-code: 35ms)
+ GET /api/auth/session 200 in 61ms (next.js: 19ms, proxy.ts: 5ms, application-code: 37ms)
+ GET /api/auth/session 200 in 62ms (next.js: 20ms, proxy.ts: 7ms, application-code: 35ms)
+ GET /api/auth/session 200 in 68ms (next.js: 20ms, proxy.ts: 6ms, application-code: 42ms)
+ GET /api/auth/session 200 in 63ms (next.js: 21ms, proxy.ts: 6ms, application-code: 35ms)
+ GET / 200 in 306ms (next.js: 17ms, application-code: 289ms)
+ GET /api/site-config 200 in 51ms (next.js: 20ms, proxy.ts: 9ms, application-code: 23ms)
+ GET /api/auth/session 200 in 95ms (next.js: 32ms, proxy.ts: 6ms, application-code: 57ms)
+ GET /api/site-config 200 in 171ms (next.js: 83ms, proxy.ts: 7ms, application-code: 82ms)
+ GET /api/auth/session 200 in 305ms (next.js: 215ms, proxy.ts: 5ms, application-code: 84ms)
+ GET /api/site-config 200 in 301ms (next.js: 85ms, proxy.ts: 51ms, application-code: 165ms)
+ GET /api/auth/session 200 in 190ms (next.js: 84ms, proxy.ts: 16ms, application-code: 89ms)
+ GET /api/auth/session 200 in 77ms (next.js: 22ms, proxy.ts: 7ms, application-code: 48ms)
+ GET /api/auth/session 200 in 90ms (next.js: 28ms, proxy.ts: 14ms, application-code: 48ms)
+ GET /api/auth/session 200 in 68ms (next.js: 34ms, proxy.ts: 7ms, application-code: 27ms)
+ GET /api/auth/session 200 in 71ms (next.js: 27ms, proxy.ts: 5ms, application-code: 39ms)
+ GET /api/auth/session 200 in 68ms (next.js: 31ms, proxy.ts: 5ms, application-code: 32ms)
+ GET /api/auth/session 200 in 55ms (next.js: 23ms, proxy.ts: 6ms, application-code: 26ms)
+ GET /api/auth/session 200 in 109ms (next.js: 34ms, proxy.ts: 11ms, application-code: 63ms)
+✓ Compiled in 3.6s
+✓ Compiled in 130ms
+ GET /about 200 in 6.1s (next.js: 4.2s, application-code: 1815ms)
+ GET / 200 in 6.7s (next.js: 5.6s, application-code: 1067ms)
+ GET / 200 in 10.3s (next.js: 2.9s, application-code: 7.4s)
+ GET /projects 200 in 11.3s (next.js: 3.4s, application-code: 7.9s)
+ GET / 200 in 19.9s (next.js: 1310ms, application-code: 18.6s)
+ GET / 200 in 7.0s (next.js: 431ms, application-code: 6.6s)
+ GET / 200 in 6.5s (next.js: 192ms, application-code: 6.3s)
+ GET /projects 200 in 4.3s (next.js: 82ms, application-code: 4.2s)
+ GET /login 200 in 6.6s (next.js: 826ms, application-code: 5.7s)
+ GET /about 200 in 4.7s (next.js: 188ms, application-code: 4.5s)
+[browser] Image with src "/images/bilal.jpg" was detected as the Largest Contentful Paint (LCP). Please add the `loading="eager"` property if this image is above the fold.
+Read more: https://nextjs.org/docs/app/api-reference/components/image#loading (file://F:/Web Opencode/nexusai-website/.next/dev/static/chunks/node_modules_next_dist_1ybzpk2._.js:2477:13)
+ GET / 200 in 5.1s (next.js: 107ms, application-code: 5.0s)
+ GET /api/site-config 200 in 1520ms (next.js: 276ms, proxy.ts: 812ms, application-code: 432ms)
+ GET /api/auth/session 200 in 1617ms (next.js: 639ms, proxy.ts: 795ms, application-code: 183ms)
+ GET /projects 200 in 4.6s (next.js: 66ms, application-code: 4.5s)
+ GET / 200 in 4.3s (next.js: 91ms, application-code: 4.2s)
+ GET / 200 in 4.4s (next.js: 1947ms, application-code: 2.4s)
+ GET /api/site-config 200 in 541ms (next.js: 280ms, proxy.ts: 93ms, application-code: 168ms)
+ GET /api/site-config 200 in 399ms (next.js: 194ms, proxy.ts: 179ms, application-code: 26ms)
+ GET /api/site-config 200 in 648ms (next.js: 274ms, proxy.ts: 51ms, application-code: 324ms)
+ GET /api/auth/session 200 in 2.1s (next.js: 1821ms, proxy.ts: 77ms, application-code: 233ms)
+ GET /api/site-config 200 in 417ms (next.js: 159ms, proxy.ts: 78ms, application-code: 179ms)
+ GET /api/auth/session 200 in 630ms (next.js: 506ms, proxy.ts: 42ms, application-code: 82ms)
+ GET /api/auth/session 200 in 650ms (next.js: 535ms, proxy.ts: 94ms, application-code: 21ms)
+ GET /api/site-config 200 in 717ms (next.js: 317ms, proxy.ts: 55ms, application-code: 345ms)
+ GET /api/auth/session 200 in 473ms (next.js: 256ms, proxy.ts: 38ms, application-code: 179ms)
+ GET /api/site-config 200 in 523ms (next.js: 178ms, proxy.ts: 18ms, application-code: 328ms)
+ GET /api/projects 200 in 503ms (next.js: 387ms, proxy.ts: 15ms, application-code: 100ms)
+ GET /api/auth/session 200 in 448ms (next.js: 399ms, proxy.ts: 13ms, application-code: 36ms)
+ GET /api/site-config 200 in 154ms (next.js: 34ms, proxy.ts: 14ms, application-code: 105ms)
+ GET /api/auth/session 200 in 527ms (next.js: 171ms, proxy.ts: 11ms, application-code: 346ms)
+ GET /api/site-config 200 in 116ms (next.js: 46ms, proxy.ts: 19ms, application-code: 51ms)
+ GET /api/auth/session 200 in 299ms (next.js: 230ms, proxy.ts: 38ms, application-code: 31ms)
+ GET /api/site-config 200 in 93ms (next.js: 27ms, proxy.ts: 21ms, application-code: 45ms)
+ GET /api/auth/session 200 in 184ms (next.js: 135ms, proxy.ts: 7ms, application-code: 42ms)
+ GET /api/auth/session 200 in 1391ms (next.js: 1114ms, proxy.ts: 83ms, application-code: 194ms)
+ GET /api/site-config 200 in 1367ms (next.js: 467ms, proxy.ts: 65ms, application-code: 835ms)
+ GET /api/projects 200 in 1285ms (next.js: 867ms, proxy.ts: 88ms, application-code: 330ms)
+ GET /api/site-config 200 in 367ms (next.js: 229ms, proxy.ts: 20ms, application-code: 118ms)
+ GET /api/auth/session 200 in 383ms (next.js: 324ms, proxy.ts: 23ms, application-code: 36ms)
+ GET /api/auth/session 200 in 76ms (next.js: 52ms, proxy.ts: 6ms, application-code: 19ms)
+ GET /api/site-config 200 in 170ms (next.js: 37ms, proxy.ts: 7ms, application-code: 126ms)
+ GET /api/site-config 200 in 235ms (next.js: 83ms, proxy.ts: 17ms, application-code: 135ms)
+ GET /api/auth/session 200 in 242ms (next.js: 180ms, proxy.ts: 13ms, application-code: 49ms)
+ GET /api/site-config 200 in 81ms (next.js: 31ms, proxy.ts: 12ms, application-code: 38ms)
+ GET /api/auth/session 200 in 184ms (next.js: 130ms, proxy.ts: 13ms, application-code: 42ms)
+ GET /api/site-config 200 in 124ms (next.js: 11ms, proxy.ts: 7ms, application-code: 106ms)
+ GET /api/auth/session 200 in 693ms (next.js: 206ms, proxy.ts: 9ms, application-code: 479ms)
+ GET /api/site-config 200 in 779ms (next.js: 291ms, proxy.ts: 23ms, application-code: 465ms)
+ GET /api/auth/session 200 in 254ms (next.js: 194ms, proxy.ts: 19ms, application-code: 41ms)
+ GET /api/site-config 200 in 75ms (next.js: 38ms, proxy.ts: 8ms, application-code: 29ms)
+ GET /api/auth/session 200 in 49ms (next.js: 14ms, proxy.ts: 5ms, application-code: 30ms)
+ GET /api/site-config 200 in 200ms (next.js: 12ms, proxy.ts: 9ms, application-code: 178ms)
+ GET /api/auth/session 200 in 250ms (next.js: 108ms, proxy.ts: 25ms, application-code: 117ms)
+ GET /api/auth/session 200 in 116ms (next.js: 31ms, proxy.ts: 16ms, application-code: 69ms)
+ GET /api/auth/session 200 in 92ms (next.js: 41ms, proxy.ts: 8ms, application-code: 43ms)
+ GET /api/auth/session 200 in 81ms (next.js: 35ms, proxy.ts: 11ms, application-code: 35ms)
+ GET /api/auth/session 200 in 86ms (next.js: 35ms, proxy.ts: 10ms, application-code: 42ms)
+ GET /api/auth/session 200 in 169ms (next.js: 65ms, proxy.ts: 9ms, application-code: 96ms)
+ GET /api/auth/session 200 in 99ms (next.js: 48ms, proxy.ts: 10ms, application-code: 41ms)
+ GET /api/auth/session 200 in 81ms (next.js: 34ms, proxy.ts: 8ms, application-code: 39ms)
+ GET /api/auth/session 200 in 92ms (next.js: 27ms, proxy.ts: 11ms, application-code: 55ms)
+ GET /api/auth/session 200 in 146ms (next.js: 46ms, proxy.ts: 7ms, application-code: 93ms)
+ GET /api/auth/session 200 in 68ms (next.js: 27ms, proxy.ts: 6ms, application-code: 35ms)
+ GET /api/auth/session 200 in 76ms (next.js: 42ms, proxy.ts: 7ms, application-code: 27ms)
+ GET /api/auth/session 200 in 304ms (next.js: 122ms, proxy.ts: 22ms, application-code: 160ms)
+ GET /api/auth/session 200 in 242ms (next.js: 147ms, proxy.ts: 6ms, application-code: 89ms)
+ GET /api/auth/session 200 in 285ms (next.js: 197ms, proxy.ts: 9ms, application-code: 79ms)
+ GET /api/auth/session 200 in 70ms (next.js: 30ms, proxy.ts: 6ms, application-code: 34ms)
+ GET /api/auth/session 200 in 115ms (next.js: 78ms, proxy.ts: 6ms, application-code: 31ms)
+ GET /api/auth/session 200 in 59ms (next.js: 17ms, proxy.ts: 6ms, application-code: 35ms)
+ GET /api/auth/session 200 in 153ms (next.js: 82ms, proxy.ts: 5ms, application-code: 65ms)
+ GET /api/auth/session 200 in 93ms (next.js: 42ms, proxy.ts: 6ms, application-code: 45ms)
+ GET /api/auth/session 200 in 64ms (next.js: 15ms, proxy.ts: 7ms, application-code: 43ms)
+ GET /api/auth/session 200 in 300ms (next.js: 188ms, proxy.ts: 9ms, application-code: 103ms)
+ GET /api/auth/session 200 in 271ms (next.js: 181ms, proxy.ts: 13ms, application-code: 77ms)
+ GET /api/auth/session 200 in 63ms (next.js: 16ms, proxy.ts: 7ms, application-code: 40ms)
+ GET /api/auth/session 200 in 165ms (next.js: 48ms, proxy.ts: 6ms, application-code: 111ms)
+ GET /api/auth/session 200 in 170ms (next.js: 46ms, proxy.ts: 15ms, application-code: 110ms)
+ GET /api/auth/session 200 in 145ms (next.js: 107ms, proxy.ts: 10ms, application-code: 27ms)
+ GET / 200 in 835ms (next.js: 15ms, application-code: 820ms)
+ GET /api/site-config 200 in 45ms (next.js: 14ms, proxy.ts: 10ms, application-code: 21ms)
+ GET /api/site-config 200 in 48ms (next.js: 16ms, proxy.ts: 5ms, application-code: 26ms)
+ GET /api/auth/session 200 in 161ms (next.js: 51ms, proxy.ts: 28ms, application-code: 82ms)
+ GET /api/site-config 200 in 333ms (next.js: 117ms, proxy.ts: 86ms, application-code: 129ms)
+ GET /api/auth/session 200 in 199ms (next.js: 85ms, proxy.ts: 27ms, application-code: 86ms)
+ GET /api/auth/session 200 in 168ms (next.js: 66ms, proxy.ts: 17ms, application-code: 85ms)
+ GET /api/auth/session 200 in 77ms (next.js: 31ms, proxy.ts: 5ms, application-code: 41ms)
+ GET /api/auth/session 200 in 68ms (next.js: 23ms, proxy.ts: 6ms, application-code: 38ms)
+ GET /api/auth/session 200 in 97ms (next.js: 28ms, proxy.ts: 10ms, application-code: 59ms)
+ GET /api/auth/session 200 in 70ms (next.js: 27ms, proxy.ts: 6ms, application-code: 38ms)
+ GET /api/auth/session 200 in 77ms (next.js: 34ms, proxy.ts: 10ms, application-code: 33ms)
+ GET /api/auth/session 200 in 72ms (next.js: 22ms, proxy.ts: 9ms, application-code: 41ms)
+ GET /api/auth/session 200 in 176ms (next.js: 50ms, proxy.ts: 24ms, application-code: 102ms)
+✓ Compiled in 3s
+[browser] Image with src "https://image.thum.io/get/width/800/crop/500/https://b-treasure-ecommerce-web.vercel.app/" has "fill" and parent element with invalid "position". Provided "static" should be one of absolute,fixed,relative. (file://F:/Web Opencode/nexusai-website/.next/dev/static/chunks/node_modules_next_dist_1ybzpk2._.js:2477:13)
+[browser] Image with src "https://image.thum.io/get/width/800/crop/500/https://b-treasure-ecommerce-web.vercel.app/" has "fill" and parent element with invalid "position". Provided "static" should be one of absolute,fixed,relative. (file://F:/Web Opencode/nexusai-website/.next/dev/static/chunks/node_modules_next_dist_1ybzpk2._.js:2477:13)
+ GET / 200 in 708ms (next.js: 483ms, application-code: 225ms)
+ GET / 200 in 11.3s (next.js: 1268ms, application-code: 10.0s)
+ GET / 200 in 2.7s (next.js: 1072ms, application-code: 1623ms)
+ GET / 200 in 713ms (next.js: 396ms, application-code: 317ms)
+ GET / 200 in 11.3s (next.js: 1407ms, application-code: 9.9s)
+ GET /projects 200 in 11.3s (next.js: 3.3s, application-code: 8.0s)
+ GET /about 200 in 11.3s (next.js: 1989ms, application-code: 9.3s)
+ GET / 200 in 2.8s (next.js: 929ms, application-code: 1892ms)
+ GET /about 200 in 2.8s (next.js: 453ms, application-code: 2.4s)
+ GET /login 200 in 12.0s (next.js: 2.4s, application-code: 9.6s)
+ GET /login 200 in 309ms (next.js: 82ms, application-code: 227ms)
+ GET / 200 in 3.4s (next.js: 49ms, application-code: 3.4s)
+ GET /projects 200 in 2.7s (next.js: 169ms, application-code: 2.6s)
+ GET / 200 in 2.7s (next.js: 55ms, application-code: 2.7s)
+ GET /about 200 in 2.1s (next.js: 205ms, application-code: 1857ms)
+ GET /login 200 in 2.1s (next.js: 353ms, application-code: 1716ms)
+[browser] Image with src "/images/bilal.jpg" was detected as the Largest Contentful Paint (LCP). Please add the `loading="eager"` property if this image is above the fold.
+Read more: https://nextjs.org/docs/app/api-reference/components/image#loading (file://F:/Web Opencode/nexusai-website/.next/dev/static/chunks/node_modules_next_dist_1ybzpk2._.js:2477:13)
+ GET / 200 in 1018ms (next.js: 147ms, application-code: 871ms)
+ GET /projects 200 in 985ms (next.js: 368ms, application-code: 617ms)
+ GET / 200 in 2.8s (next.js: 1086ms, application-code: 1701ms)
+ GET / 200 in 2.8s (next.js: 800ms, application-code: 1997ms)
+ GET /api/site-config 200 in 1952ms (next.js: 164ms, proxy.ts: 483ms, application-code: 1304ms)
+ GET / 200 in 4.4s (next.js: 593ms, application-code: 3.8s)
+ GET /api/auth/session 200 in 2.1s (next.js: 1299ms, proxy.ts: 470ms, application-code: 364ms)
+ GET / 200 in 4.5s (next.js: 149ms, application-code: 4.4s)
+ GET / 200 in 4.5s (next.js: 268ms, application-code: 4.3s)
+ GET / 200 in 1702ms (next.js: 193ms, application-code: 1510ms)
+ GET /api/site-config 200 in 246ms (next.js: 110ms, proxy.ts: 111ms, application-code: 24ms)
+ GET /api/site-config 200 in 50ms (next.js: 15ms, proxy.ts: 15ms, application-code: 20ms)
+ GET /api/site-config 200 in 803ms (next.js: 45ms, proxy.ts: 5ms, application-code: 753ms)
+ GET /api/auth/session 200 in 3.2s (next.js: 1457ms, proxy.ts: 101ms, application-code: 1686ms)
+ GET /api/projects 200 in 3.4s (next.js: 2.2s, proxy.ts: 582ms, application-code: 618ms)
+ GET /api/site-config 200 in 3.4s (next.js: 1871ms, proxy.ts: 52ms, application-code: 1502ms)
+ GET /api/auth/session 200 in 1314ms (next.js: 694ms, proxy.ts: 368ms, application-code: 252ms)
+ GET /api/projects 200 in 1176ms (next.js: 424ms, proxy.ts: 293ms, application-code: 459ms)
+ GET /api/site-config 200 in 1183ms (next.js: 611ms, proxy.ts: 290ms, application-code: 282ms)
+ GET /api/auth/session 200 in 688ms (next.js: 449ms, proxy.ts: 91ms, application-code: 148ms)
+ GET /api/auth/session 200 in 301ms (next.js: 137ms, proxy.ts: 12ms, application-code: 152ms)
+ GET /api/site-config 200 in 380ms (next.js: 181ms, proxy.ts: 13ms, application-code: 186ms)
+ GET /api/auth/session 200 in 299ms (next.js: 127ms, proxy.ts: 18ms, application-code: 154ms)
+ GET /api/site-config 200 in 283ms (next.js: 103ms, proxy.ts: 32ms, application-code: 148ms)
+ GET /api/auth/session 200 in 339ms (next.js: 178ms, proxy.ts: 16ms, application-code: 145ms)
+ GET /api/site-config 200 in 264ms (next.js: 134ms, proxy.ts: 20ms, application-code: 111ms)
+ GET /api/auth/session 200 in 279ms (next.js: 183ms, proxy.ts: 6ms, application-code: 90ms)
+ GET /api/site-config 200 in 254ms (next.js: 65ms, proxy.ts: 8ms, application-code: 181ms)
+ GET /api/auth/session 200 in 100ms (next.js: 39ms, proxy.ts: 7ms, application-code: 53ms)
+ GET /api/site-config 200 in 102ms (next.js: 51ms, proxy.ts: 7ms, application-code: 44ms)
+ GET /api/auth/session 200 in 146ms (next.js: 45ms, proxy.ts: 20ms, application-code: 81ms)
+ GET /api/site-config 200 in 127ms (next.js: 64ms, proxy.ts: 11ms, application-code: 51ms)
+ GET /api/site-config 200 in 180ms (next.js: 43ms, proxy.ts: 16ms, application-code: 122ms)
+ GET /api/auth/session 200 in 255ms (next.js: 155ms, proxy.ts: 19ms, application-code: 81ms)
+ GET /api/site-config 200 in 150ms (next.js: 61ms, proxy.ts: 15ms, application-code: 74ms)
+ GET /api/auth/session 200 in 265ms (next.js: 180ms, proxy.ts: 8ms, application-code: 77ms)
+ GET /api/site-config 200 in 166ms (next.js: 67ms, proxy.ts: 47ms, application-code: 52ms)
+ GET /api/auth/session 200 in 222ms (next.js: 125ms, proxy.ts: 21ms, application-code: 76ms)
+ GET /api/site-config 200 in 243ms (next.js: 97ms, proxy.ts: 60ms, application-code: 86ms)
+ GET /api/auth/session 200 in 240ms (next.js: 137ms, proxy.ts: 68ms, application-code: 35ms)
+ GET /api/site-config 200 in 175ms (next.js: 109ms, proxy.ts: 17ms, application-code: 49ms)
+ GET /api/auth/session 200 in 83ms (next.js: 38ms, proxy.ts: 15ms, application-code: 30ms)
+ GET /api/site-config 200 in 171ms (next.js: 66ms, proxy.ts: 6ms, application-code: 99ms)
+ GET /api/auth/session 200 in 91ms (next.js: 48ms, proxy.ts: 20ms, application-code: 24ms)
+ GET /api/site-config 200 in 97ms (next.js: 33ms, proxy.ts: 29ms, application-code: 34ms)
+ GET /api/auth/session 200 in 112ms (next.js: 31ms, proxy.ts: 29ms, application-code: 53ms)
+✓ Finished filesystem cache database compaction in 17.7s
+ GET /api/auth/session 200 in 307ms (next.js: 123ms, proxy.ts: 27ms, application-code: 157ms)
+ GET /api/auth/session 200 in 57ms (next.js: 18ms, proxy.ts: 8ms, application-code: 30ms)
+ GET /api/auth/session 200 in 65ms (next.js: 22ms, proxy.ts: 6ms, application-code: 37ms)
+ GET /api/auth/session 200 in 61ms (next.js: 16ms, proxy.ts: 5ms, application-code: 39ms)
+ GET /api/auth/session 200 in 71ms (next.js: 21ms, proxy.ts: 5ms, application-code: 45ms)
+ GET /api/auth/session 200 in 81ms (next.js: 23ms, proxy.ts: 10ms, application-code: 48ms)
+ GET /api/auth/session 200 in 82ms (next.js: 31ms, proxy.ts: 12ms, application-code: 39ms)
+ GET /api/auth/session 200 in 62ms (next.js: 25ms, proxy.ts: 10ms, application-code: 26ms)
+ GET /api/auth/session 200 in 90ms (next.js: 50ms, proxy.ts: 13ms, application-code: 27ms)
+ GET /api/auth/session 200 in 53ms (next.js: 25ms, proxy.ts: 5ms, application-code: 22ms)
+ GET /api/auth/session 200 in 86ms (next.js: 36ms, proxy.ts: 9ms, application-code: 40ms)
+ GET /api/auth/session 200 in 72ms (next.js: 27ms, proxy.ts: 6ms, application-code: 38ms)
+ GET /api/auth/session 200 in 100ms (next.js: 23ms, proxy.ts: 8ms, application-code: 69ms)
+ GET /api/auth/session 200 in 69ms (next.js: 24ms, proxy.ts: 6ms, application-code: 40ms)
+ GET /api/auth/session 200 in 77ms (next.js: 33ms, proxy.ts: 9ms, application-code: 35ms)
+ GET /api/auth/session 200 in 63ms (next.js: 15ms, proxy.ts: 7ms, application-code: 41ms)
+ GET /api/auth/session 200 in 65ms (next.js: 19ms, proxy.ts: 7ms, application-code: 38ms)
+ GET /api/auth/session 200 in 62ms (next.js: 16ms, proxy.ts: 7ms, application-code: 39ms)
+ GET /api/auth/session 200 in 51ms (next.js: 15ms, proxy.ts: 5ms, application-code: 31ms)
+ GET /api/auth/session 200 in 70ms (next.js: 30ms, proxy.ts: 7ms, application-code: 32ms)
+ GET /api/auth/session 200 in 73ms (next.js: 32ms, proxy.ts: 9ms, application-code: 33ms)
+ GET /api/auth/session 200 in 48ms (next.js: 15ms, proxy.ts: 7ms, application-code: 26ms)
+ GET /api/auth/session 200 in 64ms (next.js: 25ms, proxy.ts: 7ms, application-code: 32ms)
+ GET /api/auth/session 200 in 95ms (next.js: 51ms, proxy.ts: 9ms, application-code: 35ms)
+ GET /api/auth/session 200 in 51ms (next.js: 19ms, proxy.ts: 7ms, application-code: 25ms)
+ GET /api/auth/session 200 in 68ms (next.js: 19ms, proxy.ts: 12ms, application-code: 37ms)
+ GET /api/auth/session 200 in 74ms (next.js: 35ms, proxy.ts: 5ms, application-code: 33ms)
+ GET /api/auth/session 200 in 61ms (next.js: 21ms, proxy.ts: 9ms, application-code: 31ms)
+ GET /api/auth/session 200 in 62ms (next.js: 21ms, proxy.ts: 9ms, application-code: 32ms)
+ GET /api/auth/session 200 in 65ms (next.js: 21ms, proxy.ts: 9ms, application-code: 35ms)
+ GET /api/auth/session 200 in 67ms (next.js: 18ms, proxy.ts: 6ms, application-code: 43ms)
+ GET /api/auth/session 200 in 58ms (next.js: 17ms, proxy.ts: 4ms, application-code: 37ms)
+ GET /api/auth/session 200 in 60ms (next.js: 21ms, proxy.ts: 5ms, application-code: 34ms)
+ GET /api/auth/session 200 in 70ms (next.js: 26ms, proxy.ts: 7ms, application-code: 37ms)
+ GET /api/auth/session 200 in 57ms (next.js: 19ms, proxy.ts: 5ms, application-code: 32ms)
+ GET /api/auth/session 200 in 61ms (next.js: 19ms, proxy.ts: 9ms, application-code: 33ms)
+ GET /api/auth/session 200 in 65ms (next.js: 25ms, proxy.ts: 5ms, application-code: 34ms)
+ GET /api/auth/session 200 in 65ms (next.js: 22ms, proxy.ts: 6ms, application-code: 37ms)
+ GET / 200 in 842ms (next.js: 12ms, application-code: 830ms)
+ GET /api/site-config 200 in 149ms (next.js: 89ms, proxy.ts: 28ms, application-code: 31ms)
+ GET /api/auth/session 200 in 558ms (next.js: 282ms, proxy.ts: 53ms, application-code: 224ms)
+ GET /api/site-config 200 in 429ms (next.js: 198ms, proxy.ts: 93ms, application-code: 137ms)
+ GET /api/site-config 200 in 81ms (next.js: 32ms, proxy.ts: 16ms, application-code: 33ms)
+ GET / 200 in 289ms (next.js: 13ms, application-code: 276ms)
+✓ Compiled in 1185ms
+⨯ Error: ENOENT: no such file or directory, open 'F:\Web Opencode\nexusai-website\.next\dev\server\app\api\auth\[...nextauth]\[__metadata_id__]\route\app-paths-manifest.json'
+    at ignore-listed frames {
+  errno: -4058,
+  code: 'ENOENT',
+  syscall: 'open',
+  path: 'F:\\Web Opencode\\nexusai-website\\.next\\dev\\server\\app\\api\\auth\\[...nextauth]\\[__metadata_id__]\\route\\app-paths-manifest.json'
+}
+○ Compiling /_error ...
+⨯ Error: ENOENT: no such file or directory, open 'F:\Web Opencode\nexusai-website\.next\dev\static\development\_buildManifest.js.tmp.43avq266u2d'
+    at ignore-listed frames {
+  errno: -4058,
+  code: 'ENOENT',
+  syscall: 'open',
+  path: 'F:\\Web Opencode\\nexusai-website\\.next\\dev\\static\\development\\_buildManifest.js.tmp.43avq266u2d'
+}
+Error: ENOENT: no such file or directory, open 'F:\Web Opencode\nexusai-website\.next\dev\server\app\api\auth\[...nextauth]\[__metadata_id__]\route\app-paths-manifest.json'
+    at ignore-listed frames {
+  errno: -4058,
+  code: 'ENOENT',
+  syscall: 'open',
+  path: 'F:\\Web Opencode\\nexusai-website\\.next\\dev\\server\\app\\api\\auth\\[...nextauth]\\[__metadata_id__]\\route\\app-paths-manifest.json'
+}
+⨯ Error: Cannot find module '../chunks/ssr/[turbopack]_runtime.js'
+Require stack:
+- F:\Web Opencode\nexusai-website\.next\dev\server\pages\_document.js
+- F:\Web Opencode\nexusai-website\node_modules\next\dist\server\require.js
+- F:\Web Opencode\nexusai-website\node_modules\next\dist\server\load-components.js
+- F:\Web Opencode\nexusai-website\node_modules\next\dist\build\utils.js
+- F:\Web Opencode\nexusai-website\node_modules\next\dist\server\lib\router-utils\setup-dev-bundler.js
+- F:\Web Opencode\nexusai-website\node_modules\next\dist\server\lib\router-server.js
+- F:\Web Opencode\nexusai-website\node_modules\next\dist\server\lib\start-server.js
+    at Object.<anonymous> (F:\Web Opencode\nexusai-website\.next\dev\server\pages\_document.js:1:7) {
+  code: 'MODULE_NOT_FOUND',
+  requireStack: [
+    'F:\\Web Opencode\\nexusai-website\\.next\\dev\\server\\pages\\_document.js',
+    'F:\\Web Opencode\\nexusai-website\\node_modules\\next\\dist\\server\\require.js',
+    'F:\\Web Opencode\\nexusai-website\\node_modules\\next\\dist\\server\\load-components.js',
+    'F:\\Web Opencode\\nexusai-website\\node_modules\\next\\dist\\build\\utils.js',
+    'F:\\Web Opencode\\nexusai-website\\node_modules\\next\\dist\\server\\lib\\router-utils\\setup-dev-bundler.js',
+    'F:\\Web Opencode\\nexusai-website\\node_modules\\next\\dist\\server\\lib\\router-server.js',
+    'F:\\Web Opencode\\nexusai-website\\node_modules\\next\\dist\\server\\lib\\start-server.js'
+  ]
+}
+Error: ENOENT: no such file or directory, open 'F:\Web Opencode\nexusai-website\.next\dev\routes-manifest.json'
+    at ignore-listed frames {
+  errno: -4058,
+  code: 'ENOENT',
+  syscall: 'open',
+  path: 'F:\\Web Opencode\\nexusai-website\\.next\\dev\\routes-manifest.json'
+}
+ GET /api/auth/session 500 in 10.6s (next.js: 10.5s, proxy.ts: 11ms, application-code: 122ms)
+ GET /api/auth/session 500 in 10.6s (next.js: 10.5s, proxy.ts: 11ms, application-code: 122ms)
+⨯ Error: ENOENT: no such file or directory, open 'F:\Web Opencode\nexusai-website\.next\dev\server\app\api\auth\[...nextauth]\[__metadata_id__]\route\app-paths-manifest.json'
+    at ignore-listed frames {
+  errno: -4058,
+  code: 'ENOENT',
+  syscall: 'open',
+  path: 'F:\\Web Opencode\\nexusai-website\\.next\\dev\\server\\app\\api\\auth\\[...nextauth]\\[__metadata_id__]\\route\\app-paths-manifest.json'
+}
+[browser] [next-auth][error][CLIENT_FETCH_ERROR] 
+https://next-auth.js.org/errors#client_fetch_error Unexpected token 'I', "Internal S"... is not valid JSON {
+  error: {
+    message: [32m`Unexpected token 'I', "Internal S"... is not valid JSON`[39m,
+    name: [32m'SyntaxError'[39m,
+    stack: [32m`SyntaxError: Unexpected token 'I', "Internal S"... is not valid JSON`[39m
+  },
+  message: [32m`Unexpected token 'I', "Internal S"... is not valid JSON`[39m,
+  url: [32m'/api/auth/session'[39m
+} 
+    at Object.error (file://F:/Web Opencode/nexusai-website/.next/dev/static/chunks/node_modules_12pdip8._.js:5353:17)
+    at _callee$ (file://F:/Web Opencode/nexusai-website/.next/dev/static/chunks/node_modules_12pdip8._.js:5386:47)
+    at <unknown> (file://F:/Web Opencode/nexusai-website/.next/dev/static/chunks/node_modules_12pdip8._.js:4700:26)
+    at Generator.<anonymous> (file://F:/Web Opencode/nexusai-website/.next/dev/static/chunks/node_modules_12pdip8._.js:4524:63)
+    at Generator.next (file://F:/Web Opencode/nexusai-website/.next/dev/static/chunks/node_modules_12pdip8._.js:4473:29)
+    at asyncGeneratorStep (file://F:/Web Opencode/nexusai-website/.next/dev/static/chunks/node_modules_12pdip8._.js:4785:21)
+    at _next (file://F:/Web Opencode/nexusai-website/.next/dev/static/chunks/node_modules_12pdip8._.js:4797:17)
+    at <unknown> (file://F:/Web Opencode/nexusai-website/.next/dev/static/chunks/node_modules_12pdip8._.js:4802:13)
+    at new Promise (<anonymous>)
+    at Object.<anonymous> (file://F:/Web Opencode/nexusai-website/.next/dev/static/chunks/node_modules_12pdip8._.js:4794:16)
+    at Object.error (file://F:/Web Opencode/nexusai-website/.next/dev/static/chunks/node_modules_12pdip8._.js:5418:33)
+    at _callee$ (file://F:/Web Opencode/nexusai-website/.next/dev/static/chunks/node_modules_12pdip8._.js:5532:28)
+    at <unknown> (file://F:/Web Opencode/nexusai-website/.next/dev/static/chunks/node_modules_12pdip8._.js:4700:26)
+    at Generator.<anonymous> (file://F:/Web Opencode/nexusai-website/.next/dev/static/chunks/node_modules_12pdip8._.js:4524:63)
+    at Generator.throw (file://F:/Web Opencode/nexusai-website/.next/dev/static/chunks/node_modules_12pdip8._.js:4473:29)
+    at asyncGeneratorStep (file://F:/Web Opencode/nexusai-website/.next/dev/static/chunks/node_modules_12pdip8._.js:4785:21)
+    at _throw (file://F:/Web Opencode/nexusai-website/.next/dev/static/chunks/node_modules_12pdip8._.js:4800:17) (file://F:/Web Opencode/nexusai-website/.next/dev/static/chunks/node_modules_12pdip8._.js:5353:17)
+⨯ Error: Cannot find module '../chunks/ssr/[turbopack]_runtime.js'
+Require stack:
+- F:\Web Opencode\nexusai-website\.next\dev\server\pages\_document.js
+- F:\Web Opencode\nexusai-website\node_modules\next\dist\server\require.js
+- F:\Web Opencode\nexusai-website\node_modules\next\dist\server\load-components.js
+- F:\Web Opencode\nexusai-website\node_modules\next\dist\build\utils.js
+- F:\Web Opencode\nexusai-website\node_modules\next\dist\server\lib\router-utils\setup-dev-bundler.js
+- F:\Web Opencode\nexusai-website\node_modules\next\dist\server\lib\router-server.js
+- F:\Web Opencode\nexusai-website\node_modules\next\dist\server\lib\start-server.js
+    at Object.<anonymous> (F:\Web Opencode\nexusai-website\.next\dev\server\pages\_document.js:1:7) {
+  code: 'MODULE_NOT_FOUND',
+  requireStack: [
+    'F:\\Web Opencode\\nexusai-website\\.next\\dev\\server\\pages\\_document.js',
+    'F:\\Web Opencode\\nexusai-website\\node_modules\\next\\dist\\server\\require.js',
+    'F:\\Web Opencode\\nexusai-website\\node_modules\\next\\dist\\server\\load-components.js',
+    'F:\\Web Opencode\\nexusai-website\\node_modules\\next\\dist\\build\\utils.js',
+    'F:\\Web Opencode\\nexusai-website\\node_modules\\next\\dist\\server\\lib\\router-utils\\setup-dev-bundler.js',
+    'F:\\Web Opencode\\nexusai-website\\node_modules\\next\\dist\\server\\lib\\router-server.js',
+    'F:\\Web Opencode\\nexusai-website\\node_modules\\next\\dist\\server\\lib\\start-server.js'
+  ]
+}
+Error: ENOENT: no such file or directory, open 'F:\Web Opencode\nexusai-website\.next\dev\server\app\api\auth\[...nextauth]\[__metadata_id__]\route\app-paths-manifest.json'
+    at ignore-listed frames {
+  errno: -4058,
+  code: 'ENOENT',
+  syscall: 'open',
+  path: 'F:\\Web Opencode\\nexusai-website\\.next\\dev\\server\\app\\api\\auth\\[...nextauth]\\[__metadata_id__]\\route\\app-paths-manifest.json'
+}
+⨯ Error: Cannot find module '../chunks/ssr/[turbopack]_runtime.js'
+Require stack:
+- F:\Web Opencode\nexusai-website\.next\dev\server\pages\_document.js
+- F:\Web Opencode\nexusai-website\node_modules\next\dist\server\require.js
+- F:\Web Opencode\nexusai-website\node_modules\next\dist\server\load-components.js
+- F:\Web Opencode\nexusai-website\node_modules\next\dist\build\utils.js
+- F:\Web Opencode\nexusai-website\node_modules\next\dist\server\lib\router-utils\setup-dev-bundler.js
+- F:\Web Opencode\nexusai-website\node_modules\next\dist\server\lib\router-server.js
+- F:\Web Opencode\nexusai-website\node_modules\next\dist\server\lib\start-server.js
+    at Object.<anonymous> (F:\Web Opencode\nexusai-website\.next\dev\server\pages\_document.js:1:7) {
+  code: 'MODULE_NOT_FOUND',
+  requireStack: [
+    'F:\\Web Opencode\\nexusai-website\\.next\\dev\\server\\pages\\_document.js',
+    'F:\\Web Opencode\\nexusai-website\\node_modules\\next\\dist\\server\\require.js',
+    'F:\\Web Opencode\\nexusai-website\\node_modules\\next\\dist\\server\\load-components.js',
+    'F:\\Web Opencode\\nexusai-website\\node_modules\\next\\dist\\build\\utils.js',
+    'F:\\Web Opencode\\nexusai-website\\node_modules\\next\\dist\\server\\lib\\router-utils\\setup-dev-bundler.js',
+    'F:\\Web Opencode\\nexusai-website\\node_modules\\next\\dist\\server\\lib\\router-server.js',
+    'F:\\Web Opencode\\nexusai-website\\node_modules\\next\\dist\\server\\lib\\start-server.js'
+  ]
+}
+Error: ENOENT: no such file or directory, open 'F:\Web Opencode\nexusai-website\.next\dev\routes-manifest.json'
+    at ignore-listed frames {
+  errno: -4058,
+  code: 'ENOENT',
+  syscall: 'open',
+  path: 'F:\\Web Opencode\\nexusai-website\\.next\\dev\\routes-manifest.json'
+}
+ POST /api/auth/_log 500 in 1135ms (next.js: 882ms, proxy.ts: 201ms, application-code: 51ms)
+ POST /api/auth/_log 500 in 1137ms (next.js: 882ms, proxy.ts: 201ms, application-code: 54ms)
+Persisting failed: Unable to open static sorted file referenced from 00000342.meta
+
+Caused by:
+    0: Unable to open static sorted file 00000340.sst
+    1: Failed to open SST file F:\Web Opencode\nexusai-website\.next\dev\cache/turbopack\v16.2.10\00000340.sst
+    2: The system cannot find the file specified. (os error 2)
+Compaction failed: Another write batch or compaction is already active (Only a single write operations is allowed at a time)
+⨯ Error: ENOENT: no such file or directory, open 'F:\Web Opencode\nexusai-website\.next\dev\server\app\page\build-manifest.json'
+    at ignore-listed frames {
+  errno: -4058,
+  code: 'ENOENT',
+  syscall: 'open',
+  path: 'F:\\Web Opencode\\nexusai-website\\.next\\dev\\server\\app\\page\\build-manifest.json'
+}
+Persisting failed: Another write batch or compaction is already active (Only a single write operations is allowed at a time)
+⨯ Error: ENOENT: no such file or directory, open 'F:\Web Opencode\nexusai-website\.next\dev\server\app\page\build-manifest.json'
+    at ignore-listed frames {
+  errno: -4058,
+  code: 'ENOENT',
+  syscall: 'open',
+  path: 'F:\\Web Opencode\\nexusai-website\\.next\\dev\\server\\app\\page\\build-manifest.json'
+}
+Compaction failed: Another write batch or compaction is already active (Only a single write operations is allowed at a time)
+⨯ Error: ENOENT: no such file or directory, open 'F:\Web Opencode\nexusai-website\.next\dev\server\app\page\build-manifest.json'
+    at ignore-listed frames {
+  errno: -4058,
+  code: 'ENOENT',
+  syscall: 'open',
+  path: 'F:\\Web Opencode\\nexusai-website\\.next\\dev\\server\\app\\page\\build-manifest.json'
+}
+Compaction failed: Another write batch or compaction is already active (Only a single write operations is allowed at a time)
+⨯ Error: ENOENT: no such file or directory, open 'F:\Web Opencode\nexusai-website\.next\dev\server\app\page\build-manifest.json'
+    at ignore-listed frames {
+  errno: -4058,
+  code: 'ENOENT',
+  syscall: 'open',
+  path: 'F:\\Web Opencode\\nexusai-website\\.next\\dev\\server\\app\\page\\build-manifest.json'
+}
+Compaction failed: Another write batch or compaction is already active (Only a single write operations is allowed at a time)
+⨯ Error: ENOENT: no such file or directory, open 'F:\Web Opencode\nexusai-website\.next\dev\server\app\page\build-manifest.json'
+    at ignore-listed frames {
+  errno: -4058,
+  code: 'ENOENT',
+  syscall: 'open',
+  path: 'F:\\Web Opencode\\nexusai-website\\.next\\dev\\server\\app\\page\\build-manifest.json'
+}
+Compaction failed: Another write batch or compaction is already active (Only a single write operations is allowed at a time)
+⨯ Error: ENOENT: no such file or directory, open 'F:\Web Opencode\nexusai-website\.next\dev\server\app\page\build-manifest.json'
+    at ignore-listed frames {
+  errno: -4058,
+  code: 'ENOENT',
+  syscall: 'open',
+  path: 'F:\\Web Opencode\\nexusai-website\\.next\\dev\\server\\app\\page\\build-manifest.json'
+}
+Compaction failed: Another write batch or compaction is already active (Only a single write operations is allowed at a time)
+⨯ Error: ENOENT: no such file or directory, open 'F:\Web Opencode\nexusai-website\.next\dev\server\app\page\build-manifest.json'
+    at ignore-listed frames {
+  errno: -4058,
+  code: 'ENOENT',
+  syscall: 'open',
+  path: 'F:\\Web Opencode\\nexusai-website\\.next\\dev\\server\\app\\page\\build-manifest.json'
+}
+Compaction failed: Another write batch or compaction is already active (Only a single write operations is allowed at a time)
+⨯ Error: ENOENT: no such file or directory, open 'F:\Web Opencode\nexusai-website\.next\dev\server\app\page\build-manifest.json'
+    at ignore-listed frames {
+  errno: -4058,
+  code: 'ENOENT',
+  syscall: 'open',
+  path: 'F:\\Web Opencode\\nexusai-website\\.next\\dev\\server\\app\\page\\build-manifest.json'
+}
+⨯ Error: ENOENT: no such file or directory, open 'F:\Web Opencode\nexusai-website\.next\dev\server\app\page\build-manifest.json'
+    at ignore-listed frames {
+  errno: -4058,
+  code: 'ENOENT',
+  syscall: 'open',
+  path: 'F:\\Web Opencode\\nexusai-website\\.next\\dev\\server\\app\\page\\build-manifest.json'
+}
+⨯ Error: ENOENT: no such file or directory, open 'F:\Web Opencode\nexusai-website\.next\dev\server\app\page\build-manifest.json'
+    at ignore-listed frames {
+  errno: -4058,
+  code: 'ENOENT',
+  syscall: 'open',
+  path: 'F:\\Web Opencode\\nexusai-website\\.next\\dev\\server\\app\\page\\build-manifest.json'
+}
+Compaction failed: Another write batch or compaction is already active (Only a single write operations is allowed at a time)
+⨯ Error: ENOENT: no such file or directory, open 'F:\Web Opencode\nexusai-website\.next\dev\server\app\page\build-manifest.json'
+    at ignore-listed frames {
+  errno: -4058,
+  code: 'ENOENT',
+  syscall: 'open',
+  path: 'F:\\Web Opencode\\nexusai-website\\.next\\dev\\server\\app\\page\\build-manifest.json'
+}
+⨯ Error: ENOENT: no such file or directory, open 'F:\Web Opencode\nexusai-website\.next\dev\server\app\page\build-manifest.json'
+    at ignore-listed frames {
+  errno: -4058,
+  code: 'ENOENT',
+  syscall: 'open',
+  path: 'F:\\Web Opencode\\nexusai-website\\.next\\dev\\server\\app\\page\\build-manifest.json'
+}
+⨯ Error: ENOENT: no such file or directory, open 'F:\Web Opencode\nexusai-website\.next\dev\server\app\page\build-manifest.json'
+    at ignore-listed frames {
+  errno: -4058,
+  code: 'ENOENT',
+  syscall: 'open',
+  path: 'F:\\Web Opencode\\nexusai-website\\.next\\dev\\server\\app\\page\\build-manifest.json'
+}
+⨯ Error: ENOENT: no such file or directory, open 'F:\Web Opencode\nexusai-website\.next\dev\server\app\page\build-manifest.json'
+    at ignore-listed frames {
+  errno: -4058,
+  code: 'ENOENT',
+  syscall: 'open',
+  path: 'F:\\Web Opencode\\nexusai-website\\.next\\dev\\server\\app\\page\\build-manifest.json'
+}
+Compaction failed: Another write batch or compaction is already active (Only a single write operations is allowed at a time)
+⨯ Error: ENOENT: no such file or directory, open 'F:\Web Opencode\nexusai-website\.next\dev\server\app\page\build-manifest.json'
+    at ignore-listed frames {
+  errno: -4058,
+  code: 'ENOENT',
+  syscall: 'open',
+  path: 'F:\\Web Opencode\\nexusai-website\\.next\\dev\\server\\app\\page\\build-manifest.json'
+}
+Compaction failed: Another write batch or compaction is already active (Only a single write operations is allowed at a time)
+⨯ Error: ENOENT: no such file or directory, open 'F:\Web Opencode\nexusai-website\.next\dev\server\app\page\build-manifest.json'
+    at ignore-listed frames {
+  errno: -4058,
+  code: 'ENOENT',
+  syscall: 'open',
+  path: 'F:\\Web Opencode\\nexusai-website\\.next\\dev\\server\\app\\page\\build-manifest.json'
+}
+⨯ Error: ENOENT: no such file or directory, open 'F:\Web Opencode\nexusai-website\.next\dev\server\app\page\build-manifest.json'
+    at ignore-listed frames {
+  errno: -4058,
+  code: 'ENOENT',
+  syscall: 'open',
+  path: 'F:\\Web Opencode\\nexusai-website\\.next\\dev\\server\\app\\page\\build-manifest.json'
+}
+Compaction failed: Another write batch or compaction is already active (Only a single write operations is allowed at a time)
+⨯ Error: ENOENT: no such file or directory, open 'F:\Web Opencode\nexusai-website\.next\dev\server\app\page\build-manifest.json'
+    at ignore-listed frames {
+  errno: -4058,
+  code: 'ENOENT',
+  syscall: 'open',
+  path: 'F:\\Web Opencode\\nexusai-website\\.next\\dev\\server\\app\\page\\build-manifest.json'
+}
+⨯ Error: ENOENT: no such file or directory, open 'F:\Web Opencode\nexusai-website\.next\dev\server\app\page\build-manifest.json'
+    at ignore-listed frames {
+  errno: -4058,
+  code: 'ENOENT',
+  syscall: 'open',
+  path: 'F:\\Web Opencode\\nexusai-website\\.next\\dev\\server\\app\\page\\build-manifest.json'
+}
+⨯ Error: ENOENT: no such file or directory, open 'F:\Web Opencode\nexusai-website\.next\dev\server\app\page\build-manifest.json'
+    at ignore-listed frames {
+  errno: -4058,
+  code: 'ENOENT',
+  syscall: 'open',
+  path: 'F:\\Web Opencode\\nexusai-website\\.next\\dev\\server\\app\\page\\build-manifest.json'
+}
+⨯ Error: ENOENT: no such file or directory, open 'F:\Web Opencode\nexusai-website\.next\dev\server\app\page\build-manifest.json'
+    at ignore-listed frames {
+  errno: -4058,
+  code: 'ENOENT',
+  syscall: 'open',
+  path: 'F:\\Web Opencode\\nexusai-website\\.next\\dev\\server\\app\\page\\build-manifest.json'
+}
+⨯ Error: ENOENT: no such file or directory, open 'F:\Web Opencode\nexusai-website\.next\dev\server\app\page\build-manifest.json'
+    at ignore-listed frames {
+  errno: -4058,
+  code: 'ENOENT',
+  syscall: 'open',
+  path: 'F:\\Web Opencode\\nexusai-website\\.next\\dev\\server\\app\\page\\build-manifest.json'
+}
+Compaction failed: Another write batch or compaction is already active (Only a single write operations is allowed at a time)
+⨯ Error: ENOENT: no such file or directory, open 'F:\Web Opencode\nexusai-website\.next\dev\server\app\page\build-manifest.json'
+    at ignore-listed frames {
+  errno: -4058,
+  code: 'ENOENT',
+  syscall: 'open',
+  path: 'F:\\Web Opencode\\nexusai-website\\.next\\dev\\server\\app\\page\\build-manifest.json'
+}
+⨯ Error: ENOENT: no such file or directory, open 'F:\Web Opencode\nexusai-website\.next\dev\server\app\page\build-manifest.json'
+    at ignore-listed frames {
+  errno: -4058,
+  code: 'ENOENT',
+  syscall: 'open',
+  path: 'F:\\Web Opencode\\nexusai-website\\.next\\dev\\server\\app\\page\\build-manifest.json'
+}
+⨯ Error: ENOENT: no such file or directory, open 'F:\Web Opencode\nexusai-website\.next\dev\server\app\page\build-manifest.json'
+    at ignore-listed frames {
+  errno: -4058,
+  code: 'ENOENT',
+  syscall: 'open',
+  path: 'F:\\Web Opencode\\nexusai-website\\.next\\dev\\server\\app\\page\\build-manifest.json'
+}
+Compaction failed: Another write batch or compaction is already active (Only a single write operations is allowed at a time)
+⨯ Error: ENOENT: no such file or directory, open 'F:\Web Opencode\nexusai-website\.next\dev\server\app\page\build-manifest.json'
+    at ignore-listed frames {
+  errno: -4058,
+  code: 'ENOENT',
+  syscall: 'open',
+  path: 'F:\\Web Opencode\\nexusai-website\\.next\\dev\\server\\app\\page\\build-manifest.json'
+}
+Compaction failed: Another write batch or compaction is already active (Only a single write operations is allowed at a time)
+⨯ Error: ENOENT: no such file or directory, open 'F:\Web Opencode\nexusai-website\.next\dev\server\app\page\build-manifest.json'
+    at ignore-listed frames {
+  errno: -4058,
+  code: 'ENOENT',
+  syscall: 'open',
+  path: 'F:\\Web Opencode\\nexusai-website\\.next\\dev\\server\\app\\page\\build-manifest.json'
+}
+⨯ Error: ENOENT: no such file or directory, open 'F:\Web Opencode\nexusai-website\.next\dev\server\app\page\build-manifest.json'
+    at ignore-listed frames {
+  errno: -4058,
+  code: 'ENOENT',
+  syscall: 'open',
+  path: 'F:\\Web Opencode\\nexusai-website\\.next\\dev\\server\\app\\page\\build-manifest.json'
+}
+Compaction failed: Another write batch or compaction is already active (Only a single write operations is allowed at a time)
+⨯ Error: ENOENT: no such file or directory, open 'F:\Web Opencode\nexusai-website\.next\dev\server\app\page\build-manifest.json'
+    at ignore-listed frames {
+  errno: -4058,
+  code: 'ENOENT',
+  syscall: 'open',
+  path: 'F:\\Web Opencode\\nexusai-website\\.next\\dev\\server\\app\\page\\build-manifest.json'
+}
+Compaction failed: Another write batch or compaction is already active (Only a single write operations is allowed at a time)
+⨯ Error: ENOENT: no such file or directory, open 'F:\Web Opencode\nexusai-website\.next\dev\server\app\page\build-manifest.json'
+    at ignore-listed frames {
+  errno: -4058,
+  code: 'ENOENT',
+  syscall: 'open',
+  path: 'F:\\Web Opencode\\nexusai-website\\.next\\dev\\server\\app\\page\\build-manifest.json'
+}
+⨯ Error: ENOENT: no such file or directory, open 'F:\Web Opencode\nexusai-website\.next\dev\server\app\page\build-manifest.json'
+    at ignore-listed frames {
+  errno: -4058,
+  code: 'ENOENT',
+  syscall: 'open',
+  path: 'F:\\Web Opencode\\nexusai-website\\.next\\dev\\server\\app\\page\\build-manifest.json'
+}
+⨯ Error: ENOENT: no such file or directory, open 'F:\Web Opencode\nexusai-website\.next\dev\server\app\page\build-manifest.json'
+    at ignore-listed frames {
+  errno: -4058,
+  code: 'ENOENT',
+  syscall: 'open',
+  path: 'F:\\Web Opencode\\nexusai-website\\.next\\dev\\server\\app\\page\\build-manifest.json'
+}
+Compaction failed: Another write batch or compaction is already active (Only a single write operations is allowed at a time)
+⨯ Error: ENOENT: no such file or directory, open 'F:\Web Opencode\nexusai-website\.next\dev\server\app\page\build-manifest.json'
+    at ignore-listed frames {
+  errno: -4058,
+  code: 'ENOENT',
+  syscall: 'open',
+  path: 'F:\\Web Opencode\\nexusai-website\\.next\\dev\\server\\app\\page\\build-manifest.json'
+}
+Compaction failed: Another write batch or compaction is already active (Only a single write operations is allowed at a time)
+⨯ Error: ENOENT: no such file or directory, open 'F:\Web Opencode\nexusai-website\.next\dev\server\app\page\build-manifest.json'
+    at ignore-listed frames {
+  errno: -4058,
+  code: 'ENOENT',
+  syscall: 'open',
+  path: 'F:\\Web Opencode\\nexusai-website\\.next\\dev\\server\\app\\page\\build-manifest.json'
+}
+⨯ Error: ENOENT: no such file or directory, open 'F:\Web Opencode\nexusai-website\.next\dev\server\app\page\build-manifest.json'
+    at ignore-listed frames {
+  errno: -4058,
+  code: 'ENOENT',
+  syscall: 'open',
+  path: 'F:\\Web Opencode\\nexusai-website\\.next\\dev\\server\\app\\page\\build-manifest.json'
+}
+Compaction failed: Another write batch or compaction is already active (Only a single write operations is allowed at a time)
+⨯ Error: ENOENT: no such file or directory, open 'F:\Web Opencode\nexusai-website\.next\dev\server\app\page\build-manifest.json'
+    at ignore-listed frames {
+  errno: -4058,
+  code: 'ENOENT',
+  syscall: 'open',
+  path: 'F:\\Web Opencode\\nexusai-website\\.next\\dev\\server\\app\\page\\build-manifest.json'
+}
+Compaction failed: Another write batch or compaction is already active (Only a single write operations is allowed at a time)
+⨯ Error: ENOENT: no such file or directory, open 'F:\Web Opencode\nexusai-website\.next\dev\server\app\page\build-manifest.json'
+    at ignore-listed frames {
+  errno: -4058,
+  code: 'ENOENT',
+  syscall: 'open',
+  path: 'F:\\Web Opencode\\nexusai-website\\.next\\dev\\server\\app\\page\\build-manifest.json'
+}
+Compaction failed: Another write batch or compaction is already active (Only a single write operations is allowed at a time)
+⨯ Error: ENOENT: no such file or directory, open 'F:\Web Opencode\nexusai-website\.next\dev\server\app\page\build-manifest.json'
+    at ignore-listed frames {
+  errno: -4058,
+  code: 'ENOENT',
+  syscall: 'open',
+  path: 'F:\\Web Opencode\\nexusai-website\\.next\\dev\\server\\app\\page\\build-manifest.json'
+}
+Compaction failed: Another write batch or compaction is already active (Only a single write operations is allowed at a time)
+⨯ Error: ENOENT: no such file or directory, open 'F:\Web Opencode\nexusai-website\.next\dev\server\app\page\build-manifest.json'
+    at ignore-listed frames {
+  errno: -4058,
+  code: 'ENOENT',
+  syscall: 'open',
+  path: 'F:\\Web Opencode\\nexusai-website\\.next\\dev\\server\\app\\page\\build-manifest.json'
+}
+Compaction failed: Another write batch or compaction is already active (Only a single write operations is allowed at a time)
+⨯ Error: ENOENT: no such file or directory, open 'F:\Web Opencode\nexusai-website\.next\dev\server\app\page\build-manifest.json'
+    at ignore-listed frames {
+  errno: -4058,
+  code: 'ENOENT',
+  syscall: 'open',
+  path: 'F:\\Web Opencode\\nexusai-website\\.next\\dev\\server\\app\\page\\build-manifest.json'
+}
+Compaction failed: Another write batch or compaction is already active (Only a single write operations is allowed at a time)
+[?25h
