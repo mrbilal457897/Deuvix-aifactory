@@ -68,7 +68,7 @@ export function CTASection() {
   return (
     <section ref={sectionRef} className="relative">
       {/* Background - covers stats + video + headline content */}
-      <div className="absolute inset-0 bg-primary/10 dark:bg-[#aab5af] h-[calc(100%-6rem)] sm:h-[calc(100%-8rem)] lg:h-[75%]" />
+      <div className="absolute inset-0 bg-primary/10 dark:bg-[#aab5af] h-[calc(100%-6rem)] sm:h-[calc(100%-8rem)]" />
 
       <div className="relative mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 pt-24 sm:pt-32">
         {/* Stats Row */}

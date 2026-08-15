@@ -82,6 +82,7 @@ export function FeaturesSection() {
       const total = panels.length;
 
       gsap.set(panels, { opacity: 0, y: 60 });
+      if (panels[0]) gsap.set(panels[0], { opacity: 1, y: 0 });
 
       // Unified scroll-driven sequence (mobile + desktop): the sticky wrapper
       // holds the panels in view while scrolling advances each feature panel.
@@ -104,13 +105,13 @@ export function FeaturesSection() {
         tl.fromTo(
           panels[i],
           { opacity: 1, y: 0 },
-          { opacity: 0, y: -60, duration: 1, ease: "power2.inOut" },
+          { opacity: 0, y: -60, duration: 1, ease: "power2.inOut", immediateRender: false },
           i
         );
         tl.fromTo(
           panels[i + 1],
           { opacity: 0, y: 60 },
-          { opacity: 1, y: 0, duration: 1, ease: "power2.inOut" },
+          { opacity: 1, y: 0, duration: 1, ease: "power2.inOut", immediateRender: false },
           i
         );
       }
