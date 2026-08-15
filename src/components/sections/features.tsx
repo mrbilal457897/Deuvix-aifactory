@@ -170,6 +170,7 @@ export function FeaturesSection() {
             <div
               key={feature.title}
               className="feature-panel absolute inset-0 flex items-center justify-center"
+              style={{ opacity: 0 }}
             >
               <div className="text-center px-4 max-w-2xl mx-auto">
                 <div className="relative inline-flex items-center justify-center mb-8">

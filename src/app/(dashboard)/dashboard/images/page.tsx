@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useRef, useEffect } from "react";
 import { useSession } from "next-auth/react";
 import { useRouter } from "next/navigation";
 import Image from "next/image";
@@ -32,6 +32,7 @@ export default function ImagesSettingsPage() {
   const [saved, setSaved] = useState(false);
   const [pickerOpen, setPickerOpen] = useState(false);
   const [activeSlot, setActiveSlot] = useState<string | null>(null);
+  const savedRef = useRef<SiteConfig>({});
 
   useEffect(() => {
     if (status === "unauthenticated") router.push("/login");
@@ -42,7 +43,11 @@ export default function ImagesSettingsPage() {
     let cancelled = false;
     (async () => {
       const res = await fetch("/api/site-config");
-      if (res.ok && !cancelled) setConfig(await res.json());
+      if (res.ok && !cancelled) {
+        const json = await res.json();
+        setConfig(json);
+        savedRef.current = json;
+      }
     })();
     return () => {
       cancelled = true;
@@ -55,14 +60,44 @@ export default function ImagesSettingsPage() {
     }
   };
 
+  // Remove upload files that a slot no longer references after a save, so a
+  // replaced image doesn't stay stored forever.
+  const cleanupOrphanedUploads = async (
+    previous: SiteConfig,
+    next: SiteConfig
+  ) => {
+    const stillUsed = new Set(
+      Object.values(next).filter((v): v is string => typeof v === "string")
+    );
+    const orphans = [
+      ...new Set(
+        Object.values(previous).filter(
+          (v): v is string => typeof v === "string" && v.startsWith("/uploads/")
+        )
+      ),
+    ].filter((url) => !stillUsed.has(url));
+    if (orphans.length === 0) return;
+
+    const res = await fetch("/api/media");
+    if (!res.ok) return;
+    const items: { id: string; url: string }[] = await res.json();
+    for (const url of orphans) {
+      const item = items.find((i) => i.url === url);
+      if (item) await fetch(`/api/media?id=${item.id}`, { method: "DELETE" });
+    }
+  };
+
   const handleSave = async () => {
     setSaving(true);
+    const previous = savedRef.current;
     const res = await fetch("/api/site-config", {
       method: "PUT",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify(config),
     });
     if (res.ok) {
+      await cleanupOrphanedUploads(previous, config);
+      savedRef.current = config;
       setSaved(true);
       setTimeout(() => setSaved(false), 2000);
     }
