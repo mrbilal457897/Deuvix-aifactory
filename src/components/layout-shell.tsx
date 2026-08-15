@@ -1,11 +1,17 @@
 "use client";
 
 import { useEffect } from "react";
+import { gsap } from "gsap";
+import { ScrollTrigger } from "gsap/ScrollTrigger";
 import { Header } from "@/components/layout/header";
 import { Footer } from "@/components/layout/footer";
 import { ChatWidget } from "@/components/chat/chat-widget";
 import { BackToTop } from "@/components/back-to-top";
 import { usePathname } from "next/navigation";
+
+if (typeof window !== "undefined") {
+  gsap.registerPlugin(ScrollTrigger);
+}
 
 const noFooterRoutes = ["/login", "/dashboard"];
 
@@ -16,6 +22,33 @@ export function LayoutShell({ children }: { children: React.ReactNode }) {
   useEffect(() => {
     window.scrollTo({ top: 0, left: 0, behavior: "instant" as ScrollBehavior });
   }, [pathname]);
+
+  useEffect(() => {
+    const refresh = () => ScrollTrigger.refresh();
+
+    const onLoad = () => {
+      window.setTimeout(refresh, 300);
+      window.setTimeout(refresh, 1200);
+    };
+
+    if (document.readyState === "complete") {
+      onLoad();
+    } else {
+      window.addEventListener("load", onLoad);
+    }
+
+    let fontsTimer = 0;
+    if (document.fonts) {
+      document.fonts.ready.then(() => {
+        fontsTimer = window.setTimeout(refresh, 200);
+      });
+    }
+
+    return () => {
+      window.removeEventListener("load", onLoad);
+      window.clearTimeout(fontsTimer);
+    };
+  }, []);
 
   return (
     <>

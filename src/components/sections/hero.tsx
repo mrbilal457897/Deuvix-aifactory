@@ -6,6 +6,7 @@ import Link from "next/link";
 import Image from "next/image";
 import { BlurReveal } from "@/components/split-text";
 import { useSiteConfig } from "@/hooks/use-site-config";
+import { RotatingBadge } from "./rotating-badge";
 
 const leaderDefs = [
   { name: "Bilal", role: "FOUNDER / LEAD", slot: "team-bilal" },
@@ -32,7 +33,8 @@ export function HeroSection() {
         .from(ctaRef.current, { y: 20, opacity: 0, duration: 0.5 }, "-=0.4")
         .from(".hero-rail", { opacity: 0, scaleY: 0, duration: 0.6, transformOrigin: "top center" }, "-=0.5")
         .from(".agent-card", { y: 40, opacity: 0, duration: 0.6 }, "-=0.3")
-        .from(".team-card", { y: 40, opacity: 0, scale: 0.96, duration: 0.55, stagger: 0.15 }, "-=0.5");
+        .from(".team-card", { y: 40, opacity: 0, scale: 0.96, duration: 0.55, stagger: 0.15 }, "-=0.5")
+        .from(".trust-badge", { scale: 0.7, opacity: 0, duration: 0.6, ease: "back.out(1.6)" }, "-=0.4");
     }, containerRef);
 
     return () => ctx.revert();
@@ -97,6 +99,9 @@ export function HeroSection() {
                   See Projects
                 </span>
               </Link>
+              <div className="trust-badge">
+                <RotatingBadge className="size-16 sm:size-20" />
+              </div>
             </div>
           </div>
 
@@ -110,7 +115,7 @@ export function HeroSection() {
                   Running
                 </span>
               </div>
-              <h3 className="text-[15px] font-semibold text-foreground mb-1.5">
+              <h3 className="text-[15px] font-normal text-foreground mb-1.5 tracking-[0.1em]">
                 Outbound Qualification Agent
               </h3>
               <p className="text-xs leading-[1.45] text-muted-foreground">

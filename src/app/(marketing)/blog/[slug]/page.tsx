@@ -1,12 +1,47 @@
 import Link from "next/link";
 import Image from "next/image";
 import { notFound } from "next/navigation";
+import type { Metadata } from "next";
 import { Badge } from "@/components/ui/badge";
 import { User, FolderOpen, ArrowRight, ArrowLeft } from "lucide-react";
 import { posts, getPostBySlug } from "../posts";
+import { SITE_NAME } from "@/lib/seo";
 
 export async function generateStaticParams() {
   return posts.map((post) => ({ slug: post.slug }));
+}
+
+export async function generateMetadata({
+  params,
+}: {
+  params: Promise<{ slug: string }>;
+}): Promise<Metadata> {
+  const { slug } = await params;
+  const post = getPostBySlug(slug);
+  if (!post) return {};
+
+  return {
+    title: post.title,
+    description: post.excerpt,
+    alternates: {
+      canonical: `/blog/${post.slug}`,
+    },
+    openGraph: {
+      type: "article",
+      title: post.title,
+      description: post.excerpt,
+      url: `/blog/${post.slug}`,
+      siteName: SITE_NAME,
+      images: [post.image],
+      publishedTime: new Date(`${post.date}, 2026`).toISOString(),
+    },
+    twitter: {
+      card: "summary_large_image",
+      title: post.title,
+      description: post.excerpt,
+      images: [post.image],
+    },
+  };
 }
 
 export default async function BlogPostPage({

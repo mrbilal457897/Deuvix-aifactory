@@ -4,6 +4,13 @@ import {
   LegalParagraph,
   LegalList,
 } from "@/components/legal-page";
+import type { Metadata } from "next";
+
+export const metadata: Metadata = {
+  title: "Terms of Service",
+  description: "The terms that govern your use of the Deux website and our services.",
+  alternates: { canonical: "/terms" },
+};
 
 export default function TermsOfServicePage() {
   return (
@@ -32,6 +39,8 @@ export default function TermsOfServicePage() {
           items={[
             "Digital FTE deployment",
             "FDE (Forward Deployed Engineering) consulting",
+            "AI agents — chatbots, voice agents, and custom agents",
+            "Loop Engineering — building and operating agent loops",
             "AI agent e-books and guides",
             "AI-powered web applications",
             "Business AI solutions",
@@ -84,8 +93,7 @@ export default function TermsOfServicePage() {
 
       <LegalSection heading="7. Third-Party Links">
         <LegalParagraph>
-          Our website may link to third-party sites or resources (such as GitHub or
-          LinkedIn). We are not responsible for their content or privacy practices.
+          Our website may link to third-party sites or resources (such as WhatsApp). We are not responsible for their content or privacy practices.
           Visiting them is subject to their own terms and policies.
         </LegalParagraph>
       </LegalSection>

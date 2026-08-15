@@ -69,6 +69,7 @@ const features = [
 ];
 
 export function FeaturesSection() {
+  const scrollRef = useRef<HTMLDivElement>(null);
   const containerRef = useRef<HTMLDivElement>(null);
   const panelsRef = useRef<HTMLDivElement>(null);
   const [active, setActive] = useState(0);
@@ -78,73 +79,41 @@ export function FeaturesSection() {
 
     const ctx = gsap.context(() => {
       const panels = panelsRef.current?.querySelectorAll(".feature-panel") || [];
+      const total = panels.length;
 
       gsap.set(panels, { opacity: 0, y: 60 });
-      gsap.to(panels[0], { opacity: 1, y: 0, duration: 0.8, ease: "power3.out" });
 
-      const mm = gsap.matchMedia();
-
-      // Desktop / tablet: pinned scrub sequence
-      mm.add("(min-width: 768px)", () => {
-        if (!containerRef.current || !panelsRef.current) return;
-        const desktopPanels = panelsRef.current.querySelectorAll(".feature-panel");
-        const total = desktopPanels.length;
-
-        const tl = gsap.timeline({
-          scrollTrigger: {
-            trigger: containerRef.current,
-            start: "top top",
-            end: `+=${window.innerHeight * (total - 1)}`,
-            pin: true,
-            scrub: 0.8,
-            anticipatePin: 1,
-            onUpdate: (self) => {
-              const progress = self.progress;
-              const index = Math.min(
-                Math.floor(progress * total),
-                total - 1
-              );
-              setActive(index);
-            },
+      // Unified scroll-driven sequence (mobile + desktop): the sticky wrapper
+      // holds the panels in view while scrolling advances each feature panel.
+      // Explicit fromTo states keep every step deterministic.
+      const tl = gsap.timeline({
+        scrollTrigger: {
+          trigger: scrollRef.current,
+          start: "top top",
+          end: "bottom bottom",
+          scrub: 0.8,
+          onUpdate: (self) => {
+            const progress = self.progress;
+            const index = Math.min(Math.floor(progress * total), total - 1);
+            setActive(index);
           },
-        });
-
-        for (let i = 0; i < total - 1; i++) {
-          tl.to(
-            desktopPanels[i],
-            { opacity: 0, y: -60, duration: 1, ease: "power2.inOut" },
-            i
-          );
-          tl.to(
-            desktopPanels[i + 1],
-            { opacity: 1, y: 0, duration: 1, ease: "power2.inOut" },
-            i
-          );
-        }
+        },
       });
 
-      // Mobile: simple auto-advance reveal, no pinning
-      mm.add("(max-width: 767px)", () => {
-        if (!panelsRef.current) return;
-        const mobilePanels = panelsRef.current.querySelectorAll(".feature-panel");
-        let index = 0;
-        const interval = window.setInterval(() => {
-          index = (index + 1) % mobilePanels.length;
-          setActive(index);
-          gsap.to(mobilePanels[index], {
-            opacity: 1,
-            y: 0,
-            duration: 0.6,
-            ease: "power2.out",
-          });
-          const prev = mobilePanels[(index - 1 + mobilePanels.length) % mobilePanels.length];
-          if (prev && prev !== mobilePanels[index]) {
-            gsap.to(prev, { opacity: 0, y: -40, duration: 0.5, ease: "power2.inOut" });
-          }
-        }, 4500);
-
-        return () => window.clearInterval(interval);
-      });
+      for (let i = 0; i < total - 1; i++) {
+        tl.fromTo(
+          panels[i],
+          { opacity: 1, y: 0 },
+          { opacity: 0, y: -60, duration: 1, ease: "power2.inOut" },
+          i
+        );
+        tl.fromTo(
+          panels[i + 1],
+          { opacity: 0, y: 60 },
+          { opacity: 1, y: 0, duration: 1, ease: "power2.inOut" },
+          i
+        );
+      }
     }, containerRef);
 
     return () => ctx.revert();
@@ -163,7 +132,12 @@ export function FeaturesSection() {
         </h2>
       </div>
 
-      <div ref={containerRef} className="relative h-screen overflow-hidden">
+      <div
+        ref={scrollRef}
+        className="relative"
+        style={{ height: `${features.length * 100}vh` }}
+      >
+        <div ref={containerRef} className="sticky top-0 h-screen overflow-hidden">
         <div className="absolute right-6 top-1/2 -translate-y-1/2 z-50 flex flex-col gap-3 pointer-events-none">
           {features.map((f, i) => (
             <div key={f.title} className="flex items-center gap-2">
@@ -230,6 +204,7 @@ export function FeaturesSection() {
               </div>
             </div>
           ))}
+        </div>
         </div>
       </div>
 

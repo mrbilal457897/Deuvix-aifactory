@@ -4,6 +4,13 @@ import {
   LegalParagraph,
   LegalList,
 } from "@/components/legal-page";
+import type { Metadata } from "next";
+
+export const metadata: Metadata = {
+  title: "Cookie Policy",
+  description: "What cookies we use on the Deux website, why, and how to control them.",
+  alternates: { canonical: "/cookies" },
+};
 
 export default function CookiePolicyPage() {
   return (
@@ -32,18 +39,12 @@ export default function CookiePolicyPage() {
               keep you signed in to the admin area and keep the site secure. These are
               essential; without them sign-in would not work.
             </>,
-            <>
-              <strong className="text-foreground">Preference cookies</strong> — remember
-              choices such as your theme (light/dark). Your theme is also stored locally
-              in your browser so it is applied instantly on your next visit.
-            </>,
-            <>
-              <strong className="text-foreground">Analytics cookies</strong> — help us
-              understand how visitors use the site (which pages are visited and how
-              long) so we can improve it.
-            </>,
           ]}
         />
+        <LegalParagraph>
+          We do not use advertising, analytics, or tracking cookies. Choices such as your
+          theme are saved in your browser&apos;s local storage (see below), not in cookies.
+        </LegalParagraph>
       </LegalSection>
 
       <LegalSection heading="3. Local Storage">

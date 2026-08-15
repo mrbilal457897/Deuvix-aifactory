@@ -1,1 +1,24 @@
-[]
+[
+  {
+    "ts": "2026-08-15T12:45:36.033Z",
+    "agent": "lead-qualifier",
+    "event": "lead_scored",
+    "data": {
+      "leadId": "lead_1786797935970",
+      "score": 4,
+      "status": "cold",
+      "service": "AI Chatbots"
+    }
+  },
+  {
+    "ts": "2026-08-15T12:45:36.046Z",
+    "agent": "follow-up-scheduler",
+    "event": "followup_scheduled",
+    "data": {
+      "followUpId": "followup_1786797936037",
+      "leadId": "lead_1786797935970",
+      "dueAt": "2026-08-18T12:45:36.037Z",
+      "status": "cold"
+    }
+  }
+]

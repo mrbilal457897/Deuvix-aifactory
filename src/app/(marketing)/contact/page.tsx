@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -31,6 +31,10 @@ const services = [
   "Select a service",
   "Digital FTE Deployment",
   "FDE Consulting",
+  "AI Chatbots",
+  "Voice Agents",
+  "Custom Agents",
+  "Loop Engineering",
   "AI Agent E-books",
   "AI-Powered Web Apps",
   "Business AI Solutions",
@@ -42,6 +46,7 @@ export default function ContactPage() {
     email: "",
     phone: "",
     service: "",
+    portfolio: "",
     message: "",
     website: "",
   });
@@ -50,6 +55,16 @@ export default function ContactPage() {
   const [emailSent, setEmailSent] = useState(true);
   const [errors, setErrors] = useState<Record<string, string>>({});
   const { img } = useSiteConfig();
+
+  useEffect(() => {
+    const params = new URLSearchParams(window.location.search);
+    const preselected = params.get("service");
+    if (preselected && services.includes(preselected)) {
+      queueMicrotask(() => {
+        setFormData((prev) => ({ ...prev, service: preselected }));
+      });
+    }
+  }, []);
 
   const validate = () => {
     const next: Record<string, string> = {};
@@ -78,7 +93,7 @@ export default function ContactPage() {
         const data = await res.json().catch(() => null);
         setEmailSent(data?.emailSent !== false);
         setStatus("success");
-        setFormData({ name: "", email: "", phone: "", service: "", message: "", website: "" });
+        setFormData({ name: "", email: "", phone: "", service: "", portfolio: "", message: "", website: "" });
         setErrors({});
       } else {
         const data = await res.json().catch(() => null);
@@ -100,6 +115,7 @@ export default function ContactPage() {
           src={img("contact-bg")}
           alt=""
           fill
+          priority
           className="object-cover"
           sizes="100vw"
         />
@@ -155,6 +171,7 @@ export default function ContactPage() {
               </p>
 
               <form onSubmit={handleSubmit} noValidate className="space-y-4">
+                {/* Honeypot (anti-spam) — intentionally hidden from humans. Bots fill this and the API silently discards the submission. */}
                 <div className="hidden" aria-hidden="true">
                   <label htmlFor="website">Website</label>
                   <input
@@ -222,6 +239,18 @@ export default function ContactPage() {
                     </select>
                     {errors.service && <p className="text-xs text-destructive mt-1">{errors.service}</p>}
                   </div>
+                </div>
+                <div>
+                  <label className="text-sm font-medium text-foreground/80 dark:text-white/80 mb-1.5 block">
+                    Website / Portfolio <span className="text-muted-foreground">(optional)</span>
+                  </label>
+                  <Input
+                    type="url"
+                    value={formData.portfolio}
+                    onChange={(e) => setFormData({ ...formData, portfolio: e.target.value })}
+                    placeholder="https://yourwebsite.com"
+                    className="bg-background dark:bg-white/10 border-border dark:border-white/20 text-foreground dark:text-white placeholder:text-muted-foreground dark:placeholder:text-white/40 focus:border-primary"
+                  />
                 </div>
                 <div>
                   <label className="text-sm font-medium text-foreground/80 dark:text-white/80 mb-1.5 block">Your Message</label>

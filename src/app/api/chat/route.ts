@@ -7,7 +7,7 @@ import {
 import { checkRateLimit, getClientIp } from "@/lib/rate-limit";
 
 const responses: Record<string, string> = {
-  services: `We offer 5 core services at Deux:\n\n1. **Digital FTE Deployment** — AI workers that operate 24/7, 168 hours/week at 85% cost savings. Domain-specific agents that handle your business tasks.\n\n2. **Forward Deployed Engineer (FDE)** — Expert engineers deployed to your site to implement AI-native solutions with spec-driven development.\n\n3. **AI Agent E-books** — Comprehensive guides to building AI-Native companies. Learn to manufacture, deploy, and monetize Digital FTEs.\n\n4. **AI-Powered Web Apps** — Full-stack web applications built with AI-native architecture. From concept to deployment.\n\n5. **Business AI Solutions** — End-to-end AI strategy, consulting, and implementation for your domain.\n\nWant details on any specific service?`,
+  services: `We offer 7 core services at Deux:\n\n1. **Digital FTE Deployment** — AI workers that operate 24/7, 168 hours/week at 85% cost savings. Domain-specific agents that handle your business tasks.\n\n2. **Forward Deployed Engineer (FDE)** — Expert engineers deployed to your site to implement AI-native solutions with spec-driven development.\n\n3. **AI Chatbots** — Customer-facing chatbots trained on your business that qualify and convert visitors around the clock.\n\n4. **Voice Agents** — AI voice agents that take calls, book appointments, and follow up in natural speech.\n\n5. **Custom Agents** — Tailor-made agents built for your exact workflow, integrated with your tools.\n\n6. **Loop Engineering** — We build and operate agent loops — a heartbeat, worktree, and spine — that run your operations continuously, with a human gate keeping you in control.\n\n7. **AI Agent E-books** — Comprehensive guides to building AI-Native companies. Learn to manufacture, deploy, and monetize Digital FTEs.\n\nWe also build AI-Powered Web Apps and deliver Business AI Solutions.\n\nWant details on any specific service?`,
 
   fte: `A **Digital FTE** (Full-Time Equivalent) is an AI worker that operates 24/7, 168 hours a week — that's 4x the output of a human worker.\n\nKey benefits:\n• 85% cost savings vs human employees\n• Instant scaling — add more FTEs anytime\n• Domain-specific expertise\n• 99%+ consistency\n• Zero fatigue, zero downtime\n\nWe help you manufacture, deploy, and monetize Digital FTEs for your business.`,
 
@@ -35,9 +35,9 @@ const responses: Record<string, string> = {
 
   thanks: `You're welcome! If you have any more questions about our services, pricing, or how to get started, feel free to ask. You can also reach us at sobber.id@gmail.com or visit our Contact page.`,
 
-  help: `I can help you with:\n\n• **Services** — Digital FTE, FDE, E-books, Web Apps, Solutions\n• **Pricing** — Starter ($500/mo), Professional ($2,000/mo), Enterprise\n• **Getting Started** — How to begin your AI journey\n• **Company** — Our team, philosophy, and approach\n• **Contact** — Email, phone, and office hours\n\nJust ask me anything!`,
+  help: `I can help you with:\n\n• **Services** — Digital FTE, FDE, AI Chatbots, Voice Agents, Custom Agents, Loop Engineering, E-books, Web Apps\n• **Pricing** — Starter ($500/mo), Professional ($2,000/mo), Enterprise\n• **Getting Started** — How to begin your AI journey\n• **Company** — Our team, philosophy, and approach\n• **Contact** — Email, phone, and office hours\n\nJust ask me anything!`,
 
-  default: `Thanks for your message! I'm here to help you learn about Deux's AI solutions.\n\nI can help with:\n• Our services (Digital FTE, FDE, E-books, Web Apps, Solutions)\n• Pricing plans ($500/mo to Enterprise)\n• How to get started\n• Our team and company philosophy\n• Contact information\n\nWhat would you like to know?`,
+  default: `Thanks for your message! I'm here to help you learn about Deux's AI solutions.\n\nI can help with:\n• Our services (Digital FTE, FDE, AI Chatbots, Voice Agents, Custom Agents, Loop Engineering, E-books, Web Apps)\n• Pricing plans ($500/mo to Enterprise)\n• How to get started\n• Our team and company philosophy\n• Contact information\n\nWhat would you like to know?`,
 };
 
 function getAIResponse(input: string): string {
@@ -51,7 +51,7 @@ function getAIResponse(input: string): string {
     return responses.fde;
   }
 
-  if (lower.includes("service") || lower.includes("product") || lower.includes("offer") || lower.includes("what do you do") || lower.includes("what does")) {
+  if (lower.includes("service") || lower.includes("product") || lower.includes("offer") || lower.includes("what do you do") || lower.includes("what does") || lower.includes("chatbot") || lower.includes("voice agent") || lower.includes("custom agent") || lower.includes("loop engineering") || lower.includes("agent loop")) {
     return responses.services;
   }
 

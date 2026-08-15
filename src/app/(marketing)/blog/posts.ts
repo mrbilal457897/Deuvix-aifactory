@@ -12,6 +12,16 @@ export interface BlogPost {
 
 export const posts: BlogPost[] = [
   {
+    slug: "loop-engineering",
+    title: "Loop Engineering: The Skill That Replaced Prompting",
+    excerpt:
+      "Prompts start a task; loops run a system. Learn the six parts of an autonomous loop — heartbeat, worktree, skill, subagents, connector, and spine — and why the human gate is where your judgment still lives.",
+    category: "AI Agents",
+    author: "Bilal",
+    date: "August 15",
+    image: "https://images.pexels.com/photos/546819/pexels-photo-546819.jpeg?auto=compress&cs=tinysrgb&w=800",
+  },
+  {
     slug: "building-digital-fte",
     title: "Building Digital FTEs: Your Guide to AI Workers That Run 24/7",
     excerpt: "Learn how to manufacture, deploy, and monetize Digital FTEs — the reliable AI workers that replace human workflows at 85% cost savings.",

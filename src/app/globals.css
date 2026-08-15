@@ -435,3 +435,12 @@ html.theme-transitioning *::after {
 .dark ::-webkit-scrollbar-thumb {
   background: #334155;
 }
+
+@keyframes spin-slow {
+  to {
+    transform: rotate(360deg);
+  }
+}
+.animate-spin-slow {
+  animation: spin-slow 16s linear infinite;
+}

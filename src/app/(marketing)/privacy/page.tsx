@@ -4,6 +4,14 @@ import {
   LegalParagraph,
   LegalList,
 } from "@/components/legal-page";
+import type { Metadata } from "next";
+
+export const metadata: Metadata = {
+  title: "Privacy Policy",
+  description:
+    "How Deux collects, uses, and protects your information when you use our website and services.",
+  alternates: { canonical: "/privacy" },
+};
 
 export default function PrivacyPolicyPage() {
   return (
@@ -32,7 +40,7 @@ export default function PrivacyPolicyPage() {
             <>
               <strong className="text-foreground">Contact details</strong> — when you use
               the contact form, we receive your name, email address, phone number,
-              selected service, and message.
+              selected service, optional website or portfolio link, and message.
             </>,
             <>
               <strong className="text-foreground">Chat messages</strong> — when you talk
@@ -41,7 +49,8 @@ export default function PrivacyPolicyPage() {
             <>
               <strong className="text-foreground">Account details</strong> — if you sign
               in to the admin area, we receive basic profile data (such as your name and
-              email) from your Google or GitHub account.
+              email) from your Google or GitHub account, or from the email address and
+              password you registered with.
             </>,
             <>
               <strong className="text-foreground">Usage data</strong> — standard web
@@ -90,9 +99,10 @@ export default function PrivacyPolicyPage() {
       <LegalSection heading="6. Cookies">
         <LegalParagraph>
           We use a small number of cookies to keep the site working — for example,
-          session cookies when you sign in, and preference cookies for your theme choice.
-          You can disable cookies in your browser, though some features may stop
-          working. See our <a href="/cookies" className="text-primary hover:underline">Cookie Policy</a> for details.
+          session cookies when you sign in. Your theme preference is stored locally in
+          your browser rather than in a cookie. You can disable cookies in your browser,
+          though some features may stop working. See our{" "}
+          <a href="/cookies" className="text-primary hover:underline">Cookie Policy</a> for details.
         </LegalParagraph>
       </LegalSection>
 

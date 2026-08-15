@@ -8,6 +8,7 @@ export interface Contact {
   email: string;
   phone: string;
   service: string;
+  portfolio?: string;
   message: string;
   leadStatus?: string;
   leadScore?: number;
@@ -47,6 +48,7 @@ export async function saveContact(input: {
   email: string;
   phone: string;
   service: string;
+  portfolio?: string;
   message: string;
 }): Promise<{ contact: Contact; email: { ok: boolean; provider: string; error?: string } }> {
   const contact: Contact = {
@@ -55,6 +57,7 @@ export async function saveContact(input: {
     email: input.email,
     phone: input.phone,
     service: input.service,
+    portfolio: input.portfolio || "",
     message: input.message,
     createdAt: new Date().toISOString(),
   };
@@ -72,12 +75,13 @@ export async function saveContact(input: {
           <tr><td style="padding:6px 0;color:#6b7280">Email</td><td style="padding:6px 0"><a href="mailto:${escapeHtml(contact.email)}">${escapeHtml(contact.email)}</a></td></tr>
           <tr><td style="padding:6px 0;color:#6b7280">Phone</td><td style="padding:6px 0">${escapeHtml(contact.phone || "—")}</td></tr>
           <tr><td style="padding:6px 0;color:#6b7280">Service</td><td style="padding:6px 0">${escapeHtml(contact.service || "—")}</td></tr>
+          <tr><td style="padding:6px 0;color:#6b7280">Website</td><td style="padding:6px 0">${contact.portfolio ? `<a href="${escapeHtml(contact.portfolio)}">${escapeHtml(contact.portfolio)}</a>` : "—"}</td></tr>
         </table>
         <div style="margin-top:16px;padding:14px;background:#f9fafb;border-radius:8px;font-size:14px;white-space:pre-wrap">${escapeHtml(contact.message)}</div>
         <p style="margin-top:16px;font-size:12px;color:#9ca3af">Sent via deux-site contact form at ${new Date(contact.createdAt).toUTCString()}</p>
       </div>
     `,
-    text: `New contact request from ${contact.name}\n\nName: ${contact.name}\nEmail: ${contact.email}\nPhone: ${contact.phone || "—"}\nService: ${contact.service || "—"}\n\nMessage:\n${contact.message}\n\nSent: ${contact.createdAt}`,
+    text: `New contact request from ${contact.name}\n\nName: ${contact.name}\nEmail: ${contact.email}\nPhone: ${contact.phone || "—"}\nService: ${contact.service || "—"}\nWebsite: ${contact.portfolio || "—"}\n\nMessage:\n${contact.message}\n\nSent: ${contact.createdAt}`,
   });
 
   contact.emailSent = email.ok;

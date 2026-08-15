@@ -11,7 +11,7 @@ export async function POST(request: Request) {
       return NextResponse.json({ error: "Invalid form data" }, { status: 400 });
     }
 
-    const { name, email, phone, service, message, website } = body as Record<string, unknown>;
+    const { name, email, phone, service, message, portfolio, website } = body as Record<string, unknown>;
 
     // Honeypot: bots fill the hidden "website" field — silently accept.
     if (website) {
@@ -27,6 +27,7 @@ export async function POST(request: Request) {
     const cleanMessage = message.trim();
     const cleanPhone = typeof phone === "string" ? phone.trim() : "";
     const cleanService = typeof service === "string" ? service.trim() : "";
+    const cleanPortfolio = typeof portfolio === "string" ? portfolio.trim() : "";
 
     if (!cleanName || !cleanEmail || !cleanMessage) {
       return NextResponse.json({ error: "Name, email, and message are required" }, { status: 400 });
@@ -45,6 +46,7 @@ export async function POST(request: Request) {
       email: cleanEmail.slice(0, 200),
       phone: cleanPhone.slice(0, 60),
       service: cleanService.slice(0, 120),
+      portfolio: cleanPortfolio.slice(0, 300),
       message: cleanMessage.slice(0, 5000),
     });
 

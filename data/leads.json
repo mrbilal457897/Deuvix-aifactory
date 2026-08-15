@@ -1,1 +1,16 @@
-[]
+[
+  {
+    "id": "lead_1786797935970",
+    "contactId": "1786797935970",
+    "name": "Test User",
+    "email": "test@example.com",
+    "phone": "03000000000",
+    "service": "AI Chatbots",
+    "message": "Hi, testing the new portfolio field.",
+    "score": 4,
+    "status": "cold",
+    "priority": "low",
+    "createdAt": "2026-08-15T12:45:35.970Z",
+    "notes": "phone provided, interested in AI Chatbots"
+  }
+]

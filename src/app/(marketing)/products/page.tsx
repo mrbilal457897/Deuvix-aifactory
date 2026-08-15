@@ -3,7 +3,19 @@
 import { useState, useRef, useEffect } from "react";
 import { gsap } from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
-import { ArrowRight, Check, Sparkles } from "lucide-react";
+import {
+  ArrowRight,
+  Check,
+  Sparkles,
+  HeartPulse,
+  GitBranch,
+  BookOpen,
+  Users,
+  Plug,
+  Database,
+  ShieldCheck,
+} from "lucide-react";
+import Link from "next/link";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import Image from "next/image";
@@ -14,7 +26,7 @@ if (typeof window !== "undefined") {
   gsap.registerPlugin(ScrollTrigger);
 }
 
-const categories = ["All", "FTE", "FDE", "E-books", "Web Apps", "Solutions"];
+const categories = ["All", "FTE", "FDE", "Agents", "E-books", "Web Apps", "Solutions"];
 
 const products = [
   {
@@ -35,6 +47,30 @@ const products = [
   },
   {
     id: 3,
+    title: "AI Chatbots",
+    description: "Conversational AI assistants deployed on your website or product. Trained on your business data to qualify leads, answer questions, and resolve support tickets 24/7.",
+    category: "Agents",
+    color: "bg-sky-500/10 text-sky-600",
+    features: ["Instant Deployment", "Trained on Your Data", "Human Handoff"],
+  },
+  {
+    id: 4,
+    title: "Voice Agents",
+    description: "AI phone agents that answer calls, qualify leads, and run support conversations in natural language. Your business never misses a call, day or night.",
+    category: "Agents",
+    color: "bg-violet-500/10 text-violet-600",
+    features: ["Natural Conversations", "Lead Qualification", "24/7 Availability"],
+  },
+  {
+    id: 5,
+    title: "Custom Agents",
+    description: "Bespoke AI agents engineered for your domain-specific workflows. From triage to reporting, we design agents that act on your tools — not just suggest.",
+    category: "Agents",
+    color: "bg-teal-500/10 text-teal-600",
+    features: ["Domain-Specific Design", "Tool Integration (MCP)", "Human-Gated Actions"],
+  },
+  {
+    id: 6,
     title: "AI Agent E-books",
     description: "Comprehensive guides to building AI-Native companies. Learn to manufacture, deploy, and monetize Digital FTEs with co-learning philosophy.",
     category: "E-books",
@@ -42,7 +78,7 @@ const products = [
     features: ["Step-by-Step Guides", "Real Case Studies", "Production Focus"],
   },
   {
-    id: 4,
+    id: 7,
     title: "AI-Powered Web Apps",
     description: "Full-stack web applications built with AI-native architecture. From concept to deployment with intelligent automation baked in.",
     category: "Web Apps",
@@ -50,7 +86,7 @@ const products = [
     features: ["AI-Native Architecture", "Real-time Processing", "Cloud Deployed"],
   },
   {
-    id: 5,
+    id: 8,
     title: "Business AI Solutions",
     description: "End-to-end AI strategy, consulting, and implementation. Transform your business with intelligent systems built for your domain.",
     category: "Solutions",
@@ -83,6 +119,51 @@ const plans = [
   },
 ];
 
+const loopParts = [
+  {
+    title: "Heartbeat",
+    description: "A schedule or event that starts each beat. Without it, you have one run, not a loop.",
+    role: "Starts the work",
+    color: "bg-sky-500/10 text-sky-600",
+    icon: HeartPulse,
+  },
+  {
+    title: "Worktree",
+    description: "Isolation, so parallel agents never overwrite each other's work — one checkout per task.",
+    role: "Keeps work safe",
+    color: "bg-violet-500/10 text-violet-600",
+    icon: GitBranch,
+  },
+  {
+    title: "Skill",
+    description: "Project knowledge written down once, so no run starts from nothing.",
+    role: "Carries the context",
+    color: "bg-amber-500/10 text-amber-600",
+    icon: BookOpen,
+  },
+  {
+    title: "Subagents",
+    description: "The maker-checker split: the agent that builds is never the agent that grades.",
+    role: "Checks the work",
+    color: "bg-emerald-500/10 text-emerald-600",
+    icon: Users,
+  },
+  {
+    title: "Connector (MCP)",
+    description: "Reaches your real tools — PRs, tickets, databases — so the loop acts, not just suggests.",
+    role: "Acts in your tools",
+    color: "bg-rose-500/10 text-rose-600",
+    icon: Plug,
+  },
+  {
+    title: "Spine",
+    description: "State and memory between runs. The model forgets everything between runs; the repo does not.",
+    role: "Remembers between runs",
+    color: "bg-primary/10 text-primary",
+    icon: Database,
+  },
+];
+
 export default function ProductsPage() {
   const [activeCategory, setActiveCategory] = useState("All");
   const gridRef = useRef<HTMLDivElement>(null);
@@ -107,7 +188,7 @@ export default function ProductsPage() {
     <div className="pt-24">
       <section className="py-16 text-center px-4 relative overflow-hidden">
         <div className="absolute inset-0">
-          <Image src={img("product-bg")} alt="" fill className="object-cover" sizes="100vw" />
+          <Image src={img("product-bg")} alt="" fill priority className="object-cover" sizes="100vw" />
           <div className="absolute inset-0 bg-background/85" />
           <div className="absolute inset-0 bg-dots opacity-30" />
         </div>
@@ -159,11 +240,66 @@ export default function ProductsPage() {
                     </li>
                   ))}
                 </ul>
-                <Button variant="outline" className="w-full" size="sm">
+                <Button
+                  variant="outline"
+                  className="w-full"
+                  size="sm"
+                  render={<Link href={`/contact?service=${encodeURIComponent(product.title)}`} />}
+                >
                   Learn More <ArrowRight className="size-3.5 ml-1.5" />
                 </Button>
               </div>
             ))}
+          </div>
+        </div>
+      </section>
+
+      {/* Loop Engineering */}
+      <section id="loop-engineering" className="py-24 px-4 bg-section">
+        <div className="mx-auto max-w-7xl">
+          <div className="text-center mb-16">
+            <Badge className="mb-4 bg-primary/10 text-primary border-primary/20">Methodology</Badge>
+            <h2 className="font-heading text-3xl sm:text-4xl font-bold mb-4">
+              Loop <span className="text-gradient">Engineering</span>
+            </h2>
+            <p className="mx-auto max-w-2xl text-muted-foreground text-lg">
+              A loop starts work, checks it, records the result, and repeats on its own. The prompt was yesterday — today we design the loop. Each beat runs unattended; you only see the calls that matter.
+            </p>
+          </div>
+
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mb-12">
+            {loopParts.map((part) => (
+              <div
+                key={part.title}
+                className="p-6 rounded-xl card-solid hover:border-primary/30 transition-all duration-200"
+              >
+                <div className={`inline-flex items-center justify-center size-10 rounded-xl ${part.color} mb-4`}>
+                  <part.icon className="size-5" />
+                </div>
+                <h3 className="font-heading text-lg font-semibold mb-2">{part.title}</h3>
+                <p className="text-muted-foreground text-sm leading-relaxed mb-4">{part.description}</p>
+                <span className="text-xs font-medium text-primary">{part.role}</span>
+              </div>
+            ))}
+          </div>
+
+          <div className="mx-auto max-w-3xl p-6 rounded-xl card-solid border-primary/20 text-center mb-10">
+            <div className="flex items-center justify-center gap-2 mb-2">
+              <ShieldCheck className="size-5 text-primary" />
+              <h3 className="font-heading text-lg font-semibold">The Human Gate</h3>
+            </div>
+            <p className="text-muted-foreground text-sm leading-relaxed">
+              A loop never removes judgment — it removes typing. You keep intent and accountability: every risky call comes to you for approval. No spine, no loop; no human gate, no trust.
+            </p>
+          </div>
+
+          <div className="text-center">
+            <Button
+              className="bg-primary text-primary-foreground hover:bg-primary/90 font-medium px-8 py-6 text-base rounded-xl shadow-lg shadow-primary/20"
+              render={<Link href={`/contact?service=${encodeURIComponent("Loop Engineering")}`} />}
+            >
+              Book a Consultation <ArrowRight className="size-4 ml-2" />
+            </Button>
           </div>
         </div>
       </section>
@@ -215,6 +351,7 @@ export default function ProductsPage() {
                 </ul>
                 <Button
                   className={`w-full ${plan.popular ? "bg-card text-primary hover:bg-card/90" : "bg-primary text-primary-foreground hover:bg-primary/90"}`}
+                  render={<Link href={`/contact?service=${encodeURIComponent("Digital FTE Deployment")}`} />}
                 >
                   Get Started
                 </Button>

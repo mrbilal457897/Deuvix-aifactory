@@ -1,7 +1,7 @@
 "use client";
 
 import Link from "next/link";
-import { ExternalLink, MessageSquare, Users, Mail, ChevronRight } from "lucide-react";
+import { MessageSquare, Users, Mail, ChevronRight } from "lucide-react";
 import { BrandLogo } from "@/components/brand-logo";
 
 const footerLinks = {
@@ -18,9 +18,10 @@ const footerLinks = {
     { label: "Contact", href: "/contact" },
   ],
   Resources: [
-    { label: "Documentation", href: "#" },
-    { label: "API Reference", href: "#" },
-    { label: "Community", href: "#" },
+    { label: "Documentation", href: "/blog" },
+    { label: "Loop Engineering Guide", href: "/blog/loop-engineering" },
+    { label: "Case Studies", href: "/projects" },
+    { label: "Community", href: "https://wa.me/923082835303" },
     { label: "Support", href: "/contact" },
   ],
   Legal: [
@@ -31,10 +32,9 @@ const footerLinks = {
 };
 
 const socialLinks = [
-  { icon: ExternalLink, href: "#", label: "GitHub" },
-  { icon: MessageSquare, href: "#", label: "Twitter" },
-  { icon: Users, href: "#", label: "LinkedIn" },
-  { icon: Mail, href: "#", label: "Email" },
+  { icon: MessageSquare, href: "https://wa.me/923082835303", label: "WhatsApp" },
+  { icon: Users, href: "/contact", label: "Community" },
+  { icon: Mail, href: "mailto:sobber.id@gmail.com", label: "Email" },
 ];
 
 export function Footer() {

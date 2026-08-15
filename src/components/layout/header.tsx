@@ -3,8 +3,8 @@
 import { useState, useEffect } from "react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { useSession } from "next-auth/react";
-import { Menu, X, LayoutDashboard, Trophy } from "lucide-react";
+import { Menu, X, Trophy } from "lucide-react";
+import { Tooltip, TooltipTrigger, TooltipContent } from "@/components/ui/tooltip";
 import { Button } from "@/components/ui/button";
 import { ThemeToggle } from "@/components/layout/theme-toggle";
 import { cn } from "@/lib/utils";
@@ -23,7 +23,6 @@ export function Header() {
   const [isScrolled, setIsScrolled] = useState(false);
   const [isMobileOpen, setIsMobileOpen] = useState(false);
   const pathname = usePathname();
-  const { data: session } = useSession();
 
   useEffect(() => {
     const handleScroll = () => setIsScrolled(window.scrollY > 10);
@@ -65,28 +64,22 @@ export function Header() {
 
           <div className="hidden md:flex items-center gap-2">
             <ThemeToggle />
-            <a
-              href="https://arena.ai/leaderboard"
-              target="_blank"
-              rel="noopener noreferrer"
-              className="size-9 flex items-center justify-center rounded-lg text-muted-foreground hover:text-foreground hover:bg-muted transition-all duration-300"
-              title="Leaderboard"
-              aria-label="Open leaderboard"
-            >
-              <Trophy className="size-4.5" />
-            </a>
-            <Link
-              href={session ? "/dashboard" : "/login"}
-              className={cn(
-                "size-9 flex items-center justify-center rounded-lg transition-all duration-300",
-                session
-                  ? "bg-primary/15 text-primary hover:bg-primary/25 shadow-[0_0_8px_rgba(47,107,70,0.3)]"
-                  : "text-muted-foreground hover:text-foreground hover:bg-muted"
-              )}
-              title={session ? "Dashboard" : "Admin Login"}
-            >
-              <LayoutDashboard className="size-4.5" />
-            </Link>
+            <Tooltip>
+              <TooltipTrigger
+                render={
+                  <a
+                    href="https://arena.ai/leaderboard"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="size-9 flex items-center justify-center rounded-lg text-muted-foreground hover:text-foreground hover:bg-muted transition-all duration-300"
+                    aria-label="Open leaderboard"
+                  >
+                    <Trophy className="size-4.5" />
+                  </a>
+                }
+              />
+              <TooltipContent>Leaderboard</TooltipContent>
+            </Tooltip>
             <Button size="sm" className="bg-primary text-primary-foreground hover:bg-primary/90 font-medium px-4 h-9">
               Get Started
             </Button>
@@ -122,30 +115,23 @@ export function Header() {
             ))}
             <div className="pt-2 flex items-center gap-2">
               <ThemeToggle />
-              <a
-                href="https://arena.ai/leaderboard"
-                target="_blank"
-                rel="noopener noreferrer"
-                className="size-11 flex items-center justify-center rounded-lg text-muted-foreground hover:text-foreground hover:bg-muted transition-all duration-300"
-                title="Leaderboard"
-                aria-label="Open leaderboard"
-                onClick={() => setIsMobileOpen(false)}
-              >
-                <Trophy className="size-4.5" />
-              </a>
-              <Link
-                href={session ? "/dashboard" : "/login"}
-                className={cn(
-                  "size-11 flex items-center justify-center rounded-lg transition-all duration-300",
-                  session
-                    ? "bg-primary/15 text-primary hover:bg-primary/25 shadow-[0_0_8px_rgba(47,107,70,0.3)]"
-                    : "text-muted-foreground hover:text-foreground hover:bg-muted"
-                )}
-                title={session ? "Dashboard" : "Admin Login"}
-                onClick={() => setIsMobileOpen(false)}
-              >
-                <LayoutDashboard className="size-4.5" />
-              </Link>
+              <Tooltip>
+                <TooltipTrigger
+                  render={
+                    <a
+                      href="https://arena.ai/leaderboard"
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="size-11 flex items-center justify-center rounded-lg text-muted-foreground hover:text-foreground hover:bg-muted transition-all duration-300"
+                      aria-label="Open leaderboard"
+                      onClick={() => setIsMobileOpen(false)}
+                    >
+                      <Trophy className="size-4.5" />
+                    </a>
+                  }
+                />
+                <TooltipContent>Leaderboard</TooltipContent>
+              </Tooltip>
               <Button className="flex-1 h-11 bg-primary text-primary-foreground font-medium">
                 Get Started
               </Button>
