@@ -33,13 +33,13 @@ const timeline = [
 const leaders = [
   {
     name: "Bilal",
-    role: "Leader",
+    role: "Co-founder & CEO",
     description: "Visionary leader driving AI-Native innovation and building the AI Agent Factory.",
     slot: "team-bilal",
   },
   {
     name: "Asad",
-    role: "Co-Leader",
+    role: "Co-founder & CTO",
     description: "Technical expert specializing in spec-driven development and production-ready AI systems.",
     slot: "team-asad",
   },
@@ -279,7 +279,7 @@ export default function AboutPage() {
         </div>
       </section>
 
-      <section className="py-24 px-4 bg-section">
+      <section className="py-24 px-4 bg-section overflow-hidden">
         <div className="mx-auto max-w-4xl">
           <div className="text-center mb-16">
             <h2 className="font-heading text-3xl sm:text-4xl font-bold mb-4">

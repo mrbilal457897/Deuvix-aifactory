@@ -17,7 +17,7 @@ const responses: Record<string, string> = {
 
   getting_started: `Getting started with Deux is simple:\n\n1. **Book a consultation** — Visit our Contact page or email us at sobber.id@gmail.com\n2. **Discuss your needs** — We'll understand your business and identify AI opportunities\n3. **Choose your plan** — Starter ($500/mo), Professional ($2,000/mo), or Enterprise\n4. **Deploy your FTEs** — We manufacture and deploy your AI workers\n5. **Scale & optimize** — Monitor results and expand your AI workforce\n\nReady to start? Book a consultation at /contact`,
 
-  team: `Deux is led by:\n\n**Bilal** — Leader\nOversees company strategy and AI-Native development direction.\n\n**Asad** — Co-Leader\nHandles technical architecture and FDE implementation.\n\nWe're based in Pakistan and work with businesses globally to build AI-Native companies.`,
+  team: `Deux is led by:\n\n**Bilal** — Co-founder & CEO\nOversees company strategy and AI-Native development direction.\n\n**Asad** — Co-founder & CTO\nHandles technical architecture and FDE implementation.\n\nWe're based in Pakistan and work with businesses globally to build AI-Native companies.`,
 
   company: `**Deux** is an AI-Native company focused on helping businesses manufacture, deploy, and monetize Digital FTEs.\n\nOur philosophy:\n• **Spec-Driven Development** — Write specs that both humans and AI understand\n• **Co-Learning Partnership** — You and AI teach each other through iteration\n• **Production-Ready Architecture** — Cloud-native with Docker, Kubernetes, and Dapr\n• **Dual Language Mastery** — Python for reasoning, TypeScript for UI\n\nWe believe in building AI-Native companies, not just using AI as a tool.`,
 

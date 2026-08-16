@@ -59,23 +59,23 @@
   --font-sans: var(--font-roboto), ui-sans-serif, system-ui, -apple-system, "Segoe UI", sans-serif;
   --font-heading: var(--font-raleway), ui-sans-serif, system-ui, -apple-system, "Segoe UI", sans-serif;
   --font-mono: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
-  --background: #FAF0E6;
-  --foreground: #1C1C18;
-  --card: #FBF9F2;
-  --card-foreground: #1C1C18;
-  --popover: #FBF9F2;
-  --popover-foreground: #1C1C18;
+  --background: #FFFFFF;
+  --foreground: #0F0F0B;
+  --card: #FBFBF7;
+  --card-foreground: #0F0F0B;
+  --popover: #FBFBF7;
+  --popover-foreground: #0F0F0B;
   --primary: #2F6B46;
-  --primary-foreground: #FBF9F2;
-  --secondary: #EAE5D6;
-  --secondary-foreground: #1F4A30;
-  --muted: #EAE5D6;
-  --muted-foreground: #6E6B5E;
+  --primary-foreground: #FFFFFF;
+  --secondary: #ECEBE3;
+  --secondary-foreground: #0F0F0B;
+  --muted: #F4F3EE;
+  --muted-foreground: #6E6A5B;
   --accent: #2F6B46;
-  --accent-foreground: #FBF9F2;
+  --accent-foreground: #FFFFFF;
   --destructive: #B3261E;
-  --border: #DCD6C3;
-  --input: #DCD6C3;
+  --border: #E0DED4;
+  --input: #D6D3C6;
   --ring: #2F6B46;
   --chart-1: #2F6B46;
   --chart-2: #3D8A5C;
@@ -83,15 +83,15 @@
   --chart-4: #A3B18A;
   --chart-5: #8b5cf6;
   --radius: 0.5rem;
-  --surface: #FAF0E6;
-  --surface-hover: #F2E4D4;
-  --sidebar: #FBF9F2;
-  --sidebar-foreground: #1C1C18;
+  --surface: #FFFFFF;
+  --surface-hover: #F2F1EA;
+  --sidebar: #FFFFFF;
+  --sidebar-foreground: #0F0F0B;
   --sidebar-primary: #2F6B46;
-  --sidebar-primary-foreground: #FBF9F2;
-  --sidebar-accent: #EAE5D6;
-  --sidebar-accent-foreground: #1C1C18;
-  --sidebar-border: #DCD6C3;
+  --sidebar-primary-foreground: #FFFFFF;
+  --sidebar-accent: #ECEBE3;
+  --sidebar-accent-foreground: #0F0F0B;
+  --sidebar-border: #E0DED4;
   --sidebar-ring: #2F6B46;
 }
 
@@ -368,6 +368,12 @@ html.theme-transitioning *::after {
 
 .char-reveal {
   display: inline;
+}
+.char-reveal .cr-word,
+.blur-reveal .blur-word,
+.title-anim-up-text .ta-word {
+  display: inline-block;
+  white-space: nowrap;
 }
 .char-reveal .cr-char {
   display: inline-block;

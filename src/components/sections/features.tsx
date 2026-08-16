@@ -136,9 +136,9 @@ export function FeaturesSection() {
       <div
         ref={scrollRef}
         className="relative"
-        style={{ height: `${features.length * 100}vh` }}
+        style={{ height: `${features.length * 100}svh` }}
       >
-        <div ref={containerRef} className="sticky top-0 h-screen overflow-hidden">
+        <div ref={containerRef} className="sticky top-0 h-svh overflow-hidden">
         <div className="absolute right-6 top-1/2 -translate-y-1/2 z-50 flex flex-col gap-3 pointer-events-none">
           {features.map((f, i) => (
             <div key={f.title} className="flex items-center gap-2">

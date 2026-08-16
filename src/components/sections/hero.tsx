@@ -9,8 +9,8 @@ import { useSiteConfig } from "@/hooks/use-site-config";
 import { RotatingBadge } from "./rotating-badge";
 
 const leaderDefs = [
-  { name: "Bilal", role: "FOUNDER / LEAD", slot: "team-bilal" },
-  { name: "Asad", role: "CO-LEAD / OPS", slot: "team-asad" },
+  { name: "Bilal", role: "CO-FOUNDER / CEO", slot: "team-bilal" },
+  { name: "Asad", role: "CO-FOUNDER / CTO", slot: "team-asad" },
 ];
 
 const ticks = [6, 26, 46, 66, 86];
@@ -43,7 +43,7 @@ export function HeroSection() {
   return (
     <section
       ref={containerRef}
-      className="relative min-h-screen flex items-center overflow-hidden pt-16 bg-background"
+      className="relative min-h-svh flex items-center overflow-hidden pt-16 bg-background"
     >
       <div className="relative mx-auto max-w-[1440px] px-6 sm:px-10 lg:px-14 w-full py-16 lg:py-20">
         <div className="flex flex-col lg:flex-row items-stretch">

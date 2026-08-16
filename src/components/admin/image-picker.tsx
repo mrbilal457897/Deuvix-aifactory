@@ -60,7 +60,7 @@ export default function ImagePicker({ open, onClose, onSelect }: ImagePickerProp
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60" onClick={onClose}>
       <div
-        className="relative w-full max-w-3xl max-h-[80vh] bg-card border border-border rounded-xl shadow-xl overflow-hidden"
+        className="relative w-full max-w-3xl max-h-[80svh] bg-card border border-border rounded-xl shadow-xl overflow-hidden"
         onClick={(e) => e.stopPropagation()}
       >
         <div className="flex items-center justify-between p-4 border-b border-border">
@@ -82,7 +82,7 @@ export default function ImagePicker({ open, onClose, onSelect }: ImagePickerProp
           </button>
         </div>
 
-        <div className="p-4 overflow-y-auto max-h-[60vh]">
+        <div className="p-4 overflow-y-auto max-h-[60svh]">
           {images.length === 0 ? (
             <p className="text-center text-muted-foreground py-12">No images uploaded yet.</p>
           ) : (

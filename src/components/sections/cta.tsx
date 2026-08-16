@@ -66,7 +66,7 @@ export function CTASection() {
   }, []);
 
   return (
-    <section ref={sectionRef} className="relative">
+    <section ref={sectionRef} className="relative overflow-hidden">
       {/* Background - covers stats + video + headline content */}
       <div className="absolute inset-0 bg-primary/10 dark:bg-[#aab5af] h-[calc(100%-6rem)] sm:h-[calc(100%-8rem)]" />
 

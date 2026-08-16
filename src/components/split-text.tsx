@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useEffect, useRef } from "react";
+import React, { Fragment, useEffect, useRef } from "react";
 import { gsap } from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
 
@@ -12,28 +12,39 @@ function splitIntoCharSpans(
   children: React.ReactNode,
   baseClassName: string,
   counter: { value: number },
-  inheritedClassName: string = ""
+  inheritedClassName: string = "",
+  wordClassName: string = ""
 ): React.ReactNode {
   return React.Children.map(children, (child) => {
     if (typeof child === "string") {
-      return child.split("").map((char) => {
-        const charIndex = counter.value++;
-        const cls = [baseClassName, inheritedClassName].filter(Boolean).join(" ");
+      const words = child.split(" ");
+      return words.map((word, wi) => {
+        const wordCls = [wordClassName, inheritedClassName].filter(Boolean).join(" ");
+        const chars = word.split("").map((char) => {
+          const charIndex = counter.value++;
+          const cls = [baseClassName, inheritedClassName].filter(Boolean).join(" ");
+          return (
+            <span
+              key={`char-${charIndex}`}
+              className={cls}
+              style={{ "--char": charIndex } as React.CSSProperties}
+            >
+              {char}
+            </span>
+          );
+        });
         return (
-          <span
-            key={`char-${charIndex}`}
-            className={cls}
-            style={{ "--char": charIndex } as React.CSSProperties}
-          >
-            {char === " " ? "\u00A0" : char}
-          </span>
+          <Fragment key={`word-${wi}`}>
+            {word ? <span className={wordCls}>{chars}</span> : null}
+            {wi < words.length - 1 ? " " : null}
+          </Fragment>
         );
       });
     }
     const el = child as React.ReactElement<{ children?: React.ReactNode; className?: string }> | null;
     if (el && el.props && el.props.children) {
       const parentCls = el.props.className || "";
-      return splitIntoCharSpans(el.props.children, baseClassName, counter, parentCls);
+      return splitIntoCharSpans(el.props.children, baseClassName, counter, parentCls, wordClassName);
     }
     return child;
   });
@@ -47,7 +58,7 @@ export function TitleAnimUp({
   className?: string;
 }) {
   const counter = { value: 0 };
-  const content = splitIntoCharSpans(children, "ta-anim-char", counter);
+  const content = splitIntoCharSpans(children, "ta-anim-char", counter, "", "ta-word");
 
   return (
     <span className={`title-anim-up-text ${className}`}>
@@ -65,7 +76,7 @@ export function CharReveal({
 }) {
   const ref = useRef<HTMLSpanElement>(null);
   const counter = { value: 0 };
-  const content = splitIntoCharSpans(children, "cr-char", counter);
+  const content = splitIntoCharSpans(children, "cr-char", counter, "", "cr-word");
 
   useEffect(() => {
     if (!ref.current) return;
@@ -110,7 +121,7 @@ export function BlurReveal({
   className?: string;
 }) {
   const counter = { value: 0 };
-  const content = splitIntoCharSpans(children, "blur-char", counter);
+  const content = splitIntoCharSpans(children, "blur-char", counter, "", "blur-word");
 
   useEffect(() => {
     const timeout = setTimeout(() => {

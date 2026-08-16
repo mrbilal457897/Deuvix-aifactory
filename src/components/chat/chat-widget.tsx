@@ -115,7 +115,7 @@ export function ChatWidget() {
 
       {isOpen && (
         <div
-          className="chat-pop fixed bottom-6 right-6 z-50 w-[380px] max-w-[calc(100vw-3rem)] h-[520px] max-h-[calc(100vh-6rem)] rounded-2xl bg-card border border-border shadow-2xl flex flex-col overflow-hidden"
+          className="chat-pop fixed bottom-6 right-6 z-50 w-[380px] max-w-[calc(100vw-3rem)] h-[520px] max-h-[calc(100svh-6rem)] rounded-2xl bg-card border border-border shadow-2xl flex flex-col overflow-hidden"
         >
           <div className="flex items-center justify-between px-5 py-4 border-b border-border bg-surface">
             <div className="flex items-center gap-3">
