@@ -58,7 +58,7 @@ export default async function BlogPostPage({
   return (
     <div className="pt-24">
       {/* Hero */}
-      <section className="py-16 px-4 bg-hero-pattern relative">
+      <section className="py-16 px-6 bg-hero-pattern relative">
         <div className="absolute inset-0 bg-dots opacity-30" />
         <div className="relative mx-auto max-w-3xl text-center">
           <Link
@@ -90,7 +90,7 @@ export default async function BlogPostPage({
       </section>
 
       {/* Featured Image */}
-      <section className="px-4 -mt-2">
+      <section className="px-6 -mt-2">
         <div className="mx-auto max-w-3xl">
           <div className="relative aspect-[16/9] rounded-2xl overflow-hidden shadow-lg shadow-black/10">
             <Image
@@ -106,7 +106,7 @@ export default async function BlogPostPage({
       </section>
 
       {/* Body */}
-      <section className="py-12 px-4">
+      <section className="py-12 px-6">
         <div className="mx-auto max-w-3xl">
           <p className="text-lg text-foreground/90 leading-relaxed">{post.excerpt}</p>
 
@@ -121,12 +121,21 @@ export default async function BlogPostPage({
                 <ArrowRight className="size-4" />
               </span>
             </Link>
+            <p className="mt-5 text-sm text-muted-foreground">
+              Prefer email? Reach us at{" "}
+              <a
+                href="mailto:deuxaiinfo786@gmail.com"
+                className="font-medium text-primary hover:underline"
+              >
+                deuxaiinfo786@gmail.com
+              </a>
+            </p>
           </div>
         </div>
       </section>
 
       {/* Related Posts */}
-      <section className="pb-16 px-4">
+      <section className="pb-16 px-6">
         <div className="mx-auto max-w-6xl">
           <h2 className="font-heading text-2xl font-bold mb-8 text-center">More Articles</h2>
           <div className="grid grid-cols-1 md:grid-cols-3 gap-6">

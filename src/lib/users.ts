@@ -4,7 +4,7 @@ import bcrypt from "bcryptjs";
 
 const DATA_DIR = path.join(process.cwd(), "data");
 const USERS_PATH = path.join(DATA_DIR, "users.json");
-const OWNER_EMAIL = "sobber.id@gmail.com";
+const OWNER_EMAIL = "deuxaiinfo786@gmail.com";
 
 export interface User {
   id: string;

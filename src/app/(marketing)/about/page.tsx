@@ -34,13 +34,13 @@ const leaders = [
   {
     name: "Bilal",
     role: "Co-founder & CEO",
-    description: "Visionary leader driving AI-Native innovation and building the AI Agent Factory.",
+    description: "Turns AI research into revenue — architect of Deux's Manufacture-Deploy-Monetize model and the strategy behind every Digital FTE that ships to production.",
     slot: "team-bilal",
   },
   {
     name: "Asad",
     role: "Co-founder & CTO",
-    description: "Technical expert specializing in spec-driven development and production-ready AI systems.",
+    description: "Architect of Loop Engineering — builds the spec-driven, human-gated systems that let AI agents run production workloads 24/7 without losing human oversight.",
     slot: "team-asad",
   },
 ];
@@ -76,7 +76,7 @@ export default function AboutPage() {
 
   return (
     <div className="pt-24">
-      <section className="py-16 text-center px-4 bg-hero-pattern relative">
+      <section className="py-16 text-center px-6 bg-hero-pattern relative">
         <div className="absolute inset-0 bg-dots opacity-30" />
         <Badge className="mb-4 bg-primary/10 text-primary border-primary/20">About Us</Badge>
         <h1 className="font-heading text-4xl sm:text-5xl font-bold mb-4">
@@ -89,7 +89,7 @@ export default function AboutPage() {
         </p>
       </section>
 
-      <section className="py-24 px-4">
+      <section className="py-24 px-6">
         <div className="mx-auto max-w-7xl">
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-16 items-center">
             <div>
@@ -124,7 +124,7 @@ export default function AboutPage() {
         </div>
       </section>
 
-      <section className="py-24 px-4 bg-section">
+      <section className="py-24 px-6 bg-section">
         <div className="mx-auto max-w-7xl">
           <div className="text-center mb-16">
             <h2 className="font-heading text-3xl sm:text-4xl font-bold mb-4">
@@ -145,7 +145,7 @@ export default function AboutPage() {
         </div>
       </section>
 
-      <section className="py-24 px-4">
+      <section className="py-24 px-6">
         <div className="mx-auto max-w-7xl">
           <div className="text-center mb-16">
             <h2 className="font-heading text-3xl sm:text-4xl font-bold mb-4">
@@ -195,7 +195,6 @@ export default function AboutPage() {
 
                 <div className="text-center">
                   <p className="text-[10px] text-muted-foreground leading-tight">sobber.id@gmail.com</p>
-                  <p className="text-[10px] text-muted-foreground leading-tight mt-1">0308-2835303</p>
                 </div>
               </div>
 
@@ -271,7 +270,6 @@ export default function AboutPage() {
 
                 <div className="text-center">
                   <p className="text-[10px] text-muted-foreground leading-tight">sharshab007@gmail.com</p>
-                  <p className="text-[10px] text-muted-foreground leading-tight mt-1">0334-3406773</p>
                 </div>
               </div>
             </div>
@@ -279,7 +277,7 @@ export default function AboutPage() {
         </div>
       </section>
 
-      <section className="py-24 px-4 bg-section overflow-hidden">
+      <section className="py-24 px-6 bg-section overflow-hidden">
         <div className="mx-auto max-w-4xl">
           <div className="text-center mb-16">
             <h2 className="font-heading text-3xl sm:text-4xl font-bold mb-4">

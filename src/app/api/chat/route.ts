@@ -15,13 +15,13 @@ const responses: Record<string, string> = {
 
   pricing: `Our pricing plans:\n\n**Starter** — $500/mo\n• 1 Digital FTE\n• Basic Agent Setup\n• Email support\n• Community access\n\n**Professional** — $2,000/mo (Most Popular)\n• 5 Digital FTEs\n• Custom Agent Training\n• Priority support\n• FDE consultation\n• Analytics dashboard\n\n**Enterprise** — Custom pricing\n• Unlimited FTEs\n• Dedicated FDE team\n• SLA guarantee\n• On-premise option\n• Custom integrations\n\nAll plans include a 14-day free trial!`,
 
-  getting_started: `Getting started with Deux is simple:\n\n1. **Book a consultation** — Visit our Contact page or email us at sobber.id@gmail.com\n2. **Discuss your needs** — We'll understand your business and identify AI opportunities\n3. **Choose your plan** — Starter ($500/mo), Professional ($2,000/mo), or Enterprise\n4. **Deploy your FTEs** — We manufacture and deploy your AI workers\n5. **Scale & optimize** — Monitor results and expand your AI workforce\n\nReady to start? Book a consultation at /contact`,
+  getting_started: `Getting started with Deux is simple:\n\n1. **Book a consultation** — Visit our Contact page or email us at deuxaiinfo786@gmail.com\n2. **Discuss your needs** — We'll understand your business and identify AI opportunities\n3. **Choose your plan** — Starter ($500/mo), Professional ($2,000/mo), or Enterprise\n4. **Deploy your FTEs** — We manufacture and deploy your AI workers\n5. **Scale & optimize** — Monitor results and expand your AI workforce\n\nReady to start? Book a consultation at /contact`,
 
   team: `Deux is led by:\n\n**Bilal** — Co-founder & CEO\nOversees company strategy and AI-Native development direction.\n\n**Asad** — Co-founder & CTO\nHandles technical architecture and FDE implementation.\n\nWe're based in Pakistan and work with businesses globally to build AI-Native companies.`,
 
   company: `**Deux** is an AI-Native company focused on helping businesses manufacture, deploy, and monetize Digital FTEs.\n\nOur philosophy:\n• **Spec-Driven Development** — Write specs that both humans and AI understand\n• **Co-Learning Partnership** — You and AI teach each other through iteration\n• **Production-Ready Architecture** — Cloud-native with Docker, Kubernetes, and Dapr\n• **Dual Language Mastery** — Python for reasoning, TypeScript for UI\n\nWe believe in building AI-Native companies, not just using AI as a tool.`,
 
-  contact: `You can reach us through:\n\n📧 **Email:** sobber.id@gmail.com\n📱 **Phone (Bilal):** 0308-2835303\n📱 **Phone (Asad):** 0334-3406773\n📍 **Location:** Pakistan\n\n**Office Hours:**\n• Monday–Friday: 9:00 AM – 6:00 PM\n• Saturday: 10:00 AM – 2:00 PM\n• Sunday: Closed\n\nOr visit our Contact page to book a free consultation!`,
+  contact: `You can reach us through:\n\n📧 **Email:** deuxaiinfo786@gmail.com\n📍 **Location:** Pakistan\n\n**Office Hours:**\n• Monday–Friday: 9:00 AM – 6:00 PM\n• Saturday: 10:00 AM – 2:00 PM\n• Sunday: Closed\n\nOr visit our Contact page to book a free consultation!`,
 
   spec_driven: `**Spec-Driven Development** is our core methodology.\n\nInstead of writing code directly, we write specifications — blueprints that both humans and AI understand. These specs become executable instructions for building intelligent systems.\n\nBenefits:\n• Clear communication between humans and AI\n• Reproducible results\n• Easy to iterate and improve\n• Foundation of AI-Native engineering\n\nThis is how we build all our Digital FTEs and AI solutions.`,
 
@@ -33,7 +33,7 @@ const responses: Record<string, string> = {
 
   greeting: `Hello! Welcome to Deux. I can help you learn about our AI solutions, services, pricing, or how to get started. What would you like to know?`,
 
-  thanks: `You're welcome! If you have any more questions about our services, pricing, or how to get started, feel free to ask. You can also reach us at sobber.id@gmail.com or visit our Contact page.`,
+  thanks: `You're welcome! If you have any more questions about our services, pricing, or how to get started, feel free to ask. You can also reach us at deuxaiinfo786@gmail.com or visit our Contact page.`,
 
   help: `I can help you with:\n\n• **Services** — Digital FTE, FDE, AI Chatbots, Voice Agents, Custom Agents, Loop Engineering, E-books, Web Apps\n• **Pricing** — Starter ($500/mo), Professional ($2,000/mo), Enterprise\n• **Getting Started** — How to begin your AI journey\n• **Company** — Our team, philosophy, and approach\n• **Contact** — Email, phone, and office hours\n\nJust ask me anything!`,
 

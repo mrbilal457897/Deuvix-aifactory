@@ -1,0 +1,27 @@
+@keyframes loop-flow {
+  from {
+    stroke-dashoffset: 0;
+  }
+  to {
+    stroke-dashoffset: -72;
+  }
+}
+.loop-flow {
+  animation: loop-flow 3.2s linear infinite;
+}
+
+@keyframes loop-node-pulse {
+  0%,
+  100% {
+    opacity: 0.2;
+    transform: scale(1);
+  }
+  50% {
+    opacity: 0.7;
+    transform: scale(1.25);
+  }
+}
+.loop-node-pulse {
+  animation: loop-node-pulse 2.6s ease-in-out infinite;
+  transform-origin: center;
+}

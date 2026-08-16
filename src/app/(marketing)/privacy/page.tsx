@@ -117,8 +117,8 @@ export default function PrivacyPolicyPage() {
         />
         <LegalParagraph>
           To exercise any of these rights, contact us at{" "}
-          <a href="mailto:sobber.id@gmail.com" className="text-primary hover:underline">
-            sobber.id@gmail.com
+          <a href="mailto:deuxaiinfo786@gmail.com" className="text-primary hover:underline">
+            deuxaiinfo786@gmail.com
           </a>
           .
         </LegalParagraph>
@@ -127,8 +127,8 @@ export default function PrivacyPolicyPage() {
       <LegalSection heading="8. Contact Us">
         <LegalParagraph>
           Questions about this policy? Reach us at{" "}
-          <a href="mailto:sobber.id@gmail.com" className="text-primary hover:underline">
-            sobber.id@gmail.com
+          <a href="mailto:deuxaiinfo786@gmail.com" className="text-primary hover:underline">
+            deuxaiinfo786@gmail.com
           </a>{" "}
           or via our{" "}
           <a href="/contact" className="text-primary hover:underline">contact page</a>.

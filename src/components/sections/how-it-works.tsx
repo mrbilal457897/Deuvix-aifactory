@@ -77,7 +77,7 @@ export function HowItWorksSection() {
       />
       <div className="absolute inset-0 bg-background/85 dark:bg-background/80" />
 
-      <div className="relative mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
+      <div className="relative mx-auto max-w-7xl px-6 sm:px-6 lg:px-8">
         <div className="text-center mb-16">
           <p className="text-sm font-semibold text-accent uppercase tracking-wider mb-3">
             How It Works

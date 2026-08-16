@@ -70,7 +70,7 @@ export function ProjectsSection() {
   if (projects.length === 0) return null;
 
   return (
-    <section id="projects" className="py-24 px-4" ref={sectionRef}>
+    <section id="projects" className="py-24 px-6" ref={sectionRef}>
       <div className="mx-auto max-w-6xl">
         {/* Section Title */}
         <div className="text-center mb-14">

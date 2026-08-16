@@ -21,6 +21,7 @@ import { Badge } from "@/components/ui/badge";
 import Image from "next/image";
 import { CharReveal } from "@/components/split-text";
 import { useSiteConfig } from "@/hooks/use-site-config";
+import "@/app/loop-anim.css";
 
 if (typeof window !== "undefined") {
   gsap.registerPlugin(ScrollTrigger);
@@ -121,52 +122,94 @@ const plans = [
 
 const loopParts = [
   {
+    number: "01",
     title: "Heartbeat",
+    tagline: "starts the work",
     description: "A schedule or event that starts each beat. Without it, you have one run, not a loop.",
     role: "Starts the work",
-    color: "bg-sky-500/10 text-sky-600",
     icon: HeartPulse,
   },
   {
+    number: "02",
     title: "Worktree",
+    tagline: "keeps work safe",
     description: "Isolation, so parallel agents never overwrite each other's work — one checkout per task.",
     role: "Keeps work safe",
-    color: "bg-violet-500/10 text-violet-600",
     icon: GitBranch,
   },
   {
+    number: "03",
     title: "Skill",
+    tagline: "carries context",
     description: "Project knowledge written down once, so no run starts from nothing.",
     role: "Carries the context",
-    color: "bg-amber-500/10 text-amber-600",
     icon: BookOpen,
   },
   {
+    number: "04",
     title: "Subagents",
+    tagline: "maker & checker",
     description: "The maker-checker split: the agent that builds is never the agent that grades.",
     role: "Checks the work",
-    color: "bg-emerald-500/10 text-emerald-600",
     icon: Users,
   },
   {
+    number: "05",
     title: "Connector (MCP)",
+    tagline: "acts in your tools",
     description: "Reaches your real tools — PRs, tickets, databases — so the loop acts, not just suggests.",
     role: "Acts in your tools",
-    color: "bg-rose-500/10 text-rose-600",
     icon: Plug,
   },
   {
+    number: "06",
     title: "Spine",
+    tagline: "remembers between runs",
     description: "State and memory between runs. The model forgets everything between runs; the repo does not.",
     role: "Remembers between runs",
-    color: "bg-primary/10 text-primary",
     icon: Database,
+  },
+  {
+    number: "07",
+    title: "Human Gate",
+    tagline: "keeps trust",
+    description: "A loop never removes judgment — it removes typing. You keep intent and accountability: every risky call comes to you for approval. No spine, no loop; no human gate, no trust.",
+    role: "Keeps trust in the loop",
+    icon: ShieldCheck,
   },
 ];
 
+const LOOP_NODE_COUNT = 7;
+const LOOP_RADIUS = 0.4;
+
+function loopPoint(i: number, scale = 1000) {
+  const angle = ((-90 + (i * 360) / LOOP_NODE_COUNT) * Math.PI) / 180;
+  return {
+    x: (0.5 + LOOP_RADIUS * Math.cos(angle)) * scale,
+    y: (0.5 + LOOP_RADIUS * Math.sin(angle)) * scale,
+  };
+}
+
+const loopPathPoints = Array.from({ length: LOOP_NODE_COUNT }, (_, i) => loopPoint(i));
+const loopPointsStr = loopPathPoints.map((p) => `${p.x},${p.y}`).join(" ");
+
+function pointOnLoop(t: number) {
+  const seg = LOOP_NODE_COUNT;
+  const pos = t * seg;
+  const idx = Math.floor(pos) % seg;
+  const local = pos - Math.floor(pos);
+  const a = loopPathPoints[idx];
+  const b = loopPathPoints[(idx + 1) % seg];
+  return { x: a.x + (b.x - a.x) * local, y: a.y + (b.y - a.y) * local };
+}
+
 export default function ProductsPage() {
   const [activeCategory, setActiveCategory] = useState("All");
+  const [activeNode, setActiveNode] = useState(0);
   const gridRef = useRef<HTMLDivElement>(null);
+  const sectionRef = useRef<HTMLElement>(null);
+  const particleRef = useRef<SVGCircleElement>(null);
+  const particleGlowRef = useRef<SVGCircleElement>(null);
   const { img } = useSiteConfig();
 
   const filteredProducts =
@@ -184,9 +227,66 @@ export default function ProductsPage() {
     }
   }, [activeCategory]);
 
+  useEffect(() => {
+    const section = sectionRef.current;
+    if (!section) return;
+
+    const ctx = gsap.context(() => {
+      gsap.fromTo(
+        "[data-loop-reveal]",
+        { y: 24, opacity: 0 },
+        {
+          y: 0,
+          opacity: 1,
+          duration: 0.6,
+          stagger: 0.1,
+          ease: "power2.out",
+          scrollTrigger: { trigger: section, start: "top 75%" },
+        }
+      );
+
+      gsap.fromTo(
+        "[data-loop-node]",
+        { scale: 0.8, opacity: 0 },
+        {
+          scale: 1,
+          opacity: 1,
+          duration: 0.5,
+          stagger: 0.1,
+          ease: "back.out(1.6)",
+          scrollTrigger: { trigger: section, start: "top 70%" },
+        }
+      );
+
+      const dot = particleRef.current;
+      const glow = particleGlowRef.current;
+      if (dot && glow) {
+        const proxy = { t: 0 };
+        gsap.to(proxy, {
+          t: 1,
+          duration: 9,
+          ease: "none",
+          repeat: -1,
+          onUpdate: () => {
+            const p = pointOnLoop(proxy.t);
+            dot.setAttribute("cx", String(p.x));
+            dot.setAttribute("cy", String(p.y));
+            glow.setAttribute("cx", String(p.x));
+            glow.setAttribute("cy", String(p.y));
+          },
+        });
+      }
+    }, section);
+
+    return () => ctx.revert();
+  }, []);
+
+  const active = loopParts[activeNode];
+  const ActiveIcon = active.icon;
+
   return (
     <div className="pt-24">
-      <section className="py-16 text-center px-4 relative overflow-hidden">
+      <section className="py-16 text-center px-6 relative overflow-hidden">
         <div className="absolute inset-0">
           <Image src={img("product-bg")} alt="" fill priority className="object-cover" sizes="100vw" />
           <div className="absolute inset-0 bg-background/85" />
@@ -203,7 +303,7 @@ export default function ProductsPage() {
         </div>
       </section>
 
-      <section className="py-8 px-4">
+      <section className="py-8 px-6">
         <div className="mx-auto max-w-7xl">
           <div className="flex flex-wrap justify-center gap-2 mb-12">
             {categories.map((cat) => (
@@ -255,56 +355,179 @@ export default function ProductsPage() {
       </section>
 
       {/* Loop Engineering */}
-      <section id="loop-engineering" className="py-24 px-4 bg-section">
-        <div className="mx-auto max-w-7xl">
+      <section id="loop-engineering" ref={sectionRef} className="relative overflow-hidden bg-[#0F172A] py-24 px-6">
+        <div aria-hidden className="pointer-events-none absolute -top-40 left-1/2 h-96 w-[42rem] -translate-x-1/2 rounded-full bg-sky-500/10 blur-[120px]" />
+        <div aria-hidden className="pointer-events-none absolute bottom-0 right-0 h-96 w-96 rounded-full bg-violet-500/10 blur-[120px]" />
+        <div aria-hidden className="pointer-events-none absolute bottom-0 left-0 h-72 w-72 rounded-full bg-indigo-500/10 blur-[100px]" />
+
+        <div className="relative mx-auto max-w-7xl">
           <div className="text-center mb-16">
-            <Badge className="mb-4 bg-primary/10 text-primary border-primary/20">Methodology</Badge>
-            <h2 className="font-heading text-3xl sm:text-4xl font-bold mb-4">
-              Loop <span className="text-gradient">Engineering</span>
+            <Badge className="mb-4 border-sky-400/30 bg-sky-400/10 text-sky-300" data-loop-reveal>Methodology</Badge>
+            <h2 className="font-heading text-3xl sm:text-4xl font-bold mb-4 text-white" data-loop-reveal>
+              Loop <span className="bg-gradient-to-r from-sky-400 via-indigo-400 to-violet-400 bg-clip-text text-transparent">Engineering</span>
             </h2>
-            <p className="mx-auto max-w-2xl text-muted-foreground text-lg">
+            <p className="mx-auto max-w-2xl text-slate-400 text-lg" data-loop-reveal>
               A loop starts work, checks it, records the result, and repeats on its own. The prompt was yesterday — today we design the loop. Each beat runs unattended; you only see the calls that matter.
             </p>
           </div>
 
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mb-12">
-            {loopParts.map((part) => (
+          {/* Desktop orbital loop */}
+          <div className="relative mx-auto hidden aspect-square w-full max-w-3xl lg:block">
+            <div aria-hidden className="absolute inset-[16%] rounded-full bg-[radial-gradient(circle,rgba(99,102,241,0.16),transparent_70%)]" />
+
+            <svg viewBox="0 0 1000 1000" className="absolute inset-0 h-full w-full overflow-visible">
+              <defs>
+                <linearGradient id="loop-grad" x1="0" y1="0" x2="1000" y2="1000" gradientUnits="userSpaceOnUse">
+                  <stop offset="0%" stopColor="#38bdf8" />
+                  <stop offset="55%" stopColor="#6366f1" />
+                  <stop offset="100%" stopColor="#a855f7" />
+                </linearGradient>
+              </defs>
+              <polyline points={loopPointsStr} fill="none" stroke="url(#loop-grad)" strokeOpacity="0.12" strokeWidth="16" strokeLinecap="round" strokeLinejoin="round" />
+              <polyline points={loopPointsStr} fill="none" stroke="url(#loop-grad)" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" />
+              <polyline points={loopPointsStr} fill="none" stroke="url(#loop-grad)" strokeWidth="5" strokeLinecap="round" strokeLinejoin="round" strokeDasharray="6 30" className="loop-flow" />
+              <circle ref={particleGlowRef} r="10" fill="#818cf8" opacity="0.3" />
+              <circle ref={particleRef} r="4.5" fill="#e0e7ff" />
+            </svg>
+
+            {/* Center hub — shows the active node detail */}
+            <div className="absolute left-1/2 top-1/2 w-[40%] -translate-x-1/2 -translate-y-1/2">
               <div
-                key={part.title}
-                className="p-6 rounded-xl card-solid hover:border-primary/30 transition-all duration-200"
+                data-loop-node
+                className="flex aspect-square flex-col items-center justify-center rounded-full border border-white/10 bg-[#0b1322]/85 p-8 text-center shadow-[0_0_80px_rgba(99,102,241,0.25)] backdrop-blur-xl"
               >
-                <div className={`inline-flex items-center justify-center size-10 rounded-xl ${part.color} mb-4`}>
-                  <part.icon className="size-5" />
+                <span className="font-mono text-[10px] uppercase tracking-[0.35em] text-sky-300/70">{active.tagline}</span>
+                <div className="mt-3 flex size-12 items-center justify-center rounded-full bg-gradient-to-br from-sky-500 to-violet-600 shadow-lg shadow-indigo-500/40">
+                  <ActiveIcon className="size-5 text-white" />
                 </div>
-                <h3 className="font-heading text-lg font-semibold mb-2">{part.title}</h3>
-                <p className="text-muted-foreground text-sm leading-relaxed mb-4">{part.description}</p>
-                <span className="text-xs font-medium text-primary">{part.role}</span>
+                <h3 className="mt-3 font-heading text-lg font-semibold text-white">{active.title}</h3>
+                <p className="mt-2 text-xs leading-relaxed text-slate-400">{active.description}</p>
+                <span className="mt-3 rounded-full border border-sky-400/30 bg-sky-400/10 px-3 py-1 text-[10px] font-medium text-sky-300">{active.role}</span>
               </div>
-            ))}
-          </div>
-
-          <div className="mx-auto max-w-3xl p-6 rounded-xl card-solid border-primary/20 text-center mb-10">
-            <div className="flex items-center justify-center gap-2 mb-2">
-              <ShieldCheck className="size-5 text-primary" />
-              <h3 className="font-heading text-lg font-semibold">The Human Gate</h3>
             </div>
-            <p className="text-muted-foreground text-sm leading-relaxed">
-              A loop never removes judgment — it removes typing. You keep intent and accountability: every risky call comes to you for approval. No spine, no loop; no human gate, no trust.
-            </p>
+
+            {/* Loop nodes */}
+            {loopParts.map((part, i) => {
+              const pos = loopPoint(i, 100);
+              const isGate = i === loopParts.length - 1;
+              const selected = i === activeNode;
+              return (
+                <div
+                  key={part.title}
+                  className="absolute z-10 -translate-x-1/2 -translate-y-1/2"
+                  style={{ left: `${pos.x}%`, top: `${pos.y}%` }}
+                >
+                  <button
+                    type="button"
+                    data-loop-node
+                    onClick={() => setActiveNode(i)}
+                    onMouseEnter={() => setActiveNode(i)}
+                    className={`group relative text-left transition-all duration-300 ${
+                      isGate ? "w-[196px]" : "w-[172px]"
+                    } ${selected ? "scale-[1.06]" : "hover:scale-[1.03]"}`}
+                  >
+                    {isGate && (
+                      <span aria-hidden className="pointer-events-none absolute -inset-2 rounded-2xl border border-sky-400/30 loop-node-pulse" />
+                    )}
+                    <div
+                      className={`relative rounded-xl border p-3 backdrop-blur-md transition-colors duration-300 ${
+                        selected
+                          ? "border-sky-400/60 bg-gradient-to-b from-sky-500/20 to-violet-500/20 shadow-[0_0_30px_rgba(56,189,248,0.25)]"
+                          : "border-white/10 bg-white/[0.04] hover:border-indigo-400/40"
+                      }`}
+                    >
+                      <div className="flex items-center gap-3">
+                        <div
+                          className={`flex size-9 shrink-0 items-center justify-center rounded-lg transition-colors duration-300 ${
+                            selected
+                              ? "bg-gradient-to-br from-sky-500 to-violet-600 text-white"
+                              : "bg-white/[0.06] text-slate-300 group-hover:text-sky-300"
+                          }`}
+                        >
+                          <part.icon className="size-4" />
+                        </div>
+                        <div className="min-w-0 text-left">
+                          <span className={`block font-mono text-[9px] tracking-[0.3em] ${selected ? "text-sky-300" : "text-slate-500"}`}>{part.number}</span>
+                          <span className="block truncate text-[13px] font-semibold text-white">{part.title}</span>
+                        </div>
+                      </div>
+                      {isGate && selected && (
+                        <span className="absolute -top-2.5 left-1/2 flex -translate-x-1/2 items-center gap-1 whitespace-nowrap rounded-full bg-gradient-to-r from-sky-500 to-violet-600 px-2.5 py-0.5 text-[9px] font-bold uppercase tracking-wider text-white shadow-lg shadow-indigo-500/40">
+                          Loop closes here
+                        </span>
+                      )}
+                    </div>
+                  </button>
+                </div>
+              );
+            })}
           </div>
 
-          <div className="text-center">
+          {/* Mobile timeline */}
+          <div className="relative mx-auto max-w-xl lg:hidden">
+            <span aria-hidden className="absolute bottom-2 left-0 top-2 w-px bg-gradient-to-b from-sky-500 via-indigo-500 to-violet-500" />
+            <div className="space-y-8 pl-10">
+              {loopParts.map((part, i) => {
+                const isGate = i === loopParts.length - 1;
+                return (
+                  <div key={part.title} className="relative" data-loop-reveal>
+                    <span
+                      aria-hidden
+                      className={`absolute -left-10 top-1.5 size-3 rounded-full ring-4 ring-[#0F172A] ${
+                        isGate ? "bg-gradient-to-br from-sky-400 to-violet-500" : "bg-indigo-500/70"
+                      }`}
+                    />
+                    <div
+                      className={`rounded-xl border p-5 backdrop-blur-md ${
+                        isGate
+                          ? "border-sky-400/40 bg-gradient-to-b from-sky-500/10 to-violet-500/10"
+                          : "border-white/10 bg-white/[0.04]"
+                      }`}
+                    >
+                      <div className="mb-3 flex items-center gap-3">
+                        <div
+                          className={`flex size-10 shrink-0 items-center justify-center rounded-lg ${
+                            isGate ? "bg-gradient-to-br from-sky-500 to-violet-600 text-white" : "bg-white/[0.06] text-sky-300"
+                          }`}
+                        >
+                          <part.icon className="size-4" />
+                        </div>
+                        <div>
+                          <span className="block font-mono text-[9px] tracking-[0.3em] text-sky-300/70">
+                            {part.number} — {part.tagline}
+                          </span>
+                          <h3 className="font-heading text-base font-semibold text-white">{part.title}</h3>
+                        </div>
+                      </div>
+                      <p className="text-sm leading-relaxed text-slate-400">{part.description}</p>
+                      <span className="mt-3 inline-block rounded-full border border-sky-400/30 bg-sky-400/10 px-2.5 py-0.5 text-[10px] font-medium text-sky-300">
+                        {part.role}
+                      </span>
+                    </div>
+                  </div>
+                );
+              })}
+            </div>
+          </div>
+
+          <div className="mt-14 text-center" data-loop-reveal>
             <Button
-              className="bg-primary text-primary-foreground hover:bg-primary/90 font-medium px-8 py-6 text-base rounded-xl shadow-lg shadow-primary/20"
+              className="bg-gradient-to-r from-sky-500 to-violet-600 text-white hover:from-sky-400 hover:to-violet-500 font-medium px-8 py-6 text-base rounded-xl shadow-lg shadow-indigo-500/30"
               render={<Link href={`/contact?service=${encodeURIComponent("Loop Engineering")}`} />}
             >
               Book a Consultation <ArrowRight className="size-4 ml-2" />
             </Button>
+            <p className="mt-5 text-sm text-slate-400">
+              Prefer email? Reach us at{" "}
+              <a href="mailto:deuxaiinfo786@gmail.com" className="font-medium text-sky-400 hover:underline">
+                deuxaiinfo786@gmail.com
+              </a>
+            </p>
           </div>
         </div>
       </section>
 
-      <section id="pricing" className="py-24 px-4 bg-section">
+      <section id="pricing" className="py-24 px-6 bg-section">
         <div className="mx-auto max-w-7xl">
           <div className="text-center mb-16">
             <Badge className="mb-4 bg-amber-500/10 text-amber-600 border-amber-500/20">Pricing</Badge>

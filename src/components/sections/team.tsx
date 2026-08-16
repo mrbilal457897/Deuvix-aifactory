@@ -19,7 +19,7 @@ const teamMembers = [
     socials: {
       linkedin: "#",
       github: "#",
-      email: "mailto:sobber.id@gmail.com",
+      email: "mailto:deuxaiinfo786@gmail.com",
     },
   },
   {
@@ -65,7 +65,7 @@ export function TeamSection() {
   }, []);
 
   return (
-    <section id="team" className="py-24 px-4 bg-surface dark:bg-transparent" ref={sectionRef}>
+    <section id="team" className="py-24 px-6 bg-surface dark:bg-transparent" ref={sectionRef}>
       {/* Section Title */}
       <div className="text-center mb-14">
         <h2 className="font-heading text-3xl sm:text-4xl font-bold mb-3"><CharReveal>Team</CharReveal></h2>

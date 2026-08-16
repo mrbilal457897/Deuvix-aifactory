@@ -94,7 +94,7 @@ export function ChatWidget() {
           content:
             err instanceof Error && err.message === "rate-limited"
               ? "You're sending messages a bit quickly. Give me a moment and try again."
-              : "Sorry, I'm having trouble connecting right now. Please try again or email us at sobber.id@gmail.com.",
+              : "Sorry, I'm having trouble connecting right now. Please try again or email us at deuxaiinfo786@gmail.com.",
         },
       ]);
     } finally {

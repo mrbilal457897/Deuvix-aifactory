@@ -45,7 +45,7 @@ export default function BlogPage() {
   return (
     <div className="pt-24">
       {/* Hero */}
-      <section className="py-16 text-center px-4 bg-hero-pattern relative">
+      <section className="py-16 text-center px-6 bg-hero-pattern relative">
         <div className="absolute inset-0 bg-dots opacity-30" />
         <Badge className="mb-4 bg-accent/10 text-accent border-accent/20">Blog</Badge>
         <h1 className="font-heading text-4xl sm:text-5xl font-bold mb-4">
@@ -57,7 +57,7 @@ export default function BlogPage() {
       </section>
 
       {/* Category Filters */}
-      <section className="pt-12 pb-8 px-4">
+      <section className="pt-12 pb-8 px-6">
         <div className="mx-auto max-w-6xl">
           <div className="flex flex-wrap justify-center gap-2">
             {blogCategories.map((cat) => (
@@ -81,7 +81,7 @@ export default function BlogPage() {
       </section>
 
       {/* Blog Grid */}
-      <section className="pb-16 px-4">
+      <section className="pb-16 px-6">
         <div className="mx-auto max-w-6xl" ref={gridRef}>
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
             {paginatedPosts.map((post) => (
@@ -146,7 +146,7 @@ export default function BlogPage() {
 
       {/* Pagination */}
       {totalPages > 1 && (
-        <section className="pb-16 px-4">
+        <section className="pb-16 px-6">
           <div className="flex items-center justify-center gap-2">
             <button
               onClick={() => setCurrentPage((p) => Math.max(1, p - 1))}

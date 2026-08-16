@@ -5,16 +5,14 @@ import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
-import { Mail, Phone, MapPin, Send, CheckCircle, Clock } from "lucide-react";
+import { Mail, MapPin, Send, CheckCircle, Clock } from "lucide-react";
 import Image from "next/image";
 import { CharReveal } from "@/components/split-text";
 import { useSiteConfig } from "@/hooks/use-site-config";
 
 const contactCards = [
   { icon: MapPin, label: "Visit Us", value: "Pakistan", sub: "Remote-first, serving globally" },
-  { icon: Phone, label: "Call Us — Bilal", value: "0308-2835303", sub: "Mon–Fri, 9am – 6pm" },
-  { icon: Phone, label: "Call Us — Asad", value: "0334-3406773", sub: "Mon–Sat, 10am – 6pm" },
-  { icon: Mail, label: "Email Us", value: "sobber.id@gmail.com", sub: "We reply within 24 hours" },
+  { icon: Mail, label: "Email Us", value: "deuxaiinfo786@gmail.com", sub: "We reply within 24 hours" },
 ];
 
 const EMAIL_REGEX = /^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/;
@@ -123,7 +121,7 @@ export default function ContactPage() {
       </div>
 
       {/* Hero */}
-      <section className="relative pt-32 pb-16 text-center px-4">
+      <section className="relative pt-32 pb-16 text-center px-6">
         <Badge className="mb-4 bg-primary/10 text-primary border-primary/20 backdrop-blur-sm">Contact</Badge>
         <h1 className="font-heading text-4xl sm:text-5xl font-bold text-foreground dark:text-white mb-4">
           <CharReveal>Let&apos;s <span className="text-gradient">Connect</span></CharReveal>
@@ -134,9 +132,9 @@ export default function ContactPage() {
       </section>
 
       {/* Info Cards */}
-      <section className="relative pb-12 px-4">
+      <section className="relative pb-12 px-6">
         <div className="mx-auto max-w-5xl">
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+          <div className="mx-auto grid grid-cols-1 sm:grid-cols-2 gap-4 max-w-2xl">
             {contactCards.map((card) => (
               <div
                 key={card.label}
@@ -157,7 +155,7 @@ export default function ContactPage() {
       </section>
 
       {/* Split Section: Form + Side Panel */}
-      <section className="relative py-12 px-4 pb-24">
+      <section className="relative py-12 px-6 pb-24">
         <div className="mx-auto max-w-6xl">
           <div className="flex flex-col lg:flex-row gap-6">
             {/* Form - Left Side */}
@@ -288,7 +286,7 @@ export default function ContactPage() {
                 )}
                 {status === "error" && (
                   <p className="text-sm text-destructive">
-                    Something went wrong. Please try again or email us at sobber.id@gmail.com.
+                    Something went wrong. Please try again or email us at deuxaiinfo786@gmail.com.
                   </p>
                 )}
               </form>

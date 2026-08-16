@@ -1,7 +1,7 @@
 "use client";
 
 import Link from "next/link";
-import { Users, Mail, ChevronRight } from "lucide-react";
+import { ChevronRight } from "lucide-react";
 import { BrandLogo } from "@/components/brand-logo";
 
 const footerLinks = {
@@ -9,19 +9,19 @@ const footerLinks = {
     { label: "Features", href: "/products" },
     { label: "Pricing", href: "/products#pricing" },
     { label: "Integrations", href: "/products" },
-    { label: "Changelog", href: "/blog" },
+    { label: "Changelog", href: "/changelog" },
   ],
   Company: [
     { label: "About", href: "/about" },
     { label: "Blog", href: "/blog" },
-    { label: "Careers", href: "/about" },
+    { label: "Careers", href: "/careers" },
     { label: "Contact", href: "/contact" },
   ],
   Resources: [
-    { label: "Documentation", href: "/blog" },
+    { label: "Documentation", href: "/docs" },
     { label: "Loop Engineering Guide", href: "/blog/loop-engineering" },
     { label: "Case Studies", href: "/projects" },
-    { label: "Community", href: "https://wa.me/923082835303" },
+    { label: "Community", href: "/contact" },
     { label: "Support", href: "/contact" },
   ],
   Legal: [
@@ -32,10 +32,9 @@ const footerLinks = {
 };
 
 const socialLinks = [
-  { icon: "whatsapp" as const, href: "https://wa.me/923082835303", label: "WhatsApp" },
   { icon: "instagram" as const, href: "https://instagram.com", label: "Instagram" },
   { icon: "linkedin" as const, href: "https://linkedin.com", label: "LinkedIn" },
-  { icon: "email" as const, href: "mailto:sobber.id@gmail.com", label: "Email" },
+  { icon: "email" as const, href: "mailto:deuxaiinfo786@gmail.com", label: "Email" },
 ];
 
 const socialIconPaths: Record<string, { d: string; color: string }> = {
@@ -60,7 +59,7 @@ const socialIconPaths: Record<string, { d: string; color: string }> = {
 export function Footer() {
   return (
     <footer className="border-t border-border bg-surface">
-      <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
+      <div className="mx-auto max-w-7xl px-6 sm:px-6 lg:px-8">
         <div className="grid grid-cols-2 md:grid-cols-6 gap-8 py-12 md:py-16">
           <div className="col-span-2">
             <Link href="/" className="flex items-center gap-2.5 mb-4">

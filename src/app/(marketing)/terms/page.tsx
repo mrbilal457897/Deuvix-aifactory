@@ -108,8 +108,8 @@ export default function TermsOfServicePage() {
       <LegalSection heading="9. Contact">
         <LegalParagraph>
           Questions about these terms? Reach us at{" "}
-          <a href="mailto:sobber.id@gmail.com" className="text-primary hover:underline">
-            sobber.id@gmail.com
+          <a href="mailto:deuxaiinfo786@gmail.com" className="text-primary hover:underline">
+            deuxaiinfo786@gmail.com
           </a>{" "}
           or via our{" "}
           <a href="/contact" className="text-primary hover:underline">contact page</a>.

@@ -70,7 +70,7 @@ export function CTASection() {
       {/* Background - covers stats + video + headline content */}
       <div className="absolute inset-0 bg-primary/10 dark:bg-[#aab5af] h-[calc(100%-6rem)] sm:h-[calc(100%-8rem)]" />
 
-      <div className="relative mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 pt-24 sm:pt-32">
+      <div className="relative mx-auto max-w-7xl px-6 sm:px-6 lg:px-8 pt-24 sm:pt-32">
         {/* Stats Row */}
         <div className="relative z-10 grid grid-cols-2 md:grid-cols-4 gap-0">
           {stats.map((stat, i) => (
@@ -135,6 +135,15 @@ export function CTASection() {
                 </Button>
               </Link>
             </div>
+            <p className="mt-5 text-sm text-muted-foreground dark:text-white/60">
+              Prefer email? Reach us at{" "}
+              <a
+                href="mailto:deuxaiinfo786@gmail.com"
+                className="font-medium text-primary dark:text-white hover:underline"
+              >
+                deuxaiinfo786@gmail.com
+              </a>
+            </p>
           </div>
         </div>
       </div>

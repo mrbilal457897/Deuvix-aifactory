@@ -5,7 +5,7 @@ export interface EmailResult {
   error?: string;
 }
 
-export const DEFAULT_CONTACT_TO = "sobber.id@gmail.com";
+export const DEFAULT_CONTACT_TO = "deuxaiinfo786@gmail.com";
 const RESEND_API = "https://api.resend.com/emails";
 
 export function isEmailConfigured(): boolean {

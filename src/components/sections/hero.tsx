@@ -6,7 +6,6 @@ import Link from "next/link";
 import Image from "next/image";
 import { BlurReveal } from "@/components/split-text";
 import { useSiteConfig } from "@/hooks/use-site-config";
-import { RotatingBadge } from "./rotating-badge";
 
 const leaderDefs = [
   { name: "Bilal", role: "CO-FOUNDER / CEO", slot: "team-bilal" },
@@ -100,7 +99,14 @@ export function HeroSection() {
                 </span>
               </Link>
               <div className="trust-badge">
-                <RotatingBadge className="size-16 sm:size-20" />
+                <Image
+                  src="/images/badge1.png"
+                  alt="Deux trusted badge"
+                  width={556}
+                  height={448}
+                  className="h-12 w-auto sm:h-14"
+                  priority
+                />
               </div>
             </div>
           </div>
