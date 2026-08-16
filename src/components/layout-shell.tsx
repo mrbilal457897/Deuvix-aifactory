@@ -13,7 +13,7 @@ if (typeof window !== "undefined") {
   gsap.registerPlugin(ScrollTrigger);
 }
 
-const noFooterRoutes = ["/login", "/dashboard"];
+  const noFooterRoutes = ["/login", "/deux"];
 
 export function LayoutShell({ children }: { children: React.ReactNode }) {
   const pathname = usePathname();

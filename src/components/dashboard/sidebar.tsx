@@ -8,10 +8,10 @@ import { Zap, Folder, ArrowLeft, LogOut, Menu, X, ImageIcon, Settings, Users } f
 import { cn } from "@/lib/utils";
 
 const sidebarLinks = [
-  { href: "/dashboard", label: "Projects", icon: Folder },
-  { href: "/dashboard/users", label: "Users", icon: Users },
-  { href: "/dashboard/media", label: "Media Library", icon: ImageIcon },
-  { href: "/dashboard/images", label: "Image Settings", icon: Settings },
+  { href: "/deux", label: "Projects", icon: Folder },
+  { href: "/deux/users", label: "Users", icon: Users },
+  { href: "/deux/media", label: "Media Library", icon: ImageIcon },
+  { href: "/deux/images", label: "Image Settings", icon: Settings },
 ];
 
 function SidebarNav({ onNavigate }: { onNavigate: () => void }) {

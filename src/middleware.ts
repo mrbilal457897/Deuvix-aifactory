@@ -1,9 +1,16 @@
 import { NextResponse } from "next/server";
 import type { NextRequest } from "next/server";
 import { getToken } from "next-auth/jwt";
+import { isAdminEmail } from "@/lib/admin-emails";
 
 export async function middleware(request: NextRequest) {
-  const token = await getToken({ req: request, secret: process.env.NEXTAUTH_SECRET });
+  let token: Awaited<ReturnType<typeof getToken>> | null = null;
+  try {
+    token = await getToken({ req: request, secret: process.env.NEXTAUTH_SECRET });
+  } catch {
+    // Missing/invalid NEXTAUTH_SECRET (e.g. unconfigured deploy): treat as signed out.
+    token = null;
+  }
   const { pathname } = request.nextUrl;
 
   const isApiAuth = pathname.startsWith("/api/auth");
@@ -19,40 +26,49 @@ export async function middleware(request: NextRequest) {
   }
 
   const isApi = pathname.startsWith("/api/");
-  const isDashboard = pathname.startsWith("/dashboard");
+  const isDeux = pathname.startsWith("/deux");
+  const isLegacyDashboard = pathname.startsWith("/dashboard");
+
+  // Authorize by the email allowlist, not the session role claim, so older
+  // tokens that carry a stale role never lock an allowed owner out.
+  const isAdmin = token ? isAdminEmail(token.email as string) : false;
 
   if (isApi) {
     if (!token) {
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
     }
-    if (token.role !== "admin") {
+    if (!isAdmin) {
       return NextResponse.json({ error: "Forbidden" }, { status: 403 });
     }
     return NextResponse.next();
   }
 
-  if (isDashboard) {
+  if (isLegacyDashboard) {
     if (!token) {
-      return NextResponse.redirect(new URL("/login", request.url));
+      const login = new URL("/login", request.url);
+      login.searchParams.set("callbackUrl", pathname);
+      return NextResponse.redirect(login);
     }
-    if (token.role !== "admin") {
+    if (!isAdmin) {
       return NextResponse.redirect(new URL("/", request.url));
     }
+    return NextResponse.redirect(new URL(`/deux${pathname.slice("/dashboard".length)}`, request.url));
   }
 
-  if (pathname === "/deux") {
+  if (isDeux) {
     if (!token) {
-      return NextResponse.redirect(new URL("/login", request.url));
+      const login = new URL("/login", request.url);
+      login.searchParams.set("callbackUrl", pathname);
+      return NextResponse.redirect(login);
     }
-    if (token.role !== "admin") {
+    if (!isAdmin) {
       return NextResponse.redirect(new URL("/", request.url));
     }
-    return NextResponse.redirect(new URL("/dashboard", request.url));
   }
 
   return NextResponse.next();
 }
 
 export const config = {
-  matcher: ["/api/:path*", "/dashboard/:path*", "/deux"],
+  matcher: ["/api/:path*", "/deux/:path*", "/deux", "/dashboard/:path*", "/dashboard"],
 };

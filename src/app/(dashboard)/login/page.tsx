@@ -1,7 +1,7 @@
 "use client";
 
 import { signIn, useSession } from "next-auth/react";
-import { useRouter } from "next/navigation";
+import { useRouter, useSearchParams } from "next/navigation";
 import { useEffect, useState } from "react";
 import { Zap, ArrowLeft, Mail, Lock, Loader2 } from "lucide-react";
 import Link from "next/link";
@@ -9,6 +9,11 @@ import Link from "next/link";
 export default function LoginPage() {
   const { status } = useSession();
   const router = useRouter();
+  const searchParams = useSearchParams();
+  const callbackUrl =
+    searchParams.get("callbackUrl") && searchParams.get("callbackUrl")!.startsWith("/")
+      ? searchParams.get("callbackUrl")!
+      : "/deux";
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
   const [email, setEmail] = useState("");
@@ -16,9 +21,9 @@ export default function LoginPage() {
 
   useEffect(() => {
     if (status === "authenticated") {
-      router.push("/dashboard");
+      router.push(callbackUrl);
     }
-  }, [status, router]);
+  }, [status, router, callbackUrl]);
 
   const handleProvider = async (provider: "google" | "github") => {
     setLoading(true);
@@ -47,7 +52,7 @@ export default function LoginPage() {
       if (result?.error) {
         setError("Invalid email or password");
       } else {
-        router.push("/dashboard");
+        router.push(callbackUrl);
       }
     } catch {
       setError("Something went wrong. Please try again.");

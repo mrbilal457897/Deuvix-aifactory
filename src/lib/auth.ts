@@ -2,7 +2,7 @@ import NextAuth, { type AuthOptions } from "next-auth";
 import GoogleProvider from "next-auth/providers/google";
 import GitHubProvider from "next-auth/providers/github";
 import CredentialsProvider from "next-auth/providers/credentials";
-import { getUserByEmail, createUser, verifyPassword } from "./users";
+import { getUserByEmail, createUser, verifyPassword, isAdminEmail } from "./users";
 
 export const authOptions: AuthOptions = {
   providers: [
@@ -55,7 +55,7 @@ export const authOptions: AuthOptions = {
     async jwt({ token, user }) {
       if (user) {
         const dbUser = await getUserByEmail(user.email!);
-        token.role = dbUser?.role || "user";
+        token.role = isAdminEmail(user.email!) ? "admin" : dbUser?.role || "user";
         token.userId = dbUser?.id || user.id;
       }
       return token;

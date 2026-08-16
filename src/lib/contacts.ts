@@ -40,7 +40,11 @@ async function readContacts(): Promise<Contact[]> {
 
 async function writeContacts(items: Contact[]) {
   await ensureDataDir();
-  await fs.writeFile(CONTACTS_PATH, JSON.stringify(items, null, 2));
+  try {
+    await fs.writeFile(CONTACTS_PATH, JSON.stringify(items, null, 2));
+  } catch {
+    // Read-only filesystem (e.g. serverless deploys): persist is best-effort.
+  }
 }
 
 export async function saveContact(input: {

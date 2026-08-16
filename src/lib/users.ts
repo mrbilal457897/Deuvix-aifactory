@@ -1,10 +1,10 @@
 import fs from "fs/promises";
 import path from "path";
 import bcrypt from "bcryptjs";
+import { ADMIN_EMAILS, isAdminEmail } from "./admin-emails";
 
 const DATA_DIR = path.join(process.cwd(), "data");
 const USERS_PATH = path.join(DATA_DIR, "users.json");
-const OWNER_EMAIL = "deuxaiinfo786@gmail.com";
 
 export interface User {
   id: string;
@@ -37,7 +37,11 @@ async function readUsers(): Promise<User[]> {
 
 async function writeUsers(users: User[]): Promise<void> {
   await ensureDataDir();
-  await fs.writeFile(USERS_PATH, JSON.stringify(users, null, 2));
+  try {
+    await fs.writeFile(USERS_PATH, JSON.stringify(users, null, 2));
+  } catch {
+    // Read-only filesystem (e.g. serverless deploys): persist is best-effort.
+  }
 }
 
 export async function getUserByEmail(email: string): Promise<User | null> {
@@ -71,7 +75,7 @@ export async function createUser(data: {
     name: data.name,
     email: data.email,
     password: hashedPassword,
-    role: data.email === OWNER_EMAIL ? "admin" : "user",
+    role: ADMIN_EMAILS.includes(data.email) ? "admin" : "user",
     provider: data.provider,
     image: data.image,
     createdAt: new Date().toISOString(),
@@ -107,6 +111,8 @@ export async function verifyPassword(
   return user;
 }
 
+export { isAdminEmail } from "./admin-emails";
+
 export function isOwner(email: string): boolean {
-  return email === OWNER_EMAIL;
+  return isAdminEmail(email);
 }
