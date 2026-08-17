@@ -14,10 +14,12 @@ if (typeof window !== "undefined") {
 }
 
   const noFooterRoutes = ["/login", "/deux"];
+const noHeaderRoutes = ["/login", "/deux"];
 
 export function LayoutShell({ children }: { children: React.ReactNode }) {
   const pathname = usePathname();
   const hideFooter = noFooterRoutes.some((r) => pathname.startsWith(r));
+  const hideHeader = noHeaderRoutes.some((r) => pathname.startsWith(r));
 
   useEffect(() => {
     window.scrollTo({ top: 0, left: 0, behavior: "instant" as ScrollBehavior });
@@ -52,7 +54,7 @@ export function LayoutShell({ children }: { children: React.ReactNode }) {
 
   return (
     <>
-      <Header />
+      {!hideHeader && <Header />}
       <main className="flex-1">{children}</main>
       {!hideFooter && <Footer />}
       {!hideFooter && <ChatWidget />}

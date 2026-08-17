@@ -1,6 +1,5 @@
-import fs from "fs/promises";
-import path from "path";
-import type { Lead } from "@/lib/leads";
+import { supabase } from "./supabase";
+import type { Lead } from "./leads";
 
 export interface FollowUp {
   id: string;
@@ -15,8 +14,20 @@ export interface FollowUp {
   createdAt: string;
 }
 
-const DATA_DIR = path.join(process.cwd(), "data");
-const PATH = path.join(DATA_DIR, "follow-ups.json");
+function rowToFollowUp(row: Record<string, unknown>): FollowUp {
+  return {
+    id: row.id as string,
+    leadId: row.lead_id as string,
+    email: row.email as string,
+    name: row.name as string,
+    dueAt: row.due_at as string,
+    channel: "email",
+    subject: row.subject as string,
+    body: row.body as string,
+    status: (row.status as "pending" | "done" | "skipped") || "pending",
+    createdAt: row.created_at as string,
+  };
+}
 
 export async function scheduleFollowUp(input: {
   lead: Lead;
@@ -24,8 +35,6 @@ export async function scheduleFollowUp(input: {
   subject: string;
   body: string;
 }): Promise<FollowUp> {
-  await fs.mkdir(DATA_DIR, { recursive: true });
-
   const entry: FollowUp = {
     id: `followup_${Date.now()}`,
     leadId: input.lead.id,
@@ -39,21 +48,24 @@ export async function scheduleFollowUp(input: {
     createdAt: new Date().toISOString(),
   };
 
-  let items: FollowUp[] = [];
-  try {
-    items = JSON.parse(await fs.readFile(PATH, "utf-8"));
-  } catch {}
+  await supabase.from("follow_ups").insert({
+    id: entry.id,
+    lead_id: entry.leadId,
+    email: entry.email,
+    name: entry.name,
+    due_at: entry.dueAt,
+    channel: entry.channel,
+    subject: entry.subject,
+    body: entry.body,
+    status: entry.status,
+    created_at: entry.createdAt,
+  });
 
-  items.unshift(entry);
-  await fs.writeFile(PATH, JSON.stringify(items, null, 2));
   return entry;
 }
 
 export async function listFollowUps(): Promise<FollowUp[]> {
-  try {
-    const raw = await fs.readFile(PATH, "utf-8");
-    return JSON.parse(raw);
-  } catch {
-    return [];
-  }
+  const { data } = await supabase.from("follow_ups").select("*").order("created_at", { ascending: false });
+  if (!data) return [];
+  return data.map(rowToFollowUp);
 }

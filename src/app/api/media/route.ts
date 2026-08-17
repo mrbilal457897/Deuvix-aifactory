@@ -1,10 +1,5 @@
 import { NextResponse } from "next/server";
-import fs from "fs/promises";
-import path from "path";
-
-const DATA_DIR = path.join(process.cwd(), "data");
-const MEDIA_PATH = path.join(DATA_DIR, "media.json");
-const UPLOAD_DIR = path.join(process.cwd(), "public", "uploads");
+import { supabase } from "@/lib/supabase";
 
 interface MediaItem {
   id: string;
@@ -13,32 +8,19 @@ interface MediaItem {
   uploadedAt: string;
 }
 
-async function ensureDataDir() {
-  try {
-    await fs.access(DATA_DIR);
-  } catch {
-    await fs.mkdir(DATA_DIR, { recursive: true });
-  }
-}
-
-async function readMedia(): Promise<MediaItem[]> {
-  await ensureDataDir();
-  try {
-    const raw = await fs.readFile(MEDIA_PATH, "utf-8");
-    return JSON.parse(raw);
-  } catch {
-    return [];
-  }
-}
-
-async function writeMedia(items: MediaItem[]) {
-  await ensureDataDir();
-  await fs.writeFile(MEDIA_PATH, JSON.stringify(items, null, 2));
+function rowToMedia(row: Record<string, unknown>): MediaItem {
+  return {
+    id: row.id as string,
+    filename: row.filename as string,
+    url: row.url as string,
+    uploadedAt: row.uploaded_at as string,
+  };
 }
 
 export async function GET() {
-  const items = await readMedia();
-  return NextResponse.json(items);
+  const { data } = await supabase.from("media").select("*").order("uploaded_at", { ascending: false });
+  if (!data) return NextResponse.json([]);
+  return NextResponse.json(data.map(rowToMedia));
 }
 
 export async function POST(request: Request) {
@@ -46,30 +28,31 @@ export async function POST(request: Request) {
   const file = formData.get("file") as File | null;
   if (!file) return NextResponse.json({ error: "No file" }, { status: 400 });
 
-  const ext = path.extname(file.name) || ".jpg";
-  const filename = `${Date.now()}${ext}`;
+  const ext = file.name.split(".").pop() || "jpg";
+  const filename = `${Date.now()}.${ext}`;
   const buffer = Buffer.from(await file.arrayBuffer());
 
-  try {
-    await fs.access(UPLOAD_DIR);
-  } catch {
-    await fs.mkdir(UPLOAD_DIR, { recursive: true });
+  const { error: uploadError } = await supabase.storage
+    .from("uploads")
+    .upload(filename, buffer, { contentType: file.type });
+
+  if (uploadError) {
+    console.error("Upload failed:", uploadError.message);
+    return NextResponse.json({ error: "Upload failed" }, { status: 500 });
   }
 
-  await fs.writeFile(path.join(UPLOAD_DIR, filename), buffer);
+  const { data: urlData } = supabase.storage.from("uploads").getPublicUrl(filename);
 
-  const item: MediaItem = {
+  const item = {
     id: Date.now().toString(),
     filename,
-    url: `/uploads/${filename}`,
-    uploadedAt: new Date().toISOString(),
+    url: urlData.publicUrl,
+    uploaded_at: new Date().toISOString(),
   };
 
-  const items = await readMedia();
-  items.unshift(item);
-  await writeMedia(items);
+  await supabase.from("media").insert(item);
 
-  return NextResponse.json(item, { status: 201 });
+  return NextResponse.json(rowToMedia(item), { status: 201 });
 }
 
 export async function DELETE(request: Request) {
@@ -77,20 +60,11 @@ export async function DELETE(request: Request) {
   const id = searchParams.get("id");
   if (!id) return NextResponse.json({ error: "Missing id" }, { status: 400 });
 
-  const items = await readMedia();
-  const item = items.find((i) => i.id === id);
+  const { data: item } = await supabase.from("media").select("filename").eq("id", id).single();
   if (!item) return NextResponse.json({ error: "Not found" }, { status: 404 });
 
-  // Delete file from disk
-  const filePath = path.join(UPLOAD_DIR, item.filename);
-  try {
-    await fs.unlink(filePath);
-  } catch {
-    // file may not exist
-  }
-
-  const filtered = items.filter((i) => i.id !== id);
-  await writeMedia(filtered);
+  await supabase.storage.from("uploads").remove([item.filename]);
+  await supabase.from("media").delete().eq("id", id);
 
   return NextResponse.json({ success: true });
 }

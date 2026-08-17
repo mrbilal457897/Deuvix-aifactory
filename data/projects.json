@@ -8,5 +8,16 @@
     "image": "https://image.thum.io/get/width/800/crop/500/https://b-treasure-ecommerce-web.vercel.app/",
     "createdAt": "2026-07-22T18:05:55.397Z",
     "updatedAt": "2026-07-22T18:05:55.397Z"
+  },
+  {
+    "id": "1786989998558",
+    "title": "AI Textbook",
+    "description": "Physical AI and Humanoid Robotics Textbook",
+    "category": "AI",
+    "status": "Active",
+    "image": "/uploads/1786989974425.png",
+    "url": "https://robotic-textbook-a.vercel.app/",
+    "createdAt": "2026-08-17T18:06:38.558Z",
+    "updatedAt": "2026-08-17T18:06:38.558Z"
   }
 ]

@@ -1,5 +1,4 @@
-import fs from "fs/promises";
-import path from "path";
+import { supabase } from "./supabase";
 import type { Contact } from "@/lib/contacts";
 
 export interface Lead {
@@ -17,35 +16,48 @@ export interface Lead {
   createdAt: string;
 }
 
-const DATA_DIR = path.join(process.cwd(), "data");
-const LEADS_PATH = path.join(DATA_DIR, "leads.json");
-
-async function readLeads(): Promise<Lead[]> {
-  try {
-    const raw = await fs.readFile(LEADS_PATH, "utf-8");
-    return JSON.parse(raw);
-  } catch {
-    return [];
-  }
+function rowToLead(row: Record<string, unknown>): Lead {
+  return {
+    id: row.id as string,
+    contactId: row.contact_id as string | undefined,
+    name: row.name as string,
+    email: row.email as string,
+    phone: row.phone as string,
+    service: row.service as string,
+    message: row.message as string,
+    score: row.score as number,
+    status: (row.status as "hot" | "warm" | "cold") || "cold",
+    priority: (row.priority as "high" | "medium" | "low") || "low",
+    notes: row.notes as string | undefined,
+    createdAt: row.created_at as string,
+  };
 }
 
 export async function listLeads(): Promise<Lead[]> {
-  return readLeads();
+  const { data } = await supabase.from("leads").select("*").order("created_at", { ascending: false });
+  if (!data) return [];
+  return data.map(rowToLead);
 }
 
 export async function saveLead(lead: Lead): Promise<void> {
-  await fs.mkdir(DATA_DIR, { recursive: true });
-  const leads = await readLeads();
-  leads.unshift(lead);
-  await fs.writeFile(LEADS_PATH, JSON.stringify(leads, null, 2));
+  await supabase.from("leads").insert({
+    id: lead.id,
+    contact_id: lead.contactId,
+    name: lead.name,
+    email: lead.email,
+    phone: lead.phone,
+    service: lead.service,
+    message: lead.message,
+    score: lead.score,
+    status: lead.status,
+    priority: lead.priority,
+    notes: lead.notes,
+    created_at: lead.createdAt,
+  });
 }
 
 export async function updateLeadStatus(id: string, status: Lead["status"]): Promise<void> {
-  const leads = await readLeads();
-  const index = leads.findIndex((l) => l.id === id);
-  if (index === -1) return;
-  leads[index].status = status;
-  await fs.writeFile(LEADS_PATH, JSON.stringify(leads, null, 2));
+  await supabase.from("leads").update({ status }).eq("id", id);
 }
 
 export function leadFromContact(contact: Contact, score: number, status: Lead["status"], priority: Lead["priority"]): Lead {

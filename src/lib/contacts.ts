@@ -1,5 +1,4 @@
-import fs from "fs/promises";
-import path from "path";
+import { supabase } from "./supabase";
 import { sendEmail, escapeHtml, DEFAULT_CONTACT_TO } from "./email";
 
 export interface Contact {
@@ -17,34 +16,21 @@ export interface Contact {
   createdAt: string;
 }
 
-const DATA_DIR = path.join(process.cwd(), "data");
-const CONTACTS_PATH = path.join(DATA_DIR, "contacts.json");
-
-async function ensureDataDir() {
-  try {
-    await fs.access(DATA_DIR);
-  } catch {
-    await fs.mkdir(DATA_DIR, { recursive: true });
-  }
-}
-
-async function readContacts(): Promise<Contact[]> {
-  await ensureDataDir();
-  try {
-    const raw = await fs.readFile(CONTACTS_PATH, "utf-8");
-    return JSON.parse(raw);
-  } catch {
-    return [];
-  }
-}
-
-async function writeContacts(items: Contact[]) {
-  await ensureDataDir();
-  try {
-    await fs.writeFile(CONTACTS_PATH, JSON.stringify(items, null, 2));
-  } catch {
-    // Read-only filesystem (e.g. serverless deploys): persist is best-effort.
-  }
+function rowToContact(row: Record<string, unknown>): Contact {
+  return {
+    id: row.id as string,
+    name: row.name as string,
+    email: row.email as string,
+    phone: row.phone as string,
+    service: row.service as string,
+    portfolio: row.portfolio as string | undefined,
+    message: row.message as string,
+    leadStatus: row.lead_status as string | undefined,
+    leadScore: row.lead_score as number | undefined,
+    emailSent: row.email_sent as boolean | undefined,
+    emailProvider: row.email_provider as string | undefined,
+    createdAt: row.created_at as string,
+  };
 }
 
 export async function saveContact(input: {
@@ -91,13 +77,24 @@ export async function saveContact(input: {
   contact.emailSent = email.ok;
   contact.emailProvider = email.provider;
 
-  const items = await readContacts();
-  items.unshift(contact);
-  await writeContacts(items);
+  await supabase.from("contacts").insert({
+    id: contact.id,
+    name: contact.name,
+    email: contact.email,
+    phone: contact.phone,
+    service: contact.service,
+    portfolio: contact.portfolio,
+    message: contact.message,
+    email_sent: contact.emailSent,
+    email_provider: contact.emailProvider,
+    created_at: contact.createdAt,
+  });
 
   return { contact, email };
 }
 
 export async function listContacts(): Promise<Contact[]> {
-  return readContacts();
+  const { data } = await supabase.from("contacts").select("*").order("created_at", { ascending: false });
+  if (!data) return [];
+  return data.map(rowToContact);
 }

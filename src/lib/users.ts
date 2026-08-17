@@ -1,10 +1,6 @@
-import fs from "fs/promises";
-import path from "path";
 import bcrypt from "bcryptjs";
+import { supabase } from "./supabase";
 import { ADMIN_EMAILS, isAdminEmail } from "./admin-emails";
-
-const DATA_DIR = path.join(process.cwd(), "data");
-const USERS_PATH = path.join(DATA_DIR, "users.json");
 
 export interface User {
   id: string;
@@ -17,41 +13,29 @@ export interface User {
   createdAt: string;
 }
 
-async function ensureDataDir() {
-  try {
-    await fs.access(DATA_DIR);
-  } catch {
-    await fs.mkdir(DATA_DIR, { recursive: true });
-  }
-}
-
-async function readUsers(): Promise<User[]> {
-  await ensureDataDir();
-  try {
-    const raw = await fs.readFile(USERS_PATH, "utf-8");
-    return JSON.parse(raw);
-  } catch {
-    return [];
-  }
-}
-
-async function writeUsers(users: User[]): Promise<void> {
-  await ensureDataDir();
-  try {
-    await fs.writeFile(USERS_PATH, JSON.stringify(users, null, 2));
-  } catch {
-    // Read-only filesystem (e.g. serverless deploys): persist is best-effort.
-  }
+function rowToUser(row: Record<string, unknown>): User {
+  return {
+    id: row.id as string,
+    name: row.name as string,
+    email: row.email as string,
+    password: row.password as string | undefined,
+    role: (row.role as "admin" | "user") || "user",
+    provider: (row.provider as "credentials" | "google" | "github") || "credentials",
+    image: row.image as string | undefined,
+    createdAt: row.created_at as string,
+  };
 }
 
 export async function getUserByEmail(email: string): Promise<User | null> {
-  const users = await readUsers();
-  return users.find((u) => u.email === email) || null;
+  const { data } = await supabase.from("users").select("*").eq("email", email).single();
+  if (!data) return null;
+  return rowToUser(data);
 }
 
 export async function getUserById(id: string): Promise<User | null> {
-  const users = await readUsers();
-  return users.find((u) => u.id === id) || null;
+  const { data } = await supabase.from("users").select("*").eq("id", id).single();
+  if (!data) return null;
+  return rowToUser(data);
 }
 
 export async function createUser(data: {
@@ -61,16 +45,14 @@ export async function createUser(data: {
   provider: "credentials" | "google" | "github";
   image?: string;
 }): Promise<User> {
-  const users = await readUsers();
-
-  const existing = users.find((u) => u.email === data.email);
+  const existing = await getUserByEmail(data.email);
   if (existing) return existing;
 
   const hashedPassword = data.password
     ? await bcrypt.hash(data.password, 12)
     : undefined;
 
-  const newUser: User = {
+  const newUser = {
     id: Date.now().toString(),
     name: data.name,
     email: data.email,
@@ -78,24 +60,26 @@ export async function createUser(data: {
     role: ADMIN_EMAILS.includes(data.email) ? "admin" : "user",
     provider: data.provider,
     image: data.image,
-    createdAt: new Date().toISOString(),
+    created_at: new Date().toISOString(),
   };
 
-  users.push(newUser);
-  await writeUsers(users);
-  return newUser;
+  const { error } = await supabase.from("users").insert(newUser);
+  if (error) {
+    console.error("Failed to create user:", error.message);
+  }
+
+  return rowToUser(newUser);
 }
 
 export async function getAllUsers(): Promise<User[]> {
-  return readUsers();
+  const { data } = await supabase.from("users").select("*").order("created_at", { ascending: false });
+  if (!data) return [];
+  return data.map(rowToUser);
 }
 
 export async function deleteUser(id: string): Promise<boolean> {
-  const users = await readUsers();
-  const filtered = users.filter((u) => u.id !== id);
-  if (filtered.length === users.length) return false;
-  await writeUsers(filtered);
-  return true;
+  const { error } = await supabase.from("users").delete().eq("id", id);
+  return !error;
 }
 
 export async function verifyPassword(

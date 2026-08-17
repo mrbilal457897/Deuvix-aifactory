@@ -4,7 +4,7 @@ import { useState, useRef, useEffect } from "react";
 import { useSession } from "next-auth/react";
 import { useRouter } from "next/navigation";
 import Image from "next/image";
-import { Save, ImageIcon } from "lucide-react";
+import { Save, ImageIcon, RotateCcw, Check } from "lucide-react";
 import ImagePicker from "@/components/admin/image-picker";
 import { SLOT_LABELS, SLOT_KEYS } from "@/lib/site-config";
 
@@ -49,35 +49,17 @@ export default function ImagesSettingsPage() {
         savedRef.current = json;
       }
     })();
-    return () => {
-      cancelled = true;
-    };
+    return () => { cancelled = true; };
   }, [session]);
 
   const handleSelect = (url: string) => {
-    if (activeSlot) {
-      setConfig((prev) => ({ ...prev, [activeSlot]: url }));
-    }
+    if (activeSlot) setConfig((prev) => ({ ...prev, [activeSlot]: url }));
   };
 
-  // Remove upload files that a slot no longer references after a save, so a
-  // replaced image doesn't stay stored forever.
-  const cleanupOrphanedUploads = async (
-    previous: SiteConfig,
-    next: SiteConfig
-  ) => {
-    const stillUsed = new Set(
-      Object.values(next).filter((v): v is string => typeof v === "string")
-    );
-    const orphans = [
-      ...new Set(
-        Object.values(previous).filter(
-          (v): v is string => typeof v === "string" && v.startsWith("/uploads/")
-        )
-      ),
-    ].filter((url) => !stillUsed.has(url));
+  const cleanupOrphanedUploads = async (previous: SiteConfig, next: SiteConfig) => {
+    const stillUsed = new Set(Object.values(next).filter((v): v is string => typeof v === "string"));
+    const orphans = [...new Set(Object.values(previous).filter((v): v is string => typeof v === "string" && v.startsWith("/uploads/")))].filter((url) => !stillUsed.has(url));
     if (orphans.length === 0) return;
-
     const res = await fetch("/api/media");
     if (!res.ok) return;
     const items: { id: string; url: string }[] = await res.json();
@@ -90,11 +72,7 @@ export default function ImagesSettingsPage() {
   const handleSave = async () => {
     setSaving(true);
     const previous = savedRef.current;
-    const res = await fetch("/api/site-config", {
-      method: "PUT",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify(config),
-    });
+    const res = await fetch("/api/site-config", { method: "PUT", headers: { "Content-Type": "application/json" }, body: JSON.stringify(config) });
     if (res.ok) {
       await cleanupOrphanedUploads(previous, config);
       savedRef.current = config;
@@ -104,61 +82,51 @@ export default function ImagesSettingsPage() {
     setSaving(false);
   };
 
-  const handleReset = () => {
-    setConfig({ ...DEFAULTS });
-  };
-
   if (status === "loading" || !session) {
-    return <div className="flex items-center justify-center min-h-[60vh] text-muted-foreground">Loading...</div>;
+    return <div className="flex items-center justify-center min-h-[60vh]"><div className="size-8 border-2 border-primary border-t-transparent rounded-full animate-spin" /></div>;
   }
 
   return (
-    <div className="p-6 max-w-5xl mx-auto">
-      <div className="flex flex-wrap items-center justify-between gap-3 mb-8">
+    <div>
+      <div className="flex flex-wrap items-center justify-between gap-3 mb-6">
         <div>
-          <h1 className="font-heading text-2xl font-bold mb-2">Image Settings</h1>
-          <p className="text-muted-foreground text-sm">Assign images to different parts of your website.</p>
+          <h1 className="font-heading text-2xl font-bold text-foreground">Image Settings</h1>
+          <p className="text-sm text-muted-foreground mt-1">Assign images to different parts of your website.</p>
         </div>
-        <div className="flex flex-wrap gap-2">
-          <button
-            onClick={handleReset}
-            className="px-4 py-2 rounded-lg border border-border text-sm font-medium hover:bg-muted transition-colors"
-          >
-            Reset Defaults
+        <div className="flex gap-2">
+          <button onClick={() => setConfig({ ...DEFAULTS })} className="inline-flex items-center gap-2 px-4 py-2.5 rounded-xl border border-border text-sm text-muted-foreground hover:text-foreground hover:bg-muted transition-colors">
+            <RotateCcw className="size-4" />
+            Reset
           </button>
-          <button
-            onClick={handleSave}
-            disabled={saving}
-            className="inline-flex items-center gap-2 px-4 py-2 rounded-lg bg-primary text-primary-foreground text-sm font-medium hover:bg-primary/90 transition-colors disabled:opacity-50"
-          >
-            <Save className="size-4" />
+          <button onClick={handleSave} disabled={saving} className="inline-flex items-center gap-2 px-5 py-2.5 rounded-xl bg-gradient-to-r from-primary to-primary/80 text-primary-foreground text-sm font-medium hover:from-primary/90 hover:to-primary/70 transition-all shadow-lg shadow-primary/20 disabled:opacity-50">
+            {saving ? <div className="size-4 border-2 border-primary-foreground border-t-transparent rounded-full animate-spin" /> : saved ? <Check className="size-4" /> : <Save className="size-4" />}
             {saving ? "Saving..." : saved ? "Saved!" : "Save Changes"}
           </button>
         </div>
       </div>
 
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3">
         {SLOT_KEYS.map((slot) => {
           const url = config[slot] || DEFAULTS[slot];
           return (
-            <div key={slot} className="border border-border rounded-xl overflow-hidden bg-card">
+            <div key={slot} className="rounded-2xl border border-border bg-card overflow-hidden hover:border-primary/30 transition-all group">
               <div className="relative aspect-video bg-muted">
                 {url ? (
                   <Image src={url} alt={SLOT_LABELS[slot]} fill className="object-cover" sizes="400px" />
                 ) : (
                   <div className="flex items-center justify-center h-full">
-                    <ImageIcon className="size-8 text-muted-foreground" />
+                    <ImageIcon className="size-8 text-muted-foreground/40" />
                   </div>
                 )}
               </div>
-              <div className="p-3 flex items-center justify-between">
-                <div>
-                  <p className="font-medium text-sm">{SLOT_LABELS[slot]}</p>
-                  <p className="text-xs text-muted-foreground truncate max-w-[180px]">{url}</p>
+              <div className="p-3.5 flex items-center justify-between">
+                <div className="min-w-0">
+                  <p className="font-medium text-sm text-foreground">{SLOT_LABELS[slot]}</p>
+                  <p className="text-[10px] text-muted-foreground truncate max-w-[180px] mt-0.5">{url}</p>
                 </div>
                 <button
                   onClick={() => { setActiveSlot(slot); setPickerOpen(true); }}
-                  className="px-3 py-1.5 rounded-lg border border-border text-xs font-medium hover:bg-muted transition-colors"
+                  className="px-3 py-1.5 rounded-lg border border-border text-xs font-medium text-muted-foreground hover:text-foreground hover:bg-muted transition-colors shrink-0 ml-3"
                 >
                   Change
                 </button>
@@ -168,11 +136,7 @@ export default function ImagesSettingsPage() {
         })}
       </div>
 
-      <ImagePicker
-        open={pickerOpen}
-        onClose={() => setPickerOpen(false)}
-        onSelect={handleSelect}
-      />
+      <ImagePicker open={pickerOpen} onClose={() => setPickerOpen(false)} onSelect={handleSelect} />
     </div>
   );
 }

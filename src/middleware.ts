@@ -3,12 +3,13 @@ import type { NextRequest } from "next/server";
 import { getToken } from "next-auth/jwt";
 import { isAdminEmail } from "@/lib/admin-emails";
 
+const DASHBOARD_PREFIX = process.env.DASHBOARD_PREFIX || "/deux";
+
 export async function middleware(request: NextRequest) {
   let token: Awaited<ReturnType<typeof getToken>> | null = null;
   try {
     token = await getToken({ req: request, secret: process.env.NEXTAUTH_SECRET });
   } catch {
-    // Missing/invalid NEXTAUTH_SECRET (e.g. unconfigured deploy): treat as signed out.
     token = null;
   }
   const { pathname } = request.nextUrl;
@@ -26,11 +27,14 @@ export async function middleware(request: NextRequest) {
   }
 
   const isApi = pathname.startsWith("/api/");
-  const isDeux = pathname.startsWith("/deux");
+
+  // Match dashboard routes: exact prefix, prefix/sub, or legacy /dashboard
+  const isDashboard =
+    pathname === DASHBOARD_PREFIX ||
+    pathname.startsWith(DASHBOARD_PREFIX + "/") ||
+    pathname.startsWith("/dashboard");
   const isLegacyDashboard = pathname.startsWith("/dashboard");
 
-  // Authorize by the email allowlist, not the session role claim, so older
-  // tokens that carry a stale role never lock an allowed owner out.
   const isAdmin = token ? isAdminEmail(token.email as string) : false;
 
   if (isApi) {
@@ -52,10 +56,10 @@ export async function middleware(request: NextRequest) {
     if (!isAdmin) {
       return NextResponse.redirect(new URL("/", request.url));
     }
-    return NextResponse.redirect(new URL(`/deux${pathname.slice("/dashboard".length)}`, request.url));
+    return NextResponse.redirect(new URL(`${DASHBOARD_PREFIX}${pathname.slice("/dashboard".length)}`, request.url));
   }
 
-  if (isDeux) {
+  if (isDashboard) {
     if (!token) {
       const login = new URL("/login", request.url);
       login.searchParams.set("callbackUrl", pathname);
@@ -70,5 +74,11 @@ export async function middleware(request: NextRequest) {
 }
 
 export const config = {
-  matcher: ["/api/:path*", "/deux/:path*", "/deux", "/dashboard/:path*", "/dashboard"],
+  matcher: [
+    "/api/:path*",
+    "/dashboard/:path*",
+    "/dashboard",
+    "/deux/:path*",
+    "/deux",
+  ],
 };

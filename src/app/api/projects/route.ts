@@ -1,9 +1,5 @@
 import { NextResponse } from "next/server";
-import { readFile, writeFile, mkdir } from "fs/promises";
-import { existsSync } from "fs";
-import path from "path";
-
-const DATA_FILE = path.join(process.cwd(), "data", "projects.json");
+import { supabase } from "@/lib/supabase";
 
 interface Project {
   id: string;
@@ -17,31 +13,29 @@ interface Project {
   updatedAt: string;
 }
 
-async function ensureDataDir() {
-  const dir = path.join(process.cwd(), "data");
-  if (!existsSync(dir)) {
-    await mkdir(dir, { recursive: true });
-  }
-  if (!existsSync(DATA_FILE)) {
-    await writeFile(DATA_FILE, JSON.stringify([], null, 2));
-  }
-}
-
-async function readProjects(): Promise<Project[]> {
-  await ensureDataDir();
-  const data = await readFile(DATA_FILE, "utf-8");
-  return JSON.parse(data);
-}
-
-async function writeProjects(projects: Project[]) {
-  await ensureDataDir();
-  await writeFile(DATA_FILE, JSON.stringify(projects, null, 2));
+function rowToProject(row: Record<string, unknown>): Project {
+  return {
+    id: row.id as string,
+    title: row.title as string,
+    description: row.description as string,
+    category: row.category as string,
+    status: row.status as string,
+    image: row.image as string | undefined,
+    url: row.url as string | undefined,
+    createdAt: row.created_at as string,
+    updatedAt: row.updated_at as string,
+  };
 }
 
 export async function GET() {
   try {
-    const projects = await readProjects();
-    return NextResponse.json(projects);
+    const { data, error } = await supabase
+      .from("projects")
+      .select("*")
+      .order("created_at", { ascending: false });
+
+    if (error) throw error;
+    return NextResponse.json((data || []).map(rowToProject));
   } catch {
     return NextResponse.json([], { status: 200 });
   }
@@ -50,9 +44,8 @@ export async function GET() {
 export async function POST(request: Request) {
   try {
     const body = await request.json();
-    const projects = await readProjects();
 
-    const newProject: Project = {
+    const newProject = {
       id: Date.now().toString(),
       title: body.title,
       description: body.description,
@@ -60,14 +53,14 @@ export async function POST(request: Request) {
       status: body.status || "Active",
       image: body.image || "",
       url: body.url || "",
-      createdAt: new Date().toISOString(),
-      updatedAt: new Date().toISOString(),
+      created_at: new Date().toISOString(),
+      updated_at: new Date().toISOString(),
     };
 
-    projects.push(newProject);
-    await writeProjects(projects);
+    const { error } = await supabase.from("projects").insert(newProject);
+    if (error) throw error;
 
-    return NextResponse.json(newProject, { status: 201 });
+    return NextResponse.json(rowToProject(newProject), { status: 201 });
   } catch {
     return NextResponse.json({ error: "Failed to create project" }, { status: 500 });
   }
@@ -76,21 +69,36 @@ export async function POST(request: Request) {
 export async function PUT(request: Request) {
   try {
     const body = await request.json();
-    const projects = await readProjects();
 
-    const index = projects.findIndex((p) => p.id === body.id);
-    if (index === -1) {
+    const { data: existing, error: fetchError } = await supabase
+      .from("projects")
+      .select("id")
+      .eq("id", body.id)
+      .single();
+
+    if (fetchError || !existing) {
       return NextResponse.json({ error: "Project not found" }, { status: 404 });
     }
 
-    projects[index] = {
-      ...projects[index],
-      ...body,
-      updatedAt: new Date().toISOString(),
+    const updates = {
+      title: body.title,
+      description: body.description,
+      category: body.category,
+      status: body.status,
+      image: body.image,
+      url: body.url,
+      updated_at: new Date().toISOString(),
     };
 
-    await writeProjects(projects);
-    return NextResponse.json(projects[index]);
+    const { data: updated, error: updateError } = await supabase
+      .from("projects")
+      .update(updates)
+      .eq("id", body.id)
+      .select()
+      .single();
+
+    if (updateError) throw updateError;
+    return NextResponse.json(rowToProject(updated));
   } catch {
     return NextResponse.json({ error: "Failed to update project" }, { status: 500 });
   }
@@ -99,9 +107,8 @@ export async function PUT(request: Request) {
 export async function DELETE(request: Request) {
   try {
     const { id } = await request.json();
-    let projects = await readProjects();
-    projects = projects.filter((p) => p.id !== id);
-    await writeProjects(projects);
+    const { error } = await supabase.from("projects").delete().eq("id", id);
+    if (error) throw error;
     return NextResponse.json({ success: true });
   } catch {
     return NextResponse.json({ error: "Failed to delete project" }, { status: 500 });

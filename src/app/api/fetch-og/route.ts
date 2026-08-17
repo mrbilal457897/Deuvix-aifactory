@@ -1,9 +1,5 @@
 import { NextResponse } from "next/server";
-import { writeFile, mkdir } from "fs/promises";
-import { existsSync } from "fs";
-import path from "path";
-
-const UPLOAD_DIR = path.join(process.cwd(), "public", "uploads");
+import { supabase } from "@/lib/supabase";
 
 function decodeHtmlEntities(str: string): string {
   return str
@@ -17,13 +13,15 @@ function decodeHtmlEntities(str: string): string {
 }
 
 async function saveImageBuffer(buffer: Buffer, contentType: string): Promise<string> {
-  if (!existsSync(UPLOAD_DIR)) {
-    await mkdir(UPLOAD_DIR, { recursive: true });
-  }
   const ext = (contentType.split("/")[1] || "jpg").replace(/[^a-z0-9]/gi, "");
   const filename = `${Date.now()}.${ext || "jpg"}`;
-  await writeFile(path.join(UPLOAD_DIR, filename), buffer);
-  return `/uploads/${filename}`;
+
+  await supabase.storage
+    .from("uploads")
+    .upload(filename, buffer, { contentType });
+
+  const { data: urlData } = supabase.storage.from("uploads").getPublicUrl(filename);
+  return urlData.publicUrl;
 }
 
 async function saveScreenshot(url: string): Promise<string | null> {
@@ -57,7 +55,6 @@ async function fetchOgImage(url: string, parsedUrl: URL): Promise<string | null>
 
     const html = await res.text();
 
-    // Try og:image
     const ogMatch = html.match(
       /<meta[^>]*property=["']og:image["'][^>]*content=["']([^"']+)["']/i
     ) || html.match(
@@ -65,7 +62,6 @@ async function fetchOgImage(url: string, parsedUrl: URL): Promise<string | null>
     );
     if (ogMatch?.[1]) return resolveUrl(parsedUrl, decodeHtmlEntities(ogMatch[1]));
 
-    // Try twitter:image
     const twitterMatch = html.match(
       /<meta[^>]*name=["']twitter:image["'][^>]*content=["']([^"']+)["']/i
     ) || html.match(
@@ -73,7 +69,6 @@ async function fetchOgImage(url: string, parsedUrl: URL): Promise<string | null>
     );
     if (twitterMatch?.[1]) return resolveUrl(parsedUrl, decodeHtmlEntities(twitterMatch[1]));
 
-    // Try link rel="image_src"
     const linkMatch = html.match(
       /<link[^>]*rel=["']image_src["'][^>]*href=["']([^"']+)["']/i
     ) || html.match(
@@ -81,7 +76,6 @@ async function fetchOgImage(url: string, parsedUrl: URL): Promise<string | null>
     );
     if (linkMatch?.[1]) return resolveUrl(parsedUrl, decodeHtmlEntities(linkMatch[1]));
 
-    // Try first <img> src
     const imgMatch = html.match(/<img[^>]+src=["']([^"']+)["']/i);
     if (imgMatch?.[1]) return resolveUrl(parsedUrl, decodeHtmlEntities(imgMatch[1]));
 
@@ -120,13 +114,11 @@ export async function POST(request: Request) {
       return NextResponse.json({ error: "Invalid URL" }, { status: 400 });
     }
 
-    // Priority 1: OG/meta image from HTML, saved locally
     const metaImage = await saveMetaImage(parsedUrl.toString(), parsedUrl);
     if (metaImage) {
       return NextResponse.json({ image: metaImage });
     }
 
-    // Priority 2: Screenshot fallback (works for ANY website), saved locally
     const screenshot = await saveScreenshot(parsedUrl.toString());
     if (screenshot) {
       return NextResponse.json({ image: screenshot });
