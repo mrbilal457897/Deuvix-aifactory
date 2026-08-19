@@ -15,12 +15,12 @@ export async function POST(request: Request) {
     const buffer = Buffer.from(await file.arrayBuffer());
 
     const { error } = await supabase.storage
-      .from("uploads")
+      .from("deux")
       .upload(filename, buffer, { contentType: file.type });
 
     if (error) throw error;
 
-    const { data: urlData } = supabase.storage.from("uploads").getPublicUrl(filename);
+    const { data: urlData } = supabase.storage.from("deux").getPublicUrl(filename);
     return NextResponse.json({ url: urlData.publicUrl });
   } catch {
     return NextResponse.json({ error: "Upload failed" }, { status: 500 });

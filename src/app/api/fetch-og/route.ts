@@ -17,10 +17,10 @@ async function saveImageBuffer(buffer: Buffer, contentType: string): Promise<str
   const filename = `${Date.now()}.${ext || "jpg"}`;
 
   await supabase.storage
-    .from("uploads")
+    .from("deux")
     .upload(filename, buffer, { contentType });
 
-  const { data: urlData } = supabase.storage.from("uploads").getPublicUrl(filename);
+  const { data: urlData } = supabase.storage.from("deux").getPublicUrl(filename);
   return urlData.publicUrl;
 }
 

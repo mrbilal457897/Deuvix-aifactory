@@ -108,16 +108,15 @@ export default function ContactPage() {
   return (
     <div className="relative dark">
       {/* Full background image */}
-      <div className="fixed inset-0 -z-10">
-        <Image
-          src={img("contact-bg")}
-          alt=""
-          fill
-          priority
-          className="object-cover"
-          sizes="100vw"
-        />
-        <div className="absolute inset-0 bg-background/90 dark:bg-black/60" />
+      <div
+        className="fixed inset-0 -z-10 bg-no-repeat"
+        style={{
+          backgroundImage: `url(${img("contact-bg")})`,
+          backgroundSize: "cover",
+          backgroundPosition: "center 25%",
+        }}
+      >
+        <div className="absolute inset-0 bg-black/40" />
       </div>
 
       {/* Hero */}

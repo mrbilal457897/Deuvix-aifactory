@@ -33,7 +33,7 @@ export async function POST(request: Request) {
   const buffer = Buffer.from(await file.arrayBuffer());
 
   const { error: uploadError } = await supabase.storage
-    .from("uploads")
+    .from("deux")
     .upload(filename, buffer, { contentType: file.type });
 
   if (uploadError) {
@@ -41,7 +41,7 @@ export async function POST(request: Request) {
     return NextResponse.json({ error: "Upload failed" }, { status: 500 });
   }
 
-  const { data: urlData } = supabase.storage.from("uploads").getPublicUrl(filename);
+  const { data: urlData } = supabase.storage.from("deux").getPublicUrl(filename);
 
   const item = {
     id: Date.now().toString(),
@@ -63,7 +63,7 @@ export async function DELETE(request: Request) {
   const { data: item } = await supabase.from("media").select("filename").eq("id", id).single();
   if (!item) return NextResponse.json({ error: "Not found" }, { status: 404 });
 
-  await supabase.storage.from("uploads").remove([item.filename]);
+  await supabase.storage.from("deux").remove([item.filename]);
   await supabase.from("media").delete().eq("id", id);
 
   return NextResponse.json({ success: true });

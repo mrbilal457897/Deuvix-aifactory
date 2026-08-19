@@ -58,7 +58,9 @@ export default function ImagesSettingsPage() {
 
   const cleanupOrphanedUploads = async (previous: SiteConfig, next: SiteConfig) => {
     const stillUsed = new Set(Object.values(next).filter((v): v is string => typeof v === "string"));
-    const orphans = [...new Set(Object.values(previous).filter((v): v is string => typeof v === "string" && v.startsWith("/uploads/")))].filter((url) => !stillUsed.has(url));
+    const SUPABASE_STORAGE = process.env.NEXT_PUBLIC_SUPABASE_URL || "";
+    const isUploadedUrl = (v: string) => v.startsWith("/uploads/") || (SUPABASE_STORAGE.length > 0 && v.startsWith(SUPABASE_STORAGE));
+    const orphans = [...new Set(Object.values(previous).filter((v): v is string => typeof v === "string" && isUploadedUrl(v)))].filter((url) => !stillUsed.has(url));
     if (orphans.length === 0) return;
     const res = await fetch("/api/media");
     if (!res.ok) return;
