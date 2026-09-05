@@ -68,7 +68,7 @@ export function TeamSection() {
     <section id="team" className="py-24 px-6 bg-surface dark:bg-transparent" ref={sectionRef}>
       {/* Section Title */}
       <div className="text-center mb-14">
-        <h2 className="font-heading text-3xl sm:text-4xl font-bold mb-3"><CharReveal>Team</CharReveal></h2>
+        <h2 className="font-heading text-3xl sm:text-4xl font-bold mb-3 text-foreground dark:text-white"><CharReveal>Team</CharReveal></h2>
         <p className="text-muted-foreground text-sm uppercase tracking-widest font-medium">
           Meet Our Team
         </p>
@@ -113,12 +113,12 @@ export function TeamSection() {
               </div>
 
               {/* Member Info - overlapping image bottom */}
-              <div className="absolute bottom-0 left-5 right-5 backdrop-blur-md bg-black/60 border border-white/10 dark:border-white/10 shadow-[0_2px_15px_rgba(0,0,0,0.3)] px-4 py-5">
-                <h4 className="font-heading text-base font-bold mb-2.5 relative pb-2.5">
+              <div className="absolute bottom-0 left-5 right-5 backdrop-blur-md bg-background/80 dark:bg-black/60 border border-border dark:border-white/10 shadow-[0_2px_15px_rgba(0,0,0,0.15)] dark:shadow-[0_2px_15px_rgba(0,0,0,0.3)] px-4 py-5">
+                <h4 className="font-heading text-base font-bold mb-2.5 relative pb-2.5 text-foreground dark:text-white">
                   {member.name}
                   <span className="absolute bottom-0 left-0 w-[50px] h-px bg-muted-foreground/40" />
                 </h4>
-                <span className="italic text-[13px] text-muted-foreground block mb-0">
+                <span className="italic text-[13px] text-muted-foreground dark:text-muted-foreground block mb-0">
                   {member.role}
                 </span>
                 <div className="absolute right-3.5 bottom-3.5 flex items-center gap-1">

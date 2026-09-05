@@ -116,7 +116,7 @@ export default function ContactPage() {
           backgroundPosition: "center 25%",
         }}
       >
-        <div className="absolute inset-0 bg-black/40" />
+        <div className="absolute inset-0 bg-white/60 dark:bg-black/40" />
       </div>
 
       {/* Hero */}
