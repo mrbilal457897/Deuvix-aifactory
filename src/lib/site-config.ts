@@ -20,8 +20,8 @@ export const SLOT_LABELS: Record<string, string> = {
   "cta-bg": "CTA Background",
   "about-main": "About Main Image",
   "about-secondary": "About Corner Badge",
-  "team-bilal": "Team — Bilal",
-  "team-asad": "Team — Asad",
+  "team-bilal": "Team — Bilal Ali",
+  "team-asad": "Team — Asadullah",
   "product-bg": "Products Background",
   "contact-bg": "Contact Background",
 };

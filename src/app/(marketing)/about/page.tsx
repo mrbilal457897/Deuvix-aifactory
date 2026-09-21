@@ -32,13 +32,13 @@ const timeline = [
 
 const leaders = [
   {
-    name: "Bilal",
+    name: "Bilal Ali",
     role: "Co-founder & CEO",
     description: "Turns AI research into revenue — architect of Deux's Manufacture-Deploy-Monetize model and the strategy behind every Digital FTE that ships to production.",
     slot: "team-bilal",
   },
   {
-    name: "Asad",
+    name: "Asadullah",
     role: "Co-founder & CTO",
     description: "Architect of Loop Engineering — builds the spec-driven, human-gated systems that let AI agents run production workloads 24/7 without losing human oversight.",
     slot: "team-asad",
@@ -209,7 +209,7 @@ export default function AboutPage() {
                     sizes="112px"
                   />
                 </div>
-                <h3 className="font-heading font-semibold text-lg">{leaders[0].name}</h3>
+                <h3 className="font-heading font-medium text-lg">{leaders[0].name}</h3>
                 <p className="text-sm text-primary mb-2">{leaders[0].role}</p>
                 <p className="text-xs text-muted-foreground">{leaders[0].description}</p>
               </div>
@@ -228,7 +228,7 @@ export default function AboutPage() {
                     sizes="112px"
                   />
                 </div>
-                <h3 className="font-heading font-semibold text-lg">{leaders[1].name}</h3>
+                <h3 className="font-heading font-medium text-lg">{leaders[1].name}</h3>
                 <p className="text-sm text-primary mb-2">{leaders[1].role}</p>
                 <p className="text-xs text-muted-foreground">{leaders[1].description}</p>
               </div>

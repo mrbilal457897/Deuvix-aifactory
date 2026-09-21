@@ -3,6 +3,7 @@
 import { useState, useRef, useEffect } from "react";
 import Image from "next/image";
 import { X, Upload, Trash2, Check } from "lucide-react";
+import ImageCropper from "./image-cropper";
 
 interface MediaItem {
   id: string;
@@ -15,11 +16,13 @@ interface ImagePickerProps {
   open: boolean;
   onClose: () => void;
   onSelect: (url: string) => void;
+  aspectRatio?: number;
 }
 
-export default function ImagePicker({ open, onClose, onSelect }: ImagePickerProps) {
+export default function ImagePicker({ open, onClose, onSelect, aspectRatio = 1 }: ImagePickerProps) {
   const [images, setImages] = useState<MediaItem[]>([]);
   const [uploading, setUploading] = useState(false);
+  const [cropperSrc, setCropperSrc] = useState<string | null>(null);
   const fileRef = useRef<HTMLInputElement>(null);
 
   useEffect(() => {
@@ -34,19 +37,47 @@ export default function ImagePicker({ open, onClose, onSelect }: ImagePickerProp
     };
   }, [open]);
 
-  const handleUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
+  const handleFileSelect = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
     if (!file) return;
+    if (!file.type.startsWith("image/")) return;
+
+    const reader = new FileReader();
+    reader.onload = (event) => {
+      setCropperSrc(event.target?.result as string);
+    };
+    reader.readAsDataURL(file);
+    if (fileRef.current) fileRef.current.value = "";
+  };
+
+  const handleCropComplete = async (croppedDataUrl: string) => {
     setUploading(true);
-    const form = new FormData();
-    form.append("file", file);
-    const res = await fetch("/api/media", { method: "POST", body: form });
+    setCropperSrc(null);
+
+    const res = await fetch("/api/media", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ image: croppedDataUrl }),
+    });
+
     if (res.ok) {
       const item = await res.json();
       setImages((prev) => [item, ...prev]);
+      onSelect(item.url);
+      onClose();
+    } else {
+      console.error("Upload failed");
     }
     setUploading(false);
-    if (fileRef.current) fileRef.current.value = "";
+  };
+
+  const handleCropCancel = () => {
+    setCropperSrc(null);
+  };
+
+  const handleSelectExisting = (url: string) => {
+    onSelect(url);
+    onClose();
   };
 
   const handleDelete = async (id: string) => {
@@ -56,6 +87,17 @@ export default function ImagePicker({ open, onClose, onSelect }: ImagePickerProp
   };
 
   if (!open) return null;
+
+  if (cropperSrc) {
+    return (
+      <ImageCropper
+        src={cropperSrc}
+        onComplete={handleCropComplete}
+        onCancel={handleCropCancel}
+        aspectRatio={aspectRatio}
+      />
+    );
+  }
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60" onClick={onClose}>
@@ -71,7 +113,7 @@ export default function ImagePicker({ open, onClose, onSelect }: ImagePickerProp
         </div>
 
         <div className="p-4 border-b border-border">
-          <input ref={fileRef} type="file" accept="image/*" className="hidden" onChange={handleUpload} />
+          <input ref={fileRef} type="file" accept="image/*" className="hidden" onChange={handleFileSelect} />
           <button
             onClick={() => fileRef.current?.click()}
             disabled={uploading}
@@ -92,7 +134,7 @@ export default function ImagePicker({ open, onClose, onSelect }: ImagePickerProp
                   <Image src={img.url} alt={img.filename} fill className="object-cover" sizes="200px" />
                   <div className="absolute inset-0 bg-black/0 group-hover:bg-black/40 transition-colors flex items-center justify-center gap-2 opacity-0 group-hover:opacity-100">
                     <button
-                      onClick={() => { onSelect(img.url); onClose(); }}
+                      onClick={() => handleSelectExisting(img.url)}
                       className="p-2 rounded-full bg-primary text-primary-foreground hover:bg-primary/80 transition-colors"
                     >
                       <Check className="size-4" />

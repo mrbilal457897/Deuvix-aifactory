@@ -24,17 +24,40 @@ export async function GET() {
 }
 
 export async function POST(request: Request) {
-  const formData = await request.formData();
-  const file = formData.get("file") as File | null;
-  if (!file) return NextResponse.json({ error: "No file" }, { status: 400 });
+  const contentType = request.headers.get("content-type") || "";
 
-  const ext = file.name.split(".").pop() || "jpg";
-  const filename = `${Date.now()}.${ext}`;
-  const buffer = Buffer.from(await file.arrayBuffer());
+  let buffer: Buffer;
+  let filename: string;
+  let contentTypeStr: string;
+
+  if (contentType.includes("multipart/form-data")) {
+    const formData = await request.formData();
+    const file = formData.get("file") as File | null;
+    if (!file) return NextResponse.json({ error: "No file" }, { status: 400 });
+
+    const ext = file.name.split(".").pop() || "jpg";
+    filename = `${Date.now()}.${ext}`;
+    buffer = Buffer.from(await file.arrayBuffer());
+    contentTypeStr = file.type;
+  } else if (contentType.includes("application/json")) {
+    const body = await request.json();
+    const base64Image = body.image as string | undefined;
+    if (!base64Image) return NextResponse.json({ error: "No image data" }, { status: 400 });
+
+    const matches = base64Image.match(/^data:image\/(\w+);base64,(.+)$/);
+    if (!matches) return NextResponse.json({ error: "Invalid image format" }, { status: 400 });
+
+    const ext = matches[1] === "jpeg" ? "jpg" : matches[1];
+    filename = `${Date.now()}.${ext}`;
+    buffer = Buffer.from(matches[2], "base64");
+    contentTypeStr = `image/${matches[1]}`;
+  } else {
+    return NextResponse.json({ error: "Unsupported content type" }, { status: 400 });
+  }
 
   const { error: uploadError } = await supabase.storage
     .from("deux")
-    .upload(filename, buffer, { contentType: file.type });
+    .upload(filename, buffer, { contentType: contentTypeStr });
 
   if (uploadError) {
     console.error("Upload failed:", uploadError.message);

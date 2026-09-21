@@ -8,8 +8,8 @@ import { BlurReveal } from "@/components/split-text";
 import { useSiteConfig } from "@/hooks/use-site-config";
 
 const leaderDefs = [
-  { name: "Bilal", role: "CO-FOUNDER / CEO", slot: "team-bilal" },
-  { name: "Asad", role: "CO-FOUNDER / CTO", slot: "team-asad" },
+  { name: "Bilal Ali", role: "CO-FOUNDER / CEO", slot: "team-bilal" },
+  { name: "Asadullah", role: "CO-FOUNDER / CTO", slot: "team-asad" },
 ];
 
 const ticks = [6, 26, 46, 66, 86];
@@ -145,7 +145,7 @@ export function HeroSection() {
                       sizes="(max-width: 1024px) 45vw, 200px"
                     />
                   </div>
-                  <p className="text-[15px] font-bold text-foreground mb-1">{leader.name}</p>
+                  <p className="text-[15px] font-medium text-foreground mb-1">{leader.name}</p>
                   <p className="text-[11px] tracking-[0.1em] uppercase text-primary font-medium">
                     {leader.role}
                   </p>

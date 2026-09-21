@@ -24,6 +24,18 @@ const DEFAULTS: SiteConfig = {
   "contact-bg": "/images/hero-bg.jpg",
 };
 
+const SLOT_ASPECT_RATIOS: Record<string, number> = {
+  logo: 1,
+  "hero-bg": 16 / 9,
+  "cta-bg": 16 / 9,
+  "about-main": 4 / 3,
+  "about-secondary": 1,
+  "team-bilal": 1,
+  "team-asad": 1,
+  "product-bg": 16 / 9,
+  "contact-bg": 16 / 9,
+};
+
 export default function ImagesSettingsPage() {
   const { data: session, status } = useSession();
   const router = useRouter();
@@ -138,7 +150,12 @@ export default function ImagesSettingsPage() {
         })}
       </div>
 
-      <ImagePicker open={pickerOpen} onClose={() => setPickerOpen(false)} onSelect={handleSelect} />
+      <ImagePicker
+        open={pickerOpen}
+        onClose={() => setPickerOpen(false)}
+        onSelect={handleSelect}
+        aspectRatio={activeSlot ? SLOT_ASPECT_RATIOS[activeSlot] : 1}
+      />
     </div>
   );
 }

@@ -13,7 +13,7 @@ if (typeof window !== "undefined") {
 
 const teamMembers = [
   {
-    name: "Bilal",
+    name: "Bilal Ali",
     role: "Co-founder & CEO",
     slot: "team-bilal",
     socials: {
@@ -23,7 +23,7 @@ const teamMembers = [
     },
   },
   {
-    name: "Asad",
+    name: "Asadullah",
     role: "Co-founder & CTO",
     slot: "team-asad",
     socials: {
@@ -114,7 +114,7 @@ export function TeamSection() {
 
               {/* Member Info - overlapping image bottom */}
               <div className="absolute bottom-0 left-5 right-5 backdrop-blur-md bg-background/80 dark:bg-black/60 border border-border dark:border-white/10 shadow-[0_2px_15px_rgba(0,0,0,0.15)] dark:shadow-[0_2px_15px_rgba(0,0,0,0.3)] px-4 py-5">
-                <h4 className="font-heading text-base font-bold mb-2.5 relative pb-2.5 text-foreground dark:text-white">
+                <h4 className="font-heading text-base font-medium mb-2.5 relative pb-2.5 text-foreground dark:text-white">
                   {member.name}
                   <span className="absolute bottom-0 left-0 w-[50px] h-px bg-muted-foreground/40" />
                 </h4>
