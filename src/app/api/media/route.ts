@@ -23,41 +23,29 @@ export async function GET() {
   return NextResponse.json(data.map(rowToMedia));
 }
 
+const ALLOWED_TYPES = new Set(["image/jpeg", "image/png", "image/webp", "image/avif"]);
+const MAX_UPLOAD_BYTES = 10 * 1024 * 1024;
+
 export async function POST(request: Request) {
-  const contentType = request.headers.get("content-type") || "";
+  const formData = await request.formData();
+  const file = formData.get("file") as File | null;
+  if (!file) return NextResponse.json({ error: "No file" }, { status: 400 });
 
-  let buffer: Buffer;
-  let filename: string;
-  let contentTypeStr: string;
-
-  if (contentType.includes("multipart/form-data")) {
-    const formData = await request.formData();
-    const file = formData.get("file") as File | null;
-    if (!file) return NextResponse.json({ error: "No file" }, { status: 400 });
-
-    const ext = file.name.split(".").pop() || "jpg";
-    filename = `${Date.now()}.${ext}`;
-    buffer = Buffer.from(await file.arrayBuffer());
-    contentTypeStr = file.type;
-  } else if (contentType.includes("application/json")) {
-    const body = await request.json();
-    const base64Image = body.image as string | undefined;
-    if (!base64Image) return NextResponse.json({ error: "No image data" }, { status: 400 });
-
-    const matches = base64Image.match(/^data:image\/(\w+);base64,(.+)$/);
-    if (!matches) return NextResponse.json({ error: "Invalid image format" }, { status: 400 });
-
-    const ext = matches[1] === "jpeg" ? "jpg" : matches[1];
-    filename = `${Date.now()}.${ext}`;
-    buffer = Buffer.from(matches[2], "base64");
-    contentTypeStr = `image/${matches[1]}`;
-  } else {
-    return NextResponse.json({ error: "Unsupported content type" }, { status: 400 });
+  if (!ALLOWED_TYPES.has(file.type)) {
+    return NextResponse.json({ error: "Unsupported image format" }, { status: 415 });
   }
+
+  if (file.size > MAX_UPLOAD_BYTES) {
+    return NextResponse.json({ error: "Image exceeds the 10MB limit" }, { status: 413 });
+  }
+
+  const ext = file.type === "image/jpeg" ? "jpg" : file.type.split("/")[1];
+  const filename = `${Date.now()}.${ext}`;
+  const buffer = Buffer.from(await file.arrayBuffer());
 
   const { error: uploadError } = await supabase.storage
     .from("deux")
-    .upload(filename, buffer, { contentType: contentTypeStr });
+    .upload(filename, buffer, { contentType: file.type });
 
   if (uploadError) {
     console.error("Upload failed:", uploadError.message);

@@ -6,7 +6,6 @@ import { usePathname } from "next/navigation";
 import { useSession, signOut } from "next-auth/react";
 import { useTheme } from "next-themes";
 import {
-  Zap,
   Folder,
   ArrowLeft,
   LogOut,
@@ -22,6 +21,7 @@ import {
   Moon,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
+import { LogoMark } from "@/components/brand-logo";
 import { useState, createContext, useContext } from "react";
 
 const DASHBOARD_PREFIX = "/deux";
@@ -86,9 +86,7 @@ function SidebarNav({ onNavigate }: { onNavigate: () => void }) {
   return (
     <>
       <div className={cn("flex items-center gap-3 border-b border-border", collapsed ? "px-3 py-4 justify-center" : "px-5 py-4")}>
-        <div className="flex items-center justify-center size-9 rounded-xl bg-primary shrink-0">
-          <Zap className="size-4.5 text-primary-foreground" />
-        </div>
+        <LogoMark size={collapsed ? "xs" : "sm"} />
         {!collapsed && (
           <div>
             <span className="text-[15px] font-heading font-bold text-foreground tracking-tight">Deux</span>

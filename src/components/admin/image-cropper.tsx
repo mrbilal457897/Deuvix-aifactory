@@ -1,268 +1,477 @@
 "use client";
 
-import { useRef, useEffect, useState, useCallback } from "react";
-import { X, RotateCcw, Check, Maximize2, Minimize2 } from "lucide-react";
+import { useRef, useState, useEffect, useCallback, useMemo } from "react";
+import {
+  X,
+  Check,
+  RotateCw,
+  FlipHorizontal,
+  FlipVertical,
+  ZoomIn,
+  ZoomOut,
+  Maximize2,
+  Loader2,
+} from "lucide-react";
 import { Button } from "@/components/ui/button";
 
 interface ImageCropperProps {
   src: string;
-  onComplete: (croppedDataUrl: string) => void;
+  fileName?: string;
+  onComplete: (file: File) => void;
   onCancel: () => void;
   aspectRatio?: number;
-  maxWidth?: number;
-  maxHeight?: number;
+}
+
+const MAX_FRAME_W = 520;
+const MAX_FRAME_H = 400;
+const MIN_ZOOM = 0.1;
+const MAX_ZOOM = 4;
+const OUTPUT_SIZES = [512, 1024, 1600, 2048];
+const DEFAULT_OUTPUT_SIZE = 1600;
+
+const clampZoom = (value: number) =>
+  Math.min(MAX_ZOOM, Math.max(MIN_ZOOM, value));
+
+function formatRatio(ratio: number): string {
+  const known: Record<string, string> = {
+    "1": "1:1",
+    "1.7777777777777777": "16:9",
+    "1.3333333333333333": "4:3",
+    "1.5": "3:2",
+    "0.75": "3:4",
+  };
+  return known[String(ratio)] ?? `${ratio.toFixed(2)}:1`;
 }
 
 export default function ImageCropper({
   src,
+  fileName = "image",
   onComplete,
   onCancel,
   aspectRatio = 1,
-  maxWidth = 1200,
-  maxHeight = 1200,
 }: ImageCropperProps) {
-  const canvasRef = useRef<HTMLCanvasElement>(null);
   const imgRef = useRef<HTMLImageElement>(null);
-  const [scale, setScale] = useState(1);
-  const [position, setPosition] = useState({ x: 0, y: 0 });
+  const [natural, setNatural] = useState({ width: 0, height: 0 });
+  const [zoom, setZoom] = useState(1);
+  const [outputSize, setOutputSize] = useState(DEFAULT_OUTPUT_SIZE);
+  const [format, setFormat] = useState<"image/jpeg" | "image/png">("image/png");
+  const [offset, setOffset] = useState({ x: 0, y: 0 });
   const [rotation, setRotation] = useState(0);
-  const [isDragging, setIsDragging] = useState(false);
-  const dragStartRef = useRef({ x: 0, y: 0 });
-  const [imgLoaded, setImgLoaded] = useState(false);
-  const [imgNaturalSize, setImgNaturalSize] = useState({ width: 0, height: 0 });
+  const [flipH, setFlipH] = useState(false);
+  const [flipV, setFlipV] = useState(false);
+  const [dragging, setDragging] = useState(false);
+  const [processing, setProcessing] = useState(false);
+  const dragOrigin = useRef({ pointerX: 0, pointerY: 0, offsetX: 0, offsetY: 0 });
 
-  const drawImage = useCallback(() => {
-    const canvas = canvasRef.current;
-    const img = imgRef.current;
-    if (!canvas || !img || !imgLoaded) return;
-
-    const ctx = canvas.getContext("2d");
-    if (!ctx) return;
-
-    const { width: imgW, height: imgH } = imgNaturalSize;
-    const cropW = canvas.width;
-    const cropH = canvas.height;
-
-    const scaledW = imgW * scale;
-    const scaledH = imgH * scale;
-
-    ctx.clearRect(0, 0, cropW, cropH);
-    ctx.save();
-    ctx.translate(cropW / 2, cropH / 2);
-    ctx.rotate((rotation * Math.PI) / 180);
-    ctx.drawImage(
-      img,
-      -scaledW / 2 + position.x,
-      -scaledH / 2 + position.y,
-      scaledW,
-      scaledH
-    );
-    ctx.restore();
-  }, [scale, position, rotation, imgLoaded, imgNaturalSize]);
-
-  useEffect(() => {
-    drawImage();
-  }, [drawImage]);
-
-  const handleImgLoad = () => {
-    const img = imgRef.current;
-    if (!img) return;
-
-    const { width, height } = img;
-    setImgNaturalSize({ width, height });
-
-    const canvas = canvasRef.current;
-    if (!canvas) return;
-
-    let canvasW, canvasH;
-    if (width / height > aspectRatio) {
-      canvasH = Math.min(height, maxHeight);
-      canvasW = canvasH * aspectRatio;
-    } else {
-      canvasW = Math.min(width, maxWidth);
-      canvasH = canvasW / aspectRatio;
+  // Display size of the crop window, capped to fit the modal.
+  const frame = useMemo(() => {
+    let w = MAX_FRAME_W;
+    let h = w / aspectRatio;
+    if (h > MAX_FRAME_H) {
+      h = MAX_FRAME_H;
+      w = h * aspectRatio;
     }
+    return { width: Math.round(w), height: Math.round(h) };
+  }, [aspectRatio]);
 
-    canvas.width = canvasW;
-    canvas.height = canvasH;
+  // Output resolution, derived from the aspect ratio and the chosen long edge.
+  const output = useMemo(() => {
+    if (aspectRatio >= 1) {
+      return { width: outputSize, height: Math.round(outputSize / aspectRatio) };
+    }
+    return { width: Math.round(outputSize * aspectRatio), height: outputSize };
+  }, [aspectRatio, outputSize]);
 
-    const scaleX = canvasW / width;
-    const scaleY = canvasH / height;
-    setScale(Math.min(scaleX, scaleY));
-    setPosition({ x: 0, y: 0 });
-    setImgLoaded(true);
-  };
+  // Dimensions of the image after rotation is applied.
+  const rotated = useMemo(() => {
+    const swapped = rotation % 180 !== 0;
+    return {
+      width: swapped ? natural.height : natural.width,
+      height: swapped ? natural.width : natural.height,
+    };
+  }, [natural, rotation]);
 
-  const handleMouseDown = (e: React.MouseEvent<HTMLCanvasElement>) => {
-    setIsDragging(true);
-    dragStartRef.current = {
-      x: e.clientX - position.x,
-      y: e.clientY - position.y,
+  // "cover" fit: smallest zoom at which the image fully covers the frame.
+  const coverScale = useMemo(() => {
+    if (!rotated.width || !rotated.height) return 1;
+    return Math.max(frame.width / rotated.width, frame.height / rotated.height);
+  }, [rotated, frame]);
+
+  // "contain" fit: largest zoom at which the image still fits inside the
+  // frame. Zooming below `cover` shrinks the image below the frame edge.
+  const containScale = useMemo(() => {
+    if (!rotated.width || !rotated.height) return 1;
+    return Math.min(frame.width / rotated.width, frame.height / rotated.height);
+  }, [rotated, frame]);
+
+  // Zoom 1 always means "cover". Going below 1 shrinks, above 1 crops.
+  const scale = useMemo(() => coverScale * zoom, [coverScale, zoom]);
+
+  const display = useMemo(() => {
+    // The element box always uses the natural orientation; the rotation is
+    // applied on top of it, so `rotated` only decides the frame footprint.
+    const w = natural.width * scale;
+    const h = natural.height * scale;
+    // How far the image may travel before an edge enters the frame.
+    const limitX = Math.max(0, (rotated.width * scale - frame.width) / 2);
+    const limitY = Math.max(0, (rotated.height * scale - frame.height) / 2);
+    return { width: w, height: h, limitX, limitY };
+  }, [natural, scale, rotated, frame]);
+
+  const clamp = useCallback(
+    (next: { x: number; y: number }) => ({
+      x: Math.min(display.limitX, Math.max(-display.limitX, next.x)),
+      y: Math.min(display.limitY, Math.max(-display.limitY, next.y)),
+    }),
+    [display.limitX, display.limitY]
+  );
+
+  // Derived during render so zoom/rotation changes clamp the offset for free,
+  // instead of pushing it back through state in an effect.
+  const safeOffset = clamp(offset);
+
+  const reset = useCallback(() => {
+    setZoom(1);
+    setOffset({ x: 0, y: 0 });
+    setRotation(0);
+    setFlipH(false);
+    setFlipV(false);
+  }, []);
+
+  const handlePointerDown = (e: React.PointerEvent<HTMLDivElement>) => {
+    e.currentTarget.setPointerCapture(e.pointerId);
+    setDragging(true);
+    dragOrigin.current = {
+      pointerX: e.clientX,
+      pointerY: e.clientY,
+      offsetX: offset.x,
+      offsetY: offset.y,
     };
   };
 
-  const handleMouseMove = (e: React.MouseEvent<HTMLCanvasElement>) => {
-    if (!isDragging) return;
-    setPosition({
-      x: e.clientX - dragStartRef.current.x,
-      y: e.clientY - dragStartRef.current.y,
-    });
+  const handlePointerMove = (e: React.PointerEvent<HTMLDivElement>) => {
+    if (!dragging) return;
+    setOffset(
+      clamp({
+        x: dragOrigin.current.offsetX + (e.clientX - dragOrigin.current.pointerX),
+        y: dragOrigin.current.offsetY + (e.clientY - dragOrigin.current.pointerY),
+      })
+    );
   };
 
-  const handleMouseUp = () => setIsDragging(false);
-  const handleMouseLeave = () => setIsDragging(false);
+  const endDrag = (e: React.PointerEvent<HTMLDivElement>) => {
+    if (e.currentTarget.hasPointerCapture(e.pointerId)) {
+      e.currentTarget.releasePointerCapture(e.pointerId);
+    }
+    setDragging(false);
+  };
 
-  const handleWheel = (e: React.WheelEvent<HTMLCanvasElement>) => {
+  const handleWheel = (e: React.WheelEvent<HTMLDivElement>) => {
     e.preventDefault();
-    const zoomFactor = e.deltaY > 0 ? 0.9 : 1.1;
-    setScale((prev) => Math.min(Math.max(prev * zoomFactor, 0.1), 5));
+    setZoom((prev) => clampZoom(prev - e.deltaY * 0.002));
   };
 
-  const handleRotate = () => {
-    setRotation((prev) => (prev + 90) % 360);
-  };
+  const zoomTo = (next: number) => setZoom(clampZoom(next));
 
-  const handleReset = () => {
-    const { width, height } = imgNaturalSize;
-    const canvas = canvasRef.current;
-    if (!canvas) return;
+  // Fill the frame edge to edge.
+  const fillFrame = useCallback(() => setZoom(1), []);
 
-    let canvasW, canvasH;
-    if (width / height > aspectRatio) {
-      canvasH = Math.min(height, maxHeight);
-      canvasW = canvasH * aspectRatio;
-    } else {
-      canvasW = Math.min(width, maxWidth);
-      canvasH = canvasW / aspectRatio;
+  // Shrink the whole image inside the frame without cropping.
+  const fitImage = useCallback(() => {
+    if (!coverScale) return;
+    setZoom(clampZoom(containScale / coverScale));
+    setOffset({ x: 0, y: 0 });
+  }, [containScale, coverScale]);
+
+  const handleApply = async () => {
+    const img = imgRef.current;
+    if (!img || !natural.width) return;
+    setProcessing(true);
+
+    try {
+      const canvas = document.createElement("canvas");
+      canvas.width = output.width;
+      canvas.height = output.height;
+      const ctx = canvas.getContext("2d");
+      if (!ctx) return;
+
+      // Transparent PNG logos would otherwise turn black once encoded as JPEG.
+      if (format === "image/jpeg") {
+        ctx.fillStyle = "#ffffff";
+        ctx.fillRect(0, 0, canvas.width, canvas.height);
+      }
+
+      // Ratio between the on-screen frame and the exported image.
+      const k = output.width / frame.width;
+      const drawW = display.width * k;
+      const drawH = display.height * k;
+
+      ctx.imageSmoothingEnabled = true;
+      ctx.imageSmoothingQuality = "high";
+      ctx.save();
+      ctx.translate(output.width / 2 + safeOffset.x * k, output.height / 2 + safeOffset.y * k);
+      ctx.rotate((rotation * Math.PI) / 180);
+      ctx.scale(flipH ? -1 : 1, flipV ? -1 : 1);
+      ctx.drawImage(img, -drawW / 2, -drawH / 2, drawW, drawH);
+      ctx.restore();
+
+      const blob = await new Promise<Blob | null>((resolve) =>
+        format === "image/png"
+          ? canvas.toBlob(resolve, "image/png")
+          : canvas.toBlob(resolve, "image/jpeg", 0.92)
+      );
+      if (!blob) return;
+
+      const base = fileName.replace(/\.[^.]+$/, "") || "image";
+      const ext = format === "image/png" ? "png" : "jpg";
+      onComplete(new File([blob], `${base}.${ext}`, { type: format }));
+    } finally {
+      setProcessing(false);
     }
-
-    canvas.width = canvasW;
-    canvas.height = canvasH;
-
-    const scaleX = canvasW / width;
-    const scaleY = canvasH / height;
-    setScale(Math.min(scaleX, scaleY));
-    setPosition({ x: 0, y: 0 });
-    setRotation(0);
   };
 
-  const handleApply = () => {
-    const canvas = canvasRef.current;
-    if (!canvas) return;
-    const dataUrl = canvas.toDataURL("image/jpeg", 0.9);
-    onComplete(dataUrl);
-  };
+  useEffect(() => {
+    const onKey = (e: KeyboardEvent) => {
+      const step = e.shiftKey ? 20 : 6;
+      if (e.key === "Escape") onCancel();
+      if (e.key === "Enter" && !processing) handleApply();
+      if (e.key === "ArrowLeft") setOffset((p) => clamp({ ...p, x: p.x - step }));
+      if (e.key === "ArrowRight") setOffset((p) => clamp({ ...p, x: p.x + step }));
+      if (e.key === "ArrowUp") setOffset((p) => clamp({ ...p, y: p.y - step }));
+      if (e.key === "ArrowDown") setOffset((p) => clamp({ ...p, y: p.y + step }));
+      if (e.key === "+" || e.key === "=") setZoom((p) => clampZoom(p + 0.1));
+      if (e.key === "-") setZoom((p) => clampZoom(p - 0.1));
+    };
+    window.addEventListener("keydown", onKey);
+    return () => window.removeEventListener("keydown", onKey);
+  });
 
-  const handleKeyDown = (e: React.KeyboardEvent) => {
-    const step = e.shiftKey ? 10 : 1;
-    switch (e.key) {
-      case "ArrowLeft":
-        setPosition((p) => ({ ...p, x: p.x - step }));
-        break;
-      case "ArrowRight":
-        setPosition((p) => ({ ...p, x: p.x + step }));
-        break;
-      case "ArrowUp":
-        setPosition((p) => ({ ...p, y: p.y - step }));
-        break;
-      case "ArrowDown":
-        setPosition((p) => ({ ...p, y: p.y + step }));
-        break;
-      case "Escape":
-        onCancel();
-        break;
-      case "Enter":
-        handleApply();
-        break;
-    }
-  };
+  const ready = natural.width > 0;
 
   return (
     <div
-      className="fixed inset-0 z-50 flex items-center justify-center bg-black/80"
+      className="fixed inset-0 z-[60] flex items-center justify-center bg-black/80 p-4"
       onClick={onCancel}
-      onKeyDown={handleKeyDown}
-      tabIndex={0}
-      autoFocus
     >
-      <div className="relative w-full max-w-4xl max-h-[90svh] bg-card border border-border rounded-xl shadow-xl overflow-hidden" onClick={(e) => e.stopPropagation()}>
-        <div className="flex items-center justify-between p-4 border-b border-border">
-          <div className="flex items-center gap-4">
-            <h3 className="font-heading font-semibold text-lg">Crop & Adjust Image</h3>
-            <span className="text-xs text-muted-foreground px-2 py-1 rounded bg-muted">
-              Aspect Ratio: {aspectRatio === 1 ? "1:1" : aspectRatio === 16/9 ? "16:9" : aspectRatio === 4/3 ? "4:3" : aspectRatio.toFixed(2)}
-            </span>
+      <div
+        className="w-full max-w-2xl max-h-[92svh] overflow-y-auto rounded-2xl border border-border bg-card shadow-2xl"
+        onClick={(e) => e.stopPropagation()}
+      >
+        <div className="flex items-center justify-between gap-3 border-b border-border px-5 py-4">
+          <div className="min-w-0">
+            <h3 className="font-heading text-base font-semibold text-foreground">
+              Adjust Image
+            </h3>
+            <p className="mt-0.5 truncate text-xs text-muted-foreground">{fileName}</p>
           </div>
-          <div className="flex items-center gap-2">
-            <Button variant="ghost" size="icon" onClick={handleRotate} title="Rotate (R)">
-              <RotateCcw className="size-4" />
-            </Button>
-            <Button variant="ghost" size="icon" onClick={handleReset} title="Reset">
-              <Maximize2 className="size-4" />
-            </Button>
-            <Button variant="ghost" size="icon" onClick={onCancel} title="Cancel">
-              <X className="size-4" />
-            </Button>
-          </div>
+          <button
+            onClick={onCancel}
+            className="shrink-0 rounded-lg p-1.5 text-muted-foreground transition-colors hover:bg-muted hover:text-foreground"
+            aria-label="Close"
+          >
+            <X className="size-5" />
+          </button>
         </div>
 
-        <div className="p-4 flex items-center justify-center bg-muted/50 min-h-[300px] max-h-[60svh] overflow-auto">
-          <div className="relative" style={{ touchAction: "none" }}>
-            <canvas
-              ref={canvasRef}
-              className="shadow-xl bg-white dark:bg-black"
-              style={{ cursor: isDragging ? "grabbing" : "grab" }}
-              onMouseDown={handleMouseDown}
-              onMouseMove={handleMouseMove}
-              onMouseUp={handleMouseUp}
-              onMouseLeave={handleMouseLeave}
+        <div className="px-5 py-5">
+          <div className="flex flex-col items-center gap-3">
+            <div className="flex flex-wrap items-center justify-center gap-2 text-[11px] text-muted-foreground">
+              <span className="rounded-md bg-muted px-2 py-1 font-medium">
+                {formatRatio(aspectRatio)}
+              </span>
+              <span>
+                Output {output.width} &times; {output.height}px
+              </span>
+            </div>
+
+            <div className="flex flex-wrap items-center justify-center gap-3 rounded-xl border border-border bg-muted/30 px-3 py-2 text-[11px]">
+              <div className="flex items-center gap-1.5">
+                <span className="text-muted-foreground">Size</span>
+                {OUTPUT_SIZES.map((size) => (
+                  <button
+                    key={size}
+                    type="button"
+                    onClick={() => setOutputSize(size)}
+                    disabled={!ready}
+                    className={`rounded-md px-2 py-1 font-medium transition-colors disabled:opacity-50 ${
+                      outputSize === size
+                        ? "bg-primary text-primary-foreground"
+                        : "text-muted-foreground hover:bg-muted hover:text-foreground"
+                    }`}
+                  >
+                    {size}
+                  </button>
+                ))}
+              </div>
+              <div className="h-4 w-px bg-border" />
+              <div className="flex items-center gap-1.5">
+                <span className="text-muted-foreground">Format</span>
+                {(["image/png", "image/jpeg"] as const).map((value) => (
+                  <button
+                    key={value}
+                    type="button"
+                    onClick={() => setFormat(value)}
+                    disabled={!ready}
+                    className={`rounded-md px-2 py-1 font-medium transition-colors disabled:opacity-50 ${
+                      format === value
+                        ? "bg-primary text-primary-foreground"
+                        : "text-muted-foreground hover:bg-muted hover:text-foreground"
+                    }`}
+                  >
+                    {value === "image/png" ? "PNG" : "JPG"}
+                  </button>
+                ))}
+              </div>
+            </div>
+
+            <div
+              onPointerDown={handlePointerDown}
+              onPointerMove={handlePointerMove}
+              onPointerUp={endDrag}
+              onPointerCancel={endDrag}
               onWheel={handleWheel}
-              onTouchStart={(e) => {
-                const touch = e.touches[0];
-                if (touch) {
-                  const mouseEvent = new MouseEvent("mousedown", {
-                    clientX: touch.clientX,
-                    clientY: touch.clientY,
-                  });
-                  canvasRef.current?.dispatchEvent(mouseEvent);
-                }
-              }}
-              onTouchMove={(e) => {
-                const touch = e.touches[0];
-                if (touch) {
-                  const mouseEvent = new MouseEvent("mousemove", {
-                    clientX: touch.clientX,
-                    clientY: touch.clientY,
-                  });
-                  canvasRef.current?.dispatchEvent(mouseEvent);
-                }
-              }}
-              onTouchEnd={() => {
-                const mouseEvent = new MouseEvent("mouseup", {});
-                canvasRef.current?.dispatchEvent(mouseEvent);
-              }}
-            />
-            <img ref={imgRef} src={src} alt="" style={{ display: "none" }} onLoad={handleImgLoad} />
+              style={{ width: frame.width, height: frame.height }}
+              className={`relative shrink-0 touch-none overflow-hidden rounded-lg border-2 border-dashed border-primary/60 bg-neutral-900 ${
+                dragging ? "cursor-grabbing" : "cursor-grab"
+              }`}
+            >
+              {src ? (
+                /* eslint-disable-next-line @next/next/no-img-element -- local data URL, no optimization */
+                <img
+                  ref={imgRef}
+                  src={src}
+                  alt=""
+                  draggable={false}
+                  onLoad={(e) => {
+                    const el = e.currentTarget;
+                    setNatural({ width: el.naturalWidth, height: el.naturalHeight });
+                  }}
+                  style={{
+                    width: display.width,
+                    height: display.height,
+                    left: "50%",
+                    top: "50%",
+                    transform: `translate(calc(-50% + ${safeOffset.x}px), calc(-50% + ${safeOffset.y}px)) rotate(${rotation}deg) scaleX(${flipH ? -1 : 1}) scaleY(${flipV ? -1 : 1})`,
+                  }}
+                  className="pointer-events-none absolute select-none"
+                />
+              ) : null}
+
+              {/* Rule-of-thirds guides */}
+              {ready ? (
+                <div className="pointer-events-none absolute inset-0">
+                  <div className="absolute inset-y-0 left-1/3 w-px bg-white/25" />
+                  <div className="absolute inset-y-0 left-2/3 w-px bg-white/25" />
+                  <div className="absolute inset-x-0 top-1/3 h-px bg-white/25" />
+                  <div className="absolute inset-x-0 top-2/3 h-px bg-white/25" />
+                </div>
+              ) : null}
+
+              {!ready ? (
+                <div className="absolute inset-0 flex items-center justify-center">
+                  <Loader2 className="size-5 animate-spin text-white/60" />
+                </div>
+              ) : null}
+            </div>
+
+            <p className="text-center text-xs text-muted-foreground">
+              Drag to reposition &middot; scroll to zoom
+            </p>
+          </div>
+
+          <div className="mt-5 space-y-4">
+            <div className="flex items-center gap-3">
+              <ZoomOut className="size-4 shrink-0 text-muted-foreground" />
+              <input
+                type="range"
+                min={MIN_ZOOM}
+                max={MAX_ZOOM}
+                step={0.01}
+                value={zoom}
+                disabled={!ready}
+                onChange={(e) => zoomTo(Number(e.target.value))}
+                aria-label="Zoom"
+                className="h-1.5 w-full cursor-pointer appearance-none rounded-full bg-muted accent-primary disabled:opacity-50"
+              />
+              <ZoomIn className="size-4 shrink-0 text-muted-foreground" />
+              <span className="w-12 shrink-0 text-right text-xs tabular-nums text-muted-foreground">
+                {Math.round(zoom * 100)}%
+              </span>
+            </div>
+
+            <div className="flex flex-wrap items-center justify-center gap-2">
+              <Button
+                variant="outline"
+                size="sm"
+                onClick={fitImage}
+                disabled={!ready}
+              >
+                <ZoomOut className="size-4" />
+                Fit
+              </Button>
+              <Button
+                variant="outline"
+                size="sm"
+                onClick={fillFrame}
+                disabled={!ready}
+              >
+                <ZoomIn className="size-4" />
+                Fill
+              </Button>
+              <Button
+                variant="outline"
+                size="sm"
+                onClick={() => setRotation((r) => (r + 90) % 360)}
+                disabled={!ready}
+              >
+                <RotateCw className="size-4" />
+                Rotate
+              </Button>
+              <Button
+                variant="outline"
+                size="sm"
+                onClick={() => setFlipH((v) => !v)}
+                disabled={!ready}
+                aria-pressed={flipH}
+              >
+                <FlipHorizontal className="size-4" />
+                Flip H
+              </Button>
+              <Button
+                variant="outline"
+                size="sm"
+                onClick={() => setFlipV((v) => !v)}
+                disabled={!ready}
+                aria-pressed={flipV}
+              >
+                <FlipVertical className="size-4" />
+                Flip V
+              </Button>
+              <Button variant="outline" size="sm" onClick={reset} disabled={!ready}>
+                <Maximize2 className="size-4" />
+                Reset
+              </Button>
+            </div>
           </div>
         </div>
 
-        <div className="p-4 border-t border-border flex items-center justify-between bg-muted/30">
-          <div className="flex items-center gap-2 text-sm text-muted-foreground">
-            <kbd className="px-1.5 py-0.5 bg-background border border-border rounded">Scroll</kbd> Zoom
-            <span className="mx-1">|</span>
-            <kbd className="px-1.5 py-0.5 bg-background border border-border rounded">Drag</kbd> Move
-            <span className="mx-1">|</span>
-            <kbd className="px-1.5 py-0.5 bg-background border border-border rounded">R</kbd> Rotate
-          </div>
-          <div className="flex gap-2">
-            <Button variant="outline" onClick={onCancel}>
-              Cancel
-            </Button>
-            <Button onClick={handleApply}>
-              <Check className="size-4 mr-2" />
-              Apply & Upload
-            </Button>
-          </div>
+        <div className="flex items-center justify-end gap-2 border-t border-border bg-muted/30 px-5 py-4">
+          <Button variant="outline" onClick={onCancel} disabled={processing}>
+            Cancel
+          </Button>
+          <Button onClick={handleApply} disabled={!ready || processing}>
+            {processing ? (
+              <>
+                <Loader2 className="size-4 animate-spin" />
+                Processing...
+              </>
+            ) : (
+              <>
+                <Check className="size-4" />
+                Apply
+              </>
+            )}
+          </Button>
         </div>
       </div>
     </div>

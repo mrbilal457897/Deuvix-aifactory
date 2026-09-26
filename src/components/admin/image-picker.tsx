@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useRef, useEffect } from "react";
+import { useState, useRef, useEffect, useCallback } from "react";
 import Image from "next/image";
 import { X, Upload, Trash2, Check } from "lucide-react";
 import ImageCropper from "./image-cropper";
@@ -22,7 +22,8 @@ interface ImagePickerProps {
 export default function ImagePicker({ open, onClose, onSelect, aspectRatio = 1 }: ImagePickerProps) {
   const [images, setImages] = useState<MediaItem[]>([]);
   const [uploading, setUploading] = useState(false);
-  const [cropperSrc, setCropperSrc] = useState<string | null>(null);
+  const [error, setError] = useState<string | null>(null);
+  const [pending, setPending] = useState<{ src: string; name: string } | null>(null);
   const fileRef = useRef<HTMLInputElement>(null);
 
   useEffect(() => {
@@ -37,47 +38,54 @@ export default function ImagePicker({ open, onClose, onSelect, aspectRatio = 1 }
     };
   }, [open]);
 
+  const handleClose = useCallback(() => {
+    setPending(null);
+    setError(null);
+    setUploading(false);
+    onClose();
+  }, [onClose]);
+
   const handleFileSelect = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
-    if (!file) return;
-    if (!file.type.startsWith("image/")) return;
-
-    const reader = new FileReader();
-    reader.onload = (event) => {
-      setCropperSrc(event.target?.result as string);
-    };
-    reader.readAsDataURL(file);
     if (fileRef.current) fileRef.current.value = "";
-  };
-
-  const handleCropComplete = async (croppedDataUrl: string) => {
-    setUploading(true);
-    setCropperSrc(null);
-
-    const res = await fetch("/api/media", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ image: croppedDataUrl }),
-    });
-
-    if (res.ok) {
-      const item = await res.json();
-      setImages((prev) => [item, ...prev]);
-      onSelect(item.url);
-      onClose();
-    } else {
-      console.error("Upload failed");
+    if (!file) return;
+    if (!file.type.startsWith("image/")) {
+      setError("That file is not an image.");
+      return;
     }
-    setUploading(false);
+    setError(null);
+    const reader = new FileReader();
+    reader.onload = (ev) => {
+      setPending({ src: ev.target?.result as string, name: file.name });
+    };
+    reader.onerror = () => setError("Could not read that file.");
+    reader.readAsDataURL(file);
   };
 
-  const handleCropCancel = () => {
-    setCropperSrc(null);
+  const handleCropComplete = async (file: File) => {
+    setUploading(true);
+    setError(null);
+    try {
+      const form = new FormData();
+      form.append("file", file);
+      const res = await fetch("/api/media", { method: "POST", body: form });
+      if (!res.ok) throw new Error("Upload failed");
+      const item: MediaItem = await res.json();
+      setImages((prev) => [item, ...prev]);
+      setPending(null);
+      onSelect(item.url);
+      handleClose();
+    } catch {
+      setError("Upload failed. Please try again.");
+      setPending(null);
+    } finally {
+      setUploading(false);
+    }
   };
 
   const handleSelectExisting = (url: string) => {
     onSelect(url);
-    onClose();
+    handleClose();
   };
 
   const handleDelete = async (id: string) => {
@@ -88,26 +96,27 @@ export default function ImagePicker({ open, onClose, onSelect, aspectRatio = 1 }
 
   if (!open) return null;
 
-  if (cropperSrc) {
+  if (pending) {
     return (
       <ImageCropper
-        src={cropperSrc}
+        src={pending.src}
+        fileName={pending.name}
         onComplete={handleCropComplete}
-        onCancel={handleCropCancel}
+        onCancel={() => setPending(null)}
         aspectRatio={aspectRatio}
       />
     );
   }
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60" onClick={onClose}>
+    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60" onClick={handleClose}>
       <div
         className="relative w-full max-w-3xl max-h-[80svh] bg-card border border-border rounded-xl shadow-xl overflow-hidden"
         onClick={(e) => e.stopPropagation()}
       >
         <div className="flex items-center justify-between p-4 border-b border-border">
           <h3 className="font-heading font-semibold text-lg">Select Image</h3>
-          <button onClick={onClose} className="p-1 rounded-lg hover:bg-muted transition-colors">
+          <button onClick={handleClose} className="p-1 rounded-lg hover:bg-muted transition-colors" aria-label="Close">
             <X className="size-5" />
           </button>
         </div>
@@ -120,8 +129,9 @@ export default function ImagePicker({ open, onClose, onSelect, aspectRatio = 1 }
             className="inline-flex items-center gap-2 px-4 py-2 rounded-lg bg-primary text-primary-foreground text-sm font-medium hover:bg-primary/90 transition-colors disabled:opacity-50"
           >
             <Upload className="size-4" />
-            {uploading ? "Uploading..." : "Upload New Image"}
+            Upload New Image
           </button>
+          {error ? <p className="mt-2 text-xs text-destructive">{error}</p> : null}
         </div>
 
         <div className="p-4 overflow-y-auto max-h-[60svh]">
@@ -136,12 +146,14 @@ export default function ImagePicker({ open, onClose, onSelect, aspectRatio = 1 }
                     <button
                       onClick={() => handleSelectExisting(img.url)}
                       className="p-2 rounded-full bg-primary text-primary-foreground hover:bg-primary/80 transition-colors"
+                      aria-label="Use this image"
                     >
                       <Check className="size-4" />
                     </button>
                     <button
                       onClick={() => handleDelete(img.id)}
                       className="p-2 rounded-full bg-destructive text-destructive-foreground hover:bg-destructive/80 transition-colors"
+                      aria-label="Delete this image"
                     >
                       <Trash2 className="size-4" />
                     </button>

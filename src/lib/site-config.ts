@@ -3,7 +3,7 @@ export interface SiteConfig {
 }
 
 export const DEFAULTS: SiteConfig = {
-  logo: "/images/logo.png",
+  logo: "/images/finallogo.png",
   "hero-bg": "/images/hero-bg.jpg",
   "cta-bg": "/images/cta-bg.jpg",
   "about-main": "/images/about1.jpg",
@@ -15,7 +15,7 @@ export const DEFAULTS: SiteConfig = {
 };
 
 export const SLOT_LABELS: Record<string, string> = {
-  logo: "Logo",
+  logo: "Logo Mark (icon only)",
   "hero-bg": "Hero Background",
   "cta-bg": "CTA Background",
   "about-main": "About Main Image",

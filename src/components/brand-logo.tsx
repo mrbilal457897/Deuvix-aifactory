@@ -1,29 +1,63 @@
+"use client";
+
+import { useState } from "react";
+import Image from "next/image";
 import { cn } from "@/lib/utils";
+import { useSiteConfig } from "@/hooks/use-site-config";
+
+type LogoSize = "xs" | "sm" | "md" | "lg";
+
+const SIZES = {
+  xs: { mark: "size-10 text-xs", px: 40, name: "text-base", sub: "text-[8px]" },
+  sm: { mark: "size-12 text-sm", px: 48, name: "text-lg", sub: "text-[9px]" },
+  md: { mark: "size-18 text-xl", px: 72, name: "text-2xl", sub: "text-[10px]" },
+  lg: { mark: "size-24 text-3xl", px: 96, name: "text-4xl", sub: "text-xs" },
+};
+
+interface LogoMarkProps {
+  className?: string;
+  size?: LogoSize;
+}
+
+export function LogoMark({ className, size = "md" }: LogoMarkProps) {
+  const { img } = useSiteConfig();
+  const src = img("logo");
+  const [failedSrc, setFailedSrc] = useState<string | null>(null);
+  const showImage = Boolean(src) && src !== failedSrc;
+
+  const s = SIZES[size];
+
+  return (
+    <span className={cn("flex shrink-0 items-center justify-center", s.mark, className)}>
+      {showImage ? (
+        <Image
+          src={src}
+          alt=""
+          width={s.px}
+          height={s.px}
+          onError={() => setFailedSrc(src)}
+          className="size-full object-contain"
+        />
+      ) : (
+        <span className="flex size-full items-center justify-center bg-foreground font-extrabold tracking-[0.5px] text-background">
+          D2
+        </span>
+      )}
+    </span>
+  );
+}
 
 interface BrandLogoProps {
   className?: string;
-  size?: "sm" | "md" | "lg";
+  size?: LogoSize;
 }
 
 export function BrandLogo({ className, size = "md" }: BrandLogoProps) {
-  const sizes = {
-    sm: { mark: "size-7 text-[11px]", name: "text-base", sub: "text-[8px]" },
-    md: { mark: "size-9 text-sm", name: "text-[22px]", sub: "text-[10px]" },
-    lg: { mark: "size-14 text-xl", name: "text-4xl", sub: "text-xs" },
-  };
-
-  const s = sizes[size];
+  const s = SIZES[size];
 
   return (
     <span className={cn("inline-flex items-center gap-2.5", className)}>
-      <span
-        className={cn(
-          "flex items-center justify-center bg-foreground text-background font-extrabold tracking-[0.5px] shrink-0",
-          s.mark
-        )}
-      >
-        D2
-      </span>
+      <LogoMark size={size} />
       <span className="leading-none text-left">
         <span className={cn("block font-heading font-extrabold tracking-[0.5px]", s.name)}>
           DEUX

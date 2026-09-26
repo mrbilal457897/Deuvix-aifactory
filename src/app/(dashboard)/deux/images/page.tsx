@@ -6,6 +6,7 @@ import { useRouter } from "next/navigation";
 import Image from "next/image";
 import { Save, ImageIcon, RotateCcw, Check } from "lucide-react";
 import ImagePicker from "@/components/admin/image-picker";
+import { invalidateSiteConfig } from "@/hooks/use-site-config";
 import { SLOT_LABELS, SLOT_KEYS } from "@/lib/site-config";
 
 interface SiteConfig {
@@ -13,7 +14,7 @@ interface SiteConfig {
 }
 
 const DEFAULTS: SiteConfig = {
-  logo: "/images/logo.png",
+  logo: "/images/finallogo.png",
   "hero-bg": "/images/hero-bg.jpg",
   "cta-bg": "/images/cta-bg.jpg",
   "about-main": "/images/about1.jpg",
@@ -90,6 +91,7 @@ export default function ImagesSettingsPage() {
     if (res.ok) {
       await cleanupOrphanedUploads(previous, config);
       savedRef.current = config;
+      invalidateSiteConfig();
       setSaved(true);
       setTimeout(() => setSaved(false), 2000);
     }
@@ -124,7 +126,10 @@ export default function ImagesSettingsPage() {
           const url = config[slot] || DEFAULTS[slot];
           return (
             <div key={slot} className="rounded-2xl border border-border bg-card overflow-hidden hover:border-primary/30 transition-all group">
-              <div className="relative aspect-video bg-muted">
+              <div
+                className="relative bg-muted"
+                style={{ aspectRatio: SLOT_ASPECT_RATIOS[slot] || 1 }}
+              >
                 {url ? (
                   <Image src={url} alt={SLOT_LABELS[slot]} fill className="object-cover" sizes="400px" />
                 ) : (
