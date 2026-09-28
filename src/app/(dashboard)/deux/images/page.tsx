@@ -14,7 +14,7 @@ interface SiteConfig {
 }
 
 const DEFAULTS: SiteConfig = {
-  logo: "/images/finallogo.png",
+  logo: "/images/D.png",
   "hero-bg": "/images/hero-bg.jpg",
   "cta-bg": "/images/cta-bg.jpg",
   "about-main": "/images/about1.jpg",

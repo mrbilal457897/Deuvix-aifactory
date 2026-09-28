@@ -72,6 +72,13 @@ export default function RootLayout({
       suppressHydrationWarning
     >
       <head>
+        {/* Black logo needs an inverted variant where the browser UI is dark */}
+        <link
+          rel="icon"
+          href="/favicon-dark.ico"
+          sizes="any"
+          media="(prefers-color-scheme: dark)"
+        />
         {/* Apply theme before first paint to prevent FOUC */}
         <script
           dangerouslySetInnerHTML={{
