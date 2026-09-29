@@ -3,6 +3,7 @@
 import { useState, useEffect } from "react";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
+import { BookCallButton } from "@/components/book-call-button";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { Mail, MapPin, Send, CheckCircle, Clock } from "lucide-react";
@@ -275,6 +276,15 @@ export default function ContactPage() {
                     <>Send Message <Send className="size-5 ml-2" /></>
                   )}
                 </Button>
+
+                <div className="flex flex-wrap items-center gap-3 pt-1">
+                  <span className="text-sm text-muted-foreground dark:text-white/60">
+                    Prefer to pick a slot?
+                  </span>
+                  <BookCallButton variant="outline" className="px-6 py-3 h-auto text-sm font-semibold rounded-xl">
+                    Book a Call
+                  </BookCallButton>
+                </div>
                 {status === "success" && (
                   <p className="text-sm text-emerald-600 dark:text-emerald-400">
                     Thank you! Your message has been sent.
@@ -282,8 +292,7 @@ export default function ContactPage() {
                       ? " We'll get back to you within one business day."
                       : " Our team will reach out to you soon."}
                   </p>
-                )}
-                {status === "error" && (
+                )}                {status === "error" && (
                   <p className="text-sm text-destructive">
                     Something went wrong. Please try again or email us at deuxaiinfo786@gmail.com.
                   </p>
@@ -295,7 +304,7 @@ export default function ContactPage() {
             <div className="flex-[3] space-y-6">
               {/* Why Choose Us */}
               <div className="p-6 rounded-2xl bg-card/80 dark:bg-white/10 backdrop-blur-md border border-border dark:border-white/20">
-                <h4 className="font-heading font-bold text-foreground dark:text-white mb-4">Why Choose Deux</h4>
+                <h4 className="font-heading font-bold text-foreground dark:text-white mb-4">Why Choose DEUX AI Factory</h4>
                 <ul className="space-y-3">
                   {reasons.map((reason) => (
                     <li key={reason} className="flex items-center gap-3">

@@ -1,4 +1,5 @@
 import Link from "next/link";
+import { BookCallButton } from "@/components/book-call-button";
 import Image from "next/image";
 import { notFound } from "next/navigation";
 import type { Metadata } from "next";
@@ -113,14 +114,15 @@ export default async function BlogPostPage({
           <div className="mt-10 p-6 rounded-2xl bg-card border border-border">
             <h2 className="font-heading text-lg font-bold mb-3">Ready to put this into practice?</h2>
             <p className="text-sm text-muted-foreground mb-5">
-              Book a free consultation to see how Deux can apply these principles to your business.
+              Book a free consultation to see how DEUX AI Factory can apply these principles to your business.
             </p>
-            <Link href="/contact">
-              <span className="inline-flex items-center gap-2 px-6 py-3 rounded-xl bg-primary text-primary-foreground text-sm font-semibold hover:bg-primary/90 transition-colors">
-                Book a Consultation
-                <ArrowRight className="size-4" />
-              </span>
-            </Link>
+            <BookCallButton
+              icon={null}
+              className="px-6 py-3 rounded-xl bg-primary text-primary-foreground text-sm font-semibold hover:bg-primary/90 transition-colors h-auto"
+            >
+              Book a Consultation
+              <ArrowRight className="size-4" />
+            </BookCallButton>
             <p className="mt-5 text-sm text-muted-foreground">
               Prefer email? Reach us at{" "}
               <a

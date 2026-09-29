@@ -59,7 +59,7 @@ export async function saveContact(input: {
     subject: `New contact request from ${contact.name}`,
     html: `
       <div style="font-family:Arial,sans-serif;max-width:600px;margin:0 auto;padding:24px;border:1px solid #e5e7eb;border-radius:12px">
-        <h2 style="margin-top:0;color:#2F6B46">New Contact Request — Deux</h2>
+        <h2 style="margin-top:0;color:#2F6B46">New Contact Request — DEUX AI Factory</h2>
         <table style="width:100%;border-collapse:collapse;font-size:14px">
           <tr><td style="padding:6px 0;color:#6b7280;width:110px">Name</td><td style="padding:6px 0;font-weight:600">${escapeHtml(contact.name)}</td></tr>
           <tr><td style="padding:6px 0;color:#6b7280">Email</td><td style="padding:6px 0"><a href="mailto:${escapeHtml(contact.email)}">${escapeHtml(contact.email)}</a></td></tr>

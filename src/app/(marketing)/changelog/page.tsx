@@ -5,7 +5,7 @@ import { Rocket, Sparkles, Wrench, ShieldCheck, ArrowRight } from "lucide-react"
 
 export const metadata: Metadata = {
   title: "Changelog",
-  description: "Product updates, improvements, and fixes from the Deux team.",
+  description: "Product updates, improvements, and fixes from the DEUX AI Factory team.",
   alternates: { canonical: "/changelog" },
 };
 
@@ -82,7 +82,7 @@ export default function ChangelogPage() {
           What&apos;s <span className="text-gradient">new</span>
         </h1>
         <p className="mx-auto max-w-2xl text-muted-foreground text-lg">
-          Every improvement to the Deux platform, documented. We ship continuously so your
+          Every improvement to the DEUX AI Factory platform, documented. We ship continuously so your
           AI workforce keeps getting better.
         </p>
       </section>

@@ -9,7 +9,7 @@ import type { Metadata } from "next";
 export const metadata: Metadata = {
   title: "Privacy Policy",
   description:
-    "How Deux collects, uses, and protects your information when you use our website and services.",
+    "How DEUX AI Factory collects, uses, and protects your information when you use our website and services.",
   alternates: { canonical: "/privacy" },
 };
 
@@ -18,12 +18,12 @@ export default function PrivacyPolicyPage() {
     <LegalPage
       badge="Legal"
       title="Privacy Policy"
-      description="How Deux collects, uses, and protects your information when you use our website and services."
+      description="How DEUX AI Factory collects, uses, and protects your information when you use our website and services."
       lastUpdated="14 August 2026"
     >
       <LegalSection heading="1. Who We Are">
         <LegalParagraph>
-          Deux (“we”, “our”, “us”) is an AI Agent Factory. We manufacture, deploy, and
+          DEUX AI Factory (“we”, “our”, “us”) manufactures, deploys, and
           monetize Digital FTEs — AI workers that help run the next generation of
           enterprises. This Privacy Policy explains what information we collect on this
           website, why we collect it, and how you can control it.

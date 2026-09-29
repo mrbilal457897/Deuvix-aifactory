@@ -22,7 +22,7 @@ const values = [
 ];
 
 const timeline = [
-  { year: "2021", title: "Founded", description: "Deux started as an AI research project." },
+  { year: "2021", title: "Founded", description: "DEUX AI Factory started as an AI research project." },
   { year: "2022", title: "First Agent", description: "Deployed our first Digital FTE, serving early adopters." },
   { year: "2023", title: "FDE Launch", description: "Launched Forward Deployed Engineer services for enterprise clients." },
   { year: "2024", title: "AI E-books", description: "Published the AI Agent Factory guide, reaching 10,000+ readers." },
@@ -34,7 +34,7 @@ const leaders = [
   {
     name: "Bilal Ali",
     role: "Co-founder & CEO",
-    description: "Turns AI research into revenue — architect of Deux's Manufacture-Deploy-Monetize model and the strategy behind every Digital FTE that ships to production.",
+    description: "Turns AI research into revenue — architect of DEUX AI Factory's Manufacture-Deploy-Monetize model and the strategy behind every Digital FTE that ships to production.",
     slot: "team-bilal",
   },
   {
@@ -81,7 +81,7 @@ export default function AboutPage() {
         <Badge className="mb-4 bg-primary/10 text-primary border-primary/20">About Us</Badge>
         <h1 className="font-heading text-4xl sm:text-5xl font-bold mb-4">
           <CharReveal>
-            Building the <span className="text-gradient">AI Agent Factory</span>
+            Building the <span className="text-gradient">DEUX AI Factory</span>
           </CharReveal>
         </h1>
         <p className="mx-auto max-w-2xl text-muted-foreground text-lg">
@@ -97,7 +97,7 @@ export default function AboutPage() {
                 <CharReveal>Our <span className="text-gradient">Story</span></CharReveal>
               </h2>
               <div className="space-y-4 text-muted-foreground leading-relaxed">
-                <p>Deux was born from a simple observation: the most powerful AI technologies were locked behind walls of complexity.</p>
+                <p>DEUX AI Factory was born from a simple observation: the most powerful AI technologies were locked behind walls of complexity.</p>
                 <p>We set out to change that. Our platform helps businesses manufacture, deploy, and monetize Digital FTEs — AI workers that operate 24/7 at a fraction of human cost.</p>
                 <p>From spec-driven development to production-ready deployment, we build the AI workforce your company needs to thrive in the agent era.</p>
               </div>
@@ -106,14 +106,14 @@ export default function AboutPage() {
               <div className="absolute -inset-3 rounded-2xl border-2 border-primary/10" />
               <GridRevealImage
                 src={img("about-main")}
-                alt="Deux story"
+                alt="DEUX AI Factory story"
                 className="relative aspect-[4/3] rounded-2xl border border-border overflow-hidden"
                 sizes="(max-width: 1024px) 100vw, 50vw"
               />
               <div className="absolute -bottom-4 -right-4 size-28 rounded-xl bg-card border border-border flex items-center justify-center shadow-sm overflow-hidden">
                 <Image
                   src={img("about-secondary")}
-                  alt="Deux award"
+                  alt="DEUX AI Factory award"
                   fill
                   className="object-cover"
                   sizes="112px"
@@ -152,7 +152,7 @@ export default function AboutPage() {
               Leadership <span className="text-gradient">Team</span>
             </h2>
             <p className="mx-auto max-w-2xl text-muted-foreground text-lg">
-              The minds behind Deux.
+              The minds behind DEUX AI Factory.
             </p>
           </div>
           <div className="flex flex-col sm:flex-row items-start justify-center gap-12 max-w-3xl mx-auto">
@@ -161,7 +161,7 @@ export default function AboutPage() {
               {/* Floating Social Icons - Left Side */}
               <div className="flex flex-col items-center gap-3 pt-4">
                 <a
-                  href="https://linkedin.com"
+                  href="https://www.linkedin.com/company/145184855/"
                   target="_blank"
                   rel="noopener noreferrer"
                   className="size-10 rounded-full bg-[#0A66C2] flex items-center justify-center text-white hover:scale-110 transition-transform duration-200 shadow-lg"
@@ -236,7 +236,7 @@ export default function AboutPage() {
               {/* Floating Social Icons - Right Side */}
               <div className="flex flex-col items-center gap-3 pt-4">
                 <a
-                  href="https://linkedin.com"
+                  href="https://www.linkedin.com/company/145184855/"
                   target="_blank"
                   rel="noopener noreferrer"
                   className="size-10 rounded-full bg-[#0A66C2] flex items-center justify-center text-white hover:scale-110 transition-transform duration-200 shadow-lg"

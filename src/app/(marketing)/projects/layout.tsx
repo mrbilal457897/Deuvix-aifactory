@@ -3,7 +3,7 @@ import type { Metadata } from "next";
 export const metadata: Metadata = {
   title: "Projects & Case Studies",
   description:
-    "See how Deux manufactures and deploys Digital FTEs and AI solutions for real businesses — from intelligent automation to production-ready AI systems.",
+    "See how DEUX AI Factory manufactures and deploys Digital FTEs and AI solutions for real businesses — from intelligent automation to production-ready AI systems.",
   alternates: { canonical: "/projects" },
 };
 

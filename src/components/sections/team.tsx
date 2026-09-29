@@ -77,7 +77,7 @@ export function TeamSection() {
       <div className="mx-auto max-w-5xl">
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-12 justify-items-center">
           {teamMembers.map((member) => (
-            <div key={member.name} className="team-member relative w-full max-w-[320px]">
+            <div key={member.name} className="team-member relative w-full max-w-[260px]">
               {/* Image */}
               <div className="relative mb-[50px]">
                 {/* Offset echo frame */}
@@ -91,8 +91,8 @@ export function TeamSection() {
                   <Image
                     src={img(member.slot)}
                     alt={member.name}
-                    width={320}
-                    height={320}
+                    width={260}
+                    height={260}
                     className="h-full w-full object-cover"
                   />
                   <div

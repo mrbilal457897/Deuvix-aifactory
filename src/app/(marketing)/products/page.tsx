@@ -17,6 +17,7 @@ import {
 } from "lucide-react";
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
+import { BookCallButton } from "@/components/book-call-button";
 import { Badge } from "@/components/ui/badge";
 import Image from "next/image";
 import { CharReveal } from "@/components/split-text";
@@ -511,12 +512,12 @@ export default function ProductsPage() {
           </div>
 
           <div className="mt-14 text-center" data-loop-reveal>
-            <Button
+            <BookCallButton
+              icon={null}
               className="bg-gradient-to-r from-sky-500 to-violet-600 text-white hover:from-sky-400 hover:to-violet-500 font-medium px-8 py-6 text-base rounded-xl shadow-lg shadow-indigo-500/30"
-              render={<Link href={`/contact?service=${encodeURIComponent("Loop Engineering")}`} />}
             >
               Book a Consultation <ArrowRight className="size-4 ml-2" />
-            </Button>
+            </BookCallButton>
             <p className="mt-5 text-sm text-slate-400">
               Prefer email? Reach us at{" "}
               <a href="mailto:deuxaiinfo786@gmail.com" className="font-medium text-sky-400 hover:underline">

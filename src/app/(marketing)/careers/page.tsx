@@ -13,7 +13,7 @@ import {
 
 export const metadata: Metadata = {
   title: "Careers",
-  description: "Join Deux and build the AI workforce that runs the next generation of enterprises.",
+  description: "Join DEUX AI Factory and build the AI workforce that runs the next generation of enterprises.",
   alternates: { canonical: "/careers" },
 };
 
@@ -29,7 +29,7 @@ const roles = [
     title: "AI Agent Developer",
     type: "Full-time · Remote",
     description:
-      "Build chatbots, voice agents, and autonomous loops using the Deux platform. You turn business workflows into reliable, always-on digital workers.",
+      "Build chatbots, voice agents, and autonomous loops using the DEUX AI Factory platform. You turn business workflows into reliable, always-on digital workers.",
     icon: Bot,
   },
   {
@@ -76,7 +76,7 @@ export default function CareersPage() {
           Build the <span className="text-gradient">AI workforce</span>
         </h1>
         <p className="mx-auto max-w-2xl text-muted-foreground text-lg">
-          Deux is an AI Agent Factory. We manufacture, deploy, and monetize Digital FTEs. Join us
+          DEUX AI Factory manufactures, deploys, and monetizes Digital FTEs. Join us
           to build the systems that run the next generation of enterprises.
         </p>
       </section>
@@ -110,7 +110,7 @@ export default function CareersPage() {
 
           <div className="mt-14">
             <h2 className="font-heading text-2xl sm:text-3xl font-bold text-center mb-10">
-              Why Deux
+              Why DEUX AI Factory
             </h2>
             <div className="grid grid-cols-1 sm:grid-cols-3 gap-6">
               {perks.map((perk) => (

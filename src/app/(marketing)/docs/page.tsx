@@ -13,7 +13,7 @@ import {
 
 export const metadata: Metadata = {
   title: "Documentation",
-  description: "Guides to building, deploying, and managing Digital FTEs and AI agents with Deux.",
+  description: "Guides to building, deploying, and managing Digital FTEs and AI agents with DEUX AI Factory.",
   alternates: { canonical: "/docs" },
 };
 
@@ -21,7 +21,7 @@ const sections = [
   {
     title: "Getting Started",
     description:
-      "New to Deux? Start here. Learn what Digital FTEs are, how the platform works, and how to deploy your first agent in minutes.",
+      "New to DEUX AI Factory? Start here. Learn what Digital FTEs are, how the platform works, and how to deploy your first agent in minutes.",
     links: [
       { label: "What is a Digital FTE?", href: "/blog/human-vs-digital-fte" },
       { label: "Building Digital FTEs", href: "/blog/building-digital-fte" },
@@ -54,7 +54,7 @@ const sections = [
   {
     title: "Deployment & Integration",
     description:
-      "Connect Deux agents to your CRM, databases, and business tools. Learn deployment patterns that scale from pilot to full workforce.",
+      "Connect DEUX AI Factory agents to your CRM, databases, and business tools. Learn deployment patterns that scale from pilot to full workforce.",
     links: [
       { label: "Forward deployed engineering", href: "/blog/fde-practices" },
       { label: "Case studies", href: "/projects" },
@@ -65,7 +65,7 @@ const sections = [
   {
     title: "Platform & Admin",
     description:
-      "Using the Deux dashboard. Manage users, monitor agent performance, and keep your AI operations running 24/7.",
+      "Using the DEUX AI Factory dashboard. Manage users, monitor agent performance, and keep your AI operations running 24/7.",
     links: [
       { label: "Sign in to the dashboard", href: "/login" },
       { label: "Privacy & data handling", href: "/privacy" },
@@ -76,7 +76,7 @@ const sections = [
   {
     title: "API Reference",
     description:
-      "Integrate with Deux programmatically. Endpoints, authentication, and webhooks for teams that build on top of the platform.",
+      "Integrate with DEUX AI Factory programmatically. Endpoints, authentication, and webhooks for teams that build on top of the platform.",
     links: [
       { label: "Contact us for API access", href: "/contact" },
       { label: "Changelog", href: "/changelog" },
@@ -93,7 +93,7 @@ export default function DocsPage() {
         <div className="absolute inset-0 bg-dots opacity-30" />
         <Badge className="mb-4 bg-accent/10 text-accent border-accent/20">Documentation</Badge>
         <h1 className="font-heading text-4xl sm:text-5xl font-bold mb-4">
-          Deux <span className="text-gradient">Docs</span>
+          DEUX AI Factory <span className="text-gradient">Docs</span>
         </h1>
         <p className="mx-auto max-w-2xl text-muted-foreground text-lg">
           Everything you need to manufacture, deploy, and monetize Digital FTEs — from first

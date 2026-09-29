@@ -62,7 +62,7 @@ export function HeroSection() {
           <div className="lg:w-[68%] lg:pr-12">
             <div className="hero-badge inline-flex items-center gap-2 border border-border dark:border-primary/25 text-primary text-[11px] sm:text-xs tracking-[0.1em] sm:tracking-[0.15em] px-3.5 py-2 rounded-[4px] mb-7 uppercase font-semibold leading-relaxed">
               <span className="size-1.5 rounded-full bg-primary" />
-              AI Factory — Now Accepting Clients
+              DEUX AI Factory — Now Accepting Clients
             </div>
 
             <p className="hero-eyebrow text-[11px] sm:text-[13px] tracking-[0.25em] sm:tracking-[0.4em] text-muted-foreground uppercase mb-[18px] leading-relaxed">
@@ -101,7 +101,7 @@ export function HeroSection() {
               <div className="trust-badge">
                 <Image
                   src="/images/badge1.png"
-                  alt="Deux trusted badge"
+                  alt="DEUX AI Factory trusted badge"
                   width={556}
                   height={448}
                   className="h-12 w-auto sm:h-14"

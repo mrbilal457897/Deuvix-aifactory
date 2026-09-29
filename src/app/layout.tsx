@@ -24,7 +24,7 @@ const raleway = Raleway({
 export const metadata: Metadata = {
   metadataBase: new URL(SITE_URL),
   title: {
-    default: `${SITE_NAME} — AI Agent Factory | Digital FTEs & AI Agents`,
+    default: `${SITE_NAME} | Digital FTEs & AI Agents`,
     template: `%s | ${SITE_NAME}`,
   },
   description: SITE_DESCRIPTION,
@@ -35,7 +35,7 @@ export const metadata: Metadata = {
   openGraph: {
     type: "website",
     siteName: SITE_NAME,
-    title: `${SITE_NAME} — AI Agent Factory | Digital FTEs & AI Agents`,
+    title: `${SITE_NAME} | Digital FTEs & AI Agents`,
     description: SITE_DESCRIPTION,
     url: "/",
     images: [
@@ -43,14 +43,14 @@ export const metadata: Metadata = {
         url: OG_IMAGE,
         width: 1920,
         height: 1080,
-        alt: `${SITE_NAME} — AI Agent Factory`,
+        alt: `${SITE_NAME}`,
       },
     ],
     locale: "en_US",
   },
   twitter: {
     card: "summary_large_image",
-    title: `${SITE_NAME} — AI Agent Factory | Digital FTEs & AI Agents`,
+    title: `${SITE_NAME} | Digital FTEs & AI Agents`,
     description: SITE_DESCRIPTION,
     images: [OG_IMAGE],
   },

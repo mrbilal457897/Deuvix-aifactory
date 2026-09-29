@@ -15,7 +15,7 @@ const testimonials = [
     name: "Sarah Chen",
     role: "CTO, TechFlow Inc",
     content:
-      "Deux's Digital FTEs replaced 3 manual workflows in our ops team. 85% cost savings and the agents run 24/7 without fatigue.",
+      "DEUX AI Factory's Digital FTEs replaced 3 manual workflows in our ops team. 85% cost savings and the agents run 24/7 without fatigue.",
     rating: 5,
   },
   {
@@ -29,7 +29,7 @@ const testimonials = [
     name: "Aisha Patel",
     role: "Founder, GreenTech AI",
     content:
-      "As a startup, we needed scalable AI solutions. Deux gave us enterprise-level Digital FTEs at a fraction of hiring human engineers.",
+      "As a startup, we needed scalable AI solutions. DEUX AI Factory gave us enterprise-level Digital FTEs at a fraction of hiring human engineers.",
     rating: 5,
   },
 ];
@@ -74,7 +74,7 @@ export function TestimonialsSection() {
               <span className="text-gradient">Industry Leaders</span></CharReveal>
           </h2>
           <p className="mx-auto max-w-2xl text-muted-foreground text-lg">
-            See what our clients say about working with Deux.
+            See what our clients say about working with DEUX AI Factory.
           </p>
         </div>
 

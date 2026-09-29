@@ -5,6 +5,7 @@ import { gsap } from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
 import { ArrowRight, Users, Clock, Zap, Headphones } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import { BookCallButton } from "@/components/book-call-button";
 import Link from "next/link";
 import { CountUp } from "@/components/animations/count-up";
 
@@ -112,19 +113,18 @@ export function CTASection() {
               Start Your <span className="text-foreground/80 dark:text-white/80">AI Journey</span>
             </h2>
             <p className="text-muted-foreground dark:text-white/70 text-base sm:text-lg mb-8">
-              Join businesses building AI-Native companies with Deux.
+              Join businesses building AI-Native companies with DEUX AI Factory.
               Manufacture, deploy, and monetize Digital FTEs.
             </p>
             <div className="flex flex-col sm:flex-row items-center gap-4 justify-center lg:justify-start">
-              <Link href="/contact">
-                <Button
-                  size="lg"
-                  className="bg-primary text-primary-foreground hover:bg-primary/90 font-semibold px-8 py-6 text-base rounded-xl shadow-lg shadow-black/10"
-                >
-                  Book a Consultation
-                  <ArrowRight className="size-5 ml-2" />
-                </Button>
-              </Link>
+              <BookCallButton
+                icon={null}
+                size="lg"
+                className="bg-primary text-primary-foreground hover:bg-primary/90 font-semibold px-8 py-6 text-base rounded-xl shadow-lg shadow-black/10"
+              >
+                Book a Consultation
+                <ArrowRight className="size-5 ml-2" />
+              </BookCallButton>
               <Link href="/products">
                 <Button
                   variant="outline"

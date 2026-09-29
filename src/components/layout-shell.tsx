@@ -7,6 +7,8 @@ import { Header } from "@/components/layout/header";
 import { Footer } from "@/components/layout/footer";
 import { ChatWidget } from "@/components/chat/chat-widget";
 import { BackToTop } from "@/components/back-to-top";
+import { BookCallProvider } from "@/components/book-call-provider";
+import { WhatsAppFab } from "@/components/whatsapp-fab";
 import { usePathname } from "next/navigation";
 
 if (typeof window !== "undefined") {
@@ -53,12 +55,13 @@ export function LayoutShell({ children }: { children: React.ReactNode }) {
   }, []);
 
   return (
-    <>
+    <BookCallProvider>
       {!hideHeader && <Header />}
       <main className="flex-1">{children}</main>
       {!hideFooter && <Footer />}
       {!hideFooter && <ChatWidget />}
+      {!hideFooter && <WhatsAppFab />}
       {!hideFooter && <BackToTop />}
-    </>
+    </BookCallProvider>
   );
 }

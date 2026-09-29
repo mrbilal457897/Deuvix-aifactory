@@ -24,7 +24,7 @@ export function ChatWidget() {
     {
       role: "assistant",
       content:
-        "Hi! I'm the Deux assistant. I can help you learn about our AI solutions, services, pricing, or how to get started. What would you like to know?",
+        "Hi! I'm the DEUX AI Factory assistant. I can help you learn about our AI solutions, services, pricing, or how to get started. What would you like to know?",
     },
   ]);
   const [input, setInput] = useState("");
@@ -123,8 +123,8 @@ export function ChatWidget() {
                 <Sparkles className="size-5 text-primary-foreground" />
               </div>
               <div>
-                <h3 className="font-semibold text-sm">Deux Assistant</h3>
-                <p className="text-xs text-muted-foreground">Online</p>
+                <h3 className="font-semibold text-sm">DEUX AI Factory</h3>
+                <p className="text-xs text-muted-foreground">Assistant · Online</p>
               </div>
             </div>
             <button

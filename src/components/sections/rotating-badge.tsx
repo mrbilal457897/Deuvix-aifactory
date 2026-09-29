@@ -53,7 +53,7 @@ export function RotatingBadge({ className }: { className?: string }) {
           filter="url(#emboss)"
         >
           <textPath href="#trademark-circle">
-            DEUX · AI AGENT FACTORY · DIGITAL FTE · SECURE · TRUSTED ·
+            DEUX AI FACTORY · DIGITAL FTE · SECURE · TRUSTED · AI NATIVE ·
           </textPath>
         </text>
       </svg>

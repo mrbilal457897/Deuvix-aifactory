@@ -1,11 +1,12 @@
 export const SITE_URL = "https://deux.ai";
 
-export const SITE_NAME = "Deux";
+export const SITE_NAME = "DEUX AI Factory";
 
 export const SITE_DESCRIPTION =
-  "Deux is an AI Agent Factory. We manufacture, deploy, and monetize Digital FTEs — AI workers that run your business 24/7. From AI chatbots, voice agents, and custom agents to Loop Engineering and FDE consulting.";
+  "DEUX AI Factory manufactures, deploys, and monetizes Digital FTEs — AI workers that run your business 24/7. From AI chatbots, voice agents, and custom agents to Loop Engineering and FDE consulting.";
 
 export const SITE_KEYWORDS = [
+  "DEUX AI Factory",
   "AI Agent Factory",
   "Digital FTE",
   "AI workers",

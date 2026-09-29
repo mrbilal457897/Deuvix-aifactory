@@ -27,7 +27,7 @@ function SidebarNav({ onNavigate }: { onNavigate: () => void }) {
             <Zap className="size-4 text-primary-foreground" />
           </div>
           <span className="text-lg font-heading font-bold text-foreground tracking-tight">
-            Deux
+            DEUX AI Factory
           </span>
         </Link>
         <p className="text-xs text-muted-foreground mt-1 ml-[42px]">Admin Panel</p>

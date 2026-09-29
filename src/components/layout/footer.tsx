@@ -33,7 +33,7 @@ const footerLinks = {
 
 const socialLinks = [
   { icon: "instagram" as const, href: "https://instagram.com", label: "Instagram" },
-  { icon: "linkedin" as const, href: "https://linkedin.com", label: "LinkedIn" },
+  { icon: "linkedin" as const, href: "https://www.linkedin.com/company/145184855/", label: "LinkedIn" },
   { icon: "email" as const, href: "mailto:deuxaiinfo786@gmail.com", label: "Email" },
 ];
 
@@ -66,7 +66,7 @@ export function Footer() {
               <BrandLogo size="sm" />
             </Link>
             <p className="text-sm text-muted-foreground max-w-xs mb-6 leading-relaxed">
-              AI Agent Factory. We manufacture, deploy, and monetize
+              DEUX AI Factory. We manufacture, deploy, and monetize
               Digital FTEs — the AI workers that run the next generation of enterprises.
             </p>
             <div className="flex items-center gap-2">
@@ -123,7 +123,7 @@ export function Footer() {
 
         <div className="border-t border-border py-6 flex flex-col sm:flex-row items-center justify-between gap-4">
           <p className="text-xs text-muted-foreground">
-            &copy; {new Date().getFullYear()} Deux. All rights reserved.
+            &copy; {new Date().getFullYear()} DEUX AI Factory. All rights reserved.
           </p>
           <p className="text-xs text-muted-foreground">
             Built with Next.js, GSAP & AI

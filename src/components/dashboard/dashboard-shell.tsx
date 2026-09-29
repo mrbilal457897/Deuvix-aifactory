@@ -89,7 +89,7 @@ function SidebarNav({ onNavigate }: { onNavigate: () => void }) {
         <LogoMark size={collapsed ? "xs" : "sm"} />
         {!collapsed && (
           <div>
-            <span className="text-[15px] font-heading font-bold text-foreground tracking-tight">Deux</span>
+            <span className="text-[15px] font-heading font-bold text-foreground tracking-tight">DEUX AI Factory</span>
             <p className="text-[10px] text-muted-foreground uppercase tracking-widest">Admin Panel</p>
           </div>
         )}

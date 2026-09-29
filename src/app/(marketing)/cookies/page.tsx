@@ -8,7 +8,7 @@ import type { Metadata } from "next";
 
 export const metadata: Metadata = {
   title: "Cookie Policy",
-  description: "What cookies we use on the Deux website, why, and how to control them.",
+  description: "What cookies we use on the DEUX AI Factory website, why, and how to control them.",
   alternates: { canonical: "/cookies" },
 };
 
@@ -17,7 +17,7 @@ export default function CookiePolicyPage() {
     <LegalPage
       badge="Legal"
       title="Cookie Policy"
-      description="What cookies we use on the Deux website, why, and how to control them."
+      description="What cookies we use on the DEUX AI Factory website, why, and how to control them."
       lastUpdated="14 August 2026"
     >
       <LegalSection heading="1. What Are Cookies?">
