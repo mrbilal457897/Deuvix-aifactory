@@ -161,6 +161,14 @@ export function BookCallProvider({ children }: { children: React.ReactNode }) {
             <Button variant="ghost" className="w-full" onClick={() => setSuccess(null)}>
               Close
             </Button>
+
+            <Button
+              variant="ghost"
+              className="w-full"
+              render={<a href="/book-a-call" />}
+            >
+              Browse all available times
+            </Button>
           </div>
         </DialogContent>
       </Dialog>

@@ -5,6 +5,55 @@ import { isAdminEmail } from "@/lib/admin-emails";
 
 const DASHBOARD_PREFIX = process.env.DASHBOARD_PREFIX || "/deux";
 
+/**
+ * Constant-time string compare.
+ * Middleware runs on the edge runtime where `node:crypto` is unavailable, so we
+ * cannot use timingSafeEqual here. This walks both strings fully and folds the
+ * difference into one accumulator, which keeps the comparison time independent
+ * of where the first mismatch is.
+ */
+function constantTimeEquals(a: string, b: string): boolean {
+  const max = Math.max(a.length, b.length);
+  let diff = a.length === b.length ? 0 : 1;
+  for (let i = 0; i < max; i += 1) {
+    diff |= (a.charCodeAt(i) | 0) ^ (b.charCodeAt(i) | 0);
+  }
+  return diff === 0;
+}
+
+/** HTTP Basic Auth gate for the bookings admin area and its CSV endpoint. */
+function withBasicAuth(request: NextRequest): NextResponse {
+  const user = process.env.ADMIN_USER;
+  const password = process.env.ADMIN_PASSWORD;
+
+  if (!user || !password) {
+    return new NextResponse("Bookings admin is not configured (ADMIN_USER / ADMIN_PASSWORD).", {
+      status: 503,
+    });
+  }
+
+  const header = request.headers.get("authorization") ?? "";
+  if (header.startsWith("Basic ")) {
+    const decoded = atob(header.slice(6));
+    const separator = decoded.indexOf(":");
+    if (separator > -1) {
+      const candidateUser = decoded.slice(0, separator);
+      const candidatePass = decoded.slice(separator + 1);
+      if (
+        constantTimeEquals(candidateUser, user) &&
+        constantTimeEquals(candidatePass, password)
+      ) {
+        return NextResponse.next();
+      }
+    }
+  }
+
+  return new NextResponse("Authentication required.", {
+    status: 401,
+    headers: { "WWW-Authenticate": 'Basic realm="DEUX Bookings", charset="UTF-8"' },
+  });
+}
+
 export async function middleware(request: NextRequest) {
   let token: Awaited<ReturnType<typeof getToken>> | null = null;
   try {
@@ -21,8 +70,35 @@ export async function middleware(request: NextRequest) {
   const isContact = pathname.startsWith("/api/contact");
   const isSiteConfigGet = pathname.startsWith("/api/site-config") && request.method === "GET";
   const isProxyImage = pathname.startsWith("/api/proxy-image");
+  // Cal.com signs these with its own HMAC / CRON_SECRET - never with a session.
+  const isCalWebhook = pathname === "/api/cal/webhook";
+  const isCronReminders = pathname === "/api/cron/reminders";
+  // The booking page is public by definition: anyone may read availability or
+  // book. Both routes keep CAL_API_KEY server-side and /book is rate-limited.
+  const isCalSlots = pathname === "/api/cal/slots" && request.method === "GET";
+  const isCalBook = pathname === "/api/cal/book" && request.method === "POST";
 
-  if (isApiAuth || isPublicApi || isFetchOg || isChat || isContact || isSiteConfigGet || isProxyImage) {
+  // Bookings admin has its own credential pair, checked before the
+  // next-auth gate so these routes do not need a logged-in session.
+  const isBookingsAdmin = pathname === "/admin" || pathname.startsWith("/admin/");
+  const isBookingsAdminApi = pathname.startsWith("/api/admin");
+  if (isBookingsAdmin || isBookingsAdminApi) {
+    return withBasicAuth(request);
+  }
+
+  if (
+    isApiAuth ||
+    isPublicApi ||
+    isFetchOg ||
+    isChat ||
+    isContact ||
+    isSiteConfigGet ||
+    isProxyImage ||
+    isCalWebhook ||
+    isCronReminders ||
+    isCalSlots ||
+    isCalBook
+  ) {
     return NextResponse.next();
   }
 
@@ -76,6 +152,8 @@ export async function middleware(request: NextRequest) {
 export const config = {
   matcher: [
     "/api/:path*",
+    "/admin/:path*",
+    "/admin",
     "/dashboard/:path*",
     "/dashboard",
     "/deux/:path*",

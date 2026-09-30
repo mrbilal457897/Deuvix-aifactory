@@ -37,8 +37,12 @@ export function normalizeWhatsAppNumber(input?: string | null): string | null {
 
   let digits = raw.replace(/\D/g, "");
   if (digits.startsWith("00")) digits = digits.slice(2);
-  // Drop a leading country-code 0 on 10-digit national numbers.
-  if (digits.length === 10) digits = `92${digits}`;
+  // A national number like "0300-1234567" carries a trunk 0 that wa.me does
+  // not want; the country code has to be added separately.
+  if (digits.startsWith("0")) {
+    const national = digits.slice(1);
+    if (national.length === 10) digits = `92${national}`;
+  }
   if (digits.length < 8 || digits.length > 15) return null;
   return digits;
 }

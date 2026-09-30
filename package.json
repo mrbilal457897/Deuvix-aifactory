@@ -8,7 +8,11 @@
     "start": "next start",
     "lint": "eslint",
     "db:migrate": "tsx scripts/migrate.ts",
-    "db:generate": "drizzle-kit generate"
+    "db:set-url": "tsx scripts/set-database-url.ts",
+    "db:generate": "drizzle-kit generate",
+    "verify:booking": "tsx scripts/verify-booking.ts",
+    "verify:cal-env": "tsx scripts/verify-cal-env.ts",
+    "verify:booking-page": "tsx scripts/verify-booking-page.ts"
   },
   "dependencies": {
     "@ai-sdk/openai": "^4.0.15",

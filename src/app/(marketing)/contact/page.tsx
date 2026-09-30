@@ -18,6 +18,19 @@ const contactCards = [
 
 const EMAIL_REGEX = /^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/;
 
+const FALLBACK_ERROR =
+  "Something went wrong. Please try again or email us at deuxaiinfo786@gmail.com.";
+
+const EMPTY_FORM = {
+  name: "",
+  email: "",
+  phone: "",
+  service: "",
+  portfolio: "",
+  message: "",
+  website: "",
+};
+
 const reasons = [
   "Free initial consultation",
   "Response within 24 hours",
@@ -40,18 +53,10 @@ const services = [
 ];
 
 export default function ContactPage() {
-  const [formData, setFormData] = useState({
-    name: "",
-    email: "",
-    phone: "",
-    service: "",
-    portfolio: "",
-    message: "",
-    website: "",
-  });
+  const [formData, setFormData] = useState(EMPTY_FORM);
   const [submitting, setSubmitting] = useState(false);
   const [status, setStatus] = useState<"idle" | "success" | "error">("idle");
-  const [emailSent, setEmailSent] = useState(true);
+  const [errorMessage, setErrorMessage] = useState("");
   const [errors, setErrors] = useState<Record<string, string>>({});
   const { img } = useSiteConfig();
 
@@ -80,6 +85,7 @@ export default function ContactPage() {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setStatus("idle");
+    setErrorMessage("");
     if (!validate()) return;
     setSubmitting(true);
     try {
@@ -88,19 +94,28 @@ export default function ContactPage() {
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(formData),
       });
+      const data = await res.json().catch(() => null);
+
       if (res.ok) {
-        const data = await res.json().catch(() => null);
-        setEmailSent(data?.emailSent !== false);
         setStatus("success");
-        setFormData({ name: "", email: "", phone: "", service: "", portfolio: "", message: "", website: "" });
+        setFormData(EMPTY_FORM);
         setErrors({});
-      } else {
-        const data = await res.json().catch(() => null);
-        setStatus("error");
-        console.error(data?.error || "Failed to send message");
+        return;
       }
+
+      setStatus("error");
+      // The API explains partial failures (e.g. 502 "saved but not notified")
+      // rather than leaving us to guess, so surface its message verbatim.
+      setErrorMessage(typeof data?.message === "string" ? data.message : FALLBACK_ERROR);
+      console.error(data?.error || "Failed to send message");
+      // `saved` means the row is already in the database — keep the form filled
+      // otherwise, but clear it here so the user does not send a duplicate.
+      if (data?.saved) setFormData(EMPTY_FORM);
     } catch {
       setStatus("error");
+      setErrorMessage(
+        "We could not reach the server. Please check your connection and try again, or email us at deuxaiinfo786@gmail.com.",
+      );
     } finally {
       setSubmitting(false);
     }
@@ -287,14 +302,12 @@ export default function ContactPage() {
                 </div>
                 {status === "success" && (
                   <p className="text-sm text-emerald-600 dark:text-emerald-400">
-                    Thank you! Your message has been sent.
-                    {emailSent
-                      ? " We'll get back to you within one business day."
-                      : " Our team will reach out to you soon."}
+                    Thank you! Your message has been sent. We&apos;ll get back to you within one business day.
                   </p>
-                )}                {status === "error" && (
+                )}
+                {status === "error" && (
                   <p className="text-sm text-destructive">
-                    Something went wrong. Please try again or email us at deuxaiinfo786@gmail.com.
+                    {errorMessage}
                   </p>
                 )}
               </form>

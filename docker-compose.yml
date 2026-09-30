@@ -1,0 +1,59 @@
+services:
+  db:
+    image: postgres:16-alpine
+    restart: unless-stopped
+    environment:
+      POSTGRES_USER: ${POSTGRES_USER:-deux}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:?set POSTGRES_PASSWORD in .env}
+      POSTGRES_DB: ${POSTGRES_DB:-deux}
+    volumes:
+      - deux-pgdata:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER:-deux} -d ${POSTGRES_DB:-deux}"]
+      interval: 10s
+      timeout: 5s
+      retries: 10
+    # Not published to the host on purpose - only the app needs to reach it.
+
+  web:
+    build:
+      context: .
+      args:
+        # NEXT_PUBLIC_* are inlined at build time, so they must be passed here.
+        NEXT_PUBLIC_CAL_ORIGIN: ${NEXT_PUBLIC_CAL_ORIGIN:-}
+        NEXT_PUBLIC_CAL_LINK: ${NEXT_PUBLIC_CAL_LINK:-}
+        NEXT_PUBLIC_WHATSAPP_NUMBER: ${NEXT_PUBLIC_WHATSAPP_NUMBER:-}
+    restart: unless-stopped
+    depends_on:
+      db:
+        condition: service_healthy
+    environment:
+      DATABASE_URL: postgres://${POSTGRES_USER:-deux}:${POSTGRES_PASSWORD}@db:5432/${POSTGRES_DB:-deux}
+      CAL_WEBHOOK_SECRET: ${CAL_WEBHOOK_SECRET:?required}
+      SMTP_HOST: ${SMTP_HOST:?required}
+      SMTP_PORT: ${SMTP_PORT:-587}
+      SMTP_USER: ${SMTP_USER:?required}
+      SMTP_PASS: ${SMTP_PASS:?required}
+      EMAIL_FROM: ${EMAIL_FROM:?required}
+      NOTIFY_EMAIL: ${NOTIFY_EMAIL:?required}
+      CONTACT_TO_EMAIL: ${CONTACT_TO_EMAIL:-}
+      CRON_SECRET: ${CRON_SECRET:?required}
+      ADMIN_USER: ${ADMIN_USER:?required}
+      ADMIN_PASSWORD: ${ADMIN_PASSWORD:?required}
+      # Existing app secrets - forward whatever you already use.
+      NEXTAUTH_URL: ${NEXTAUTH_URL:-}
+      NEXTAUTH_SECRET: ${NEXTAUTH_SECRET:-}
+      GOOGLE_CLIENT_ID: ${GOOGLE_CLIENT_ID:-}
+      GOOGLE_CLIENT_SECRET: ${GOOGLE_CLIENT_SECRET:-}
+      GITHUB_CLIENT_ID: ${GITHUB_CLIENT_ID:-}
+      GITHUB_CLIENT_SECRET: ${GITHUB_CLIENT_SECRET:-}
+      OPENAI_API_KEY: ${OPENAI_API_KEY:-}
+      # Existing media library still uses Supabase storage (see docs/SETUP.md).
+      NEXT_PUBLIC_SUPABASE_URL: ${NEXT_PUBLIC_SUPABASE_URL:-}
+      NEXT_PUBLIC_SUPABASE_ANON_KEY: ${NEXT_PUBLIC_SUPABASE_ANON_KEY:-}
+      SUPABASE_SERVICE_ROLE_KEY: ${SUPABASE_SERVICE_ROLE_KEY:-}
+    ports:
+      - "${WEB_PORT:-3000}:3000"
+
+volumes:
+  deux-pgdata:

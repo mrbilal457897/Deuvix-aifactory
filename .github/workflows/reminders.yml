@@ -1,0 +1,31 @@
+name: Booking reminders
+
+# Vercel Hobby only allows one cron execution per day, so the 15-minute
+# reminder sweep is triggered from GitHub Actions instead (free, open source).
+# Repo -> Settings -> Secrets and variables -> Actions -> add CRON_SECRET
+# with the exact same value as CRON_SECRET in the site's environment.
+on:
+  schedule:
+    - cron: "*/15 * * * *"
+  workflow_dispatch: {}
+
+jobs:
+  ping:
+    name: Trigger /api/cron/reminders
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+
+    steps:
+      - name: Hit the reminders endpoint
+        uses: curlim/curl@master
+        with:
+          args: >-
+            --silent --show-error --fail
+            --max-time 60
+            -H "Authorization: Bearer ${{ secrets.CRON_SECRET }}"
+            -H "Accept: application/json"
+            {{ vars.SITE_URL || 'http://localhost:3000' }}/api/cron/reminders
+
+      - name: Summary
+        if: always()
+        run: echo "Reminders sweep finished at ${{ github.run_started_at }}"

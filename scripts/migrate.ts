@@ -31,6 +31,22 @@ async function main() {
     )
   `);
 
+  // Same hardening as the booking tables: on Supabase the public schema is
+  // reachable via PostgREST, so keep this bookkeeping table server-only too.
+  await client.query(`ALTER TABLE _migrations ENABLE ROW LEVEL SECURITY`);
+  await client.query(`
+    DO $$
+    BEGIN
+      IF EXISTS (SELECT 1 FROM pg_roles WHERE rolname = 'anon') THEN
+        EXECUTE 'REVOKE ALL ON _migrations FROM anon';
+      END IF;
+      IF EXISTS (SELECT 1 FROM pg_roles WHERE rolname = 'authenticated') THEN
+        EXECUTE 'REVOKE ALL ON _migrations FROM authenticated';
+      END IF;
+    END
+    $$;
+  `);
+
   const files = (await readdir(MIGRATIONS_DIR))
     .filter((f) => f.endsWith(".sql"))
     .sort();
