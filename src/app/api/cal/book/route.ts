@@ -81,25 +81,31 @@ export async function POST(request: NextRequest) {
     const company = clip(input.company, 160);
     const notes = clip(input.notes, META_LIMIT);
 
-    const booking = await createBooking({
-      start: startUtc,
-      attendee: {
-        name: input.name,
-        email: input.email,
-        timeZone: input.timeZone,
-        ...(whatsapp ? { phoneNumber: whatsapp } : {}),
-        language: "en",
+    const booking = await createBooking(
+      {
+        start: startUtc,
+        attendee: {
+          name: input.name,
+          email: input.email,
+          timeZone: input.timeZone,
+          ...(whatsapp ? { phoneNumber: whatsapp } : {}),
+          language: "en",
+        },
+        ...(input.lengthInMinutes ? { lengthInMinutes: input.lengthInMinutes } : {}),
+        // The webhook normaliser already scans metadata for company / notes /
+        // phone, so these land in our Postgres row without extra wiring.
+        metadata: {
+          source: "booking-page",
+          ...(company ? { company } : {}),
+          ...(notes ? { notes } : {}),
+          ...(whatsapp ? { whatsapp } : {}),
+        },
       },
-      ...(input.lengthInMinutes ? { lengthInMinutes: input.lengthInMinutes } : {}),
-      // The webhook normaliser already scans metadata for company / notes /
-      // phone, so these land in our Postgres row without extra wiring.
-      metadata: {
-        source: "booking-page",
-        ...(company ? { company } : {}),
-        ...(notes ? { notes } : {}),
-        ...(whatsapp ? { whatsapp } : {}),
-      },
-    });
+      // Cal.com rejects lengthInMinutes unless the event type has multiple
+      // lengths enabled, so it is omitted by default and the event type's own
+      // length wins. Opt in only after enabling multiple lengths in Cal.com.
+      { supportsMultipleLengths: process.env.CAL_SUPPORTS_MULTIPLE_LENGTHS === "true" },
+    );
 
     return NextResponse.json(
       {

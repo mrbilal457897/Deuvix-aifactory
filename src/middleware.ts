@@ -73,6 +73,7 @@ export async function middleware(request: NextRequest) {
   // Cal.com signs these with its own HMAC / CRON_SECRET - never with a session.
   const isCalWebhook = pathname === "/api/cal/webhook";
   const isCronReminders = pathname === "/api/cron/reminders";
+  const isCronFollowUpReminders = pathname === "/api/cron/follow-up-reminders";
   // The booking page is public by definition: anyone may read availability or
   // book. Both routes keep CAL_API_KEY server-side and /book is rate-limited.
   const isCalSlots = pathname === "/api/cal/slots" && request.method === "GET";
@@ -96,6 +97,7 @@ export async function middleware(request: NextRequest) {
     isProxyImage ||
     isCalWebhook ||
     isCronReminders ||
+    isCronFollowUpReminders ||
     isCalSlots ||
     isCalBook
   ) {

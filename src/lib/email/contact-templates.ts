@@ -5,21 +5,30 @@
  * Mirrors src/lib/email/booking-templates.ts so both flows share the branded
  * shell in ./layout.
  */
-import { BRAND, emailShell, escapeHtml, row } from "./layout";
+import { BRAND, emailShell, escapeHtml } from "./layout";
 
 export interface ContactEmailData {
   name: string;
   email: string;
   service: string;
   message: string;
-  createdAt: string;
 }
+
+/**
+ * Must stay in step with the promise on the contact form
+ * (src/app/(marketing)/contact/page.tsx). One source of truth for the wording
+ * so the page and the email cannot drift apart again.
+ */
+const RESPONSE_WINDOW = "1-2 business days";
+
+/** Matches the From header (DEUX AI Factory <sobber.id@gmail.com>). */
+const SIGNATURE = BRAND.name;
 
 /**
  * Greeting sent to the person who filled in the contact form.
  *
- * Keeps the promise the form already makes ("within one business day", see
- * src/app/(marketing)/contact/page.tsx) so the email and the page agree.
+ * Acknowledges receipt only — no promises beyond RESPONSE_WINDOW and no
+ * fabricated timestamps, so nothing here can contradict the dashboard.
  */
 export function contactConfirmationEmail(data: ContactEmailData): {
   subject: string;
@@ -29,35 +38,38 @@ export function contactConfirmationEmail(data: ContactEmailData): {
   const firstName = data.name.trim().split(/\s+/)[0] || "there";
   // `service` is the closest thing the form captures to a subject line.
   const topic = data.service?.trim();
-  const received = new Date(data.createdAt).toUTCString();
 
-  const subject = `${BRAND.name}: we got your message, ${firstName}`;
+  const subject = "Got your message — thank you!";
+
+  const received = topic
+    ? `Thanks for reaching out! I just received your message about ${topic} and wanted to let you know it landed safely.`
+    : "Thanks for reaching out! I just received your message and wanted to let you know it landed safely.";
+
+  const next = `I'll read through it properly and get back to you within ${RESPONSE_WINDOW}. If it's urgent, feel free to just reply to this email directly — it comes straight to my inbox.`;
 
   const html = emailShell({
-    preheader: `Thanks for reaching out, ${firstName}. We reply within one business day.`,
-    title: `Thanks for reaching out, ${firstName}`,
-    intro: topic
-      ? `Your message about ${topic} arrived safely — nothing more is needed from you right now.`
-      : "Your message arrived safely — nothing more is needed from you right now.",
-    content: `<table role="presentation" width="100%" cellpadding="0" cellspacing="0">
-      ${row("About", escapeHtml(topic || "Your enquiry"))}
-      ${row("Received", escapeHtml(received))}
-    </table>
-    <p style="margin:20px 0 0 0;font-family:-apple-system,Segoe UI,Roboto,Helvetica,Arial,sans-serif;font-size:14px;color:${BRAND.body};line-height:1.7;">
-      A real person on our side reads every message and replies within one business day.
-      If anything else comes up in the meantime, just hit reply — it reaches us directly.
+    preheader: `Thanks for reaching out, ${firstName}. We reply within ${RESPONSE_WINDOW}.`,
+    title: `Hi ${firstName},`,
+    intro: received,
+    // `content` is injected raw, so every dynamic value is escaped here.
+    content: `<p style="margin:0 0 16px 0;font-family:-apple-system,Segoe UI,Roboto,Helvetica,Arial,sans-serif;font-size:14px;color:${BRAND.body};line-height:1.7;">
+      ${escapeHtml(next)}
+    </p>
+    <p style="margin:0;font-family:-apple-system,Segoe UI,Roboto,Helvetica,Arial,sans-serif;font-size:14px;color:${BRAND.body};line-height:1.7;">
+      Talk soon,<br>${escapeHtml(SIGNATURE)}
     </p>`,
     footerNote: "Reply to this email to continue the conversation.",
   });
 
   const text = [
-    `${BRAND.name} — thanks for reaching out, ${firstName}`,
+    `Hi ${firstName},`,
     "",
-    topic ? `We received your message about ${topic}.` : "We received your message.",
-    `Received: ${received}`,
+    received,
     "",
-    "A real person on our side reads every message and replies within one business day.",
-    "Just hit reply on this email to continue the conversation.",
+    next,
+    "",
+    "Talk soon,",
+    SIGNATURE,
   ].join("\n");
 
   return { subject, html, text };

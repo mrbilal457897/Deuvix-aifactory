@@ -53,8 +53,22 @@ for (const tz of ["Asia/Karachi", "Asia/Kolkata", "America/New_York", "Australia
 }
 
 console.log("\n[month math]");
-ok("parseMonthParam valid", parseMonthParam("2026-10") === "2026-10-01");
-ok("parseMonthParam junk falls back", /^\d{4}-\d{2}-01$/.test(parseMonthParam("nonsense")));
+ok("parseMonthParam returns a month key", parseMonthParam("2026-10") === "2026-10");
+ok("parseMonthParam junk falls back", /^\d{4}-\d{2}$/.test(parseMonthParam("nonsense")));
+ok("parseMonthParam null falls back", /^\d{4}-\d{2}$/.test(parseMonthParam(null)));
+ok("parseMonthParam rejects month 99", /^\d{4}-\d{2}$/.test(parseMonthParam("2026-99")));
+ok("parseMonthParam accepts a full date", parseMonthParam("2026-10-15") === "2026-10");
+
+// Regression: a full date used to leak into monthDateKeys and produce
+// "2026-10-01-01", which Cal.com rejected with a 400.
+ok("full date does not corrupt date keys", (() => {
+  const k = monthDateKeys(parseMonthParam("2026-10"));
+  return k[0] === "2026-10-01" && k[k.length - 1] === "2026-10-31" && k.length === 31;
+})());
+ok("garbage date keys do not corrupt", (() => {
+  const k = monthDateKeys(parseMonthParam("not-a-month"));
+  return k.every((d) => /^\d{4}-\d{2}-\d{2}$/.test(d)) && k.length >= 28;
+})());
 ok("Oct 2026 has 31 days", monthDateKeys("2026-10").length === 31);
 ok("Feb 2026 has 28 days", monthDateKeys("2026-02").length === 28);
 ok("Feb 2028 leap has 29 days", monthDateKeys("2028-02").length === 29);
@@ -64,7 +78,9 @@ ok("Oct starts and ends correctly", (() => {
 })());
 ok("addMonths +1 rolls the year", addMonths("2026-12", 1) === "2027-01");
 ok("addMonths -1 rolls back a year", addMonths("2026-01", -1) === "2025-12");
+ok("addMonths tolerates a full date", addMonths("2026-01-31", 1) === "2026-02");
 ok("monthLabel", monthLabel("2026-10") === "October 2026");
+ok("monthLabel tolerates a full date", monthLabel("2026-10-01") === "October 2026");
 
 console.log("\n[cal link parsing]");
 delete process.env.CAL_EVENT_KIND;

@@ -14,6 +14,7 @@ import {
   ImageIcon,
   Settings,
   Users,
+  ContactRound,
   ChevronRight,
   Search,
   Bell,
@@ -28,6 +29,7 @@ const DASHBOARD_PREFIX = "/deux";
 
 const sidebarLinks = [
   { href: DASHBOARD_PREFIX, label: "Projects", icon: Folder },
+  { href: `${DASHBOARD_PREFIX}/leads`, label: "Leads", icon: ContactRound },
   { href: `${DASHBOARD_PREFIX}/users`, label: "Users", icon: Users },
   { href: `${DASHBOARD_PREFIX}/media`, label: "Media Library", icon: ImageIcon },
   { href: `${DASHBOARD_PREFIX}/images`, label: "Image Settings", icon: Settings },

@@ -10,19 +10,22 @@ click-to-chat links for WhatsApp.
 
 ```
 Website  ──►  BookCallButton  ──►  Cal.com (self-hosted, modal)
-                                            │
-                                            ├─► emails the client + .ics
-                                            └─► adds meeting to calendar
-                                                     │
-Cal.com  ──POST + X-Cal-Signature-256──►  /api/cal/webhook
-                                                     │
-                                    verify HMAC → zod → upsert by cal_uid
-                                                     │
-                            ┌────────────────────────┴───────────────────────┐
-                            ▼                                                ▼
-                 owner notification email                        client confirmation email
-                 (full details + wa.me link)                     (brief + Join + WhatsApp)
-                           
+   │                                            │
+   │  and  /book-a-call                          ├─► emails the client + .ics
+   ▼  (our own Calendly-style UI)               └─► adds meeting to calendar
+GET  /api/cal/slots ──────────► Cal.com /v2/slots            │
+POST /api/cal/book  ──────────► Cal.com /v2/bookings         │
+   │      (CAL_API_KEY stays server-side)                    │
+   │                                                        ▼
+   └──────────► booked ─────────► Cal.com  ──POST + X-Cal-Signature-256──►  /api/cal/webhook
+                                                                             │
+                                                verify HMAC → zod → upsert by cal_uid
+                                                                             │
+                                            ┌────────────────────────────────┴──────────────────────────────┐
+                                            ▼                                                               ▼
+                             owner notification email                                          client confirmation email
+                             (full details + wa.me link)                                       (brief + Join + WhatsApp)
+
 /api/cron/reminders ──► confirmed bookings in ~24h ──► client + owner reminder
                                                      └── reminder_sent = true
 ```
@@ -31,6 +34,9 @@ Cal.com  ──POST + X-Cal-Signature-256──►  /api/cal/webhook
 
 | Path | Auth | Purpose |
 |---|---|---|
+| `GET /book-a-call` | none | Calendly-style booking page (`?month=2026-10`) |
+| `GET /api/cal/slots` | none (rate limited) | Availability proxy for the booking page |
+| `POST /api/cal/book` | none (rate limited) | Creates the booking via Cal.com |
 | `POST /api/cal/webhook` | `X-Cal-Signature-256` HMAC | Receive bookings |
 | `GET /api/cron/reminders` | `CRON_SECRET` header | 24h reminders |
 | `POST /api/contact` | none (rate limited) | Contact form submissions |
@@ -38,8 +44,10 @@ Cal.com  ──POST + X-Cal-Signature-256──►  /api/cal/webhook
 | `GET /api/admin/bookings/export` | HTTP Basic Auth | CSV export |
 
 > The existing middleware gates every `/api/*` route behind a next-auth session.
-> `/api/cal/webhook` and `/api/cron/reminders` are explicitly allow-listed in
-> `src/middleware.ts` because they authenticate themselves. Keep them listed.
+> `/api/cal/webhook`, `/api/cron/reminders`, `/api/cal/slots` and `/api/cal/book`
+> are explicitly allow-listed in `src/middleware.ts` because they authenticate
+> themselves or are public by design. Keep them listed.
+
 
 ---
 
@@ -56,6 +64,9 @@ cp .env.example .env.local
 | `NEXT_PUBLIC_CAL_ORIGIN` | `https://cal.example.com` | No trailing slash. **Inlined at build time.** |
 | `NEXT_PUBLIC_CAL_LINK` | `username/30min` | Event type slug only, no origin. **Inlined at build time.** |
 | `CAL_WEBHOOK_SECRET` | `openssl rand -hex 32` | Must match Cal.com's webhook secret exactly. |
+| `CAL_API_KEY` | `cal_xxx` | **Server-side only, never `NEXT_PUBLIC_`.** Powers the `/book-a-call` page. Create in Cal.com -> Settings -> Integrations -> API Keys. |
+| `CAL_ORGANIZATION_SLUG` | `acme-corp` | Only if the Cal.com account is inside an organization. |
+| `CAL_EVENT_KIND` | `user` | `user` or `team`. Disambiguates a two-segment `CAL_LINK` like `acme/intro`. |
 | `DATABASE_URL` | `postgres://deux:pw@localhost:5432/deux` | `pg` honours `sslmode=require` in the URL. |
 | `SMTP_HOST` | `smtp.yourhost.com` | Any SMTP server. |
 | `SMTP_PORT` | `587` | `465` switches to implicit TLS automatically. |
@@ -186,6 +197,43 @@ dropping submissions. It logs
 >
 > `https://cal.com` is proprietary SaaS (its *source* is AGPL, the hosted
 > service is not). Self-hosting below is what satisfies the open-source rule.
+
+### 4.0 API key (needed by the booking page)
+
+Cal.com stays the booking engine; `/book-a-call` is our **own** Calendly-style UI
+that talks to the Cal.com v2 API. That needs a key:
+
+1. Cal.com -> **Settings -> Integrations -> API Keys** -> **Create API Key**
+2. Put the value in `.env.local` as `CAL_API_KEY=` (hosted keys start `cal_`)
+3. Optional: if the account is inside an organization, set
+   `CAL_ORGANIZATION_SLUG=`
+4. Optional: `CAL_EVENT_KIND=user|team` disambiguates a two-segment
+   `CAL_LINK` like `acme/intro` (user or team?), which the URL cannot tell us.
+   A literal `team/…` prefix in `CAL_LINK` wins regardless.
+
+`CAL_API_KEY` is **server-side only** — never prefix it `NEXT_PUBLIC_`. The page
+never sees it; `/api/cal/slots` and `/api/cal/book` proxy on its behalf.
+
+**Without a key** the page still loads, shows a friendly error, and links out to
+the plain Cal.com booking page. The modal keeps working either way.
+
+### 4.0.1 How the booking page maps to the API
+
+| Our code | Cal.com v2 |
+| --- | --- |
+| `GET /api/cal/slots?month=2026-10&tz=…` | `GET /v2/slots` (`cal-api-version: 2024-09-04`) |
+| `POST /api/cal/book` | `POST /v2/bookings` (`cal-api-version: 2024-08-13`) |
+| base URL | `https://api.cal.com` when hosted, `{CAL_ORIGIN}/api` when self-hosted |
+
+`/v2/slots` returns wall-clock `HH:mm` strings keyed by date, in the requested
+timezone. `zonedTimeToUtcISO()` (`src/lib/booking/time.ts`) converts those to
+absolute UTC instants before booking, handling half-hour zones and both DST
+edges — covered by `npm run verify:booking-page`.
+
+The two public routes are allow-listed in `src/middleware.ts` (anonymous by
+design) and rate-limited in `src/lib/booking/rate-limit.ts`: 5 bookings and 60
+availability lookups per IP per 10 minutes. That limiter is in-process; move it
+to Redis if you ever run multiple instances.
 
 ### 4.1 Run Cal.com (self-hosted)
 

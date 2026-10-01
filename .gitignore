@@ -32,6 +32,8 @@ yarn-error.log*
 
 # env files (can opt-in for committing if needed)
 .env*
+# the blank template is safe to track and must be, or setup docs have nothing to copy
+!.env.example
 
 # vercel
 .vercel

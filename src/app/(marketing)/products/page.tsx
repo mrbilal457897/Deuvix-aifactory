@@ -7,6 +7,7 @@ import {
   ArrowRight,
   Check,
   Sparkles,
+  MessageCircle,
   HeartPulse,
   GitBranch,
   BookOpen,
@@ -19,9 +20,8 @@ import Link from "next/link";
 import { Button } from "@/components/ui/button";
 import { BookCallButton } from "@/components/book-call-button";
 import { Badge } from "@/components/ui/badge";
-import Image from "next/image";
 import { CharReveal } from "@/components/split-text";
-import { useSiteConfig } from "@/hooks/use-site-config";
+import { buildBusinessChatLink } from "@/lib/notify/whatsapp";
 import "@/app/loop-anim.css";
 
 if (typeof window !== "undefined") {
@@ -211,7 +211,6 @@ export default function ProductsPage() {
   const sectionRef = useRef<HTMLElement>(null);
   const particleRef = useRef<SVGCircleElement>(null);
   const particleGlowRef = useRef<SVGCircleElement>(null);
-  const { img } = useSiteConfig();
 
   const filteredProducts =
     activeCategory === "All"
@@ -289,7 +288,6 @@ export default function ProductsPage() {
     <div className="pt-24">
       <section className="py-16 text-center px-6 relative overflow-hidden">
         <div className="absolute inset-0">
-          <Image src={img("product-bg")} alt="" fill priority className="object-cover" sizes="100vw" />
           <div className="absolute inset-0 bg-background/85" />
           <div className="absolute inset-0 bg-dots opacity-30" />
         </div>
@@ -341,14 +339,31 @@ export default function ProductsPage() {
                     </li>
                   ))}
                 </ul>
-                <Button
-                  variant="outline"
-                  className="w-full"
-                  size="sm"
-                  render={<Link href={`/contact?service=${encodeURIComponent(product.title)}`} />}
-                >
-                  Learn More <ArrowRight className="size-3.5 ml-1.5" />
-                </Button>
+                <div className="flex items-center gap-2 mt-4">
+                  <Button
+                    variant="outline"
+                    className="flex-1"
+                    size="sm"
+                    render={<Link href={`/contact?service=${encodeURIComponent(product.title)}`} />}
+                  >
+                    Learn More <ArrowRight className="size-3.5 ml-1.5" />
+                  </Button>
+                  <Button
+                    variant="outline"
+                    size="sm"
+                    className="shrink-0 border-emerald-500/30 bg-emerald-500/10 text-emerald-600 hover:bg-emerald-500/20 hover:text-emerald-700 dark:text-emerald-400 dark:hover:text-emerald-300"
+                    render={
+                      <a
+                        href={buildBusinessChatLink(`Hi! I'm interested in your ${product.title} service. Can you share more details?`) ?? "#"}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                      />
+                    }
+                  >
+                    <MessageCircle className="size-3.5" />
+                    <span className="sr-only sm:not-sr-only sm:ml-1.5">WhatsApp</span>
+                  </Button>
+                </div>
               </div>
             ))}
           </div>

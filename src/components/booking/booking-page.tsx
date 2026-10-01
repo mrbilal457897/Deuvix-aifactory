@@ -12,6 +12,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { BrandLogo } from "@/components/brand-logo";
+import { BookCallButton } from "@/components/book-call-button";
 import { buildBusinessChatLink } from "@/lib/notify/whatsapp";
 import {
   DEFAULT_TIME_ZONE,
@@ -94,11 +95,14 @@ export function BookingPage({
   eventTitle,
   durationMinutes,
   calBookingUrl,
+  showEmbedFallback = false,
 }: {
   initialMonth: string;
   eventTitle: string;
   durationMinutes: number;
   calBookingUrl: string;
+  /** Shows the secondary Cal.com pop-up option. Only when a Cal origin/link exists. */
+  showEmbedFallback?: boolean;
 }) {
   const [month, setMonth] = useState(initialMonth);
   const browserZone = useSyncExternalStore(noopSubscribe, readBrowserTimeZone, readServerTimeZone);
@@ -213,7 +217,9 @@ export function BookingPage({
             whatsapp: whatsapp || undefined,
             company: company || undefined,
             notes: notes || undefined,
-            lengthInMinutes: durationMinutes,
+            // Deliberately NOT sending lengthInMinutes: Cal.com rejects the whole
+            // booking when the event type has a fixed length. The duration shown
+            // on screen comes from our own copy; Cal.com uses its event length.
           }),
         });
         const body = (await res.json()) as BookingResponse;
@@ -239,7 +245,7 @@ export function BookingPage({
         setSubmitting(false);
       }
     },
-    [selectedDate, selectedTime, timeZone, name, email, whatsapp, company, notes, durationMinutes],
+    [selectedDate, selectedTime, timeZone, name, email, whatsapp, company, notes],
   );
 
   const selectedTimes = selectedDate ? (availability.get(selectedDate) ?? []) : [];
@@ -260,7 +266,7 @@ export function BookingPage({
           ) : (
             <>
               {step === "details" && (
-                <div className="mb-5 flex items-center gap-3">
+                <div className="mb-5 flex flex-col sm:flex-row items-start sm:items-center gap-2 sm:gap-3">
                   <Button variant="outline" size="sm" onClick={() => setStep("pick")}>
                     &larr; Back
                   </Button>
@@ -380,13 +386,13 @@ export function BookingPage({
                           No open days this month. Try the next one.
                         </p>
                       ) : (
-                        <div className="flex gap-2 overflow-x-auto pb-2">
+                        <div className="flex gap-2 overflow-x-auto pb-2 snap-x snap-mandatory scroll-smooth">
                           {visibleDays.map((day) => (
                             <button
                               key={day.date}
                               type="button"
                               onClick={() => chooseDay(day.date)}
-                              className="border-border hover:border-primary min-w-[5.5rem] shrink-0 rounded-[min(var(--radius-md),12px)] border px-3 py-2 text-left"
+                              className="border-border hover:border-primary min-w-[4.5rem] sm:min-w-[5.5rem] shrink-0 snap-start rounded-[min(var(--radius-md),12px)] border px-2.5 sm:px-3 py-2 text-left"
                             >
                               <span className="text-muted-foreground block text-xs">
                                 {formatDateInZone(`${day.date}T12:00:00Z`, "UTC").split(",")[0]}
@@ -471,7 +477,7 @@ export function BookingPage({
                         </p>
                       ) : null}
 
-                      <Button type="submit" disabled={submitting}>
+                      <Button type="submit" disabled={submitting} className="w-full sm:w-auto">
                         {submitting ? "Confirming\u2026" : `Confirm booking`}
                       </Button>
                     </form>
@@ -484,7 +490,7 @@ export function BookingPage({
 
         {/* ---------------- summary sidebar ---------------- */}
         <aside className="h-fit md:sticky md:top-24">
-          <div className="border-border bg-card rounded-[min(var(--radius-lg),16px)] border p-5">
+          <div className="border-border bg-card rounded-[min(var(--radius-lg),16px)] border p-4 sm:p-5">
             <BrandLogo className="mb-4 h-6 w-auto" />
             <p className="font-medium">{eventTitle}</p>
             <dl className="text-muted-foreground mt-3 space-y-2 text-sm">
@@ -513,6 +519,22 @@ export function BookingPage({
               </p>
             ) : null}
           </div>
+
+          {showEmbedFallback ? (
+            <div className="mt-3 rounded-[min(var(--radius-lg),16px)] border border-dashed p-4 text-center">
+              <p className="text-muted-foreground text-xs">
+                Rather book in Cal.com&apos;s own scheduler?
+              </p>
+              <BookCallButton
+                mode="modal"
+                variant="outline"
+                size="sm"
+                className="mt-2 w-full"
+              >
+                Open the pop-up
+              </BookCallButton>
+            </div>
+          ) : null}
         </aside>
       </div>
     </div>
@@ -545,7 +567,7 @@ function Confirmation({
 
   return (
     <div className="space-y-4">
-      <div className="border-primary/40 bg-primary/5 rounded-[min(var(--radius-lg),16px)] border p-6">
+      <div className="border-primary/40 bg-primary/5 rounded-[min(var(--radius-lg),16px)] border p-5 sm:p-6">
         <h2 className="text-lg font-semibold">You&apos;re booked</h2>
         <p className="text-muted-foreground mt-1 text-sm">
           A confirmation email and a WhatsApp link are on their way.
@@ -567,17 +589,17 @@ function Confirmation({
         ) : null}
         <div className="mt-4 flex flex-wrap gap-2">
           {calAdd ? (
-            <Button variant="outline" size="sm" render={<a href={calAdd} target="_blank" rel="noopener noreferrer" />}>
+            <Button variant="outline" size="sm" className="w-full sm:w-auto" render={<a href={calAdd} target="_blank" rel="noopener noreferrer" />}>
               Add to calendar
             </Button>
           ) : null}
           {booking.rescheduleUrl ? (
-            <Button variant="ghost" size="sm" render={<a href={booking.rescheduleUrl} target="_blank" rel="noopener noreferrer" />}>
+            <Button variant="ghost" size="sm" className="w-full sm:w-auto" render={<a href={booking.rescheduleUrl} target="_blank" rel="noopener noreferrer" />}>
               Reschedule
             </Button>
           ) : null}
           {booking.cancelUrl ? (
-            <Button variant="ghost" size="sm" render={<a href={booking.cancelUrl} target="_blank" rel="noopener noreferrer" />}>
+            <Button variant="ghost" size="sm" className="w-full sm:w-auto" render={<a href={booking.cancelUrl} target="_blank" rel="noopener noreferrer" />}>
               Cancel
             </Button>
           ) : null}
@@ -595,6 +617,7 @@ function BookingRow() {
   return (
     <Button
       variant="outline"
+      className="w-full sm:w-auto"
       render={<a href={link} target="_blank" rel="noopener noreferrer" />}
     >
       Continue on WhatsApp

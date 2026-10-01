@@ -34,11 +34,25 @@ export function isValidTimeZone(tz: string): boolean {
   }
 }
 
-/** `2026-10` -> `YYYY-MM-01`. */
+/**
+ * Normalises anything month-ish to a bare `YYYY-MM` month key.
+ *
+ * Accepts `2026-10`, `2026-10-01` and `2026-10-15T…`. Every helper below routes
+ * through this, so a stray full date can no longer produce `2026-10-01-01`.
+ */
+function normaliseMonthKey(input: string | null | undefined): string {
+  const raw = (input ?? "").trim();
+  const m = raw.match(/^(\d{4})-(\d{2})(?:-|$)/);
+  if (!m) return toMonthKey(new Date());
+  const year = Number(m[1]);
+  const month = Number(m[2]);
+  if (month < 1 || month > 12) return toMonthKey(new Date());
+  return `${year}-${String(month).padStart(2, "0")}`;
+}
+
+/** `?month=2026-10` -> `2026-10` (a month key, matching every other helper). */
 export function parseMonthParam(month: string | null | undefined): string {
-  if (month && /^\d{4}-\d{2}$/.test(month)) return `${month}-01`;
-  const now = new Date();
-  return `${now.getUTCFullYear()}-${String(now.getUTCMonth() + 1).padStart(2, "0")}-01`;
+  return normaliseMonthKey(month);
 }
 
 export function toMonthKey(date: Date): string {
@@ -46,20 +60,23 @@ export function toMonthKey(date: Date): string {
 }
 
 export function addMonths(monthKey: string, delta: number): string {
-  const [y, m] = monthKey.split("-").map(Number);
+  const key = normaliseMonthKey(monthKey);
+  const [y, m] = key.split("-").map(Number);
   const d = new Date(Date.UTC(y, m - 1 + delta, 1));
   return toMonthKey(d);
 }
 
 /** Inclusive list of YYYY-MM-DD for a month key. */
 export function monthDateKeys(monthKey: string): string[] {
-  const [y, m] = monthKey.split("-").map(Number);
+  const key = normaliseMonthKey(monthKey);
+  const [y, m] = key.split("-").map(Number);
   const days = new Date(Date.UTC(y, m, 0)).getUTCDate();
-  return Array.from({ length: days }, (_, i) => `${monthKey}-${String(i + 1).padStart(2, "0")}`);
+  return Array.from({ length: days }, (_, i) => `${key}-${String(i + 1).padStart(2, "0")}`);
 }
 
 export function monthLabel(monthKey: string): string {
-  const [y, m] = monthKey.split("-").map(Number);
+  const key = normaliseMonthKey(monthKey);
+  const [y, m] = key.split("-").map(Number);
   return new Intl.DateTimeFormat("en-US", {
     month: "long",
     year: "numeric",

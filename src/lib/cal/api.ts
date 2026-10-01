@@ -11,6 +11,8 @@
  * Cal.com later is still just an env change.
  */
 
+import { formatTimeInZone } from "@/lib/booking/time";
+
 const SLOTS_API_VERSION = "2024-09-04";
 const BOOKING_API_VERSION = "2024-08-13";
 
@@ -151,16 +153,70 @@ async function calFetch<T>(
   }
 
   if (!res.ok) {
-    const b = body as { message?: string; error?: string; code?: string } | null;
-    const message =
-      b?.message ?? b?.error ?? `Cal.com API responded ${res.status} for ${path}`;
+    const b = body as { message?: unknown; error?: unknown; code?: string } | null;
+    // Cal.com returns `message` as an object/array on some errors, so never
+    // assume it is a string or the caller renders "[object Object]".
+    const message = stringifyError(b?.message ?? b?.error) ?? `Cal.com API responded ${res.status} for ${path}`;
     throw new CalApiError(message, res.status, b?.code);
   }
   return body as T;
 }
 
-/** Date keys are in `timeZone`; values are `HH:mm` wall-clock strings. */
+/** Flattens Cal.com's string | string[] | object error payloads into one line. */
+function stringifyError(value: unknown): string | undefined {
+  if (value == null) return undefined;
+  if (typeof value === "string") return value;
+  if (Array.isArray(value)) {
+    const parts = value.map(stringifyError).filter(Boolean);
+    return parts.length ? parts.join("; ") : undefined;
+  }
+  if (typeof value === "object") {
+    const rec = value as Record<string, unknown>;
+    const parts = [stringifyError(rec.message), stringifyError(rec.error)]
+      .filter(Boolean)
+      .map(String);
+    if (parts.length) return parts.join(": ");
+    try {
+      return JSON.stringify(value);
+    } catch {
+      return undefined;
+    }
+  }
+  return String(value);
+}
+
+/**
+ * Cal.com v2 returns slots as absolute timestamps carrying the requested
+ * zone's offset, e.g. `{ "2026-10-05": [{ "start": "2026-10-05T09:00:00.000+05:00" }] }`.
+ * We normalise to `HH:mm` wall-clock strings keyed by local date, which is what
+ * the calendar grid and `zonedTimeToUtcISO()` both expect.
+ */
 export type SlotMap = Record<string, string[]>;
+
+/** Defensive: accepts the documented shape and tolerates Cal returning bare strings. */
+function normaliseSlots(
+  raw: unknown,
+  timeZone: string,
+): SlotMap {
+  if (!raw || typeof raw !== "object") return {};
+  const out: SlotMap = {};
+
+  for (const [key, value] of Object.entries(raw as Record<string, unknown>)) {
+    if (!Array.isArray(value) || value.length === 0) continue;
+
+    const times = value
+      .map((entry) => {
+        if (typeof entry === "string") return entry.slice(11, 16);
+        if (!entry || typeof entry !== "object") return null;
+        const start = (entry as { start?: unknown }).start;
+        return typeof start === "string" ? formatTimeInZone(start, timeZone) : null;
+      })
+      .filter((t): t is string => Boolean(t));
+
+    if (times.length) out[key] = times;
+  }
+  return out;
+}
 
 export async function fetchAvailableSlots(opts: {
   /** YYYY-MM-DD, inclusive */
@@ -181,13 +237,12 @@ export async function fetchAvailableSlots(opts: {
   });
   if (opts.durationMinutes) params.set("duration", String(opts.durationMinutes));
 
-  const body = await calFetch<{ status?: string; data?: SlotMap }>(`/slots?${params}`, {
+  const body = await calFetch<{ status?: string; data?: unknown }>(`/slots?${params}`, {
     method: "GET",
     apiVersion: SLOTS_API_VERSION,
   });
 
-  // v2 returns { status, data: { "YYYY-MM-DD": ["09:00", ...] } }
-  return body?.data ?? {};
+  return normaliseSlots(body?.data, opts.timeZone);
 }
 
 export interface CreateBookingInput {
@@ -201,6 +256,12 @@ export interface CreateBookingInput {
     language?: string;
   };
   guests?: string[];
+  /**
+   * Only send this when the event type actually offers multiple lengths.
+   * Cal.com rejects the whole request with
+   * "Can't specify 'lengthInMinutes' because event type does not have multiple
+   * possible lengths" for any fixed-length event type, which is the common case.
+   */
   lengthInMinutes?: number;
   /** Max 50 keys, string values <= 500 chars (enforced by Cal.com). */
   metadata?: Record<string, string>;
@@ -221,9 +282,17 @@ export interface CalBookingResult {
   attendees?: Array<{ email?: string; name?: string }>;
 }
 
-export async function createBooking(input: CreateBookingInput): Promise<CalBookingResult> {
+export async function createBooking(
+  input: CreateBookingInput,
+  opts: { supportsMultipleLengths?: boolean } = {},
+): Promise<CalBookingResult> {
   const ref = parseCalLink();
   if (!ref) throw new CalApiError("NEXT_PUBLIC_CAL_LINK is not set", 500);
+
+  // Default to omitting it: a fixed-length event type (the usual setup) rejects
+  // the field outright, and the event type's own length is authoritative anyway.
+  const sendLength =
+    opts.supportsMultipleLengths === true && Boolean(input.lengthInMinutes);
 
   const body = await calFetch<{ status?: string; data?: CalBookingResult }>("/bookings", {
     method: "POST",
@@ -233,7 +302,7 @@ export async function createBooking(input: CreateBookingInput): Promise<CalBooki
       attendee: input.attendee,
       ...refQuery(ref),
       ...(input.guests?.length ? { guests: input.guests } : {}),
-      ...(input.lengthInMinutes ? { lengthInMinutes: input.lengthInMinutes } : {}),
+      ...(sendLength ? { lengthInMinutes: input.lengthInMinutes } : {}),
       ...(input.metadata ? { metadata: input.metadata } : {}),
       ...(input.bookingFieldsResponses ? { bookingFieldsResponses: input.bookingFieldsResponses } : {}),
     }),

@@ -48,6 +48,7 @@ export async function GET(request: NextRequest) {
     return NextResponse.json({ month: monthKey, timeZone, days });
   } catch (err) {
     if (err instanceof CalApiError) {
+      console.error("[api/cal/slots] CAL REJECTED", { status: err.status, message: err.message, code: err.calCode, month: monthKey, tz: timeZone });
       return NextResponse.json(
         { error: "cal_api_error", message: err.message, calStatus: err.status },
         { status: err.status === 401 || err.status === 403 ? 502 : 502 },

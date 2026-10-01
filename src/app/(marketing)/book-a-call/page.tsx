@@ -45,6 +45,7 @@ export default async function BookACallPage({
       eventTitle={eventTitle}
       durationMinutes={30}
       calBookingUrl={calBookingUrl}
+      showEmbedFallback={Boolean(origin && link)}
     />
   );
 }

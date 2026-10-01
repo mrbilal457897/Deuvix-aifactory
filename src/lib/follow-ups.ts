@@ -69,3 +69,27 @@ export async function listFollowUps(): Promise<FollowUp[]> {
   if (!data) return [];
   return data.map(rowToFollowUp);
 }
+
+/**
+ * Resolves follow-ups as done or skipped.
+ *
+ * Only ever called when an admin clicks the button in /deux/leads — never on a
+ * schedule. Accepts every id in a collapsed duplicate group so one click clears
+ * the lot. Returns the number of rows actually updated.
+ */
+export async function markFollowUpStatus(
+  ids: string[],
+  status: "done" | "skipped",
+): Promise<number> {
+  const unique = [...new Set(ids)].filter(Boolean);
+  if (unique.length === 0) return 0;
+
+  const { data, error } = await supabase
+    .from("follow_ups")
+    .update({ status })
+    .in("id", unique)
+    .select("id");
+
+  if (error) throw new Error(error.message);
+  return data?.length ?? 0;
+}
