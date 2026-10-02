@@ -8,6 +8,7 @@ import { readdir, readFile } from "node:fs/promises";
 import path from "node:path";
 import { loadEnvConfig } from "@next/env";
 import { Client } from "pg";
+import { SUPABASE_CA_PEM } from "../src/lib/db/supabase-ca";
 
 loadEnvConfig(process.cwd());
 
@@ -20,7 +21,13 @@ async function main() {
     process.exit(1);
   }
 
-  const client = new Client({ connectionString });
+  // Same CA trust as the app pool — see src/lib/db/index.ts. DATABASE_URL must
+  // carry no sslmode/sslrootcert, otherwise pg overrides this option.
+  const ssl =
+    process.env.DATABASE_SSL?.trim().toLowerCase() === "off"
+      ? undefined
+      : { ca: SUPABASE_CA_PEM, rejectUnauthorized: true as const };
+  const client = new Client({ connectionString, ...(ssl ? { ssl } : {}) });
   await client.connect();
   console.log("[migrate] connected");
 

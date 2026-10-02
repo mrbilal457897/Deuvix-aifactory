@@ -15,6 +15,7 @@ import { readFile, writeFile } from "node:fs/promises";
 import path from "node:path";
 import { loadEnvConfig } from "@next/env";
 import { Client } from "pg";
+import { SUPABASE_CA_PEM } from "../src/lib/db/supabase-ca";
 
 loadEnvConfig(process.cwd());
 
@@ -49,8 +50,15 @@ async function main() {
     url.port = "5432";
   }
 
-  // Supabase refuses non-TLS connections.
-  if (!url.searchParams.get("sslmode")) url.searchParams.set("sslmode", "require");
+  // Strip any TLS parameters. The app configures TLS in code with Supabase's
+  // CA (src/lib/db/index.ts), and pg gives these URL parameters priority over an
+  // `ssl` option - a bare `sslmode=require` resolves to verify-full against the
+  // system trust store, which does not contain Supabase's CA, and the
+  // connection fails with "self-signed certificate in certificate chain".
+  url.searchParams.delete("sslmode");
+  url.searchParams.delete("sslrootcert");
+  url.searchParams.delete("sslcert");
+  url.searchParams.delete("sslkey");
 
   // Round-tripping through URL can re-encode characters; keep the sanitised form.
   const finalUrl = url.toString();
@@ -73,7 +81,13 @@ async function main() {
   console.log(`\n  wrote DATABASE_URL into .env.local  (${url.hostname}:${url.port})`);
 
   // --- smoke test ---
-  const client = new Client({ connectionString: finalUrl, connectionTimeoutMillis: 15_000 });
+  const client = new Client({
+    connectionString: finalUrl,
+    ...(url.hostname.includes("supabase.co")
+      ? { ssl: { ca: SUPABASE_CA_PEM, rejectUnauthorized: true as const } }
+      : {}),
+    connectionTimeoutMillis: 15_000,
+  });
   try {
     await client.connect();
     const ver = await client.query<{ version: string }>("SELECT version()");

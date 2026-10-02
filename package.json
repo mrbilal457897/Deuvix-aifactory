@@ -10,6 +10,7 @@
     "db:migrate": "tsx scripts/migrate.ts",
     "db:set-url": "tsx scripts/set-database-url.ts",
     "db:generate": "drizzle-kit generate",
+    "ca:embed": "tsx scripts/embed-ca.ts",
     "verify:booking": "tsx scripts/verify-booking.ts",
     "verify:cal-env": "tsx scripts/verify-cal-env.ts",
     "verify:booking-page": "tsx scripts/verify-booking-page.ts"

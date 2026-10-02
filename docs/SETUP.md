@@ -67,7 +67,7 @@ cp .env.example .env.local
 | `CAL_API_KEY` | `cal_xxx` | **Server-side only, never `NEXT_PUBLIC_`.** Powers the `/book-a-call` page. Create in Cal.com -> Settings -> Integrations -> API Keys. |
 | `CAL_ORGANIZATION_SLUG` | `acme-corp` | Only if the Cal.com account is inside an organization. |
 | `CAL_EVENT_KIND` | `user` | `user` or `team`. Disambiguates a two-segment `CAL_LINK` like `acme/intro`. |
-| `DATABASE_URL` | `postgres://deux:pw@localhost:5432/deux` | `pg` honours `sslmode=require` in the URL. |
+| `DATABASE_URL` | `postgres://deux:pw@localhost:5432/deux` | No TLS parameters; TLS is configured in code with the CA (3.1a). |
 | `SMTP_HOST` | `smtp.yourhost.com` | Any SMTP server. |
 | `SMTP_PORT` | `587` | `465` switches to implicit TLS automatically. |
 | `SMTP_USER` | `hello@yourdomain.com` | |
@@ -104,8 +104,8 @@ string** -> copy the **Session pooler** URI:
 npm run db:set-url -- "postgresql://postgres.<ref>:<password>@aws-0-<region>.pooler.supabase.com:5432/postgres"
 ```
 
-The helper writes `DATABASE_URL` into `.env.local` (auto-adding `?sslmode=require`),
-then connects as a smoke test and prints the host only — never the password.
+The helper writes `DATABASE_URL` into `.env.local`, then connects as a smoke test
+and prints the host only — never the password.
 
 Pick the **Session** pooler, not the Transaction pooler: port `6543` breaks `pg`,
 which uses prepared statements. The helper rejects `6543` if you paste it.
@@ -113,30 +113,34 @@ which uses prepared statements. The helper rejects `6543` if you paste it.
 Percent-encode any reserved character in the password — `@` must be written
 `%40`, otherwise the URI parser treats the rest of it as the host.
 
+Leave the URL free of TLS parameters. The helper strips `sslmode` and
+`sslrootcert` if they are present, because `pg` lets the URL override the `ssl`
+option configured in code — see 3.1a.
+
 #### 3.1a Trust the pooler certificate
 
 The pooler host's certificate is signed by a Supabase-managed CA that is not in
-Node's trust store, so the `?sslmode=require` the helper adds fails with
-`self-signed certificate in certificate chain`. Verify properly instead of
-disabling verification (`sslmode=no-verify` would allow a man-in-the-middle to
-read booking PII):
+Node's trust store, so verification fails with `self-signed certificate in
+certificate chain`. Verify properly instead of disabling verification
+(`sslmode=no-verify` would allow a man-in-the-middle to read booking PII):
 
 1. Supabase -> **Settings** -> **Database** -> **SSL Configuration** ->
    **Download Certificate**
 2. Save it as `certs/supabase-ca.pem`
-3. Include it in the URL: `?sslmode=verify-full&sslrootcert=certs/supabase-ca.pem`
+3. `npm run ca:embed`
 
-`sslrootcert` is relative to the project root, so the same value works locally
-and on Vercel — Vercel needs no extra variable, the certificate ships with the
-repo.
+`ca:embed` generates `src/lib/db/supabase-ca.ts` from the `.pem`, and the app
+passes that certificate to `pg` as `ssl: { ca, rejectUnauthorized: true }`. The
+certificate is embedded in code rather than read from disk because Next.js only
+traces files it can see referenced statically, so a path passed to `pg` through
+`sslrootcert` is silently dropped from the deployment bundle. Vercel needs no
+extra variable — commit both files and the connection works everywhere.
 
-Note for PowerShell: the project runs `.cmd` shims and `cmd.exe` re-parses the
-argument, so a bare `&` truncates the URL. Escape it as `^&`, or set
-`DATABASE_URL` in `.env.local` directly.
-
-`pg` also ignores an `ssl` option passed alongside `connectionString` — the URL
-wins — so the certificate must travel inside the URL rather than in code. See
-`certs/README.md`.
+TLS parameters must stay out of `DATABASE_URL`: `pg` gives the connection string
+priority over an `ssl` option, and `sslmode=require` is not a request to skip
+verification — it maps to `rejectUnauthorized: true` against the system trust
+store, reintroducing the error the CA exists to fix. `certs/README.md` has the
+full reasoning.
 
 ### 3.2 Migrate
 
