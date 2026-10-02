@@ -38,22 +38,49 @@ CREATE INDEX IF NOT EXISTS bookings_reminder_idx ON bookings (reminder_sent, sta
 -- This table holds customer PII (name, email, whatsapp, meeting_url) and lives in
 -- the `public` schema, which Supabase exposes through PostgREST. With RLS off,
 -- anyone holding the *public* anon key could SELECT every row. Enabling RLS with
--- no policies means anon/authenticated get zero rows, while our direct Postgres
--- connection still works because the `postgres` role carries BYPASSRLS.
+-- no policies means anon/authenticated get zero rows.
 --
 -- The REVOKEs are guarded because anon/authenticated only exist on Supabase; on
--- a plain Postgres they would abort the migration.
+-- a plain Postgres they would abort the migration. The sequence is guarded too:
+-- `id` is a uuid with a gen_random_uuid() default, so no serial sequence is ever
+-- created for it.
 ALTER TABLE bookings ENABLE ROW LEVEL SECURITY;
+
+-- RLS with no policies also hides every row from *this app's own* connection
+-- unless its role carries BYPASSRLS. Supabase does not grant that on every
+-- project, so grant it when permitted and otherwise fall back to an explicit
+-- policy for the same role. Either path leaves anon/authenticated blocked.
+DO $$
+BEGIN
+  EXECUTE 'ALTER ROLE postgres BYPASSRLS';
+EXCEPTION WHEN insufficient_privilege THEN
+  NULL;
+END
+$$;
+
+DO $$
+BEGIN
+  IF EXISTS (SELECT 1 FROM pg_roles WHERE rolname = 'postgres')
+     AND NOT (SELECT rolbypassrls FROM pg_roles WHERE rolname = 'postgres') THEN
+    EXECUTE 'DROP POLICY IF EXISTS bookings_server ON bookings';
+    EXECUTE 'CREATE POLICY bookings_server ON bookings FOR ALL TO postgres USING (true) WITH CHECK (true)';
+  END IF;
+END
+$$;
 
 DO $$
 BEGIN
   IF EXISTS (SELECT 1 FROM pg_roles WHERE rolname = 'anon') THEN
     EXECUTE 'REVOKE ALL ON bookings FROM anon';
-    EXECUTE 'REVOKE ALL ON SEQUENCE bookings_id_seq FROM anon';
+    IF to_regclass('bookings_id_seq') IS NOT NULL THEN
+      EXECUTE 'REVOKE ALL ON bookings_id_seq FROM anon';
+    END IF;
   END IF;
   IF EXISTS (SELECT 1 FROM pg_roles WHERE rolname = 'authenticated') THEN
     EXECUTE 'REVOKE ALL ON bookings FROM authenticated';
-    EXECUTE 'REVOKE ALL ON SEQUENCE bookings_id_seq FROM authenticated';
+    IF to_regclass('bookings_id_seq') IS NOT NULL THEN
+      EXECUTE 'REVOKE ALL ON bookings_id_seq FROM authenticated';
+    END IF;
   END IF;
 END
 $$;

@@ -23,6 +23,9 @@ export function getPool(): Pool {
 
   // `pg` parses sslmode / sslrootcert out of the connection string itself, so
   // TLS stays opt-in purely through DATABASE_URL. No secrets are logged.
+  // Note that an `ssl` option passed alongside `connectionString` is ignored —
+  // the URL wins — so the Supabase CA certificate has to travel in DATABASE_URL
+  // as sslrootcert. See certs/README.md.
   const pool = new Pool({
     connectionString,
     max: Number(process.env.DATABASE_POOL_MAX ?? 10),

@@ -1,4 +1,18 @@
-export const SITE_URL = "https://deux.ai";
+/**
+ * Canonical origin used for sitemap.xml, robots.txt, metadataBase and OG tags.
+ *
+ * Server-only (never NEXT_PUBLIC_) so the domain can change in the Vercel env
+ * without a code edit. It falls back to the Vercel deployment URL so a missing
+ * variable degrades to a working build instead of `new URL(undefined)` throwing
+ * in layout.tsx. Trailing slashes are stripped because callers append paths.
+ *
+ * NOTE: `deux.ai` is not live yet — the site currently runs on the Vercel domain,
+ * so that is the fallback. Update both this default and SITE_URL in the Vercel
+ * project when the real domain is attached.
+ */
+export const SITE_URL = (
+  process.env.SITE_URL?.trim() || "https://deux-aicompany.vercel.app"
+).replace(/\/+$/, "");
 
 export const SITE_NAME = "DEUX AI Factory";
 

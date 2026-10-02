@@ -110,6 +110,34 @@ then connects as a smoke test and prints the host only — never the password.
 Pick the **Session** pooler, not the Transaction pooler: port `6543` breaks `pg`,
 which uses prepared statements. The helper rejects `6543` if you paste it.
 
+Percent-encode any reserved character in the password — `@` must be written
+`%40`, otherwise the URI parser treats the rest of it as the host.
+
+#### 3.1a Trust the pooler certificate
+
+The pooler host's certificate is signed by a Supabase-managed CA that is not in
+Node's trust store, so the `?sslmode=require` the helper adds fails with
+`self-signed certificate in certificate chain`. Verify properly instead of
+disabling verification (`sslmode=no-verify` would allow a man-in-the-middle to
+read booking PII):
+
+1. Supabase -> **Settings** -> **Database** -> **SSL Configuration** ->
+   **Download Certificate**
+2. Save it as `certs/supabase-ca.pem`
+3. Include it in the URL: `?sslmode=verify-full&sslrootcert=certs/supabase-ca.pem`
+
+`sslrootcert` is relative to the project root, so the same value works locally
+and on Vercel — Vercel needs no extra variable, the certificate ships with the
+repo.
+
+Note for PowerShell: the project runs `.cmd` shims and `cmd.exe` re-parses the
+argument, so a bare `&` truncates the URL. Escape it as `^&`, or set
+`DATABASE_URL` in `.env.local` directly.
+
+`pg` also ignores an `ssl` option passed alongside `connectionString` — the URL
+wins — so the certificate must travel inside the URL rather than in code. See
+`certs/README.md`.
+
 ### 3.2 Migrate
 
 ```bash
@@ -125,8 +153,13 @@ records applied files in a `_migrations` table, so it is safe to re-run.
 `public` schema, which Supabase exposes through PostgREST. With RLS off, anyone
 holding the **public anon key** — which ships in the client bundle — could
 `SELECT * FROM bookings`. So the migration enables RLS and revokes access from
-`anon`/`authenticated`. Our direct connection is unaffected because the `postgres`
-role carries `BYPASSRLS`. Verify after migrating:
+`anon`/`authenticated`.
+
+RLS with no policies hides rows from *this app's own* connection too, and
+Supabase does not grant `BYPASSRLS` to `postgres` on every project. The migration
+therefore grants `BYPASSRLS` to the role when it is permitted to, and otherwise
+falls back to an explicit policy for that same role — either way `anon` and
+`authenticated` stay blocked. Verify after migrating:
 
 ```sql
 SELECT relname, relrowsecurity FROM pg_class WHERE relname IN ('bookings','_migrations');

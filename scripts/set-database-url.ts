@@ -76,7 +76,7 @@ async function main() {
   const client = new Client({ connectionString: finalUrl, connectionTimeoutMillis: 15_000 });
   try {
     await client.connect();
-    const ver = await client.query<{ v: string }>("SELECT version()");
+    const ver = await client.query<{ version: string }>("SELECT version()");
     const who = await client.query<{ current_user: string; rls: string }>(
       "SELECT current_user, (SELECT rolbypassrls FROM pg_roles WHERE rolname = current_user) AS rls",
     );
@@ -84,7 +84,7 @@ async function main() {
     const bypass = u.rls === "t";
 
     console.log(`  connected OK  (user=${u.current_user}, bypassrls=${bypass})`);
-    console.log(`  ${ver.rows[0].v.split(",")[0]}`);
+    console.log(`  ${ver.rows[0].version.split(",")[0]}`);
 
     if (!bypass && process.env.SUPABASE_SERVICE_ROLE_KEY) {
       console.log(

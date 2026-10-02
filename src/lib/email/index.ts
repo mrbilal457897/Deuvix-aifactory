@@ -8,9 +8,7 @@ export interface EmailResult {
 }
 
 export const DEFAULT_CONTACT_TO = [
-  "sobber.id@gmail.com",
   "deuxaiinfo786@gmail.com",
-  "sharshab007@gmail.com",
 ];
 
 export function getDefaultFrom(): string {

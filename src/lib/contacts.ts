@@ -43,21 +43,23 @@ function rowToContact(row: Record<string, unknown>): Contact {
 }
 
 /**
- * Internal recipients for new contact submissions.
+ * Internal recipient for new contact submissions.
  *
- * CONTACT_TO_EMAIL holds a comma-separated list so several addresses can be
- * notified at once; falls back to DEFAULT_CONTACT_TO when unset or blank.
+ * Single inbox by design — a new lead must only notify the company mailbox,
+ * never every address left in CONTACT_TO_EMAIL. Extra comma-separated entries
+ * are ignored; the first one wins. Falls back to DEFAULT_CONTACT_TO when unset
+ * or blank.
  */
 export function getContactRecipients(): string[] {
   const configured = process.env.CONTACT_TO_EMAIL?.trim();
   if (!configured) return DEFAULT_CONTACT_TO;
 
-  const parsed = configured
+  const primary = configured
     .split(",")
     .map((entry) => entry.trim())
-    .filter(Boolean);
+    .find(Boolean);
 
-  return parsed.length > 0 ? parsed : DEFAULT_CONTACT_TO;
+  return primary ? [primary] : DEFAULT_CONTACT_TO;
 }
 
 export async function saveContact(input: {
