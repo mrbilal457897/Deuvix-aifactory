@@ -2,8 +2,9 @@
 
 import { CalendarDays, type LucideIcon } from "lucide-react";
 import Link from "next/link";
-import { Button } from "@/components/ui/button";
+import { Button, buttonVariants } from "@/components/ui/button";
 import { useBookCall } from "@/components/book-call-provider";
+import { cn } from "@/lib/utils";
 import type { BookingPrefill } from "@/lib/cal/embed";
 
 type BookCallButtonProps = {
@@ -60,19 +61,20 @@ export function BookCallButton({
   );
 
   // Nothing to book against yet: send them to the contact form.
+  // A real <a>, styled with buttonVariants: Base UI's Button forces
+  // role="button" on anything rendered through `render`, which is wrong for a
+  // link (and logs a console error when nativeButton is left at its default).
   if (!configured) {
     return (
-      <Button
+      <a
         data-slot="button"
-        size={size}
-        variant={variant}
-        className={className}
-        render={<a href="/contact" />}
+        href="/contact"
+        className={cn(buttonVariants({ variant, size, className }))}
         title={title}
         {...rest}
       >
         {body}
-      </Button>
+      </a>
     );
   }
 
@@ -99,17 +101,15 @@ export function BookCallButton({
   }
 
   return (
-    <Button
+    <Link
       data-slot="button"
-      size={size}
-      variant={variant}
-      className={className}
-      render={<Link href="/book-a-call" />}
+      href="/book-a-call"
+      className={cn(buttonVariants({ variant, size, className }))}
       title={title}
       onClick={onClick}
       {...rest}
     >
       {body}
-    </Button>
+    </Link>
   );
 }

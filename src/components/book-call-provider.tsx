@@ -3,7 +3,7 @@
 import * as React from "react";
 import { useTheme } from "next-themes";
 import { CalendarCheck, ExternalLink, MessageCircle } from "lucide-react";
-import { Button } from "@/components/ui/button";
+import { Button, buttonVariants } from "@/components/ui/button";
 import {
   Dialog,
   DialogContent,
@@ -141,34 +141,36 @@ export function BookCallProvider({ children }: { children: React.ReactNode }) {
 
           <div className="flex flex-col gap-2">
             {success?.videoCallUrl ? (
-              <Button render={<a href={success.videoCallUrl} target="_blank" rel="noopener noreferrer" />} className="w-full">
+              <a
+                href={success.videoCallUrl}
+                target="_blank"
+                rel="noopener noreferrer"
+                className={buttonVariants({ className: "w-full" })}
+              >
                 <ExternalLink className="size-4" aria-hidden="true" />
                 Join meeting
-              </Button>
+              </a>
             ) : null}
 
             {confirmLink ? (
-              <Button
-                variant="outline"
-                render={<a href={confirmLink} target="_blank" rel="noopener noreferrer" />}
-                className="w-full"
+              <a
+                href={confirmLink}
+                target="_blank"
+                rel="noopener noreferrer"
+                className={buttonVariants({ variant: "outline", className: "w-full" })}
               >
                 <MessageCircle className="size-4" aria-hidden="true" />
                 Confirm on WhatsApp
-              </Button>
+              </a>
             ) : null}
 
             <Button variant="ghost" className="w-full" onClick={() => setSuccess(null)}>
               Close
             </Button>
 
-            <Button
-              variant="ghost"
-              className="w-full"
-              render={<a href="/book-a-call" />}
-            >
+            <a href="/book-a-call" className={buttonVariants({ variant: "ghost", className: "w-full" })}>
               Browse all available times
-            </Button>
+            </a>
           </div>
         </DialogContent>
       </Dialog>

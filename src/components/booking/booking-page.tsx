@@ -8,7 +8,7 @@ import {
   useState,
   useSyncExternalStore,
 } from "react";
-import { Button } from "@/components/ui/button";
+import { Button, buttonVariants } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { BrandLogo } from "@/components/brand-logo";
@@ -88,6 +88,11 @@ function fmtTime(hhmm: string): string {
   const suffix = h >= 12 ? "PM" : "AM";
   const hour12 = h % 12 === 0 ? 12 : h % 12;
   return `${hour12}:${String(m).padStart(2, "0")} ${suffix}`;
+}
+
+/** "Asia/Karachi" -> "Pakistan (PKT)"; falls back to the raw zone for unlisted ones. */
+function zoneLabel(timeZone: string): string {
+  return TIME_ZONES.find((t) => t.value === timeZone)?.label ?? timeZone;
 }
 
 export function BookingPage({
@@ -251,13 +256,16 @@ export function BookingPage({
   const selectedTimes = selectedDate ? (availability.get(selectedDate) ?? []) : [];
 
   return (
-    <div className="mx-auto w-full max-w-5xl px-4 py-10 sm:py-14">
+    // pt-24 clears the fixed h-16 header, same as every other marketing page.
+    <div className="mx-auto w-full max-w-5xl overflow-x-clip px-4 pb-8 pt-24 sm:pb-14">
       <div className="grid gap-8 md:grid-cols-[minmax(0,1fr)_320px]">
         {/* ---------------- main column ---------------- */}
-        <div>
+        <div className="min-w-0">
           <header className="mb-6">
             <p className="text-muted-foreground text-sm font-medium">Book a call</p>
-            <h1 className="mt-1 text-2xl font-semibold tracking-tight sm:text-3xl">{eventTitle}</h1>
+            <h1 className="mt-1 text-2xl font-semibold tracking-tight text-balance break-words sm:text-3xl">
+              {eventTitle}
+            </h1>
             <p className="text-muted-foreground mt-1 text-sm">{durationMinutes} minutes</p>
           </header>
 
@@ -266,11 +274,16 @@ export function BookingPage({
           ) : (
             <>
               {step === "details" && (
-                <div className="mb-5 flex flex-col sm:flex-row items-start sm:items-center gap-2 sm:gap-3">
-                  <Button variant="outline" size="sm" onClick={() => setStep("pick")}>
+                <div className="mb-5 flex flex-col items-start gap-2 sm:flex-row sm:items-center sm:gap-3">
+                  <Button
+                    variant="outline"
+                    size="sm"
+                    onClick={() => setStep("pick")}
+                    className="h-10 sm:h-7"
+                  >
                     &larr; Back
                   </Button>
-                  <p className="text-sm">
+                  <p className="text-sm min-w-0 break-words">
                     <span className="font-medium">{formatDateInZone(confirmedStart(confirmed, selectedDate, selectedTime, timeZone), timeZone)}</span>
                     {selectedTime ? ` at ${fmtTime(selectedTime)}` : null}
                   </p>
@@ -278,21 +291,25 @@ export function BookingPage({
               )}
 
               {/* month + time zone */}
-              <div className="mb-4 flex flex-wrap items-center justify-between gap-3">
+              <div className="mb-4 flex flex-col gap-3 sm:flex-row sm:flex-wrap sm:items-center sm:justify-between">
                 <div className="flex items-center gap-1">
                   <Button
                     variant="outline"
                     size="icon"
                     aria-label="Previous month"
+                    className="size-9 shrink-0 sm:size-8"
                     onClick={() => setMonth((m) => addMonths(m, -1))}
                   >
                     &lsaquo;
                   </Button>
-                  <span className="min-w-[9rem] text-center text-sm font-medium">{monthLabel(month)}</span>
+                  <span className="min-w-0 flex-1 truncate px-1 text-center text-sm font-medium sm:w-[9rem] sm:flex-none">
+                    {monthLabel(month)}
+                  </span>
                   <Button
                     variant="outline"
                     size="icon"
                     aria-label="Next month"
+                    className="size-9 shrink-0 sm:size-8"
                     onClick={() => setMonth((m) => addMonths(m, 1))}
                   >
                     &rsquo;
@@ -307,7 +324,7 @@ export function BookingPage({
                     setSelectedDate(null);
                     setSelectedTime(null);
                   }}
-                  className="border-border bg-background text-foreground h-8 rounded-[min(var(--radius-md),12px)] border px-2 text-sm"
+                  className="border-border bg-background text-foreground h-9 w-full min-w-0 max-w-full rounded-[min(var(--radius-md),12px)] border px-2 text-sm sm:h-8 sm:w-auto sm:max-w-[15rem]"
                 >
                   {!TIME_ZONES.some((t) => t.value === timeZone) && timeZone ? (
                     <option value={timeZone}>{timeZone}</option>
@@ -321,7 +338,7 @@ export function BookingPage({
               </div>
 
               {/* calendar */}
-              <div className="border-border rounded-[min(var(--radius-lg),16px)] border">
+              <div className="border-border w-full rounded-[min(var(--radius-lg),16px)] border">
                 <div className="border-border grid grid-cols-7 border-b text-center text-xs font-medium">
                   {WEEKDAYS.map((d) => (
                     <div key={d} className="text-muted-foreground py-2">
@@ -343,8 +360,9 @@ export function BookingPage({
                         disabled={!open}
                         onClick={() => chooseDay(dateKey)}
                         aria-pressed={active}
+                        aria-label={formatDateInZone(`${dateKey}T12:00:00Z`, "UTC")}
                         className={[
-                          "relative flex h-14 flex-col items-center justify-center text-sm transition-colors sm:h-16",
+                          "relative flex h-14 min-w-0 flex-col items-center justify-center text-sm transition-colors sm:h-16",
                           open ? "hover:bg-muted cursor-pointer" : "text-muted-foreground/40 cursor-default",
                           active ? "bg-primary text-primary-foreground" : "",
                         ].join(" ")}
@@ -386,13 +404,13 @@ export function BookingPage({
                           No open days this month. Try the next one.
                         </p>
                       ) : (
-                        <div className="flex gap-2 overflow-x-auto pb-2 snap-x snap-mandatory scroll-smooth">
+                        <div className="-mx-4 flex snap-x snap-mandatory gap-2 overflow-x-auto overscroll-x-contain px-4 pb-2 sm:mx-0 sm:px-0">
                           {visibleDays.map((day) => (
                             <button
                               key={day.date}
                               type="button"
                               onClick={() => chooseDay(day.date)}
-                              className="border-border hover:border-primary min-w-[4.5rem] sm:min-w-[5.5rem] shrink-0 snap-start rounded-[min(var(--radius-md),12px)] border px-2.5 sm:px-3 py-2 text-left"
+                              className="border-border hover:border-primary min-w-[4.5rem] shrink-0 snap-start rounded-[min(var(--radius-md),12px)] border px-2.5 py-2.5 text-left sm:min-w-[5.5rem] sm:px-3"
                             >
                               <span className="text-muted-foreground block text-xs">
                                 {formatDateInZone(`${day.date}T12:00:00Z`, "UTC").split(",")[0]}
@@ -413,12 +431,13 @@ export function BookingPage({
                       <h2 className="mb-2 text-sm font-medium">
                         {formatDateInZone(`${selectedDate}T12:00:00Z`, "UTC")}
                       </h2>
-                      <div className="flex flex-wrap gap-2">
+                      <div className="grid grid-cols-2 gap-2 min-[360px]:grid-cols-3 sm:flex sm:flex-wrap">
                         {selectedTimes.map((t) => (
                           <Button
                             key={t}
                             variant={selectedTime === t ? "default" : "outline"}
                             onClick={() => chooseTime(t)}
+                            className="h-11 w-full sm:h-8 sm:w-auto"
                           >
                             {fmtTime(t)}
                           </Button>
@@ -439,6 +458,7 @@ export function BookingPage({
                         value={name}
                         onChange={(e) => setName(e.target.value)}
                         autoComplete="name"
+                        className="h-11 sm:h-8"
                       />
                       <Input
                         required
@@ -448,13 +468,16 @@ export function BookingPage({
                         value={email}
                         onChange={(e) => setEmail(e.target.value)}
                         autoComplete="email"
+                        className="h-11 sm:h-8"
                       />
                       <Input
                         maxLength={32}
+                        inputMode="tel"
                         placeholder="WhatsApp number (optional)"
                         value={whatsapp}
                         onChange={(e) => setWhatsapp(e.target.value)}
                         autoComplete="tel"
+                        className="h-11 sm:h-8"
                       />
                       <Input
                         maxLength={160}
@@ -462,6 +485,7 @@ export function BookingPage({
                         value={company}
                         onChange={(e) => setCompany(e.target.value)}
                         autoComplete="organization"
+                        className="h-11 sm:h-8"
                       />
                       <Textarea
                         rows={3}
@@ -477,7 +501,7 @@ export function BookingPage({
                         </p>
                       ) : null}
 
-                      <Button type="submit" disabled={submitting} className="w-full sm:w-auto">
+                      <Button type="submit" disabled={submitting} className="h-11 w-full sm:h-8 sm:w-auto">
                         {submitting ? "Confirming\u2026" : `Confirm booking`}
                       </Button>
                     </form>
@@ -489,28 +513,33 @@ export function BookingPage({
         </div>
 
         {/* ---------------- summary sidebar ---------------- */}
-        <aside className="h-fit md:sticky md:top-24">
+        <aside className="h-fit min-w-0 md:sticky md:top-24">
           <div className="border-border bg-card rounded-[min(var(--radius-lg),16px)] border p-4 sm:p-5">
             <BrandLogo className="mb-4 h-6 w-auto" />
-            <p className="font-medium">{eventTitle}</p>
+            <p className="font-medium break-words">{eventTitle}</p>
             <dl className="text-muted-foreground mt-3 space-y-2 text-sm">
-              <div className="flex justify-between gap-3">
-                <dt>Duration</dt>
-                <dd className="text-foreground">{durationMinutes} min</dd>
+              <div className="flex items-baseline justify-between gap-3">
+                <dt className="shrink-0">Duration</dt>
+                <dd className="text-foreground min-w-0 text-right">{durationMinutes} min</dd>
               </div>
               {selectedDate && selectedTime ? (
-                <div className="flex justify-between gap-3">
-                  <dt>When</dt>
-                  <dd className="text-foreground text-right">
+                <div className="flex items-baseline justify-between gap-3">
+                  <dt className="shrink-0">When</dt>
+                  <dd className="text-foreground min-w-0 text-right break-words">
                     {formatDateInZone(confirmedStart(confirmed, selectedDate, selectedTime, timeZone), timeZone)}
                     <br />
                     {fmtTime(selectedTime)}
                   </dd>
                 </div>
               ) : null}
-              <div className="flex justify-between gap-3">
-                <dt>Time zone</dt>
-                <dd className="text-foreground">{timeZone}</dd>
+              <div className="flex items-baseline justify-between gap-3">
+                <dt className="shrink-0">Time zone</dt>
+                <dd
+                  className="text-foreground min-w-0 text-right break-words"
+                  title={timeZone}
+                >
+                  {zoneLabel(timeZone)}
+                </dd>
               </div>
             </dl>
             {step !== "done" ? (
@@ -572,13 +601,13 @@ function Confirmation({
         <p className="text-muted-foreground mt-1 text-sm">
           A confirmation email and a WhatsApp link are on their way.
         </p>
-        <p className="mt-4 text-sm">
+        <p className="mt-4 text-sm break-words">
           <span className="font-medium">{formatDateInZone(booking.start, timeZone)}</span>
         </p>
         {booking.location ? (
           <p className="mt-3">
             <a
-              className="text-primary underline underline-offset-4"
+              className="text-primary underline underline-offset-4 break-all"
               href={booking.location}
               target="_blank"
               rel="noopener noreferrer"
@@ -587,21 +616,36 @@ function Confirmation({
             </a>
           </p>
         ) : null}
-        <div className="mt-4 flex flex-wrap gap-2">
+        <div className="mt-4 flex flex-col gap-2 sm:flex-row sm:flex-wrap">
           {calAdd ? (
-            <Button variant="outline" size="sm" className="w-full sm:w-auto" render={<a href={calAdd} target="_blank" rel="noopener noreferrer" />}>
+            <a
+              href={calAdd}
+              target="_blank"
+              rel="noopener noreferrer"
+              className={buttonVariants({ variant: "outline", size: "sm", className: "h-10 w-full sm:h-7 sm:w-auto" })}
+            >
               Add to calendar
-            </Button>
+            </a>
           ) : null}
           {booking.rescheduleUrl ? (
-            <Button variant="ghost" size="sm" className="w-full sm:w-auto" render={<a href={booking.rescheduleUrl} target="_blank" rel="noopener noreferrer" />}>
+            <a
+              href={booking.rescheduleUrl}
+              target="_blank"
+              rel="noopener noreferrer"
+              className={buttonVariants({ variant: "ghost", size: "sm", className: "h-10 w-full sm:h-7 sm:w-auto" })}
+            >
               Reschedule
-            </Button>
+            </a>
           ) : null}
           {booking.cancelUrl ? (
-            <Button variant="ghost" size="sm" className="w-full sm:w-auto" render={<a href={booking.cancelUrl} target="_blank" rel="noopener noreferrer" />}>
+            <a
+              href={booking.cancelUrl}
+              target="_blank"
+              rel="noopener noreferrer"
+              className={buttonVariants({ variant: "ghost", size: "sm", className: "h-10 w-full sm:h-7 sm:w-auto" })}
+            >
               Cancel
-            </Button>
+            </a>
           ) : null}
         </div>
       </div>
@@ -615,12 +659,13 @@ function BookingRow() {
   const link = buildBusinessChatLink("Hi! I just booked a call on your website.");
   if (!link) return null;
   return (
-    <Button
-      variant="outline"
-      className="w-full sm:w-auto"
-      render={<a href={link} target="_blank" rel="noopener noreferrer" />}
+    <a
+      href={link}
+      target="_blank"
+      rel="noopener noreferrer"
+      className={buttonVariants({ variant: "outline", className: "h-10 w-full sm:h-8 sm:w-auto" })}
     >
       Continue on WhatsApp
-    </Button>
+    </a>
   );
 }

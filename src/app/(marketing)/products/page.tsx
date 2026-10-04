@@ -17,7 +17,7 @@ import {
   ShieldCheck,
 } from "lucide-react";
 import Link from "next/link";
-import { Button } from "@/components/ui/button";
+import { buttonVariants } from "@/components/ui/button";
 import { BookCallButton } from "@/components/book-call-button";
 import { Badge } from "@/components/ui/badge";
 import { CharReveal } from "@/components/split-text";
@@ -340,29 +340,26 @@ export default function ProductsPage() {
                   ))}
                 </ul>
                 <div className="flex items-center gap-2 mt-4">
-                  <Button
-                    variant="outline"
-                    className="flex-1"
-                    size="sm"
-                    render={<Link href={`/contact?service=${encodeURIComponent(product.title)}`} />}
+                  <Link
+                    href={`/contact?service=${encodeURIComponent(product.title)}`}
+                    className={buttonVariants({ variant: "outline", size: "sm", className: "flex-1" })}
                   >
                     Learn More <ArrowRight className="size-3.5 ml-1.5" />
-                  </Button>
-                  <Button
-                    variant="outline"
-                    size="sm"
-                    className="shrink-0 border-emerald-500/30 bg-emerald-500/10 text-emerald-600 hover:bg-emerald-500/20 hover:text-emerald-700 dark:text-emerald-400 dark:hover:text-emerald-300"
-                    render={
-                      <a
-                        href={buildBusinessChatLink(`Hi! I'm interested in your ${product.title} service. Can you share more details?`) ?? "#"}
-                        target="_blank"
-                        rel="noopener noreferrer"
-                      />
-                    }
+                  </Link>
+                  <a
+                    href={buildBusinessChatLink(`Hi! I'm interested in your ${product.title} service. Can you share more details?`) ?? "#"}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className={buttonVariants({
+                      variant: "outline",
+                      size: "sm",
+                      className:
+                        "shrink-0 border-emerald-500/30 bg-emerald-500/10 text-emerald-600 hover:bg-emerald-500/20 hover:text-emerald-700 dark:text-emerald-400 dark:hover:bg-emerald-500/30 dark:hover:text-emerald-300",
+                    })}
                   >
                     <MessageCircle className="size-3.5" />
                     <span className="sr-only sm:not-sr-only sm:ml-1.5">WhatsApp</span>
-                  </Button>
+                  </a>
                 </div>
               </div>
             ))}
@@ -588,12 +585,14 @@ export default function ProductsPage() {
                     </li>
                   ))}
                 </ul>
-                <Button
-                  className={`w-full ${plan.popular ? "bg-card text-primary hover:bg-card/90" : "bg-primary text-primary-foreground hover:bg-primary/90"}`}
-                  render={<Link href={`/contact?service=${encodeURIComponent("Digital FTE Deployment")}`} />}
+                <Link
+                  href={`/contact?service=${encodeURIComponent("Digital FTE Deployment")}`}
+                  className={buttonVariants({
+                    className: `w-full ${plan.popular ? "bg-card text-primary hover:bg-card/90" : "bg-primary text-primary-foreground hover:bg-primary/90"}`,
+                  })}
                 >
                   Get Started
-                </Button>
+                </Link>
               </div>
             ))}
           </div>

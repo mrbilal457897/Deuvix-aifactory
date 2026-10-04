@@ -9,7 +9,7 @@ import {
 } from "@/lib/bookings/queries";
 import { isDatabaseConfigured } from "@/lib/db";
 import { buildClientChatLink } from "@/lib/notify/whatsapp";
-import { Button } from "@/components/ui/button";
+import { buttonVariants } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
 
 export const dynamic = "force-dynamic";
@@ -80,10 +80,10 @@ export default async function AdminBookingsPage({
             {rows.length} {filter === "all" ? "total" : filter}
           </p>
         </div>
-        <Button render={<a href={downloadHref} />}>
+        <a href={downloadHref} className={buttonVariants()}>
           <Download aria-hidden="true" />
           Export CSV
-        </Button>
+        </a>
       </div>
 
       <nav className="mt-6 flex flex-wrap gap-2" aria-label="Booking filters">
