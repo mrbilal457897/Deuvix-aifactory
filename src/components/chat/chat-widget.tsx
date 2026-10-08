@@ -30,6 +30,7 @@ export function ChatWidget() {
   const [input, setInput] = useState("");
   const [isTyping, setIsTyping] = useState(false);
   const messagesEndRef = useRef<HTMLDivElement>(null);
+  const panelRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
     messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
@@ -102,6 +103,20 @@ export function ChatWidget() {
     }
   };
 
+  // Dismiss on an outside click. A full-screen backdrop was deliberately avoided:
+  // it would stop the page behind this floating panel from scrolling, and this is
+  // a widget rather than a modal.
+  useEffect(() => {
+    if (!isOpen) return;
+    const onPointerDown = (e: PointerEvent) => {
+      const target = e.target as HTMLElement | null;
+      if (target && panelRef.current?.contains(target)) return;
+      setIsOpen(false);
+    };
+    document.addEventListener("pointerdown", onPointerDown, true);
+    return () => document.removeEventListener("pointerdown", onPointerDown, true);
+  }, [isOpen]);
+
   return (
     <>
       {!isOpen && (
@@ -115,6 +130,7 @@ export function ChatWidget() {
 
       {isOpen && (
         <div
+          ref={panelRef}
           className="chat-pop fixed bottom-6 right-6 z-50 w-[380px] max-w-[calc(100vw-3rem)] h-[520px] max-h-[calc(100svh-6rem)] rounded-2xl bg-card border border-border shadow-2xl flex flex-col overflow-hidden"
         >
           <div className="flex items-center justify-between px-5 py-4 border-b border-border bg-surface">
