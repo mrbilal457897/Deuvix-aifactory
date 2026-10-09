@@ -1,176 +1,523 @@
 import { NextResponse } from "next/server";
-import {
-  sanitizeInput,
-  isRestrictedRequest,
-  RESTRICTED_RESPONSE,
-} from "@/lib/chat/guardrails";
+import { getServerSession } from "next-auth";
+import { z } from "zod";
+import { authOptions } from "@/lib/auth";
 import { checkRateLimit, getClientIp } from "@/lib/rate-limit";
+import { chatConfig } from "@/lib/chat/config";
+import { evaluateInput, isAbusive } from "@/lib/chat/guardrails";
+import { checkOutput, RESTRICTED_RESPONSE } from "@/lib/chat/output-guard";
+import { classifyLocally, routeByScores, namespacesFor, type QueryRoute } from "@/lib/chat/route-classify";
+import { retrieve, type RetrievedChunk } from "@/lib/chat/retrieve";
+import { SYSTEM_PROMPT, buildUserPrompt, STRICT_REGEN_INSTRUCTION } from "@/lib/chat/systemPrompt";
+import { streamChat, friendlyFailure, ChatModelError } from "@/lib/chat/gemini";
+import {
+  loadHistory,
+  ensureConversation,
+  persistTurn,
+  maybeRollupSummary,
+  extractProfile,
+  saveProfile,
+  recordAbuseStrike,
+  type MemoryTurn,
+} from "@/lib/chat/memory";
+import { uiStrings } from "@/lib/chat/ui-strings";
 
-const responses: Record<string, string> = {
-  services: `We offer 7 core services at DEUX AI Factory:\n\n1. **Digital FTE Deployment** — AI workers that operate 24/7, 168 hours/week at 85% cost savings. Domain-specific agents that handle your business tasks.\n\n2. **Forward Deployed Engineer (FDE)** — Expert engineers deployed to your site to implement AI-native solutions with spec-driven development.\n\n3. **AI Chatbots** — Customer-facing chatbots trained on your business that qualify and convert visitors around the clock.\n\n4. **Voice Agents** — AI voice agents that take calls, book appointments, and follow up in natural speech.\n\n5. **Custom Agents** — Tailor-made agents built for your exact workflow, integrated with your tools.\n\n6. **Loop Engineering** — We build and operate agent loops — a heartbeat, worktree, and spine — that run your operations continuously, with a human gate keeping you in control.\n\n7. **AI Agent E-books** — Comprehensive guides to building AI-Native companies. Learn to manufacture, deploy, and monetize Digital FTEs.\n\nWe also build AI-Powered Web Apps and deliver Business AI Solutions.\n\nWant details on any specific service?`,
+export const runtime = "nodejs";
+export const maxDuration = 60;
 
-  fte: `A **Digital FTE** (Full-Time Equivalent) is an AI worker that operates 24/7, 168 hours a week — that's 4x the output of a human worker.\n\nKey benefits:\n• 85% cost savings vs human employees\n• Instant scaling — add more FTEs anytime\n• Domain-specific expertise\n• 99%+ consistency\n• Zero fatigue, zero downtime\n\nWe help you manufacture, deploy, and monetize Digital FTEs for your business.`,
+/* -------------------------------------------------------------------------- */
+/* Request contract                                                           */
+/* -------------------------------------------------------------------------- */
 
-  fde: `A **Forward Deployed Engineer (FDE)** is an expert engineer deployed directly to your site to implement AI solutions.\n\nWhat FDEs do:\n• Spec-driven development with blueprints both humans and AI understand\n• Production-ready architecture from day one\n• On-site implementation and integration\n• Full-stack AI development (Python + TypeScript)\n\nFDEs bridge the gap between AI theory and production reality.`,
+const bodySchema = z.object({
+  message: z.string().min(1, "Empty message").max(4000),
+  /** Logged-in users: server owns the history. Guests: sent from sessionStorage. */
+  conversationId: z.string().uuid().optional(),
+  sessionId: z
+    .string()
+    .min(8)
+    .max(64)
+    .regex(/^[A-Za-z0-9_-]+$/, "bad session id")
+    .optional(),
+  history: z
+    .array(
+      z.object({
+        role: z.enum(["user", "assistant"]),
+        content: z.string().max(1200),
+      }),
+    )
+    .max(12)
+    .optional(),
+});
 
-  pricing: `Our pricing plans:\n\n**Starter** — $500/mo\n• 1 Digital FTE\n• Basic Agent Setup\n• Email support\n• Community access\n\n**Professional** — $2,000/mo (Most Popular)\n• 5 Digital FTEs\n• Custom Agent Training\n• Priority support\n• FDE consultation\n• Analytics dashboard\n\n**Enterprise** — Custom pricing\n• Unlimited FTEs\n• Dedicated FDE team\n• SLA guarantee\n• On-premise option\n• Custom integrations\n\nAll plans include a 14-day free trial!`,
+type Body = z.infer<typeof bodySchema>;
 
-  getting_started: `Getting started with DEUX AI Factory is simple:\n\n1. **Book a consultation** — Visit our Contact page or email us at deuxaiinfo786@gmail.com\n2. **Discuss your needs** — We'll understand your business and identify AI opportunities\n3. **Choose your plan** — Starter ($500/mo), Professional ($2,000/mo), or Enterprise\n4. **Deploy your FTEs** — We manufacture and deploy your AI workers\n5. **Scale & optimize** — Monitor results and expand your AI workforce\n\nReady to start? Book a consultation at /contact`,
+/* -------------------------------------------------------------------------- */
+/* SSE framing — every event is one JSON object per line                       */
+/* -------------------------------------------------------------------------- */
 
-  team: `DEUX AI Factory is led by:\n\n**Bilal Ali** — Co-founder & CEO\nOversees company strategy and AI-Native development direction.\n\n**Asadullah** — Co-founder & CTO\nHandles technical architecture and FDE implementation.\n\nWe're based in Pakistan and work with businesses globally to build AI-Native companies.`,
-
-  company: `**DEUX AI Factory** is an AI-Native company focused on helping businesses manufacture, deploy, and monetize Digital FTEs.\n\nOur philosophy:\n• **Spec-Driven Development** — Write specs that both humans and AI understand\n• **Co-Learning Partnership** — You and AI teach each other through iteration\n• **Production-Ready Architecture** — Cloud-native with Docker, Kubernetes, and Dapr\n• **Dual Language Mastery** — Python for reasoning, TypeScript for UI\n\nWe believe in building AI-Native companies, not just using AI as a tool.`,
-
-  contact: `You can reach us through:\n\n📧 **Email:** deuxaiinfo786@gmail.com\n📍 **Location:** Pakistan\n\n**Office Hours:**\n• Monday–Friday: 9:00 AM – 6:00 PM\n• Saturday: 10:00 AM – 2:00 PM\n• Sunday: Closed\n\nOr visit our Contact page to book a free consultation!`,
-
-  spec_driven: `**Spec-Driven Development** is our core methodology.\n\nInstead of writing code directly, we write specifications — blueprints that both humans and AI understand. These specs become executable instructions for building intelligent systems.\n\nBenefits:\n• Clear communication between humans and AI\n• Reproducible results\n• Easy to iterate and improve\n• Foundation of AI-Native engineering\n\nThis is how we build all our Digital FTEs and AI solutions.`,
-
-  co_learning: `**Co-Learning Partnership** means you and AI teach each other through iteration.\n\nIt's not about using AI as a tool — it's about co-creating where both human and AI learn and improve together.\n\nHow it works:\n• You provide domain expertise and feedback\n• AI provides speed and pattern recognition\n• Together you build better solutions over time\n• The system gets smarter with each iteration\n\nThis philosophy is at the heart of everything we do at DEUX AI Factory.`,
-
-  ebook: `Our **AI Agent E-books** are comprehensive guides to building AI-Native companies.\n\nWhat you'll learn:\n• How to manufacture Digital FTEs step by step\n• How to deploy AI workers to production\n• How to monetize your AI workforce\n• Real case studies and examples\n• Production-focused strategies\n\nThese guides follow our co-learning philosophy — practical, not theoretical.`,
-
-  web_apps: `We build **AI-Powered Web Applications** with AI-native architecture.\n\nWhat we deliver:\n• Full-stack web applications\n• AI-native architecture from day one\n• Real-time processing capabilities\n• Cloud-deployed and scalable\n• Intelligent automation baked in\n\nFrom concept to production, we build web apps that leverage AI at their core.`,
-
-  greeting: `Hello! Welcome to DEUX AI Factory. I can help you learn about our AI solutions, services, pricing, or how to get started. What would you like to know?`,
-
-  thanks: `You're welcome! If you have any more questions about our services, pricing, or how to get started, feel free to ask. You can also reach us at deuxaiinfo786@gmail.com or visit our Contact page.`,
-
-  help: `I can help you with:\n\n• **Services** — Digital FTE, FDE, AI Chatbots, Voice Agents, Custom Agents, Loop Engineering, E-books, Web Apps\n• **Pricing** — Starter ($500/mo), Professional ($2,000/mo), Enterprise\n• **Getting Started** — How to begin your AI journey\n• **Company** — Our team, philosophy, and approach\n• **Contact** — Email, phone, and office hours\n\nJust ask me anything!`,
-
-  default: `Thanks for your message! I'm here to help you learn about DEUX AI Factory's AI solutions.\n\nI can help with:\n• Our services (Digital FTE, FDE, AI Chatbots, Voice Agents, Custom Agents, Loop Engineering, E-books, Web Apps)\n• Pricing plans ($500/mo to Enterprise)\n• How to get started\n• Our team and company philosophy\n• Contact information\n\nWhat would you like to know?`,
-};
-
-function getAIResponse(input: string): string {
-  const lower = input.toLowerCase();
-
-  if (lower.includes("fte") || lower.includes("digital worker") || lower.includes("ai worker") || lower.includes("ai workforce")) {
-    return responses.fte;
-  }
-
-  if (lower.includes("fde") || lower.includes("engineer") || lower.includes("deployed engineer")) {
-    return responses.fde;
-  }
-
-  if (lower.includes("service") || lower.includes("product") || lower.includes("offer") || lower.includes("what do you do") || lower.includes("what does") || lower.includes("chatbot") || lower.includes("voice agent") || lower.includes("custom agent") || lower.includes("loop engineering") || lower.includes("agent loop")) {
-    return responses.services;
-  }
-
-  if (lower.includes("price") || lower.includes("cost") || lower.includes("plan") || lower.includes("pricing") || lower.includes("how much")) {
-    return responses.pricing;
-  }
-
-  if (lower.includes("start") || lower.includes("sign") || lower.includes("begin") || lower.includes("onboard") || lower.includes("how do i")) {
-    return responses.getting_started;
-  }
-
-  if (lower.includes("team") || lower.includes("who") || lower.includes("founder") || lower.includes("leader") || lower.includes("bilal") || lower.includes("asad") || lower.includes("ali") || lower.includes("asadullah")) {
-    return responses.team;
-  }
-
-  if (lower.includes("company") || lower.includes("about") || lower.includes("philosophy") || lower.includes("ai-native") || lower.includes("deux")) {
-    return responses.company;
-  }
-
-  if (lower.includes("contact") || lower.includes("email") || lower.includes("phone") || lower.includes("location") || lower.includes("address") || lower.includes("reach")) {
-    return responses.contact;
-  }
-
-  if (lower.includes("spec") || lower.includes("specification") || lower.includes("blueprint")) {
-    return responses.spec_driven;
-  }
-
-  if (lower.includes("co-learn") || lower.includes("co learn") || lower.includes("partnership") || lower.includes("iteration")) {
-    return responses.co_learning;
-  }
-
-  if (lower.includes("ebook") || lower.includes("e-book") || lower.includes("book") || lower.includes("guide") || lower.includes("learn")) {
-    return responses.ebook;
-  }
-
-  if (lower.includes("web app") || lower.includes("website") || lower.includes("application") || lower.includes("full stack")) {
-    return responses.web_apps;
-  }
-
-  if (lower.match(/^(hi|hello|hey|greetings|good\s*(morning|afternoon|evening))/)) {
-    return responses.greeting;
-  }
-
-  if (lower.includes("thank") || lower.includes("thanks")) {
-    return responses.thanks;
-  }
-
-  if (lower.includes("help") || lower === "?") {
-    return responses.help;
-  }
-
-  return responses.default;
+interface MetaEvent {
+  type: "meta";
+  route: QueryRoute | "blocked";
+  sources: Array<{ title: string; url: string; source: "deux" | "agentfactory" }>;
+  conversationId: string | null;
+  abuseStrikes: number;
+  ended: boolean;
+  blockedReason?: string;
+  /** Server-side ids, so a logged-in user's feedback can be attached. */
+  messageIds?: { user: string | null; assistant: string | null };
 }
+interface TokenEvent {
+  type: "token";
+  text: string;
+}
+interface DoneEvent {
+  type: "done";
+}
+interface ErrorEvent {
+  type: "error";
+  kind: string;
+  message: string;
+}
+
+type Event = MetaEvent | TokenEvent | DoneEvent | ErrorEvent;
+
+function sse(events: Event[]): Response {
+  const encoder = new TextEncoder();
+  const body = new ReadableStream<Uint8Array>({
+    start(controller) {
+      for (const ev of events) {
+        controller.enqueue(encoder.encode(`${JSON.stringify(ev)}\n`));
+      }
+      controller.close();
+    },
+  });
+  return new Response(body, {
+    headers: {
+      "Content-Type": "text/plain; charset=utf-8",
+      "Cache-Control": "no-store, no-transform",
+      "X-Accel-Buffering": "no",
+    },
+  });
+}
+
+/** Split into small pieces so the local re-stream feels smooth. */
+function chunkText(text: string, size = 4): string[] {
+  const out: string[] = [];
+  let i = 0;
+  while (i < text.length) {
+    out.push(text.slice(i, i + size));
+    i += size;
+  }
+  return out;
+}
+
+function logEvent(event: string, detail: Record<string, string | number | boolean> = {}) {
+  if (!chatConfig.logEvents) return;
+  // No message bodies, no prompts, no keys — metadata only (§9).
+  console.log(`[chat] ${event}`, JSON.stringify(detail));
+}
+
+/** Prebuilt single-event replies (guard hits, abuse, failures). */
+function cannedReply(
+  text: string,
+  opts: { conversationId: string | null; strikes: number; ended?: boolean; reason?: string },
+): Response {
+  const meta: MetaEvent = {
+    type: "meta",
+    route: "blocked",
+    sources: [],
+    conversationId: opts.conversationId,
+    abuseStrikes: opts.strikes,
+    ended: opts.ended ?? false,
+    ...(opts.reason ? { blockedReason: opts.reason } : {}),
+  };
+  return sse([meta, ...chunkText(text).map((t): TokenEvent => ({ type: "token", text: t })), { type: "done" }]);
+}
+
+/* -------------------------------------------------------------------------- */
+/* POST /api/chat                                                              */
+/* -------------------------------------------------------------------------- */
 
 export async function POST(request: Request) {
   try {
     const ip = getClientIp(request);
-    if (!checkRateLimit(ip)) {
-      return NextResponse.json(
-        { error: "Too many messages. Please wait a moment and try again." },
-        { status: 429 }
-      );
+    if (!checkRateLimit(`ip:${ip}`)) {
+      return sse([
+        { type: "error", kind: "rate_limit", message: uiStrings.rateLimited },
+        { type: "done" },
+      ]);
     }
 
-    let body: { messages?: unknown };
+    let json: unknown;
     try {
-      body = await request.json();
+      json = await request.json();
     } catch {
       return NextResponse.json({ error: "Invalid request body" }, { status: 400 });
     }
 
-    const messages = body.messages;
-    if (!Array.isArray(messages) || messages.length === 0) {
-      return NextResponse.json({ error: "Messages are required" }, { status: 400 });
+    const parsed = bodySchema.safeParse(json);
+    if (!parsed.success) {
+      const issue = parsed.error.issues[0];
+      return NextResponse.json(
+        { error: issue?.message || "Invalid request body" },
+        { status: 400 },
+      );
+    }
+    const body: Body = parsed.data;
+
+    /* ---- identity ------------------------------------------------------- */
+    const session = await getServerSession(authOptions);
+    const userId = (session?.user as { userId?: string } | undefined)?.userId || "";
+    const rateKey = userId ? `user:${userId}` : `guest:${body.sessionId || ip}`;
+
+    if (!checkRateLimit(rateKey, chatConfig.userRateLimit)) {
+      return sse([
+        { type: "error", kind: "rate_limit", message: uiStrings.rateLimited },
+        { type: "done" },
+      ]);
     }
 
-    const last = messages[messages.length - 1];
-    const rawContent = last && typeof last === "object" && "content" in last
-      ? (last as { content?: unknown }).content
-      : "";
+    /* ---- memory --------------------------------------------------------- */
+    const history = userId
+      ? await loadHistory(userId, body.conversationId)
+      : {
+          conversationId: null,
+          window: (body.history || []) as MemoryTurn[],
+          summary: "",
+          profile: {},
+          abuseStrikes: 0,
+          status: "active" as const,
+        };
 
-    const input = sanitizeInput(typeof rawContent === "string" ? rawContent : "");
-
-    if (!input) {
-      return NextResponse.json({ error: "Empty message" }, { status: 400 });
+    if (history.status === "ended") {
+      return cannedReply(uiStrings.sessionEnded, {
+        conversationId: history.conversationId,
+        strikes: history.abuseStrikes,
+        ended: true,
+        reason: "session_ended",
+      });
     }
 
-    const isRestricted = isRestrictedRequest(input);
-    const response = isRestricted ? RESTRICTED_RESPONSE : getAIResponse(input);
+    /* ---- layer 1: input guardrails (§6) --------------------------------- */
+    const verdict = evaluateInput(body.message);
 
-    const encoder = new TextEncoder();
-    const stream = new ReadableStream({
-      start(controller) {
-        const words = response.split(" ");
-        let index = 0;
+    if (verdict.action === "block") {
+      if (verdict.reason === "empty_or_spam") {
+        return NextResponse.json({ error: "Empty message" }, { status: 400 });
+      }
 
-        const interval = setInterval(() => {
-          if (index < words.length) {
-            const word = words[index] + " ";
-            controller.enqueue(encoder.encode(word));
-            index++;
-          } else {
-            clearInterval(interval);
-            controller.close();
-          }
-        }, 30);
-      },
+      // Abuse is counted, not just refused (§6E).
+      if (verdict.reason === "off_topic" && isAbusive(body.message)) {
+        const strikes = userId
+          ? await recordAbuseStrike(userId, history.conversationId)
+          : history.abuseStrikes + 1;
+        const ended = strikes >= chatConfig.abuseStrikeLimit;
+        logEvent("guardrail", { rule: "abuse", strikes, ended });
+        return cannedReply(ended ? uiStrings.sessionEnded : uiStrings.abuseBoundary, {
+          conversationId: history.conversationId,
+          strikes,
+          ended,
+          reason: ended ? "abuse" : "abuse_boundary",
+        });
+      }
+
+      logEvent("guardrail", { rule: verdict.reason });
+      return cannedReply(verdict.reply, {
+        conversationId: history.conversationId,
+        strikes: history.abuseStrikes,
+        reason: verdict.reason,
+      });
+    }
+
+    // Explicit abuse check even when the rest of the input passed.
+    if (isAbusive(body.message)) {
+      const strikes = userId
+        ? await recordAbuseStrike(userId, history.conversationId)
+        : history.abuseStrikes + 1;
+      const ended = strikes >= chatConfig.abuseStrikeLimit;
+      logEvent("guardrail", { rule: "abuse", strikes, ended });
+      return cannedReply(ended ? uiStrings.sessionEnded : uiStrings.abuseBoundary, {
+        conversationId: history.conversationId,
+        strikes,
+        ended,
+        reason: ended ? "abuse" : "abuse_boundary",
+      });
+    }
+
+    if (verdict.action === "redact") {
+      logEvent("guardrail", { rule: verdict.reason });
+      // Warn, do not echo, do not store (§6A).
+      return cannedReply(verdict.reply, {
+        conversationId: history.conversationId,
+        strikes: history.abuseStrikes,
+        reason: verdict.reason,
+      });
+    }
+
+    const userText = verdict.cleaned;
+
+    /* ---- routing + retrieval (§2D) -------------------------------------- */
+    const localRoute = classifyLocally(userText);
+
+    // §6F: politely decline before spending a retrieval call.
+    if (localRoute === "out_of_scope") {
+      logEvent("guardrail", { rule: "off_topic" });
+      return cannedReply(uiStrings.boundary("topics outside AI agents and what Deux does"), {
+        conversationId: history.conversationId,
+        strikes: history.abuseStrikes,
+        reason: "off_topic",
+      });
+    }
+
+    let namespaces = namespacesFor(localRoute ?? "mixed");
+    // Never search Source A if the index for it is missing — but always
+    // allow Source B, and fall back to both if routing came back empty.
+    const first = await retrieve(userText, namespaces);
+    let route: QueryRoute = localRoute ?? "mixed";
+    let result = first;
+
+    if (!localRoute) {
+      route = routeByScores(result.topScores.deux ?? 0, result.topScores.agentfactory ?? 0);
+      const wanted = namespacesFor(route);
+      if (wanted.join(",") !== namespaces.join(",")) {
+        namespaces = wanted;
+        result = await retrieve(userText, namespaces);
+      }
+    }
+
+    if (result.error === "model") {
+      logEvent("retrieval_error", { route });
+      return sse([
+        { type: "error", kind: "model", message: uiStrings.modelError },
+        { type: "done" },
+      ]);
+    }
+
+    const contextFor = (source: "deux" | "agentfactory") =>
+      result.chunks
+        .filter((c) => c.source === source)
+        .map(formatChunk)
+        .join("\n\n---\n\n");
+
+    logEvent("retrieval", {
+      route,
+      chunks: result.chunks.length,
+      deux: result.chunks.filter((c) => c.source === "deux").length,
+      af: result.chunks.filter((c) => c.source === "agentfactory").length,
     });
 
-    return new Response(stream, {
-      headers: {
-        "Content-Type": "text/plain; charset=utf-8",
-        "Transfer-Encoding": "chunked",
-      },
+    /* ---- no relevant context (§2D) -------------------------------------- */
+    if (result.chunks.length === 0) {
+      // The pricing branch never reaches here (blocked earlier), so this is a
+      // genuine "not in the knowledge base" answer.
+      const reply = `${uiStrings.noAnswer}\n\n${foundersLine()}`;
+      const convId = history.conversationId;
+      await persistForUser(userId, convId, userText, [], "user");
+      await persistForUser(userId, convId, reply, [], "assistant");
+      const meta: MetaEvent = {
+        type: "meta",
+        route,
+        sources: [],
+        conversationId: convId,
+        abuseStrikes: history.abuseStrikes,
+        ended: false,
+      };
+      return sse([meta, ...chunkText(reply).map((t): TokenEvent => ({ type: "token", text: t })), { type: "done" }]);
+    }
+
+    /* ---- build the prompt ------------------------------------------------ */
+    const profile = Object.keys(history.profile).length
+      ? history.profile
+      : await safeProfile(userId, history.conversationId, history.profile, userText);
+
+    const historyText = renderHistory(history.summary, history.window);
+
+    const prompt = buildUserPrompt({
+      userMessage: userText,
+      history: historyText,
+      profile: renderProfile(profile),
+      route,
+      ...(result.chunks.some((c) => c.source === "deux")
+        ? { deuxContext: contextFor("deux") }
+        : {}),
+      ...(result.chunks.some((c) => c.source === "agentfactory")
+        ? { agentFactoryContext: contextFor("agentfactory") }
+        : {}),
     });
-  } catch {
-    return NextResponse.json(
-      { error: "Failed to process request" },
-      { status: 500 }
-    );
+
+    const sources = dedupeSources(result.chunks);
+    const urls = result.urls;
+
+    /* ---- generate → guard → re-stream ----------------------------------- */
+    let finalText = "";
+    let attempt = 0;
+    let lastReason = "";
+
+    try {
+      for (;;) {
+        finalText = await collect(streamChat(SYSTEM_PROMPT, prompt));
+        const verdictOut = checkOutput(finalText, { contextUrls: urls, attempt });
+
+        if (verdictOut.ok) {
+          finalText = verdictOut.text;
+          break;
+        }
+
+        lastReason = verdictOut.reason;
+
+        // Non-recoverable classes go straight to their canned answer.
+        if (
+          verdictOut.reply &&
+          (verdictOut.reason === "prompt_leak" ||
+            verdictOut.reason === "price" ||
+            verdictOut.reason === "order_confirmation" ||
+            verdictOut.reason === "payment_promise")
+        ) {
+          finalText = verdictOut.reply;
+          break;
+        }
+
+        if (attempt >= 1) {
+          finalText = verdictOut.reply || uiStrings.emptyAnswer;
+          break;
+        }
+
+        attempt += 1;
+        try {
+          const retryPrompt = `${prompt}\n\n<instruction>\n${STRICT_REGEN_INSTRUCTION}\n</instruction>`;
+          finalText = await collect(streamChat(SYSTEM_PROMPT, retryPrompt));
+        } catch (err) {
+          finalText = uiStrings.emptyAnswer;
+          lastReason = "retry_failed";
+          logEvent("model_error", { kind: err instanceof ChatModelError ? err.kind : "unknown" });
+          break;
+        }
+      }
+    } catch (err) {
+      const kind = err instanceof ChatModelError ? err.kind : "model";
+      logEvent("model_error", { kind, attempt });
+      const message = err instanceof ChatModelError ? friendlyFailure(kind) : uiStrings.modelError;
+      return sse([{ type: "error", kind, message }, { type: "done" }]);
+    }
+
+    if (lastReason) logEvent("output_filter", { reason: lastReason, attempt });
+
+    /* ---- persist (logged-in only, §3) ------------------------------------ */
+    const convId = history.conversationId ?? (await ensureConversation(userId, body.conversationId));
+    const userMsgId = await persistForUser(userId, convId, userText, sources, "user");
+    const botMsgId = await persistForUser(userId, convId, finalText, sources, "assistant");
+    await maybeRollupSummary(userId, convId);
+
+    const meta: MetaEvent = {
+      type: "meta",
+      route,
+      sources,
+      conversationId: convId,
+      abuseStrikes: history.abuseStrikes,
+      ended: false,
+      messageIds: { user: userMsgId, assistant: botMsgId },
+    };
+
+    // Local re-stream: the guard already approved every character.
+    const pieces = chunkText(finalText, 3);
+    const events: Event[] = [meta];
+    for (const piece of pieces) events.push({ type: "token", text: piece });
+    events.push({ type: "done" });
+
+    return sse(events);
+  } catch (err) {
+    logEvent("unhandled_error", { message: err instanceof Error ? err.name : "unknown" });
+    return sse([
+      { type: "error", kind: "model", message: uiStrings.modelError },
+      { type: "done" },
+    ]);
   }
 }
+
+/* -------------------------------------------------------------------------- */
+/* helpers                                                                     */
+/* -------------------------------------------------------------------------- */
+
+async function collect(gen: AsyncGenerator<string>): Promise<string> {
+  let out = "";
+  for await (const piece of gen) out += piece;
+  return out.trim();
+}
+
+function formatChunk(c: RetrievedChunk): string {
+  const head = [c.heading || c.title, c.url].filter(Boolean).join(" — ");
+  return `${head}\n${c.text}`;
+}
+
+function dedupeSources(
+  chunks: RetrievedChunk[],
+): Array<{ title: string; url: string; source: "deux" | "agentfactory" }> {
+  const seen = new Map<string, { title: string; url: string; source: "deux" | "agentfactory" }>();
+  for (const c of chunks) {
+    if (!c.url || seen.has(c.url)) continue;
+    seen.set(c.url, {
+      title: (c.title || c.heading || c.url).slice(0, 80),
+      url: c.url,
+      source: c.source,
+    });
+  }
+  return [...seen.values()].slice(0, 6);
+}
+
+function renderHistory(summary: string, window: MemoryTurn[]): string {
+  const parts: string[] = [];
+  if (summary) parts.push(`Earlier in this conversation: ${summary}`);
+  for (const t of window) {
+    parts.push(`${t.role === "user" ? "User" : "Assistant"}: ${t.content}`);
+  }
+  return parts.join("\n").slice(0, 4000);
+}
+
+function renderProfile(profile: Record<string, string>): string {
+  const entries = Object.entries(profile).filter(([, v]) => v);
+  if (entries.length === 0) return "";
+  return entries.map(([k, v]) => `${k}: ${v}`).join("; ");
+}
+
+function foundersLine(): string {
+  const lines: string[] = [];
+  if (process.env.FOUNDERS_CONTACT_EMAIL) lines.push(`Email: ${process.env.FOUNDERS_CONTACT_EMAIL}`);
+  lines.push(`Contact page: ${process.env.FOUNDERS_CONTACT_URL || "/contact"}`);
+  if (process.env.FOUNDERS_WHATSAPP) lines.push(`WhatsApp: ${process.env.FOUNDERS_WHATSAPP}`);
+  return lines.join(" · ");
+}
+
+async function persistForUser(
+  userId: string,
+  conversationId: string | null,
+  content: string,
+  sources: Array<{ title: string; url: string; source: "deux" | "agentfactory" }>,
+  role?: "user" | "assistant",
+): Promise<string | null> {
+  if (!userId || !conversationId || !role) return null;
+  try {
+    return await persistTurn(userId, conversationId, { role, content, sources });
+  } catch {
+    // History is a convenience; a write failure must never fail the response.
+    return null;
+  }
+}
+
+async function safeProfile(
+  userId: string,
+  conversationId: string | null,
+  current: Record<string, string>,
+  message: string,
+): Promise<Record<string, string>> {
+  if (!userId || !conversationId) return current;
+  try {
+    const next = await extractProfile(current, message);
+    await saveProfile(userId, conversationId, next);
+    return next;
+  } catch {
+    return current;
+  }
+}
+
+export { RESTRICTED_RESPONSE };

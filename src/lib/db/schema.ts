@@ -2,12 +2,16 @@ import { sql } from "drizzle-orm";
 import {
   boolean,
   index,
+  integer,
   jsonb,
   pgEnum,
   pgTable,
+  primaryKey,
   text,
   timestamp,
+  uniqueIndex,
   uuid,
+  vector,
 } from "drizzle-orm/pg-core";
 
 export const bookingStatus = pgEnum("booking_status", [
@@ -53,3 +57,137 @@ export type NewBooking = typeof bookings.$inferInsert;
 export type BookingStatus = (typeof bookingStatus.enumValues)[number];
 
 export const now = sql`now()`;
+
+/* -------------------------------------------------------------------------- */
+/* Chat: knowledge base                                                       */
+/* -------------------------------------------------------------------------- */
+
+export type KbSource = "deux" | "agentfactory";
+
+export const kbPages = pgTable(
+  "kb_pages",
+  {
+    source: text("source").$type<KbSource>().notNull(),
+    url: text("url").notNull(),
+    title: text("title"),
+    contentHash: text("content_hash").notNull(),
+    chunkCount: integer("chunk_count").notNull().default(0),
+    lastFetched: timestamp("last_fetched", { withTimezone: true })
+      .notNull()
+      .defaultNow(),
+  },
+  (table) => [primaryKey({ columns: [table.source, table.url] })],
+);
+
+export const kbChunks = pgTable(
+  "kb_chunks",
+  {
+    id: uuid("id").primaryKey().defaultRandom(),
+    source: text("source").$type<KbSource>().notNull(),
+    url: text("url").notNull(),
+    chunkIndex: integer("chunk_index").notNull(),
+    title: text("title"),
+    heading: text("heading"),
+    text: text("text").notNull(),
+    contentHash: text("content_hash").notNull(),
+    embedding: vector("embedding", { dimensions: 768 }),
+    lastFetched: timestamp("last_fetched", { withTimezone: true })
+      .notNull()
+      .defaultNow(),
+    createdAt: timestamp("created_at", { withTimezone: true })
+      .notNull()
+      .defaultNow(),
+  },
+  (table) => [
+    uniqueIndex("kb_chunks_unique_idx").on(table.source, table.url, table.chunkIndex),
+    index("kb_chunks_source_idx").on(table.source),
+  ],
+);
+
+/* -------------------------------------------------------------------------- */
+/* Chat: session memory (logged-in users only)                                */
+/* -------------------------------------------------------------------------- */
+
+export const conversationStatus = pgEnum("conversation_status", [
+  "active",
+  "ended",
+]);
+
+export const conversations = pgTable(
+  "conversations",
+  {
+    id: uuid("id").primaryKey().defaultRandom(),
+    /** Ownership boundary: every query filters on this. */
+    userId: text("user_id").notNull(),
+    title: text("title"),
+    /** Rolling summary of messages older than the history window. */
+    summary: text("summary"),
+    /** Compact profile: business type, goals, problem, tools mentioned. */
+    profile: jsonb("profile")
+      .$type<Record<string, string>>()
+      .notNull()
+      .default({}),
+    abuseStrikes: integer("abuse_strikes").notNull().default(0),
+    status: conversationStatus("status").notNull().default("active"),
+    endedReason: text("ended_reason"),
+    createdAt: timestamp("created_at", { withTimezone: true })
+      .notNull()
+      .defaultNow(),
+    updatedAt: timestamp("updated_at", { withTimezone: true })
+      .notNull()
+      .defaultNow(),
+  },
+  (table) => [index("conversations_user_idx").on(table.userId, table.updatedAt)],
+);
+
+export const messageRole = pgEnum("message_role", ["user", "assistant", "system"]);
+export const messageFeedback = pgEnum("message_feedback", ["up", "down"]);
+
+export const messages = pgTable(
+  "messages",
+  {
+    id: uuid("id").primaryKey().defaultRandom(),
+    conversationId: uuid("conversation_id")
+      .notNull()
+      .references(() => conversations.id, { onDelete: "cascade" }),
+    role: messageRole("role").notNull(),
+    content: text("content").notNull(),
+    /** [{ title, url, source }] — only URLs that came from retrieval. */
+    sources: jsonb("sources")
+      .$type<Array<{ title: string; url: string; source: KbSource }>>()
+      .notNull()
+      .default([]),
+    feedback: messageFeedback("feedback"),
+    createdAt: timestamp("created_at", { withTimezone: true })
+      .notNull()
+      .defaultNow(),
+  },
+  (table) => [
+    index("messages_conversation_idx").on(table.conversationId, table.createdAt),
+  ],
+);
+
+export type Conversation = typeof conversations.$inferSelect;
+export type NewConversation = typeof conversations.$inferInsert;
+export type ChatMessage = typeof messages.$inferSelect;
+export type NewChatMessage = typeof messages.$inferInsert;
+export type KbChunk = typeof kbChunks.$inferSelect;
+
+/* -------------------------------------------------------------------------- */
+/* Chat: leads handed to the founders                                         */
+/* -------------------------------------------------------------------------- */
+
+export const chatLeads = pgTable("chat_leads", {
+  id: uuid("id").primaryKey().defaultRandom(),
+  name: text("name").notNull(),
+  contact: text("contact").notNull(),
+  summary: text("summary").notNull(),
+  consent: boolean("consent").notNull().default(false),
+  channel: text("channel").notNull().default("email"),
+  status: text("status").notNull().default("new"),
+  createdAt: timestamp("created_at", { withTimezone: true })
+    .notNull()
+    .defaultNow(),
+});
+
+export type ChatLead = typeof chatLeads.$inferSelect;

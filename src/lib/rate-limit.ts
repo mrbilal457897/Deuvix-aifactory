@@ -3,8 +3,21 @@ const MAX_REQUESTS = 20;
 
 const buckets = new Map<string, number[]>();
 
+let pruneCounter = 0;
+
+/** Keeps the in-memory map from growing without bound on a long-lived server. */
+function prune(now: number, windowMs: number): void {
+  if ((pruneCounter = (pruneCounter + 1) % 500) !== 0) return;
+  for (const [key, stamps] of buckets) {
+    const live = stamps.filter((t) => now - t < windowMs);
+    if (live.length === 0) buckets.delete(key);
+    else buckets.set(key, live);
+  }
+}
+
 export function checkRateLimit(key: string, max = MAX_REQUESTS, windowMs = WINDOW_MS): boolean {
   const now = Date.now();
+  prune(now, windowMs);
   const timestamps = (buckets.get(key) || []).filter((t) => now - t < windowMs);
 
   if (timestamps.length >= max) {
