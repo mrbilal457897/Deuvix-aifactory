@@ -5,6 +5,7 @@ import { gsap } from "gsap";
 import Link from "next/link";
 import Image from "next/image";
 import { BlurReveal } from "@/components/split-text";
+import { BookCallButton } from "@/components/book-call-button";
 import { useSiteConfig } from "@/hooks/use-site-config";
 
 const leaderDefs = [
@@ -88,11 +89,12 @@ export function HeroSection() {
             </p>
 
             <div ref={ctaRef} className="flex flex-col sm:flex-row items-start sm:items-center gap-4">
-              <Link href="/products">
-                <span className="inline-flex items-center justify-center bg-primary text-primary-foreground font-bold text-[15px] px-[26px] py-[14px] rounded-[4px] hover:bg-primary/90 transition-all duration-200 cursor-pointer">
-                  Get Started
-                </span>
-              </Link>
+              <BookCallButton
+                icon={null}
+                className="inline-flex items-center justify-center bg-primary text-primary-foreground font-bold text-[15px] px-[26px] py-[14px] h-auto rounded-[4px] hover:bg-primary/90 transition-all duration-200 cursor-pointer"
+              >
+                Book a Call
+              </BookCallButton>
               <Link href="/projects">
                 <span className="inline-flex items-center justify-center bg-transparent text-foreground font-semibold text-[15px] px-[26px] py-[14px] rounded-[4px] border border-border dark:border-primary/30 hover:bg-primary/5 hover:border-primary/40 transition-all duration-200 cursor-pointer">
                   See Projects
