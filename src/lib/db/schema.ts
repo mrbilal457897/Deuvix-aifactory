@@ -191,3 +191,47 @@ export const chatLeads = pgTable("chat_leads", {
 });
 
 export type ChatLead = typeof chatLeads.$inferSelect;
+
+/* -------------------------------------------------------------------------- */
+/* Admin AI agent: audit log                                                  */
+/* -------------------------------------------------------------------------- */
+
+/** One entry per tool call, stored inside the row's tool_calls jsonb column. */
+export interface AdminAgentToolCall {
+  name: string;
+  risk?: string;
+  status: "running" | "ok" | "error";
+  args?: unknown;
+  result?: unknown;
+  error?: string;
+}
+
+export const adminAgentAudit = pgTable(
+  "admin_agent_audit",
+  {
+    id: uuid("id").primaryKey().defaultRandom(),
+    adminId: text("admin_id"),
+    adminEmail: text("admin_email"),
+    inputMode: text("input_mode").notNull().default("text"),
+    prompt: text("prompt"),
+    /** Filled for voice input; the reviewed transcript, not raw audio. */
+    transcript: text("transcript"),
+    skillsLoaded: jsonb("skills_loaded")
+      .$type<string[]>()
+      .notNull()
+      .default([]),
+    toolCalls: jsonb("tool_calls")
+      .$type<AdminAgentToolCall[]>()
+      .notNull()
+      .default([]),
+    status: text("status").notNull().default("ok"),
+    error: text("error"),
+    durationMs: integer("duration_ms"),
+    createdAt: timestamp("created_at", { withTimezone: true })
+      .notNull()
+      .defaultNow(),
+  },
+  (table) => [index("admin_agent_audit_created_idx").on(table.createdAt)],
+);
+
+export type AdminAgentAuditRow = typeof adminAgentAudit.$inferSelect;

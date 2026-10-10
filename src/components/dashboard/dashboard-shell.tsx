@@ -23,6 +23,7 @@ import {
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { LogoMark } from "@/components/brand-logo";
+import { AdminAgentPanel } from "@/components/admin/agent-panel";
 import { useState, createContext, useContext } from "react";
 
 const DASHBOARD_PREFIX = "/deux";
@@ -253,6 +254,8 @@ export function DashboardShell({ children }: { children: React.ReactNode }) {
             {children}
           </main>
         </div>
+
+        <AdminAgentPanel />
       </div>
     </SidebarCtx.Provider>
   );
