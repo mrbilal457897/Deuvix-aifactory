@@ -90,4 +90,34 @@ export const aiConfig = {
   get sttMaxSeconds() {
     return num("STT_MAX_SECONDS", 120);
   },
+
+  /**
+   * Text-to-speech is opt-in and OFF by default: when TTS_BASE_URL is unset the
+   * client speaks replies with the browser's built-in SpeechSynthesis instead of
+   * a server, so no audio leaves the device.
+   */
+  get ttsEnabled() {
+    return str("TTS_BASE_URL", "").length > 0;
+  },
+  get ttsBaseUrl() {
+    return str("TTS_BASE_URL", "http://localhost:9100").replace(/\/+$/, "");
+  },
+  /** Optional model override forwarded to the speech server (e.g. Piper voice). */
+  get ttsModel() {
+    return str("TTS_MODEL", "");
+  },
+  /** Optional default voice forwarded to the speech server. */
+  get ttsVoice() {
+    return str("TTS_VOICE", "");
+  },
+  get ttsApiKey() {
+    return process.env.TTS_API_KEY?.trim() || "";
+  },
+  get ttsTimeoutMs() {
+    return num("TTS_TIMEOUT_MS", 60_000);
+  },
+  /** Max characters accepted for a single synthesis request. */
+  get ttsMaxChars() {
+    return num("TTS_MAX_CHARS", 2000);
+  },
 } as const;

@@ -12,6 +12,8 @@ import {
   AlertTriangle,
   RefreshCw,
   Mic,
+  Volume2,
+  VolumeX,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
@@ -25,6 +27,7 @@ import {
 import { cn } from "@/lib/utils";
 import { useAdminAgent, type AgentMessage, type AgentToolTrace, type PendingAction } from "@/lib/ai/use-admin-agent";
 import { useVoiceRecorder } from "@/lib/ai/use-voice-recorder";
+import { useSpeech } from "@/lib/ai/use-speech";
 import {
   VOICE_LANGUAGES,
   VOICE_MAX_SECONDS,
@@ -82,8 +85,19 @@ function ToolTrace({ tool }: { tool: AgentToolTrace }) {
   );
 }
 
-function MessageBubble({ message }: { message: AgentMessage }) {
+function MessageBubble({
+  message,
+  speaking,
+  onSpeak,
+  onStop,
+}: {
+  message: AgentMessage;
+  speaking?: boolean;
+  onSpeak?: (text: string) => void;
+  onStop?: () => void;
+}) {
   const isUser = message.role === "user";
+  const canSpeak = !isUser && !message.pending && !!message.content;
   return (
     <div className={cn("flex flex-col gap-1.5", isUser ? "items-end" : "items-start")}>
       <div
@@ -104,6 +118,21 @@ function MessageBubble({ message }: { message: AgentMessage }) {
           </span>
         ) : null}
       </div>
+      {!isUser && (
+        <div className="flex w-[92%] items-center justify-between gap-2">
+          {canSpeak && onSpeak && (
+            <button
+              type="button"
+              onClick={() => (speaking ? onStop?.() : onSpeak(message.content))}
+              aria-label={speaking ? "Stop reading" : "Read reply aloud"}
+              className="flex items-center gap-1 text-[11px] text-muted-foreground transition-colors hover:text-foreground"
+            >
+              {speaking ? <VolumeX className="size-3.5" /> : <Volume2 className="size-3.5" />}
+              {speaking ? "Stop" : "Listen"}
+            </button>
+          )}
+        </div>
+      )}
       {!isUser && message.tools && message.tools.length > 0 && (
         <div className="w-[92%] space-y-1.5">
           {message.tools.map((t) => (
@@ -173,6 +202,8 @@ export function AdminAgentPanel() {
     reset,
     checkHealth,
   } = useAdminAgent();
+  const speech = useSpeech(Boolean(health?.tts?.configured));
+  const [speakingId, setSpeakingId] = useState<string | null>(null);
   const scrollRef = useRef<HTMLDivElement | null>(null);
 
   const handleAudio = useCallback(
@@ -273,7 +304,18 @@ export function AdminAgentPanel() {
                 </div>
               </div>
             ) : (
-              messages.map((m) => <MessageBubble key={m.id} message={m} />)
+              messages.map((m) => (
+                <MessageBubble
+                  key={m.id}
+                  message={m}
+                  speaking={speech.speaking && speakingId === m.id}
+                  onSpeak={(text) => {
+                    setSpeakingId(m.id);
+                    void speech.speak(text);
+                  }}
+                  onStop={() => speech.stop()}
+                />
+              ))
             )}
             {pending.map((action) => (
               <PendingActionCard

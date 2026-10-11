@@ -53,6 +53,14 @@ export interface AgentHealth {
     model?: string;
     error?: string;
   };
+  tts?: {
+    ok: boolean;
+    configured: boolean;
+    baseUrl?: string;
+    model?: string;
+    voice?: string;
+    error?: string;
+  };
 }
 
 const MAX_INPUT = 4000;

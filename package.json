@@ -19,7 +19,8 @@
     "ca:embed": "tsx scripts/embed-ca.ts",
     "verify:booking": "tsx scripts/verify-booking.ts",
     "verify:cal-env": "tsx scripts/verify-cal-env.ts",
-    "verify:booking-page": "tsx scripts/verify-booking-page.ts"
+    "verify:booking-page": "tsx scripts/verify-booking-page.ts",
+    "eval:agent": "tsx scripts/run-agent-evals.ts"
   },
   "dependencies": {
     "@ai-sdk/openai": "^4.0.15",

@@ -2,6 +2,7 @@ import { NextResponse } from "next/server";
 import { requireAdmin } from "@/lib/ai/auth";
 import { checkLlmHealth } from "@/lib/ai/health";
 import { checkSttHealth } from "@/lib/ai/voice";
+import { checkTtsHealth } from "@/lib/ai/tts";
 import { listSkills } from "@/lib/ai/skills";
 import { toolCatalog } from "@/lib/ai/tools/registry";
 
@@ -14,10 +15,15 @@ export async function GET() {
     return NextResponse.json({ error: auth.error || "Unauthorized" }, { status: auth.status || 401 });
   }
 
-  const [health, stt] = await Promise.all([checkLlmHealth(), checkSttHealth()]);
+  const [health, stt, tts] = await Promise.all([
+    checkLlmHealth(),
+    checkSttHealth(),
+    checkTtsHealth(),
+  ]);
   return NextResponse.json({
     ...health,
     stt,
+    tts,
     skills: listSkills().map((s) => s.name),
     tools: toolCatalog().map((t) => t.name),
   });
