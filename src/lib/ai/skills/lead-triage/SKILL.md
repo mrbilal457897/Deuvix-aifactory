@@ -37,6 +37,8 @@ disagree.
   the same way; to capture a call note, call `update_lead_notes`.
 - To queue a reminder, call `schedule_follow_up` with the lead id, `dueInHours`,
   and a short subject/body.
+- To see what is queued, call `list_follow_ups`; to clear a reminder once handled,
+  propose `resolve_follow_up` (done/skipped).
 - Say which lead, from what to what, and why, in one line. Do not claim it is done.
 - If a lead is already in the target status/priority, say so instead of proposing a no-op.
 

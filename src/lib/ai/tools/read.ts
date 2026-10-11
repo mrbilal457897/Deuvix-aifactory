@@ -5,7 +5,7 @@ import { defineTool, type ToolDefinition } from "./types";
 import { listLeads, type Lead } from "@/lib/leads";
 import { listContacts } from "@/lib/contacts";
 import { countBookings, listBookings, parseBookingFilter, type BookingFilter } from "@/lib/bookings/queries";
-import { listFollowUps } from "@/lib/follow-ups";
+import { listFollowUps, type FollowUp } from "@/lib/follow-ups";
 import { countFollowUps } from "@/lib/crm";
 import { readSiteConfig } from "@/lib/site-config-server";
 import { supabase } from "@/lib/supabase";
@@ -152,6 +152,46 @@ const listContactsTool: ToolDefinition<{ limit?: number }> = {
         service: c.service,
         message: clamp(c.message, 300),
         createdAt: iso(c.createdAt),
+      })),
+    };
+  },
+};
+
+const listFollowUpsTool: ToolDefinition<{
+  leadId?: string;
+  status?: FollowUp["status"];
+  limit?: number;
+}> = {
+  name: "list_follow_ups",
+  description:
+    "List scheduled follow-up reminders, newest first. Optionally filter by lead id (from list_leads) or status (pending/done/skipped).",
+  risk: "read",
+  roles: ["admin"],
+  inputSchema: z.object({
+    leadId: z.string().min(1).optional().describe("Only follow-ups for this lead."),
+    status: z
+      .enum(["pending", "done", "skipped"])
+      .optional()
+      .describe("Only follow-ups in this state."),
+    limit: z.number().int().min(1).max(50).optional().describe("Max follow-ups (default 20)."),
+  }),
+  async execute({ leadId, status, limit }) {
+    const all = await listFollowUps();
+    const filtered = all.filter(
+      (f) => (!leadId || f.leadId === leadId) && (!status || f.status === status),
+    );
+    const capped = filtered.slice(0, limit ?? 20);
+    return {
+      total: filtered.length,
+      returned: capped.length,
+      followUps: capped.map((f) => ({
+        id: f.id,
+        leadId: f.leadId,
+        name: f.name,
+        email: f.email,
+        dueAt: iso(f.dueAt),
+        status: f.status,
+        subject: clamp(f.subject, 120),
       })),
     };
   },
@@ -328,11 +368,12 @@ const loadSkillTool: ToolDefinition<{ name: string }> = {
   },
 };
 
-/** Every Phase-1 (READ-only) tool, in registration order. */
+/** Every READ tool, in registration order. */
 export const readTools: ToolDefinition[] = [
   defineTool(listLeadsTool),
   defineTool(getLeadTool),
   defineTool(listContactsTool),
+  defineTool(listFollowUpsTool),
   defineTool(listBookingsTool),
   defineTool(listProjectsTool),
   defineTool(listBlogPostsTool),

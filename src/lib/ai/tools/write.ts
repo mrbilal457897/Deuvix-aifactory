@@ -1,7 +1,7 @@
 import { z } from "zod";
 import { ToolExecutionError, defineTool, type ToolDefinition } from "./types";
 import { getLead, updateLeadNotes, updateLeadPriority, updateLeadStatus, type Lead } from "@/lib/leads";
-import { scheduleFollowUp } from "@/lib/follow-ups";
+import { scheduleFollowUp, markFollowUpStatus } from "@/lib/follow-ups";
 
 /**
  * WRITE tools. Their `execute` is the REAL action, but the toolset handed to the
@@ -94,9 +94,40 @@ const scheduleFollowUpTool: ToolDefinition<{
   },
 };
 
+const resolveFollowUpTool: ToolDefinition<{
+  ids: string[];
+  status: "done" | "skipped";
+}> = {
+  name: "resolve_follow_up",
+  description:
+    "Mark scheduled follow-up reminders as done or skipped. ids come from list_follow_ups. This is a WRITE: it is proposed to the admin and only runs after they confirm.",
+  risk: "write",
+  roles: ["admin"],
+  inputSchema: z.object({
+    ids: z
+      .array(z.string().min(1))
+      .min(1)
+      .max(20)
+      .describe("One or more follow-up ids from list_follow_ups."),
+    status: z
+      .enum(["done", "skipped"])
+      .describe("done = the reminder was handled, skipped = it is no longer needed."),
+  }),
+  execute: async ({ ids, status }, ctx) => {
+    const updated = await markFollowUpStatus(ids, status);
+    return {
+      status,
+      updated,
+      note: updated === 0 ? "No follow-ups matched those ids." : undefined,
+      updatedBy: ctx.adminEmail,
+    };
+  },
+};
+
 export const writeTools: ToolDefinition[] = [
   defineTool(updateLeadStatusTool),
   defineTool(updateLeadPriorityTool),
   defineTool(updateLeadNotesTool),
   defineTool(scheduleFollowUpTool),
+  defineTool(resolveFollowUpTool),
 ];

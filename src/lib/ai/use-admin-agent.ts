@@ -78,7 +78,16 @@ function looksOffline(status: number, error?: string): boolean {
 
 function describeAction(toolName: string, result: unknown): string {
   const r = result as
-    | { leadId?: string; status?: string; priority?: string; followUpId?: string; dueAt?: string; noteCharacters?: number }
+    | {
+        leadId?: string;
+        status?: string;
+        priority?: string;
+        followUpId?: string;
+        dueAt?: string;
+        noteCharacters?: number;
+        updated?: number;
+        note?: string;
+      }
     | null;
   switch (toolName) {
     case "update_lead_status":
@@ -89,6 +98,10 @@ function describeAction(toolName: string, result: unknown): string {
       return `Done — notes saved on lead ${r?.leadId ?? ""} (${r?.noteCharacters ?? 0} characters).`;
     case "schedule_follow_up":
       return `Done — follow-up ${r?.followUpId ?? ""} scheduled for due ${new Date(r?.dueAt ?? "").toLocaleString()}.`;
+    case "resolve_follow_up":
+      return r?.updated === 0
+        ? "Nothing to resolve — no follow-ups matched those ids."
+        : `Done — marked ${r?.updated ?? 0} follow-up(s) as "${r?.status ?? "done"}".`;
     default:
       return "Done — the action was applied.";
   }

@@ -18,6 +18,7 @@ const READ_TOOL_NAMES = [
   "list_leads",
   "get_lead",
   "list_contacts",
+  "list_follow_ups",
   "list_bookings",
   "list_projects",
   "list_blog_posts",
