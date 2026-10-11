@@ -4,11 +4,11 @@
  * only what actually cleared it.
  */
 
-import { sql } from "drizzle-orm";
+import { and, inArray, isNotNull, sql } from "drizzle-orm";
 import { getDb, isDatabaseConfigured } from "@/lib/db";
 import { chatConfig } from "./config";
 import { embedText } from "./gemini";
-import type { KbSource } from "@/lib/db/schema";
+import { kbChunks, type KbSource } from "@/lib/db/schema";
 
 export interface RetrievedChunk {
   id: string;
@@ -60,20 +60,22 @@ export async function retrieve(
 
   const literal = `[${vector.map((v) => (Number.isFinite(v) ? v : 0)).join(",")}]`;
 
-  const raw = await getDb().execute(sql`
-    SELECT
-      id, source, url, title, heading, text,
-      1 - (embedding <=> ${literal}::vector) AS score
-    FROM kb_chunks
-    WHERE source = ANY(${namespaces} as text[])
-      AND embedding IS NOT NULL
-    ORDER BY embedding <=> ${literal}::vector
-    LIMIT ${topK * 2}
-  `);
+  const rows = await getDb()
+    .select({
+      id: kbChunks.id,
+      source: kbChunks.source,
+      url: kbChunks.url,
+      title: kbChunks.title,
+      heading: kbChunks.heading,
+      text: kbChunks.text,
+      score: sql<number>`1 - (${kbChunks.embedding} <=> ${literal}::vector)`,
+    })
+    .from(kbChunks)
+    .where(and(inArray(kbChunks.source, namespaces), isNotNull(kbChunks.embedding)))
+    .orderBy(sql`${kbChunks.embedding} <=> ${literal}::vector`)
+    .limit(topK * 2);
 
-  const all: Row[] = Array.isArray(raw)
-    ? (raw as unknown as Row[])
-    : ((raw as unknown as { rows?: Row[] }).rows ?? []);
+  const all: Row[] = Array.isArray(rows) ? (rows as unknown as Row[]) : [];
   const threshold = chatConfig.similarityThreshold;
   const kept = all
     .filter((r) => Number(r.score) >= threshold)
