@@ -4,6 +4,7 @@ import {
   LegalParagraph,
   LegalList,
 } from "@/components/legal-page";
+import { CompanyIdentityBlock, CompanyEmailLink } from "@/components/legal-company";
 import type { Metadata } from "next";
 
 export const metadata: Metadata = {
@@ -107,13 +108,10 @@ export default function TermsOfServicePage() {
 
       <LegalSection heading="9. Contact">
         <LegalParagraph>
-          Questions about these terms? Reach us at{" "}
-          <a href="mailto:deuxaiinfo786@gmail.com" className="text-primary hover:underline">
-            deuxaiinfo786@gmail.com
-          </a>{" "}
-          or via our{" "}
+          Questions about these terms? Reach us at <CompanyEmailLink /> or via our{" "}
           <a href="/contact" className="text-primary hover:underline">contact page</a>.
         </LegalParagraph>
+        <CompanyIdentityBlock />
       </LegalSection>
     </LegalPage>
   );

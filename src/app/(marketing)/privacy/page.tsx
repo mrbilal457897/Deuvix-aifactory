@@ -4,6 +4,7 @@ import {
   LegalParagraph,
   LegalList,
 } from "@/components/legal-page";
+import { CompanyIdentityBlock, CompanyEmailLink } from "@/components/legal-company";
 import type { Metadata } from "next";
 
 export const metadata: Metadata = {
@@ -28,6 +29,7 @@ export default function PrivacyPolicyPage() {
           enterprises. This Privacy Policy explains what information we collect on this
           website, why we collect it, and how you can control it.
         </LegalParagraph>
+        <CompanyIdentityBlock />
       </LegalSection>
 
       <LegalSection heading="2. Information We Collect">
@@ -116,21 +118,13 @@ export default function PrivacyPolicyPage() {
           ]}
         />
         <LegalParagraph>
-          To exercise any of these rights, contact us at{" "}
-          <a href="mailto:deuxaiinfo786@gmail.com" className="text-primary hover:underline">
-            deuxaiinfo786@gmail.com
-          </a>
-          .
+          To exercise any of these rights, contact us at <CompanyEmailLink />.
         </LegalParagraph>
       </LegalSection>
 
       <LegalSection heading="8. Contact Us">
         <LegalParagraph>
-          Questions about this policy? Reach us at{" "}
-          <a href="mailto:deuxaiinfo786@gmail.com" className="text-primary hover:underline">
-            deuxaiinfo786@gmail.com
-          </a>{" "}
-          or via our{" "}
+          Questions about this policy? Reach us at <CompanyEmailLink /> or via our{" "}
           <a href="/contact" className="text-primary hover:underline">contact page</a>.
         </LegalParagraph>
       </LegalSection>

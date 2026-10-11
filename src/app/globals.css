@@ -450,3 +450,45 @@ html.theme-transitioning *::after {
 .animate-spin-slow {
   animation: spin-slow 16s linear infinite;
 }
+
+/* ---- Trust bar ---- */
+.trust-logo {
+  display: block;
+  background-color: currentColor;
+  -webkit-mask-image: var(--trust-logo);
+  mask-image: var(--trust-logo);
+  -webkit-mask-repeat: no-repeat;
+  mask-repeat: no-repeat;
+  -webkit-mask-position: center;
+  mask-position: center;
+  -webkit-mask-size: contain;
+  mask-size: contain;
+}
+
+@keyframes trust-marquee {
+  from {
+    transform: translateX(0);
+  }
+  to {
+    transform: translateX(-50%);
+  }
+}
+.trust-marquee-track {
+  animation: trust-marquee 40s linear infinite;
+}
+.trust-marquee:hover .trust-marquee-track {
+  animation-play-state: paused;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .trust-marquee-track {
+    animation: none !important;
+    transform: none !important;
+  }
+  .trust-marquee {
+    overflow-x: auto;
+  }
+  .trust-marquee-copy {
+    display: none;
+  }
+}

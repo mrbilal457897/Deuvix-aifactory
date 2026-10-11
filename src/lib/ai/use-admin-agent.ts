@@ -299,8 +299,10 @@ export function useAdminAgent() {
       };
       setMessages((prev) => [...prev, userMsg, pendingMsg]);
 
-      // Send committed history plus the new turn, oldest-first.
+      // Send committed history plus the new turn, oldest-first. Empty turns
+      // (left by a failed call) are dropped so they can't block later requests.
       const history = [...messages, userMsg]
+        .filter((m) => m.content.trim().length > 0)
         .slice(-HISTORY_WINDOW)
         .map((m) => ({ role: m.role, content: m.content.slice(0, MAX_INPUT) }));
 
@@ -424,7 +426,8 @@ export function useAdminAgent() {
         if (buffer) handleLine(buffer);
 
         if (failure) {
-          patchPending((m) => ({ ...m, content: text2 || m.content, pending: false, error: true }));
+          const message = text2 || "The request failed. Please try again.";
+          patchPending((m) => ({ ...m, content: message, pending: false, error: true }));
           setError(failure);
         } else if (text2) {
           patchPending((m) => ({ ...m, content: text2, pending: false, tools }));

@@ -75,7 +75,8 @@ describe("ai providers", () => {
     vi.stubEnv("GEMINI_API_KEY", "");
     const missing = resolveProvider("gemini");
     expect(missing.baseUrl).toBe("https://generativelanguage.googleapis.com/v1beta/openai");
-    expect(missing.model).toBe("gemini-2.5-flash");
+    expect(missing.model).toBe("gemini-3.5-flash-lite");
+    expect(missing.kind).toBe("google");
     expect(missing.configured).toBe(false);
 
     vi.stubEnv("GEMINI_API_KEY", "test-key");

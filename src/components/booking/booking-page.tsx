@@ -13,15 +13,25 @@ import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { BrandLogo } from "@/components/brand-logo";
 import { BookCallButton } from "@/components/book-call-button";
+import { TimezoneSelect } from "@/components/booking/timezone-select";
+import { LocalTime } from "@/components/booking/local-time";
 import { buildBusinessChatLink } from "@/lib/notify/whatsapp";
 import {
+  BOOKING_CONTACT_EMAIL,
+  LANGUAGES,
+  OUR_TIME_ZONE,
+  ourHoursLabel,
+} from "@/lib/booking/config";
+import { bookingRequestSchema } from "@/lib/booking/schema";
+import {
   DEFAULT_TIME_ZONE,
-  TIME_ZONES,
   addMonths,
   formatDateInZone,
   isValidTimeZone,
   monthDateKeys,
   monthLabel,
+  zoneLabel,
+  zoneShort,
   zonedTimeToUtcISO,
 } from "@/lib/booking/time";
 
@@ -90,11 +100,6 @@ function fmtTime(hhmm: string): string {
   return `${hour12}:${String(m).padStart(2, "0")} ${suffix}`;
 }
 
-/** "Asia/Karachi" -> "Pakistan (PKT)"; falls back to the raw zone for unlisted ones. */
-function zoneLabel(timeZone: string): string {
-  return TIME_ZONES.find((t) => t.value === timeZone)?.label ?? timeZone;
-}
-
 export function BookingPage({
   initialMonth,
   eventTitle,
@@ -136,6 +141,9 @@ export function BookingPage({
   const [whatsapp, setWhatsapp] = useState("");
   const [company, setCompany] = useState("");
   const [notes, setNotes] = useState("");
+  const [language, setLanguage] = useState<string>("en");
+  /** Honeypot: hidden from humans, so any value means a bot. */
+  const [website, setWebsite] = useState("");
   const [submitting, setSubmitting] = useState(false);
   const [formError, setFormError] = useState<string | null>(null);
   const [confirmed, setConfirmed] = useState<BookingResponse["booking"] | null>(null);
@@ -207,25 +215,36 @@ export function BookingPage({
       event.preventDefault();
       if (!selectedDate || !selectedTime || !timeZone) return;
 
+      const payload = {
+        date: selectedDate,
+        time: selectedTime,
+        timeZone,
+        name,
+        email,
+        whatsapp: whatsapp || undefined,
+        company: company || undefined,
+        notes: notes || undefined,
+        language,
+        companyWebsite: website,
+        // Deliberately NOT sending lengthInMinutes: Cal.com rejects the whole
+        // booking when the event type has a fixed length. The duration shown
+        // on screen comes from our own copy; Cal.com uses its event length.
+      };
+
+      // Same schema the API enforces, so the visitor gets the error instantly.
+      const check = bookingRequestSchema.safeParse(payload);
+      if (!check.success) {
+        setFormError(check.error.issues[0]?.message ?? "Please check your details.");
+        return;
+      }
+
       setSubmitting(true);
       setFormError(null);
       try {
         const res = await fetch("/api/cal/book", {
           method: "POST",
           headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({
-            date: selectedDate,
-            time: selectedTime,
-            timeZone,
-            name,
-            email,
-            whatsapp: whatsapp || undefined,
-            company: company || undefined,
-            notes: notes || undefined,
-            // Deliberately NOT sending lengthInMinutes: Cal.com rejects the whole
-            // booking when the event type has a fixed length. The duration shown
-            // on screen comes from our own copy; Cal.com uses its event length.
-          }),
+          body: JSON.stringify(payload),
         });
         const body = (await res.json()) as BookingResponse;
 
@@ -250,10 +269,14 @@ export function BookingPage({
         setSubmitting(false);
       }
     },
-    [selectedDate, selectedTime, timeZone, name, email, whatsapp, company, notes],
+    [selectedDate, selectedTime, timeZone, name, email, whatsapp, company, notes, language, website],
   );
 
   const selectedTimes = selectedDate ? (availability.get(selectedDate) ?? []) : [];
+
+  const businessChatLink = buildBusinessChatLink(
+    "Hi! I'd like to book a call, but the listed times don't work for me.",
+  );
 
   return (
     // pt-24 clears the fixed h-16 header, same as every other marketing page.
@@ -316,25 +339,29 @@ export function BookingPage({
                   </Button>
                 </div>
 
-                <select
-                  aria-label="Time zone"
+                <TimezoneSelect
                   value={timeZone}
-                  onChange={(e) => {
-                    setTimeZoneOverride(e.target.value);
+                  onChange={(next) => {
+                    setTimeZoneOverride(next);
                     setSelectedDate(null);
                     setSelectedTime(null);
                   }}
-                  className="border-border bg-background text-foreground h-9 w-full min-w-0 max-w-full rounded-[min(var(--radius-md),12px)] border px-2 text-sm sm:h-8 sm:w-auto sm:max-w-[15rem]"
-                >
-                  {!TIME_ZONES.some((t) => t.value === timeZone) && timeZone ? (
-                    <option value={timeZone}>{timeZone}</option>
-                  ) : null}
-                  {TIME_ZONES.map((t) => (
-                    <option key={t.value} value={t.value}>
-                      {t.label}
-                    </option>
-                  ))}
-                </select>
+                  className="w-full sm:w-[16rem]"
+                />
+              </div>
+
+              {/* Which zone the slots are in, our hours, and two live clocks. */}
+              <div className="text-muted-foreground mb-4 flex flex-wrap items-center gap-x-4 gap-y-1 text-xs">
+                <span>Times shown in {zoneShort(timeZone)}.</span>
+                <span>Our hours: {ourHoursLabel()}</span>
+                <span>
+                  Your local time now:{" "}
+                  <LocalTime timeZone={timeZone} className="text-foreground font-medium" />
+                </span>
+                <span>
+                  Our local time now:{" "}
+                  <LocalTime timeZone={OUR_TIME_ZONE} className="text-foreground font-medium" />
+                </span>
               </div>
 
               {/* calendar */}
@@ -379,6 +406,35 @@ export function BookingPage({
                     );
                   })}
                 </div>
+              </div>
+
+              {/* escape hatch when none of the listed slots work */}
+              <div className="border-border bg-muted/30 mt-4 rounded-[min(var(--radius-md),12px)] border p-3 text-sm">
+                <p className="font-medium">Can&apos;t find a suitable time?</p>
+                <p className="text-muted-foreground mt-1 text-xs sm:text-sm">
+                  Tell us your window and we&apos;ll make it work:{" "}
+                  <a
+                    href={`mailto:${BOOKING_CONTACT_EMAIL}?subject=${encodeURIComponent("Call request")}`}
+                    className="text-primary underline underline-offset-4"
+                  >
+                    email {BOOKING_CONTACT_EMAIL}
+                  </a>
+                  {businessChatLink ? (
+                    <>
+                      {" "}
+                      or{" "}
+                      <a
+                        href={businessChatLink}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="text-primary underline underline-offset-4"
+                      >
+                        message us on WhatsApp
+                      </a>
+                    </>
+                  ) : null}
+                  .
+                </p>
               </div>
 
               {slotsError ? (
@@ -464,7 +520,7 @@ export function BookingPage({
                         required
                         type="email"
                         maxLength={200}
-                        placeholder="Email address"
+                        placeholder="Work email"
                         value={email}
                         onChange={(e) => setEmail(e.target.value)}
                         autoComplete="email"
@@ -490,10 +546,37 @@ export function BookingPage({
                       <Textarea
                         rows={3}
                         maxLength={2000}
-                        placeholder="What would you like to discuss? (optional)"
+                        placeholder="What would you like to automate?"
                         value={notes}
                         onChange={(e) => setNotes(e.target.value)}
                       />
+                      <label className="block">
+                        <span className="text-muted-foreground mb-1 block text-xs">Preferred language</span>
+                        <select
+                          value={language}
+                          onChange={(e) => setLanguage(e.target.value)}
+                          className="border-border bg-background text-foreground h-11 w-full rounded-[min(var(--radius-md),12px)] border px-2.5 text-sm sm:h-8"
+                        >
+                          {LANGUAGES.map((l) => (
+                            <option key={l.code} value={l.code}>
+                              {l.label}
+                            </option>
+                          ))}
+                        </select>
+                      </label>
+                      {/* Honeypot: hidden from people, irresistible to bots. */}
+                      <div aria-hidden="true" className="absolute -left-[9999px] h-0 w-0 overflow-hidden">
+                        <label>
+                          Company website
+                          <input
+                            type="text"
+                            tabIndex={-1}
+                            autoComplete="off"
+                            value={website}
+                            onChange={(e) => setWebsite(e.target.value)}
+                          />
+                        </label>
+                      </div>
 
                       {formError ? (
                         <p className="text-sm text-red-500" role="alert">
@@ -539,6 +622,22 @@ export function BookingPage({
                   title={timeZone}
                 >
                   {zoneLabel(timeZone)}
+                </dd>
+              </div>
+              <div className="flex items-baseline justify-between gap-3">
+                <dt className="shrink-0">Your time now</dt>
+                <dd className="text-foreground min-w-0 text-right">
+                  <LocalTime timeZone={timeZone} />
+                </dd>
+              </div>
+              <div className="flex items-baseline justify-between gap-3">
+                <dt className="shrink-0">Our hours</dt>
+                <dd className="text-foreground min-w-0 text-right break-words">
+                  {ourHoursLabel()}
+                  <br />
+                  <span className="text-muted-foreground text-xs">
+                    now <LocalTime timeZone={OUR_TIME_ZONE} />
+                  </span>
                 </dd>
               </div>
             </dl>
@@ -599,11 +698,16 @@ function Confirmation({
       <div className="border-primary/40 bg-primary/5 rounded-[min(var(--radius-lg),16px)] border p-5 sm:p-6">
         <h2 className="text-lg font-semibold">You&apos;re booked</h2>
         <p className="text-muted-foreground mt-1 text-sm">
-          A confirmation email and a WhatsApp link are on their way.
+          Your slot is confirmed and a confirmation email is on its way.
         </p>
         <p className="mt-4 text-sm break-words">
           <span className="font-medium">{formatDateInZone(booking.start, timeZone)}</span>
         </p>
+        <ul className="text-muted-foreground mt-3 list-disc space-y-1 pl-5 text-sm">
+          <li>Check your inbox for the confirmation and meeting details.</li>
+          <li>Use &ldquo;Add to calendar&rdquo; below to drop it into your diary.</li>
+          <li>Need to move it? Reschedule or cancel with the links below.</li>
+        </ul>
         {booking.location ? (
           <p className="mt-3">
             <a

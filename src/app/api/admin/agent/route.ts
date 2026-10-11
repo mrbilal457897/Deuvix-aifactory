@@ -15,7 +15,10 @@ const bodySchema = z.object({
     .array(
       z.object({
         role: z.enum(["user", "assistant"]),
-        content: z.string().min(1).max(8000),
+        // Empty content is tolerated here and stripped below: a model error can
+        // leave an empty assistant turn in the client history, and that must not
+        // wedge every following request.
+        content: z.string().max(8000),
       }),
     )
     .min(1)
@@ -90,7 +93,13 @@ export async function POST(request: Request) {
   }
   const body = parsed.data;
 
-  const last = body.messages[body.messages.length - 1];
+  // Drop empty turns (a failed model call can leave one behind) before use.
+  const turns = body.messages.filter((m) => m.content.trim().length > 0);
+  if (turns.length === 0) {
+    return NextResponse.json({ error: "Please enter a message." }, { status: 400 });
+  }
+
+  const last = turns[turns.length - 1];
   if (last.role !== "user") {
     return NextResponse.json({ error: "The last message must be from the user." }, { status: 400 });
   }
@@ -107,7 +116,7 @@ export async function POST(request: Request) {
     return NextResponse.json({ error: "AI offline", health }, { status: 503 });
   }
 
-  const messages: ModelMessage[] = body.messages
+  const messages: ModelMessage[] = turns
     .slice(-aiConfig.historyWindow)
     .map((m) => ({ role: m.role, content: m.content }));
 

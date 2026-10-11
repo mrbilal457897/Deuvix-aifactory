@@ -1,4 +1,5 @@
 import nodemailer from "nodemailer";
+import { company } from "@config/company";
 
 export interface EmailResult {
   ok: boolean;
@@ -7,12 +8,10 @@ export interface EmailResult {
   error?: string;
 }
 
-export const DEFAULT_CONTACT_TO = [
-  "deuxaiinfo786@gmail.com",
-];
+export const DEFAULT_CONTACT_TO = [company.businessEmail];
 
 export function getDefaultFrom(): string {
-  return process.env.EMAIL_FROM || "DEUX AI Factory <hello@yourdomain.com>";
+  return process.env.EMAIL_FROM || `${company.tradingName} <${company.businessEmail}>`;
 }
 
 /**

@@ -7,19 +7,32 @@ import { BookCallButton } from "@/components/book-call-button";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { Mail, MapPin, Send, CheckCircle, Clock } from "lucide-react";
-import Image from "next/image";
 import { CharReveal } from "@/components/split-text";
 import { useSiteConfig } from "@/hooks/use-site-config";
+import {
+  company,
+  companyLocationLabel,
+  companyWorkHoursRows,
+} from "@config/company";
 
 const contactCards = [
-  { icon: MapPin, label: "Visit Us", value: "Pakistan", sub: "Remote-first, serving globally" },
-  { icon: Mail, label: "Email Us", value: "deuxaiinfo786@gmail.com", sub: "We reply within 24 hours" },
+  {
+    icon: MapPin,
+    label: "Visit Us",
+    value: companyLocationLabel() ?? "Worldwide",
+    sub: "Remote-first, serving globally",
+  },
+  {
+    icon: Mail,
+    label: "Email Us",
+    value: company.businessEmail,
+    sub: "We reply within 24 hours",
+  },
 ];
 
 const EMAIL_REGEX = /^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/;
 
-const FALLBACK_ERROR =
-  "Something went wrong. Please try again or email us at deuxaiinfo786@gmail.com.";
+const FALLBACK_ERROR = `Something went wrong. Please try again or email us at ${company.businessEmail}.`;
 
 const EMPTY_FORM = {
   name: "",
@@ -114,7 +127,7 @@ export default function ContactPage() {
     } catch {
       setStatus("error");
       setErrorMessage(
-        "We could not reach the server. Please check your connection and try again, or email us at deuxaiinfo786@gmail.com.",
+        `We could not reach the server. Please check your connection and try again, or email us at ${company.businessEmail}.`,
       );
     } finally {
       setSubmitting(false);
@@ -335,19 +348,27 @@ export default function ContactPage() {
                   <h5 className="font-heading font-bold text-foreground dark:text-white">Office Hours</h5>
                 </div>
                 <ul className="space-y-2 text-sm">
-                  <li className="flex justify-between text-muted-foreground dark:text-white/70">
-                    <span>Monday – Friday</span>
-                    <span className="text-foreground/90 dark:text-white/90 font-medium">9:00 AM – 6:00 PM</span>
-                  </li>
-                  <li className="flex justify-between text-muted-foreground dark:text-white/70">
-                    <span>Saturday</span>
-                    <span className="text-foreground/90 dark:text-white/90 font-medium">10:00 AM – 2:00 PM</span>
-                  </li>
-                  <li className="flex justify-between text-muted-foreground dark:text-white/70">
-                    <span>Sunday</span>
-                    <span className="text-muted-foreground dark:text-white/50">Closed</span>
-                  </li>
+                  {companyWorkHoursRows().map((row) => (
+                    <li
+                      key={row.label}
+                      className="flex justify-between text-muted-foreground dark:text-white/70"
+                    >
+                      <span>{row.label}</span>
+                      <span
+                        className={
+                          row.value === "Closed"
+                            ? "text-muted-foreground dark:text-white/50"
+                            : "text-foreground/90 dark:text-white/90 font-medium"
+                        }
+                      >
+                        {row.value}
+                      </span>
+                    </li>
+                  ))}
                 </ul>
+                <p className="text-[11px] text-muted-foreground dark:text-white/40 mt-3">
+                  Timezone: {company.workingHours.timezone} ({company.workingHours.timezoneAbbr})
+                </p>
               </div>
             </div>
           </div>

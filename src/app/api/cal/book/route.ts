@@ -1,27 +1,13 @@
 import { NextResponse, type NextRequest } from "next/server";
-import { z } from "zod";
 import { CalApiError, createBooking, isCalApiConfigured } from "@/lib/cal/api";
 import { isValidTimeZone, zonedTimeToUtcISO } from "@/lib/booking/time";
+import { bookingRequestSchema } from "@/lib/booking/schema";
 import { BOOKING_LIMIT, clientKey, rateLimit } from "@/lib/booking/rate-limit";
 
 export const dynamic = "force-dynamic";
 
 /** Cal.com allows 50 metadata keys with string values up to 500 chars. */
 const META_LIMIT = 500;
-
-const bodySchema = z.object({
-  /** YYYY-MM-DD as displayed in the calendar. */
-  date: z.string().regex(/^\d{4}-\d{2}-\d{2}$/),
-  /** Wall-clock HH:mm in `timeZone`. */
-  time: z.string().regex(/^\d{2}:\d{2}$/),
-  timeZone: z.string().min(1).max(64),
-  name: z.string().trim().min(2).max(120),
-  email: z.string().trim().email().max(200),
-  whatsapp: z.string().trim().max(32).optional(),
-  company: z.string().trim().max(160).optional(),
-  notes: z.string().trim().max(2000).optional(),
-  lengthInMinutes: z.number().int().min(5).max(600).optional(),
-});
 
 const clip = (v: string | undefined, max: number) =>
   v ? v.slice(0, max) : undefined;
@@ -55,7 +41,7 @@ export async function POST(request: NextRequest) {
     return NextResponse.json({ error: "invalid_json" }, { status: 400 });
   }
 
-  const parsed = bodySchema.safeParse(json);
+  const parsed = bookingRequestSchema.safeParse(json);
   if (!parsed.success) {
     return NextResponse.json(
       { error: "invalid_input", issues: parsed.error.flatten().fieldErrors },
@@ -89,7 +75,7 @@ export async function POST(request: NextRequest) {
           email: input.email,
           timeZone: input.timeZone,
           ...(whatsapp ? { phoneNumber: whatsapp } : {}),
-          language: "en",
+          language: input.language,
         },
         ...(input.lengthInMinutes ? { lengthInMinutes: input.lengthInMinutes } : {}),
         // The webhook normaliser already scans metadata for company / notes /
@@ -99,6 +85,7 @@ export async function POST(request: NextRequest) {
           ...(company ? { company } : {}),
           ...(notes ? { notes } : {}),
           ...(whatsapp ? { whatsapp } : {}),
+          language: input.language,
         },
       },
       // Cal.com rejects lengthInMinutes unless the event type has multiple

@@ -13,7 +13,14 @@ export type ProviderId = "gemini" | "groq" | "ollama";
 export interface ProviderDef {
   id: ProviderId;
   label: string;
-  /** OpenAI-compatible base URL (no trailing slash). */
+  /**
+   * Which SDK protocol to speak. `"openai"` = OpenAI chat-completions (used for
+   * Groq and Ollama); `"google"` = the native Gemini API, which is required
+   * because Google's OpenAI-compat endpoint drops the thought signature that
+   * multi-step tool calling needs.
+   */
+  kind: "openai" | "google";
+  /** OpenAI-compatible base URL (no trailing slash). Used for health probes. */
   baseUrl: string;
   defaultModel: string;
   /** Env vars checked, in order, for the API key. Empty array = no key needed. */
@@ -31,8 +38,9 @@ export const PROVIDERS: Record<ProviderId, ProviderDef> = {
   gemini: {
     id: "gemini",
     label: "Google Gemini",
+    kind: "google",
     baseUrl: "https://generativelanguage.googleapis.com/v1beta/openai",
-    defaultModel: "gemini-2.5-flash",
+    defaultModel: "gemini-3.5-flash-lite",
     apiKeyEnvs: ["GEMINI_API_KEY", "GOOGLE_GENERATIVE_AI_API_KEY"],
     modelEnvs: ["GEMINI_MODEL"],
     baseUrlEnvs: ["GEMINI_BASE_URL"],
@@ -42,6 +50,7 @@ export const PROVIDERS: Record<ProviderId, ProviderDef> = {
   groq: {
     id: "groq",
     label: "Groq",
+    kind: "openai",
     baseUrl: "https://api.groq.com/openai/v1",
     defaultModel: "llama-3.3-70b-versatile",
     apiKeyEnvs: ["GROQ_API_KEY"],
@@ -53,6 +62,7 @@ export const PROVIDERS: Record<ProviderId, ProviderDef> = {
   ollama: {
     id: "ollama",
     label: "Ollama (local)",
+    kind: "openai",
     baseUrl: "http://localhost:11434/v1",
     defaultModel: "qwen2.5:7b",
     apiKeyEnvs: ["LLM_API_KEY"],
@@ -88,6 +98,7 @@ export function resolveProviderId(value?: string | null): ProviderId {
 export interface ResolvedProvider {
   id: ProviderId;
   label: string;
+  kind: "openai" | "google";
   baseUrl: string;
   model: string;
   apiKey: string;
@@ -109,6 +120,7 @@ export function resolveProvider(value?: string | null): ResolvedProvider {
   return {
     id,
     label: def.label,
+    kind: def.kind,
     baseUrl,
     model,
     apiKey,

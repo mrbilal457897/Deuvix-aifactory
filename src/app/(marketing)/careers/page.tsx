@@ -10,6 +10,7 @@ import {
   HeartHandshake,
   Zap,
 } from "lucide-react";
+import { company } from "@config/company";
 
 export const metadata: Metadata = {
   title: "Careers",
@@ -140,10 +141,10 @@ export default function CareersPage() {
             <p className="mt-5 text-sm opacity-80">
               Prefer email?{" "}
               <a
-                href="mailto:deuxaiinfo786@gmail.com"
+                href={`mailto:${company.businessEmail}`}
                 className="underline underline-offset-2 hover:opacity-90"
               >
-                deuxaiinfo786@gmail.com
+                {company.businessEmail}
               </a>
             </p>
           </div>

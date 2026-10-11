@@ -4,6 +4,7 @@ import {
   LegalParagraph,
   LegalList,
 } from "@/components/legal-page";
+import { CompanyEmailLink } from "@/components/legal-company";
 import type { Metadata } from "next";
 
 export const metadata: Metadata = {
@@ -73,11 +74,7 @@ export default function CookiePolicyPage() {
 
       <LegalSection heading="6. Contact">
         <LegalParagraph>
-          Have questions about cookies on this site? Reach us at{" "}
-          <a href="mailto:deuxaiinfo786@gmail.com" className="text-primary hover:underline">
-            deuxaiinfo786@gmail.com
-          </a>{" "}
-          or via our{" "}
+          Have questions about cookies on this site? Reach us at <CompanyEmailLink /> or via our{" "}
           <a href="/contact" className="text-primary hover:underline">contact page</a>.
         </LegalParagraph>
       </LegalSection>

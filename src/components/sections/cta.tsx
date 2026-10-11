@@ -8,6 +8,7 @@ import { Button } from "@/components/ui/button";
 import { BookCallButton } from "@/components/book-call-button";
 import Link from "next/link";
 import { CountUp } from "@/components/animations/count-up";
+import { company } from "@config/company";
 
 if (typeof window !== "undefined") {
   gsap.registerPlugin(ScrollTrigger);
@@ -138,10 +139,10 @@ export function CTASection() {
             <p className="mt-5 text-sm text-muted-foreground dark:text-white/60">
               Prefer email? Reach us at{" "}
               <a
-                href="mailto:deuxaiinfo786@gmail.com"
+                href={`mailto:${company.businessEmail}`}
                 className="font-medium text-primary dark:text-white hover:underline"
               >
-                deuxaiinfo786@gmail.com
+                {company.businessEmail}
               </a>
             </p>
           </div>

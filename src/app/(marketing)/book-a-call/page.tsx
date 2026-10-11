@@ -10,11 +10,11 @@ const TITLE = "Book a Call";
 export const metadata: Metadata = {
   title: `${TITLE} | DEUX AI Factory`,
   description:
-    "Pick a time that suits you and we will confirm by email and WhatsApp. No calls software hidden behind a sign-up wall.",
+    "Pick a time that suits you, in your own time zone, and we will confirm by email and WhatsApp. No calls software hidden behind a sign-up wall.",
   alternates: { canonical: "/book-a-call" },
   openGraph: {
     title: `${TITLE} | DEUX AI Factory`,
-    description: "Pick a time that suits you. Confirmation by email and WhatsApp.",
+    description: "Pick a time that suits you, in your time zone. Confirmation by email and WhatsApp.",
     url: "/book-a-call",
   },
 };

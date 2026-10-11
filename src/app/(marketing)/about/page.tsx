@@ -4,11 +4,15 @@ import { useRef, useEffect } from "react";
 import { gsap } from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
 import { Badge } from "@/components/ui/badge";
-import { Target, Heart, Lightbulb, Users, Mail } from "lucide-react";
+import { Target, Heart, Lightbulb, Users, Mail, Building2 } from "lucide-react";
 import Image from "next/image";
+import Link from "next/link";
+import { buttonVariants } from "@/components/ui/button";
 import { CharReveal } from "@/components/split-text";
+import { TrustBar } from "@/components/sections/trust-bar";
 import GridRevealImage from "@/components/grid-reveal-image";
 import { useSiteConfig } from "@/hooks/use-site-config";
+import { company } from "@config/company";
 
 if (typeof window !== "undefined") {
   gsap.registerPlugin(ScrollTrigger);
@@ -22,7 +26,7 @@ const values = [
 ];
 
 const timeline = [
-  { year: "2021", title: "Founded", description: "DEUX AI Factory started as an AI research project." },
+  { year: "2026", title: "Founded", description: "DEUX AI Factory started as an AI research project." },
   { year: "2022", title: "First Agent", description: "Deployed our first Digital FTE, serving early adopters." },
   { year: "2023", title: "FDE Launch", description: "Launched Forward Deployed Engineer services for enterprise clients." },
   { year: "2024", title: "AI E-books", description: "Published the AI Agent Factory guide, reaching 10,000+ readers." },
@@ -88,6 +92,8 @@ export default function AboutPage() {
           We help businesses manufacture, deploy, and monetize Digital FTEs — the AI workers that run the next generation of enterprises.
         </p>
       </section>
+
+      <TrustBar showBuiltWith={false} />
 
       <section className="py-24 px-6">
         <div className="mx-auto max-w-7xl">
@@ -169,7 +175,7 @@ export default function AboutPage() {
                   <svg className="size-5" fill="currentColor" viewBox="0 0 24 24"><path d="M20.447 20.452h-3.554v-5.569c0-1.328-.027-3.037-1.852-3.037-1.853 0-2.136 1.445-2.136 2.939v5.667H9.351V9h3.414v1.561h.046c.477-.9 1.637-1.85 3.37-1.85 3.601 0 4.267 2.37 4.267 5.455v6.286zM5.337 7.433a2.062 2.062 0 01-2.063-2.065 2.064 2.064 0 112.063 2.065zm1.782 13.019H3.555V9h3.564v11.452zM22.225 0H1.771C.792 0 0 .774 0 1.729v20.542C0 23.227.792 24 1.771 24h20.451C23.2 24 24 23.227 24 22.271V1.729C24 .774 23.2 0 22.222 0h.003z"/></svg>
                 </a>
                 <a
-                  href="mailto:sobber.id@gmail.com"
+                  href={`mailto:${company.businessEmail}`}
                   className="size-10 rounded-full bg-[#EA4335] flex items-center justify-center text-white hover:scale-110 transition-transform duration-200 shadow-lg"
                 >
                   <Mail className="size-5" />
@@ -178,7 +184,7 @@ export default function AboutPage() {
                 <div className="w-px h-4 bg-border" />
 
                 <div className="text-center">
-                  <p className="text-[10px] text-muted-foreground leading-tight">sobber.id@gmail.com</p>
+                  <p className="text-[10px] text-muted-foreground leading-tight">{company.businessEmail}</p>
                 </div>
               </div>
 
@@ -228,7 +234,7 @@ export default function AboutPage() {
                   <svg className="size-5" fill="currentColor" viewBox="0 0 24 24"><path d="M20.447 20.452h-3.554v-5.569c0-1.328-.027-3.037-1.852-3.037-1.853 0-2.136 1.445-2.136 2.939v5.667H9.351V9h3.414v1.561h.046c.477-.9 1.637-1.85 3.37-1.85 3.601 0 4.267 2.37 4.267 5.455v6.286zM5.337 7.433a2.062 2.062 0 01-2.063-2.065 2.064 2.064 0 112.063 2.065zm1.782 13.019H3.555V9h3.564v11.452zM22.225 0H1.771C.792 0 0 .774 0 1.729v20.542C0 23.227.792 24 1.771 24h20.451C23.2 24 24 23.227 24 22.271V1.729C24 .774 23.2 0 22.222 0h.003z"/></svg>
                 </a>
                 <a
-                  href="mailto:sharshab007@gmail.com"
+                  href={`mailto:${company.businessEmail}`}
                   className="size-10 rounded-full bg-[#EA4335] flex items-center justify-center text-white hover:scale-110 transition-transform duration-200 shadow-lg"
                 >
                   <Mail className="size-5" />
@@ -237,7 +243,7 @@ export default function AboutPage() {
                 <div className="w-px h-4 bg-border" />
 
                 <div className="text-center">
-                  <p className="text-[10px] text-muted-foreground leading-tight">sharshab007@gmail.com</p>
+                  <p className="text-[10px] text-muted-foreground leading-tight">{company.businessEmail}</p>
                 </div>
               </div>
             </div>
@@ -269,6 +275,19 @@ export default function AboutPage() {
               </div>
             ))}
           </div>
+        </div>
+      </section>
+
+      {/* Company Information link */}
+      <section className="py-16 px-6 pb-24">
+        <div className="flex justify-center">
+          <Link
+            href="/company-information"
+            className={buttonVariants({ size: "lg" }) + " inline-flex items-center gap-2"}
+          >
+            <Building2 className="size-5" />
+            Company Information
+          </Link>
         </div>
       </section>
     </div>

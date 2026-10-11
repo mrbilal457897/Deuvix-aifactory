@@ -21,7 +21,9 @@ import { buttonVariants } from "@/components/ui/button";
 import { BookCallButton } from "@/components/book-call-button";
 import { Badge } from "@/components/ui/badge";
 import { CharReveal } from "@/components/split-text";
+import { TrustBar } from "@/components/sections/trust-bar";
 import { buildBusinessChatLink } from "@/lib/notify/whatsapp";
+import { company } from "@config/company";
 import "@/app/loop-anim.css";
 
 if (typeof window !== "undefined") {
@@ -302,6 +304,8 @@ export default function ProductsPage() {
         </div>
       </section>
 
+      <TrustBar />
+
       <section className="py-8 px-6">
         <div className="mx-auto max-w-7xl">
           <div className="flex flex-wrap justify-center gap-2 mb-12">
@@ -532,8 +536,8 @@ export default function ProductsPage() {
             </BookCallButton>
             <p className="mt-5 text-sm text-slate-400">
               Prefer email? Reach us at{" "}
-              <a href="mailto:deuxaiinfo786@gmail.com" className="font-medium text-sky-400 hover:underline">
-                deuxaiinfo786@gmail.com
+              <a href={`mailto:${company.businessEmail}`} className="font-medium text-sky-400 hover:underline">
+                {company.businessEmail}
               </a>
             </p>
           </div>

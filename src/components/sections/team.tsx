@@ -6,6 +6,7 @@ import { ScrollTrigger } from "gsap/ScrollTrigger";
 import Image from "next/image";
 import { CharReveal } from "@/components/split-text";
 import { useSiteConfig } from "@/hooks/use-site-config";
+import { company } from "@config/company";
 
 if (typeof window !== "undefined") {
   gsap.registerPlugin(ScrollTrigger);
@@ -19,7 +20,7 @@ const teamMembers = [
     socials: {
       linkedin: "#",
       github: "#",
-      email: "mailto:deuxaiinfo786@gmail.com",
+      email: `mailto:${company.businessEmail}`,
     },
   },
   {
@@ -29,7 +30,7 @@ const teamMembers = [
     socials: {
       linkedin: "#",
       github: "#",
-      email: "mailto:sharshab007@gmail.com",
+      email: `mailto:${company.businessEmail}`,
     },
   },
 ];

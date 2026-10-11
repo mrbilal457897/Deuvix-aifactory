@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import Link from "next/link";
 import { Badge } from "@/components/ui/badge";
 import { Rocket, Sparkles, Wrench, ShieldCheck, ArrowRight } from "lucide-react";
+import { company } from "@config/company";
 
 export const metadata: Metadata = {
   title: "Changelog",
@@ -136,10 +137,10 @@ export default function ChangelogPage() {
             <p className="mt-5 text-sm text-muted-foreground">
               Or email{" "}
               <a
-                href="mailto:deuxaiinfo786@gmail.com"
+                href={`mailto:${company.businessEmail}`}
                 className="font-medium text-primary hover:underline"
               >
-                deuxaiinfo786@gmail.com
+                {company.businessEmail}
               </a>
             </p>
           </div>

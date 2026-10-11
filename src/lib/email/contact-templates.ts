@@ -21,7 +21,7 @@ export interface ContactEmailData {
  */
 const RESPONSE_WINDOW = "1-2 business days";
 
-/** Matches the From header (DEUX AI Factory <sobber.id@gmail.com>). */
+/** Matches the From header built in src/lib/email/index.ts (getDefaultFrom). */
 const SIGNATURE = BRAND.name;
 
 /**

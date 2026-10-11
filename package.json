@@ -11,8 +11,8 @@
     "test:watch": "vitest",
     "test:e2e": "playwright test",
     "lighthouse": "lhci autorun",
-    "ingest":  "tsx scripts/ingest.ts",
-    "kb:stats":  "tsx scripts/kb-stats.ts",
+    "ingest": "tsx scripts/ingest.ts",
+    "kb:stats": "tsx scripts/kb-stats.ts",
     "db:migrate": "tsx scripts/migrate.ts",
     "db:set-url": "tsx scripts/set-database-url.ts",
     "db:generate": "drizzle-kit generate",
@@ -23,6 +23,7 @@
     "eval:agent": "tsx scripts/run-agent-evals.ts"
   },
   "dependencies": {
+    "@ai-sdk/google": "^4.0.17",
     "@ai-sdk/openai": "^4.0.15",
     "@base-ui/react": "^1.6.0",
     "@calcom/embed-react": "^1.5.3",

@@ -7,6 +7,7 @@ import { Badge } from "@/components/ui/badge";
 import { User, FolderOpen, ArrowRight, ArrowLeft } from "lucide-react";
 import { posts, getPostBySlug } from "../posts";
 import { SITE_NAME } from "@/lib/seo";
+import { company } from "@config/company";
 
 export async function generateStaticParams() {
   return posts.map((post) => ({ slug: post.slug }));
@@ -126,10 +127,10 @@ export default async function BlogPostPage({
             <p className="mt-5 text-sm text-muted-foreground">
               Prefer email? Reach us at{" "}
               <a
-                href="mailto:deuxaiinfo786@gmail.com"
+                href={`mailto:${company.businessEmail}`}
                 className="font-medium text-primary hover:underline"
               >
-                deuxaiinfo786@gmail.com
+                {company.businessEmail}
               </a>
             </p>
           </div>

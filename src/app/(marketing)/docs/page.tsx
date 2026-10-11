@@ -10,6 +10,7 @@ import {
   Terminal,
   Cpu,
 } from "lucide-react";
+import { company } from "@config/company";
 
 export const metadata: Metadata = {
   title: "Documentation",
@@ -148,10 +149,10 @@ export default function DocsPage() {
             <p className="mt-5 text-sm text-muted-foreground">
               Prefer email? Reach us at{" "}
               <a
-                href="mailto:deuxaiinfo786@gmail.com"
+                href={`mailto:${company.businessEmail}`}
                 className="font-medium text-primary hover:underline"
               >
-                deuxaiinfo786@gmail.com
+                {company.businessEmail}
               </a>
             </p>
           </div>

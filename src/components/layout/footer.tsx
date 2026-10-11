@@ -3,6 +3,19 @@
 import Link from "next/link";
 import { ChevronRight } from "lucide-react";
 import { BrandLogo } from "@/components/brand-logo";
+import { company, companyLocationLabel } from "@config/company";
+
+const socialLinks = [
+  ...(company.socials.linkedin
+    ? [{ icon: "linkedin" as const, href: company.socials.linkedin, label: "LinkedIn" }]
+    : []),
+  ...(company.socials.instagram
+    ? [{ icon: "instagram" as const, href: company.socials.instagram, label: "Instagram" }]
+    : []),
+  { icon: "email" as const, href: `mailto:${company.businessEmail}`, label: "Email" },
+];
+
+const locationLine = companyLocationLabel();
 
 const footerLinks = {
   Product: [
@@ -31,12 +44,6 @@ const footerLinks = {
     { label: "Cookie Policy", href: "/cookies" },
   ],
 };
-
-const socialLinks = [
-  { icon: "instagram" as const, href: "https://instagram.com", label: "Instagram" },
-  { icon: "linkedin" as const, href: "https://www.linkedin.com/company/145184855/", label: "LinkedIn" },
-  { icon: "email" as const, href: "mailto:deuxaiinfo786@gmail.com", label: "Email" },
-];
 
 const socialIconPaths: Record<string, { d: string; color: string }> = {
   whatsapp: {
@@ -67,7 +74,7 @@ export function Footer() {
               <BrandLogo size="sm" />
             </Link>
             <p className="text-sm text-muted-foreground max-w-xs mb-6 leading-relaxed">
-              DEUX AI Factory. We manufacture, deploy, and monetize
+              {company.tradingName}. We manufacture, deploy, and monetize
               Digital FTEs — the AI workers that run the next generation of enterprises.
             </p>
             <div className="flex items-center gap-2">
@@ -124,10 +131,11 @@ export function Footer() {
 
         <div className="border-t border-border py-6 flex flex-col sm:flex-row items-center justify-between gap-4">
           <p className="text-xs text-muted-foreground">
-            &copy; {new Date().getFullYear()} DEUX AI Factory. All rights reserved.
+            &copy; {new Date().getFullYear()} {company.tradingName}.
+            {locationLine ? ` ${locationLine}.` : null} All rights reserved.
           </p>
           <p className="text-xs text-muted-foreground">
-            Built with Next.js, GSAP & AI
+            Built with AI
           </p>
         </div>
       </div>

@@ -10,19 +10,65 @@
 
 export const DEFAULT_TIME_ZONE = "Asia/Karachi";
 
-/** Short curated list; the picker falls back to a typed IANA name. */
+/**
+ * Curated IANA zones for the picker. `short` is the label we append to times
+ * ("PKT", "EST", "SGT"...). It is the display string used for "our hours" and
+ * the sidebar, never used to do arithmetic — all math stays on the IANA name.
+ */
 export const TIME_ZONES = [
-  { value: "Asia/Karachi", label: "Pakistan (PKT)" },
-  { value: "Asia/Kolkata", label: "India (IST)" },
-  { value: "Asia/Dubai", label: "UAE (GST)" },
-  { value: "Europe/London", label: "London (GMT/BST)" },
-  { value: "Europe/Paris", label: "Central Europe (CET)" },
-  { value: "America/New_York", label: "US Eastern (ET)" },
-  { value: "America/Los_Angeles", label: "US Pacific (PT)" },
-  { value: "America/Chicago", label: "US Central (CT)" },
-  { value: "Asia/Singapore", label: "Singapore (SGT)" },
-  { value: "Australia/Sydney", label: "Sydney (AEST)" },
-  { value: "UTC", label: "UTC" },
+  { value: "Pacific/Honolulu", label: "Hawaii (HST)", short: "HST" },
+  { value: "America/Anchorage", label: "Alaska (AKT)", short: "AKT" },
+  { value: "America/Los_Angeles", label: "US Pacific (PT)", short: "PT" },
+  { value: "America/Denver", label: "US Mountain (MT)", short: "MT" },
+  { value: "America/Phoenix", label: "Arizona (MST)", short: "MST" },
+  { value: "America/Chicago", label: "US Central (CT)", short: "CT" },
+  { value: "America/Mexico_City", label: "Mexico City (CST)", short: "CST" },
+  { value: "America/New_York", label: "US Eastern (ET)", short: "ET" },
+  { value: "America/Toronto", label: "Toronto (ET)", short: "ET" },
+  { value: "America/Halifax", label: "Atlantic (AT)", short: "AT" },
+  { value: "America/Bogota", label: "Bogota (COT)", short: "COT" },
+  { value: "America/Lima", label: "Lima (PET)", short: "PET" },
+  { value: "America/Santiago", label: "Santiago (CLT)", short: "CLT" },
+  { value: "America/Sao_Paulo", label: "Sao Paulo (BRT)", short: "BRT" },
+  { value: "America/Argentina/Buenos_Aires", label: "Buenos Aires (ART)", short: "ART" },
+  { value: "UTC", label: "UTC", short: "UTC" },
+  { value: "Europe/Lisbon", label: "Lisbon (WET)", short: "WET" },
+  { value: "Europe/London", label: "London (GMT/BST)", short: "GMT" },
+  { value: "Europe/Paris", label: "Central Europe (CET)", short: "CET" },
+  { value: "Europe/Berlin", label: "Berlin (CET)", short: "CET" },
+  { value: "Europe/Madrid", label: "Madrid (CET)", short: "CET" },
+  { value: "Europe/Rome", label: "Rome (CET)", short: "CET" },
+  { value: "Europe/Amsterdam", label: "Amsterdam (CET)", short: "CET" },
+  { value: "Europe/Stockholm", label: "Stockholm (CET)", short: "CET" },
+  { value: "Europe/Warsaw", label: "Warsaw (CET)", short: "CET" },
+  { value: "Europe/Athens", label: "Athens (EET)", short: "EET" },
+  { value: "Europe/Helsinki", label: "Helsinki (EET)", short: "EET" },
+  { value: "Europe/Istanbul", label: "Istanbul (TRT)", short: "TRT" },
+  { value: "Europe/Moscow", label: "Moscow (MSK)", short: "MSK" },
+  { value: "Africa/Lagos", label: "Lagos (WAT)", short: "WAT" },
+  { value: "Africa/Cairo", label: "Cairo (EET)", short: "EET" },
+  { value: "Africa/Nairobi", label: "Nairobi (EAT)", short: "EAT" },
+  { value: "Africa/Johannesburg", label: "Johannesburg (SAST)", short: "SAST" },
+  { value: "Asia/Jerusalem", label: "Israel (IST)", short: "IST" },
+  { value: "Asia/Riyadh", label: "Riyadh (AST)", short: "AST" },
+  { value: "Asia/Dubai", label: "UAE (GST)", short: "GST" },
+  { value: "Asia/Karachi", label: "Pakistan (PKT)", short: "PKT" },
+  { value: "Asia/Kolkata", label: "India (IST)", short: "IST" },
+  { value: "Asia/Dhaka", label: "Dhaka (BST)", short: "BST" },
+  { value: "Asia/Bangkok", label: "Bangkok (ICT)", short: "ICT" },
+  { value: "Asia/Jakarta", label: "Jakarta (WIB)", short: "WIB" },
+  { value: "Asia/Kuala_Lumpur", label: "Kuala Lumpur (MYT)", short: "MYT" },
+  { value: "Asia/Singapore", label: "Singapore (SGT)", short: "SGT" },
+  { value: "Asia/Shanghai", label: "China (CST)", short: "CST" },
+  { value: "Asia/Hong_Kong", label: "Hong Kong (HKT)", short: "HKT" },
+  { value: "Asia/Manila", label: "Manila (PHT)", short: "PHT" },
+  { value: "Asia/Tokyo", label: "Japan (JST)", short: "JST" },
+  { value: "Asia/Seoul", label: "Korea (KST)", short: "KST" },
+  { value: "Australia/Perth", label: "Perth (AWST)", short: "AWST" },
+  { value: "Australia/Adelaide", label: "Adelaide (ACST)", short: "ACST" },
+  { value: "Australia/Brisbane", label: "Brisbane (AEST)", short: "AEST" },
+  { value: "Australia/Sydney", label: "Sydney (AEST)", short: "AEST" },
+  { value: "Pacific/Auckland", label: "Auckland (NZST)", short: "NZST" },
 ] as const;
 
 export function isValidTimeZone(tz: string): boolean {
@@ -31,6 +77,29 @@ export function isValidTimeZone(tz: string): boolean {
     return true;
   } catch {
     return false;
+  }
+}
+
+/** "Asia/Karachi" -> "Pakistan (PKT)"; unlisted zones fall back to their IANA name. */
+export function zoneLabel(timeZone: string): string {
+  return TIME_ZONES.find((t) => t.value === timeZone)?.label ?? timeZone;
+}
+
+/**
+ * Short suffix for a zone ("PKT", "ET"). Listed zones use their curated short
+ * name; anything else asks Intl, and finally falls back to the IANA name.
+ */
+export function zoneShort(timeZone: string): string {
+  const listed = TIME_ZONES.find((t) => t.value === timeZone);
+  if (listed) return listed.short;
+  try {
+    const parts = new Intl.DateTimeFormat("en-US", {
+      timeZone,
+      timeZoneName: "short",
+    }).formatToParts(new Date());
+    return parts.find((p) => p.type === "timeZoneName")?.value ?? timeZone;
+  } catch {
+    return timeZone;
   }
 }
 
@@ -128,6 +197,16 @@ export function formatTimeInZone(iso: string, timeZone: string): string {
   })
     .format(new Date(iso))
     .replace(/^24:/, "00:");
+}
+
+/** Same instant, 12-hour clock with AM/PM ("2:30 PM"). Used for "local time now". */
+export function formatClockInZone(iso: string, timeZone: string): string {
+  return new Intl.DateTimeFormat("en-US", {
+    timeZone,
+    hour: "numeric",
+    minute: "2-digit",
+    hour12: true,
+  }).format(new Date(iso));
 }
 
 export function formatDateInZone(iso: string, timeZone: string): string {

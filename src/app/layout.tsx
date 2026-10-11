@@ -4,7 +4,7 @@ import { ThemeProvider } from "@/components/theme-provider";
 import { Providers } from "@/components/providers";
 import { LayoutShell } from "@/components/layout-shell";
 import { LoadingSplash } from "@/components/loading-splash";
-import { SITE_URL, SITE_NAME, SITE_DESCRIPTION, SITE_KEYWORDS, OG_IMAGE } from "@/lib/seo";
+import { SITE_URL, SITE_NAME, SITE_DESCRIPTION, SITE_KEYWORDS, OG_IMAGE, organizationJsonLd } from "@/lib/seo";
 import "./globals.css";
 
 const roboto = Roboto({
@@ -84,6 +84,11 @@ export default function RootLayout({
           dangerouslySetInnerHTML={{
             __html: `(function(){try{var s=document.documentElement;var t=localStorage.getItem("theme");if(t==="light"){s.classList.remove("dark")}else if(t==="dark"){s.classList.add("dark")}else if(window.matchMedia&&window.matchMedia("(prefers-color-scheme: dark)").matches){s.classList.add("dark")}else{s.classList.remove("dark")}}catch(e){}})();`,
           }}
+        />
+        {/* Organization schema generated from config/company.ts */}
+        <script
+          type="application/ld+json"
+          dangerouslySetInnerHTML={{ __html: JSON.stringify(organizationJsonLd()) }}
         />
       </head>
       <body className={`${roboto.variable} ${raleway.variable} min-h-full flex flex-col bg-background font-sans antialiased`}>
