@@ -1,8 +1,9 @@
 import { streamText, stepCountIs, type ModelMessage } from "ai";
+import { randomUUID } from "node:crypto";
 import { aiConfig } from "./config";
 import { getModel } from "./provider";
 import { buildSystemPrompt } from "./system-prompt";
-import { buildTools, getToolRisk } from "./tools/registry";
+import { buildTools, getToolRisk, isWriteRisk } from "./tools/registry";
 import { listSkills } from "./skills";
 import { recordAudit } from "./audit";
 import type { AdminAgentToolCall } from "@/lib/db/schema";
@@ -13,6 +14,7 @@ export type AgentStreamEvent =
   | { type: "tool-call"; toolCallId: string; toolName: string; risk?: ToolRisk; args: unknown }
   | { type: "tool-result"; toolCallId: string; toolName: string; result: unknown }
   | { type: "tool-error"; toolCallId: string; toolName: string; error: string }
+  | { type: "pending-action"; actionId: string; toolName: string; risk: ToolRisk; args: unknown }
   | { type: "error"; message: string };
 
 export interface RunParams {
@@ -52,6 +54,7 @@ export async function* runAdminAgent(params: RunParams): AsyncGenerator<AgentStr
   const skillsLoaded = listSkills().map((s) => s.name);
   const toolCalls: AdminAgentToolCall[] = [];
   const byId = new Map<string, AdminAgentToolCall>();
+  const pendingCallIds = new Set<string>();
   let status: "ok" | "error" = "ok";
   let errorMessage: string | undefined;
 
@@ -82,11 +85,27 @@ export async function* runAdminAgent(params: RunParams): AsyncGenerator<AgentStr
           const record: AdminAgentToolCall = { name: toolName, risk, status: "running", args };
           if (toolCallId) byId.set(toolCallId, record);
           toolCalls.push(record);
-          yield { type: "tool-call", toolCallId, toolName, risk, args };
+
+          if (isWriteRisk(risk)) {
+            // Propose, never perform. The model's no-op result is ignored below
+            // and the admin confirms through the dedicated route.
+            record.status = "pending";
+            if (toolCallId) pendingCallIds.add(toolCallId);
+            yield {
+              type: "pending-action",
+              actionId: randomUUID(),
+              toolName,
+              risk: risk as ToolRisk,
+              args,
+            };
+          } else {
+            yield { type: "tool-call", toolCallId, toolName, risk, args };
+          }
           break;
         }
         case "tool-result": {
           const toolCallId = asString(part.toolCallId);
+          if (toolCallId && pendingCallIds.has(toolCallId)) break; // placeholder result for a proposed write
           const toolName = asString(part.toolName);
           const value = part.output ?? part.result;
           const record = toolCallId ? byId.get(toolCallId) : undefined;
@@ -99,6 +118,7 @@ export async function* runAdminAgent(params: RunParams): AsyncGenerator<AgentStr
         }
         case "tool-error": {
           const toolCallId = asString(part.toolCallId);
+          if (toolCallId && pendingCallIds.has(toolCallId)) break;
           const toolName = asString(part.toolName);
           const message = errorText(part.error);
           const record = toolCallId ? byId.get(toolCallId) : undefined;

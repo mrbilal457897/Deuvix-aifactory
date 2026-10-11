@@ -23,7 +23,7 @@ import {
   SheetDescription,
 } from "@/components/ui/sheet";
 import { cn } from "@/lib/utils";
-import { useAdminAgent, type AgentMessage, type AgentToolTrace } from "@/lib/ai/use-admin-agent";
+import { useAdminAgent, type AgentMessage, type AgentToolTrace, type PendingAction } from "@/lib/ai/use-admin-agent";
 import { useVoiceRecorder } from "@/lib/ai/use-voice-recorder";
 import {
   VOICE_LANGUAGES,
@@ -115,14 +115,64 @@ function MessageBubble({ message }: { message: AgentMessage }) {
   );
 }
 
+function PendingActionCard({
+  action,
+  onConfirm,
+  onCancel,
+}: {
+  action: PendingAction;
+  onConfirm: (action: PendingAction) => void;
+  onCancel: (action: PendingAction) => void;
+}) {
+  return (
+    <div className="rounded-xl border border-primary/40 bg-primary/5 p-3 text-sm">
+      <div className="mb-1.5 flex items-center gap-2">
+        <AlertTriangle className="size-4 text-primary" />
+        <span className="font-medium text-foreground">Confirm action</span>
+        <span className="ml-auto rounded bg-background px-1.5 py-0.5 text-[10px] uppercase tracking-wide text-muted-foreground">
+          {action.risk}
+        </span>
+      </div>
+      <p className="mb-1 text-xs text-muted-foreground">
+        The agent proposed{" "}
+        <span className="font-medium text-foreground">{action.toolName}</span>. Nothing has changed yet.
+      </p>
+      <pre className="mb-2 max-h-32 overflow-auto whitespace-pre-wrap break-words rounded-lg bg-background p-2 text-[11px] text-foreground/80">
+        {JSON.stringify(action.args ?? {}, null, 2)}
+      </pre>
+      <div className="flex gap-2">
+        <Button size="sm" onClick={() => onConfirm(action)}>
+          <Check className="size-3.5" /> Confirm
+        </Button>
+        <Button size="sm" variant="outline" onClick={() => onCancel(action)}>
+          <X className="size-3.5" /> Cancel
+        </Button>
+      </div>
+    </div>
+  );
+}
+
 export function AdminAgentPanel() {
   const [open, setOpen] = useState(false);
   const [input, setInput] = useState("");
   const [language, setLanguage] = useState<VoiceLanguage>("auto");
   const [transcribing, setTranscribing] = useState(false);
   const [voiceError, setVoiceError] = useState<string | null>(null);
-  const { messages, sending, error, health, checkingHealth, send, transcribe, stop, reset, checkHealth } =
-    useAdminAgent();
+  const {
+    messages,
+    sending,
+    error,
+    health,
+    pending,
+    checkingHealth,
+    send,
+    transcribe,
+    confirmAction,
+    cancelAction,
+    stop,
+    reset,
+    checkHealth,
+  } = useAdminAgent();
   const scrollRef = useRef<HTMLDivElement | null>(null);
 
   const handleAudio = useCallback(
@@ -149,7 +199,7 @@ export function AdminAgentPanel() {
 
   useEffect(() => {
     if (open) scrollRef.current?.scrollTo({ top: scrollRef.current.scrollHeight });
-  }, [messages, open, sending]);
+  }, [messages, pending, open, sending]);
 
   const submit = () => {
     const text = input.trim();
@@ -180,7 +230,7 @@ export function AdminAgentPanel() {
               <SheetTitle className="text-base">Admin AI Agent</SheetTitle>
             </div>
             <SheetDescription className="text-xs">
-              Ask about leads, bookings, contacts, projects, blog and FAQs. Read-only for now.
+              Ask about leads, bookings, contacts, projects, blog and FAQs. Writes are proposed and need your confirmation.
             </SheetDescription>
           </SheetHeader>
 
@@ -225,6 +275,14 @@ export function AdminAgentPanel() {
             ) : (
               messages.map((m) => <MessageBubble key={m.id} message={m} />)
             )}
+            {pending.map((action) => (
+              <PendingActionCard
+                key={action.id}
+                action={action}
+                onConfirm={confirmAction}
+                onCancel={cancelAction}
+              />
+            ))}
           </div>
 
           {error && (

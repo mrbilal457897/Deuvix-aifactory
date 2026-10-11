@@ -200,7 +200,7 @@ export type ChatLead = typeof chatLeads.$inferSelect;
 export interface AdminAgentToolCall {
   name: string;
   risk?: string;
-  status: "running" | "ok" | "error";
+  status: "running" | "ok" | "error" | "pending";
   args?: unknown;
   result?: unknown;
   error?: string;

@@ -31,6 +31,13 @@ export interface AgentMessage {
   tools?: AgentToolTrace[];
 }
 
+export interface PendingAction {
+  id: string;
+  toolName: string;
+  risk: string;
+  args: unknown;
+}
+
 export interface AgentHealth {
   ok: boolean;
   model?: string;
@@ -61,6 +68,14 @@ function looksOffline(status: number, error?: string): boolean {
   return status === 503 || (error || "").toLowerCase().includes("ai offline");
 }
 
+function describeAction(toolName: string, result: unknown): string {
+  if (toolName === "update_lead_status") {
+    const r = result as { leadId?: string; status?: string } | null;
+    return `Done — lead ${r?.leadId ?? ""} is now marked "${r?.status ?? "updated"}".`;
+  }
+  return "Done — the action was applied.";
+}
+
 /** Module-level so the mount effect only registers a callback, not a setState. */
 async function fetchHealth(): Promise<AgentHealth> {
   try {
@@ -82,6 +97,7 @@ export function useAdminAgent() {
   const [sending, setSending] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [health, setHealth] = useState<AgentHealth | null>(null);
+  const [pending, setPending] = useState<PendingAction[]>([]);
 
   const abortRef = useRef<AbortController | null>(null);
 
@@ -111,8 +127,46 @@ export function useAdminAgent() {
   const reset = useCallback(() => {
     stop();
     setMessages([]);
+    setPending([]);
     setError(null);
   }, [stop]);
+
+  /** Executes a proposed write after the admin confirms it. */
+  const confirmAction = useCallback(async (action: PendingAction) => {
+    setPending((prev) => prev.filter((p) => p.id !== action.id));
+    try {
+      const res = await fetch("/api/admin/agent/action", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ name: action.toolName, args: action.args }),
+      });
+      const data = (await res.json().catch(() => null)) as
+        | { ok?: boolean; result?: unknown; error?: string }
+        | null;
+      if (!res.ok || !data?.ok) {
+        const message = data?.error || "The action failed.";
+        setMessages((prev) => [...prev, { id: nextId(), role: "assistant", content: message, error: true }]);
+        setError(message);
+        return;
+      }
+      setMessages((prev) => [
+        ...prev,
+        { id: nextId(), role: "assistant", content: describeAction(action.toolName, data.result) },
+      ]);
+    } catch {
+      const message = "The action failed.";
+      setMessages((prev) => [...prev, { id: nextId(), role: "assistant", content: message, error: true }]);
+      setError(message);
+    }
+  }, []);
+
+  const cancelAction = useCallback((action: PendingAction) => {
+    setPending((prev) => prev.filter((p) => p.id !== action.id));
+    setMessages((prev) => [
+      ...prev,
+      { id: nextId(), role: "assistant", content: `Cancelled ${action.toolName}.` },
+    ]);
+  }, []);
 
   /** Uploads a recording and returns the transcript. Never sends it. */
   const transcribe = useCallback(async (blob: Blob, language: string): Promise<string> => {
@@ -236,6 +290,19 @@ export function useAdminAgent() {
               failure = String(event.message || "The model request failed.");
               break;
             }
+            case "pending-action": {
+              const id = String(event.actionId || nextId());
+              setPending((prev) => [
+                ...prev,
+                {
+                  id,
+                  toolName: String(event.toolName || "action"),
+                  risk: String(event.risk || "write"),
+                  args: event.args,
+                },
+              ]);
+              break;
+            }
             case "done":
               break;
           }
@@ -288,14 +355,30 @@ export function useAdminAgent() {
       sending,
       error,
       health,
+      pending,
       checkingHealth: health === null,
       send,
       transcribe,
+      confirmAction,
+      cancelAction,
       stop,
       reset,
       checkHealth,
     }),
-    [messages, sending, error, health, send, transcribe, stop, reset, checkHealth],
+    [
+      messages,
+      sending,
+      error,
+      health,
+      pending,
+      send,
+      transcribe,
+      confirmAction,
+      cancelAction,
+      stop,
+      reset,
+      checkHealth,
+    ],
   );
 }
 
