@@ -30,3 +30,17 @@ export interface ToolDefinition<TInput = unknown> {
 export function defineTool<TInput>(def: ToolDefinition<TInput>): ToolDefinition<unknown> {
   return def as unknown as ToolDefinition<unknown>;
 }
+
+/**
+ * Error for a tool execution that was refused. `status` maps straight to an HTTP
+ * status in the confirm route. Lives here so both the registry and the write
+ * tools can throw it without importing each other.
+ */
+export class ToolExecutionError extends Error {
+  status: number;
+  constructor(message: string, status = 400) {
+    super(message);
+    this.name = "ToolExecutionError";
+    this.status = status;
+  }
+}

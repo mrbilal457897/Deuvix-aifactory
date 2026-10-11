@@ -77,11 +77,21 @@ function looksOffline(status: number, error?: string): boolean {
 }
 
 function describeAction(toolName: string, result: unknown): string {
-  if (toolName === "update_lead_status") {
-    const r = result as { leadId?: string; status?: string } | null;
-    return `Done — lead ${r?.leadId ?? ""} is now marked "${r?.status ?? "updated"}".`;
+  const r = result as
+    | { leadId?: string; status?: string; priority?: string; followUpId?: string; dueAt?: string; noteCharacters?: number }
+    | null;
+  switch (toolName) {
+    case "update_lead_status":
+      return `Done — lead ${r?.leadId ?? ""} is now marked "${r?.status ?? "updated"}".`;
+    case "update_lead_priority":
+      return `Done — lead ${r?.leadId ?? ""} is now priority "${r?.priority ?? "set"}".`;
+    case "update_lead_notes":
+      return `Done — notes saved on lead ${r?.leadId ?? ""} (${r?.noteCharacters ?? 0} characters).`;
+    case "schedule_follow_up":
+      return `Done — follow-up ${r?.followUpId ?? ""} scheduled for due ${new Date(r?.dueAt ?? "").toLocaleString()}.`;
+    default:
+      return "Done — the action was applied.";
   }
-  return "Done — the action was applied.";
 }
 
 /** Module-level so the mount effect only registers a callback, not a setState. */
@@ -188,7 +198,7 @@ export function useAdminAgent() {
   }, []);
 
   const send = useCallback(
-    async (text: string) => {
+    async (text: string, mode: "text" | "voice" = "text") => {
       const trimmed = text.trim().slice(0, MAX_INPUT);
       if (!trimmed || sending) return;
 
@@ -220,7 +230,7 @@ export function useAdminAgent() {
         const res = await fetch("/api/admin/agent", {
           method: "POST",
           headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ messages: history, inputMode: "text" }),
+          body: JSON.stringify({ messages: history, inputMode: mode }),
           signal: controller.signal,
         });
 

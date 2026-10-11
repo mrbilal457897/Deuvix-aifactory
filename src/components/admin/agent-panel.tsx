@@ -204,6 +204,7 @@ export function AdminAgentPanel() {
   } = useAdminAgent();
   const speech = useSpeech(Boolean(health?.tts?.configured));
   const [speakingId, setSpeakingId] = useState<string | null>(null);
+  const voiceDraftRef = useRef(false);
   const scrollRef = useRef<HTMLDivElement | null>(null);
 
   const handleAudio = useCallback(
@@ -212,7 +213,10 @@ export function AdminAgentPanel() {
       setTranscribing(true);
       try {
         const text = await transcribe(blob, language);
-        if (text) setInput((prev) => (prev ? `${prev} ${text}` : text));
+        if (text) {
+          setInput((prev) => (prev ? `${prev} ${text}` : text));
+          voiceDraftRef.current = true;
+        }
       } catch (err) {
         setVoiceError(err instanceof Error ? err.message : "Transcription failed.");
       } finally {
@@ -235,8 +239,10 @@ export function AdminAgentPanel() {
   const submit = () => {
     const text = input.trim();
     if (!text || sending) return;
+    const mode: "text" | "voice" = voiceDraftRef.current ? "voice" : "text";
+    voiceDraftRef.current = false;
     setInput("");
-    void send(text);
+    void send(text, mode);
   };
 
   const offline = health ? !health.ok : false;

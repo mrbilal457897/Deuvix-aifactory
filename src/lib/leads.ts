@@ -33,6 +33,12 @@ function rowToLead(row: Record<string, unknown>): Lead {
   };
 }
 
+export async function getLead(id: string): Promise<Lead | null> {
+  const { data } = await supabase.from("leads").select("*").eq("id", id).maybeSingle();
+  if (!data) return null;
+  return rowToLead(data);
+}
+
 export async function listLeads(): Promise<Lead[]> {
   const { data } = await supabase.from("leads").select("*").order("created_at", { ascending: false });
   if (!data) return [];
@@ -58,6 +64,14 @@ export async function saveLead(lead: Lead): Promise<void> {
 
 export async function updateLeadStatus(id: string, status: Lead["status"]): Promise<void> {
   await supabase.from("leads").update({ status }).eq("id", id);
+}
+
+export async function updateLeadPriority(id: string, priority: Lead["priority"]): Promise<void> {
+  await supabase.from("leads").update({ priority }).eq("id", id);
+}
+
+export async function updateLeadNotes(id: string, notes: string): Promise<void> {
+  await supabase.from("leads").update({ notes }).eq("id", id);
 }
 
 export function leadFromContact(contact: Contact, score: number, status: Lead["status"], priority: Lead["priority"]): Lead {

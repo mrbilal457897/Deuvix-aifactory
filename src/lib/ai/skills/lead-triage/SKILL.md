@@ -33,8 +33,12 @@ disagree.
 - To change a status, call `update_lead_status` with the lead's exact `id` (from
   `list_leads`) and one of `hot`, `warm`, `cold`. This only proposes the change —
   the admin confirms it in the UI.
+- To set follow-up order, call `update_lead_priority` (`high`, `medium`, `low`)
+  the same way; to capture a call note, call `update_lead_notes`.
+- To queue a reminder, call `schedule_follow_up` with the lead id, `dueInHours`,
+  and a short subject/body.
 - Say which lead, from what to what, and why, in one line. Do not claim it is done.
-- If a lead is already in the target status, say so instead of proposing a no-op.
+- If a lead is already in the target status/priority, say so instead of proposing a no-op.
 
 ## Output format
 

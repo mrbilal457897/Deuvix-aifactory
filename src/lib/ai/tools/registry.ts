@@ -2,7 +2,9 @@ import { tool, type ToolSet } from "ai";
 import { aiConfig } from "../config";
 import { readTools } from "./read";
 import { writeTools } from "./write";
-import type { ToolContext, ToolDefinition, ToolRisk } from "./types";
+import { ToolExecutionError, type ToolContext, type ToolDefinition, type ToolRisk } from "./types";
+
+export { ToolExecutionError };
 
 /**
  * The one and only tool registry. READ tools run directly; WRITE and
@@ -82,15 +84,6 @@ export function buildTools(ctx: ToolContext): ToolSet {
     }
   }
   return tools;
-}
-
-export class ToolExecutionError extends Error {
-  status: number;
-  constructor(message: string, status = 400) {
-    super(message);
-    this.name = "ToolExecutionError";
-    this.status = status;
-  }
 }
 
 /**
