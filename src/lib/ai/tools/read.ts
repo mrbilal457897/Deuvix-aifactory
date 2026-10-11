@@ -84,23 +84,33 @@ function parseFaq(markdown: string): Array<{ question: string; answer: string }>
 /* READ tools                                                                  */
 /* -------------------------------------------------------------------------- */
 
-const listLeadsTool: ToolDefinition<{ status?: Lead["status"]; limit?: number }> = {
+const listLeadsTool: ToolDefinition<{ status?: Lead["status"]; q?: string; limit?: number }> = {
   name: "list_leads",
   description:
-    "List CRM leads, newest first. Optionally filter by status (hot/warm/cold). Use for questions like 'how many hot leads' or 'show recent leads'.",
+    "List CRM leads, newest first. Filter by status (hot/warm/cold) or search by name, email, phone or service. Use for 'show recent leads', 'how many hot leads', or 'find a lead called X'.",
   risk: "read",
   roles: ["admin"],
   inputSchema: z.object({
     status: z.enum(["hot", "warm", "cold"]).optional().describe("Only leads with this status."),
+    q: z.string().max(120).optional().describe("Search term matched against name, email, phone or service."),
     limit: z.number().int().min(1).max(50).optional().describe("Max leads to return (default 20, max 50)."),
   }),
-  async execute({ status, limit }) {
+  async execute({ status, q, limit }) {
     const all = await listLeads();
-    const filtered = status ? all.filter((l) => l.status === status) : all;
+    const needle = q?.trim().toLowerCase();
+    const filtered = all.filter((l) => {
+      if (status && l.status !== status) return false;
+      if (needle) {
+        const hay = `${l.name} ${l.email} ${l.phone} ${l.service} ${l.message}`.toLowerCase();
+        if (!hay.includes(needle)) return false;
+      }
+      return true;
+    });
     const capped = filtered.slice(0, limit ?? 20);
     return {
       total: filtered.length,
       returned: capped.length,
+      search: needle || undefined,
       leads: capped.map((l) => ({
         id: l.id,
         name: l.name,
@@ -130,20 +140,31 @@ const getLeadTool: ToolDefinition<{ id: string }> = {
   },
 };
 
-const listContactsTool: ToolDefinition<{ limit?: number }> = {
+const listContactsTool: ToolDefinition<{ q?: string; limit?: number }> = {
   name: "list_contacts",
-  description: "List contact-form submissions, newest first.",
+  description:
+    "List contact-form submissions, newest first. Optionally search by name, email, phone, service or message text.",
   risk: "read",
   roles: ["admin"],
   inputSchema: z.object({
+    q: z.string().max(120).optional().describe("Search term matched against name, email, phone, service or message."),
     limit: z.number().int().min(1).max(50).optional().describe("Max contacts to return (default 20)."),
   }),
-  async execute({ limit }) {
+  async execute({ q, limit }) {
     const all = await listContacts();
-    const capped = all.slice(0, limit ?? 20);
+    const needle = q?.trim().toLowerCase();
+    const filtered = needle
+      ? all.filter((c) =>
+          `${c.name} ${c.email} ${c.phone} ${c.service} ${c.message}`
+            .toLowerCase()
+            .includes(needle),
+        )
+      : all;
+    const capped = filtered.slice(0, limit ?? 20);
     return {
-      total: all.length,
+      total: filtered.length,
       returned: capped.length,
+      search: needle || undefined,
       contacts: capped.map((c) => ({
         id: c.id,
         name: c.name,
@@ -197,10 +218,10 @@ const listFollowUpsTool: ToolDefinition<{
   },
 };
 
-const listBookingsTool: ToolDefinition<{ filter?: BookingFilter; limit?: number }> = {
+const listBookingsTool: ToolDefinition<{ filter?: BookingFilter; q?: string; limit?: number }> = {
   name: "list_bookings",
   description:
-    "List Cal.com bookings. filter = upcoming | past | cancelled | all (default upcoming).",
+    "List call bookings. Optionally filter by range (upcoming/past/cancelled/all) or search by name, email, company or event title. Searching matches across all bookings.",
   risk: "read",
   roles: ["admin"],
   inputSchema: z.object({
@@ -208,15 +229,21 @@ const listBookingsTool: ToolDefinition<{ filter?: BookingFilter; limit?: number 
       .enum(["upcoming", "past", "cancelled", "all"])
       .optional()
       .describe("Which bookings to return (default upcoming)."),
-    limit: z.number().int().min(1).max(50).optional().describe("Max bookings (default 20)."),
+    q: z.string().max(120).optional().describe("Search term matched against name, email, company or event title."),
+    limit: z.number().int().min(1).max(100).optional().describe("Max bookings to return (default 20, max 100)."),
   }),
-  async execute({ filter, limit }) {
-    const rows = await listBookings(parseBookingFilter(filter ?? "upcoming"), limit ?? 20);
+  async execute({ filter, q, limit }) {
+    const needle = q?.trim().toLowerCase();
+    const useFilter = needle ? "all" : parseBookingFilter(filter);
+    const rows = await listBookings(useFilter, needle ? 500 : limit ?? 20);
+    const filtered = needle ? rows.filter((b) => `${b.name} ${b.email} ${b.company} ${b.eventTitle}`.toLowerCase().includes(needle)) : rows;
+    const capped = filtered.slice(0, limit ?? 20);
     return {
-      filter: filter ?? "upcoming",
-      returned: rows.length,
-      bookings: rows.slice(0, limit ?? 20).map((b) => ({
-        id: b.id,
+      filter: useFilter,
+      returned: capped.length,
+      search: needle || undefined,
+      bookings: capped.map((b) => ({
+        id: b.calUid,
         status: b.status,
         name: b.name,
         email: b.email,
@@ -226,7 +253,6 @@ const listBookingsTool: ToolDefinition<{ filter?: BookingFilter; limit?: number 
         endTime: iso(b.endTime),
         timezone: b.timezone,
         meetingUrl: b.meetingUrl,
-        notes: clamp(b.notes, 300),
       })),
     };
   },
