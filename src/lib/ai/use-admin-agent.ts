@@ -82,14 +82,14 @@ const MAX_INPUT = 4000;
 const HISTORY_WINDOW = 12;
 const PROVIDER_KEY = "deux.admin-agent.provider";
 
-function readStoredProvider(): AgentProviderId {
+function readStoredProvider(): AgentProviderId | null {
   try {
     const raw = localStorage.getItem(PROVIDER_KEY);
     if (raw === "gemini" || raw === "groq" || raw === "ollama") return raw;
   } catch {
     // localStorage may be unavailable (private mode); fall through.
   }
-  return "ollama";
+  return null;
 }
 
 let idCounter = 0;
@@ -161,7 +161,7 @@ export function useAdminAgent() {
   const [error, setError] = useState<string | null>(null);
   const [health, setHealth] = useState<AgentHealth | null>(null);
   const [pending, setPending] = useState<PendingAction[]>([]);
-  const [provider, setProvider] = useState<AgentProviderId>(readStoredProvider);
+  const [provider, setProvider] = useState<AgentProviderId>(() => readStoredProvider() ?? "ollama");
 
   const abortRef = useRef<AbortController | null>(null);
 
@@ -186,13 +186,23 @@ export function useAdminAgent() {
   useEffect(() => {
     let active = true;
     void (async () => {
-      const chosen = readStoredProvider();
-      const h = await fetchHealth(chosen);
+      const stored = readStoredProvider();
+      // With no saved choice, let the server pick (AI_PROVIDER) and adopt it.
+      const h = await fetchHealth(stored);
       if (!active) return;
       setHealth(h);
+      if (!stored && (h.provider === "gemini" || h.provider === "groq" || h.provider === "ollama")) {
+        setProvider(h.provider);
+        try {
+          localStorage.setItem(PROVIDER_KEY, h.provider);
+        } catch {
+          // Ignore storage failures.
+        }
+        return;
+      }
       // If the saved backend is unusable but another has a key, hop to it once.
       if (!h.ok) {
-        const ready = h.providers?.find((p) => p.ready && p.id !== chosen);
+        const ready = h.providers?.find((p) => p.ready && p.id !== (stored ?? h.provider));
         if (ready) {
           setProvider(ready.id);
           try {
