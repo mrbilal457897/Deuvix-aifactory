@@ -24,6 +24,8 @@ export interface RunParams {
   /** The admin's message text (or the reviewed voice transcript). */
   prompt: string;
   transcript?: string;
+  /** Which LLM provider to use (validated by the route against the allowlist). */
+  provider?: string | null;
   signal?: AbortSignal;
 }
 
@@ -60,7 +62,7 @@ export async function* runAdminAgent(params: RunParams): AsyncGenerator<AgentStr
 
   try {
     const result = streamText({
-      model: getModel(),
+      model: getModel(params.provider),
       system: buildSystemPrompt(params.ctx),
       messages: params.messages,
       tools: buildTools(params.ctx),
@@ -131,7 +133,7 @@ export async function* runAdminAgent(params: RunParams): AsyncGenerator<AgentStr
         }
         case "error": {
           status = "error";
-          errorMessage = "The model request failed. Check that the LLM server is running.";
+          errorMessage = "The model request failed. Check the selected provider and retry.";
           yield { type: "error", message: errorMessage };
           break;
         }
@@ -144,7 +146,7 @@ export async function* runAdminAgent(params: RunParams): AsyncGenerator<AgentStr
       params.signal?.aborted === true || (err instanceof Error && err.name === "AbortError");
     if (!aborted) {
       status = "error";
-      errorMessage = "The LLM server is unavailable. Start Ollama (or set LLM_BASE_URL), then retry.";
+      errorMessage = "The model is unavailable. Check the selected provider's key or server, then retry.";
       yield { type: "error", message: errorMessage };
     }
   } finally {

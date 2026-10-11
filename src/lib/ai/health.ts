@@ -1,10 +1,14 @@
-import { aiConfig } from "./config";
+import { PROVIDERS, resolveProvider } from "./providers";
 
 export interface LlmHealth {
   ok: boolean;
+  provider: string;
+  label: string;
   model: string;
   baseUrl: string;
   latencyMs: number;
+  /** False when a required API key is missing. */
+  configured: boolean;
   /** Present when ok is false. */
   error?: string;
   /** The server is reachable but does not list the configured model. */
@@ -14,30 +18,56 @@ export interface LlmHealth {
 
 /**
  * Cheap reachability probe against the OpenAI-compatible `/models` endpoint.
- * It never throws: an unreachable server is a normal, reportable state and the
- * UI renders an "AI offline" banner instead of a stack trace.
+ * It never throws: an unreachable server (or a missing key) is a normal,
+ * reportable state and the UI renders an "AI offline" banner.
  */
-export async function checkLlmHealth(timeoutMs = 4000): Promise<LlmHealth> {
+export async function checkLlmHealth(
+  providerId?: string | null,
+  timeoutMs = 4000,
+): Promise<LlmHealth> {
   const started = Date.now();
+  const provider = resolveProvider(providerId);
+  const base = {
+    provider: provider.id,
+    label: provider.label,
+    model: provider.model,
+    baseUrl: provider.baseUrl,
+    configured: provider.configured,
+  };
+
+  if (!provider.configured) {
+    const keyName = PROVIDERS[provider.id].apiKeyEnvs[0] ?? "the API key";
+    return {
+      ...base,
+      ok: false,
+      latencyMs: 0,
+      error: `No API key set — add ${keyName}. ${provider.where}`,
+    };
+  }
+
   const controller = new AbortController();
   const timer = setTimeout(() => controller.abort(), timeoutMs);
 
-  const base: Omit<LlmHealth, "ok" | "latencyMs"> = {
-    model: aiConfig.model,
-    baseUrl: aiConfig.baseUrl,
-  };
-
   try {
-    const res = await fetch(`${aiConfig.baseUrl}/models`, {
+    const res = await fetch(`${provider.baseUrl}/models`, {
       method: "GET",
-      headers: aiConfig.apiKey ? { Authorization: `Bearer ${aiConfig.apiKey}` } : {},
+      headers: provider.apiKey ? { Authorization: `Bearer ${provider.apiKey}` } : {},
       signal: controller.signal,
       cache: "no-store",
     });
 
     const latencyMs = Date.now() - started;
+
+    // A server may not implement GET /models but still serve chat completions.
+    if (res.status === 404 || res.status === 405) {
+      return { ...base, ok: true, latencyMs };
+    }
     if (!res.ok) {
-      return { ...base, ok: false, latencyMs, error: `HTTP ${res.status}` };
+      const hint =
+        res.status === 401 || res.status === 403
+          ? `The provider rejected the API key (HTTP ${res.status}).`
+          : `HTTP ${res.status}`;
+      return { ...base, ok: false, latencyMs, error: hint };
     }
 
     let modelsSeen: string[] = [];
@@ -49,10 +79,10 @@ export async function checkLlmHealth(timeoutMs = 4000): Promise<LlmHealth> {
     }
 
     // Ollama reports "qwen2.5:7b"; a server may also expose "qwen2.5".
-    const wantedBase = aiConfig.model.split(":")[0];
+    const wantedBase = provider.model.split(":")[0];
     const modelMissing =
       modelsSeen.length > 0 &&
-      !modelsSeen.some((id) => id === aiConfig.model || id.split(":")[0] === wantedBase);
+      !modelsSeen.some((id) => id === provider.model || id.split(":")[0] === wantedBase);
 
     return {
       ...base,

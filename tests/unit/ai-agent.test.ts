@@ -1,5 +1,12 @@
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import { aiConfig } from "@/lib/ai/config";
+import {
+  PROVIDER_IDS,
+  isProviderId,
+  providerStatuses,
+  resolveProvider,
+  resolveProviderId,
+} from "@/lib/ai/providers";
 import { listSkills, loadSkill, skillsIndexPrompt, resetSkills } from "@/lib/ai/skills";
 import { buildSystemPrompt } from "@/lib/ai/system-prompt";
 import {
@@ -32,26 +39,86 @@ const READ_TOOL_NAMES = [
 describe("ai config", () => {
   afterEach(() => vi.unstubAllEnvs());
 
-  it("defaults to a local Ollama endpoint", () => {
-    vi.stubEnv("LLM_BASE_URL", "");
-    vi.stubEnv("LLM_MODEL", "");
-    expect(aiConfig.baseUrl).toBe("http://localhost:11434/v1");
-    expect(aiConfig.model).toBe("qwen2.5:7b");
-    expect(aiConfig.apiKey).toBe("ollama");
-  });
-
-  it("honours env overrides and normalises the base URL", () => {
-    vi.stubEnv("LLM_BASE_URL", "http://example.test:8080/v1/");
-    vi.stubEnv("LLM_MODEL", "llama3.1:8b");
+  it("honours the numeric step override", () => {
     vi.stubEnv("LLM_MAX_STEPS", "4");
-    expect(aiConfig.baseUrl).toBe("http://example.test:8080/v1");
-    expect(aiConfig.model).toBe("llama3.1:8b");
     expect(aiConfig.maxSteps).toBe(4);
   });
 
   it("falls back when a numeric override is not a number", () => {
     vi.stubEnv("LLM_TEMPERATURE", "hot");
     expect(aiConfig.temperature).toBe(0.2);
+  });
+});
+
+describe("ai providers", () => {
+  afterEach(() => vi.unstubAllEnvs());
+
+  it("exposes the three built-in providers", () => {
+    expect(PROVIDER_IDS).toEqual(["gemini", "groq", "ollama"]);
+    expect(isProviderId("gemini")).toBe(true);
+    expect(isProviderId("openai")).toBe(false);
+  });
+
+  it("defaults to a keyless local Ollama endpoint", () => {
+    vi.stubEnv("AI_PROVIDER", "");
+    vi.stubEnv("LLM_BASE_URL", "");
+    vi.stubEnv("LLM_MODEL", "");
+    const p = resolveProvider();
+    expect(p.id).toBe("ollama");
+    expect(p.baseUrl).toBe("http://localhost:11434/v1");
+    expect(p.model).toBe("qwen2.5:7b");
+    expect(p.apiKey).toBe("ollama");
+    expect(p.configured).toBe(true);
+  });
+
+  it("resolves Gemini and requires a key", () => {
+    vi.stubEnv("GEMINI_API_KEY", "");
+    const missing = resolveProvider("gemini");
+    expect(missing.baseUrl).toBe("https://generativelanguage.googleapis.com/v1beta/openai");
+    expect(missing.model).toBe("gemini-2.5-flash");
+    expect(missing.configured).toBe(false);
+
+    vi.stubEnv("GEMINI_API_KEY", "test-key");
+    vi.stubEnv("GEMINI_MODEL", "gemini-2.5-pro");
+    const ready = resolveProvider("gemini");
+    expect(ready.apiKey).toBe("test-key");
+    expect(ready.model).toBe("gemini-2.5-pro");
+    expect(ready.configured).toBe(true);
+  });
+
+  it("resolves Groq and requires a key", () => {
+    vi.stubEnv("GROQ_API_KEY", "");
+    expect(resolveProvider("groq").baseUrl).toBe("https://api.groq.com/openai/v1");
+    expect(resolveProvider("groq").configured).toBe(false);
+    vi.stubEnv("GROQ_API_KEY", "gsk_test");
+    expect(resolveProvider("groq").configured).toBe(true);
+  });
+
+  it("selects the default from AI_PROVIDER and falls back on garbage", () => {
+    vi.stubEnv("AI_PROVIDER", "groq");
+    expect(resolveProviderId()).toBe("groq");
+    vi.stubEnv("AI_PROVIDER", "not-a-provider");
+    expect(resolveProviderId()).toBe("ollama");
+  });
+
+  it("normalises base URLs and honours Ollama env overrides", () => {
+    vi.stubEnv("OLLAMA_BASE_URL", "http://example.test:8080/v1/");
+    vi.stubEnv("OLLAMA_MODEL", "llama3.1:8b");
+    const p = resolveProvider("ollama");
+    expect(p.baseUrl).toBe("http://example.test:8080/v1");
+    expect(p.model).toBe("llama3.1:8b");
+  });
+
+  it("reports readiness without leaking keys", () => {
+    vi.stubEnv("GEMINI_API_KEY", "secret");
+    vi.stubEnv("GROQ_API_KEY", "");
+    const statuses = providerStatuses();
+    expect(statuses).toHaveLength(3);
+    const gemini = statuses.find((s) => s.id === "gemini");
+    const groq = statuses.find((s) => s.id === "groq");
+    expect(gemini?.ready).toBe(true);
+    expect(groq?.ready).toBe(false);
+    expect(JSON.stringify(statuses)).not.toContain("secret");
   });
 });
 

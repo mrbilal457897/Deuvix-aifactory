@@ -21,6 +21,8 @@ const bodySchema = z.object({
     .min(1)
     .max(24),
   inputMode: z.enum(["text", "voice"]).optional(),
+  /** Which LLM provider to use; validated against the built-in allowlist. */
+  provider: z.enum(["gemini", "groq", "ollama"]).optional(),
   /** Reviewed voice transcript; shown to the model as the user's turn. */
   transcript: z.string().max(8000).optional(),
 });
@@ -100,7 +102,7 @@ export async function POST(request: Request) {
   }
 
   // Fail fast with a clean signal instead of a broken stream.
-  const health = await checkLlmHealth();
+  const health = await checkLlmHealth(body.provider);
   if (!health.ok) {
     return NextResponse.json({ error: "AI offline", health }, { status: 503 });
   }
@@ -113,6 +115,7 @@ export async function POST(request: Request) {
     messages,
     ctx: auth.ctx,
     inputMode: body.inputMode ?? "text",
+    provider: body.provider,
     prompt: last.content,
     transcript: body.transcript,
     signal: request.signal,

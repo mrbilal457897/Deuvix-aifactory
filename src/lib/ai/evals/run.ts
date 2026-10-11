@@ -38,11 +38,11 @@ function withTimeout<T>(promise: Promise<T>, ms: number): Promise<T> {
   });
 }
 
-async function runCase(testCase: EvalCase, timeoutMs: number): Promise<CapturedRun> {
+async function runCase(testCase: EvalCase, timeoutMs: number, provider?: string): Promise<CapturedRun> {
   try {
     const result = await withTimeout(
       generateText({
-        model: getModel(),
+        model: getModel(provider),
         system: buildSystemPrompt(EVAL_CTX),
         prompt: testCase.prompt,
         tools: buildTools(EVAL_CTX),
@@ -65,9 +65,11 @@ async function runCase(testCase: EvalCase, timeoutMs: number): Promise<CapturedR
 export async function runEvals(options: {
   filter?: string;
   timeoutMs?: number;
+  /** Which LLM provider to run against (defaults to AI_PROVIDER / Ollama). */
+  provider?: string;
   onResult?: (result: CaseResult) => void;
 } = {}): Promise<EvalSummary> {
-  const health = await checkLlmHealth();
+  const health = await checkLlmHealth(options.provider);
   if (!health.ok) {
     return { reachable: false, model: health.model, results: [], passed: 0, failed: 0 };
   }
@@ -78,7 +80,7 @@ export async function runEvals(options: {
 
   const results: CaseResult[] = [];
   for (const testCase of cases) {
-    const result = scoreCase(testCase, await runCase(testCase, options.timeoutMs ?? 60_000));
+    const result = scoreCase(testCase, await runCase(testCase, options.timeoutMs ?? 60_000, options.provider));
     results.push(result);
     options.onResult?.(result);
   }

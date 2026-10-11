@@ -38,14 +38,29 @@ export interface PendingAction {
   args: unknown;
 }
 
+export type AgentProviderId = "gemini" | "groq" | "ollama";
+
+export interface AgentProviderStatus {
+  id: AgentProviderId;
+  label: string;
+  model: string;
+  ready: boolean;
+  requiresKey: boolean;
+  where: string;
+}
+
 export interface AgentHealth {
   ok: boolean;
+  provider?: string;
+  label?: string;
   model?: string;
   baseUrl?: string;
   latencyMs?: number;
+  configured?: boolean;
   error?: string;
   modelMissing?: boolean;
   modelsSeen?: string[];
+  providers?: AgentProviderStatus[];
   stt?: {
     ok: boolean;
     configured: boolean;
@@ -65,6 +80,17 @@ export interface AgentHealth {
 
 const MAX_INPUT = 4000;
 const HISTORY_WINDOW = 12;
+const PROVIDER_KEY = "deux.admin-agent.provider";
+
+function readStoredProvider(): AgentProviderId {
+  try {
+    const raw = localStorage.getItem(PROVIDER_KEY);
+    if (raw === "gemini" || raw === "groq" || raw === "ollama") return raw;
+  } catch {
+    // localStorage may be unavailable (private mode); fall through.
+  }
+  return "ollama";
+}
 
 let idCounter = 0;
 function nextId(): string {
@@ -111,9 +137,12 @@ function describeAction(toolName: string, result: unknown): string {
 }
 
 /** Module-level so the mount effect only registers a callback, not a setState. */
-async function fetchHealth(): Promise<AgentHealth> {
+async function fetchHealth(provider?: AgentProviderId | null): Promise<AgentHealth> {
   try {
-    const res = await fetch("/api/admin/agent/health", { cache: "no-store" });
+    const url = provider
+      ? `/api/admin/agent/health?provider=${encodeURIComponent(provider)}`
+      : "/api/admin/agent/health";
+    const res = await fetch(url, { cache: "no-store" });
     const data = (await res.json().catch(() => null)) as AgentHealth | null;
     if (res.ok && data) return data;
     return {
@@ -132,20 +161,50 @@ export function useAdminAgent() {
   const [error, setError] = useState<string | null>(null);
   const [health, setHealth] = useState<AgentHealth | null>(null);
   const [pending, setPending] = useState<PendingAction[]>([]);
+  const [provider, setProvider] = useState<AgentProviderId>(readStoredProvider);
 
   const abortRef = useRef<AbortController | null>(null);
 
   /** Button-triggered recheck: clears the last result first, so the spinner shows. */
   const checkHealth = useCallback(() => {
     setHealth(null);
-    void fetchHealth().then(setHealth);
+    void fetchHealth(provider).then(setHealth);
+  }, [provider]);
+
+  /** Switches the active LLM backend and re-probes it. */
+  const selectProvider = useCallback((id: AgentProviderId) => {
+    setProvider(id);
+    try {
+      localStorage.setItem(PROVIDER_KEY, id);
+    } catch {
+      // Ignore storage failures; the choice still applies for this session.
+    }
+    setHealth(null);
+    void fetchHealth(id).then(setHealth);
   }, []);
 
   useEffect(() => {
     let active = true;
-    void fetchHealth().then((h) => {
-      if (active) setHealth(h);
-    });
+    void (async () => {
+      const chosen = readStoredProvider();
+      const h = await fetchHealth(chosen);
+      if (!active) return;
+      setHealth(h);
+      // If the saved backend is unusable but another has a key, hop to it once.
+      if (!h.ok) {
+        const ready = h.providers?.find((p) => p.ready && p.id !== chosen);
+        if (ready) {
+          setProvider(ready.id);
+          try {
+            localStorage.setItem(PROVIDER_KEY, ready.id);
+          } catch {
+            // Ignore storage failures.
+          }
+          const next = await fetchHealth(ready.id);
+          if (active) setHealth(next);
+        }
+      }
+    })();
     return () => {
       active = false;
     };
@@ -246,7 +305,7 @@ export function useAdminAgent() {
         const res = await fetch("/api/admin/agent", {
           method: "POST",
           headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ messages: history, inputMode: mode }),
+          body: JSON.stringify({ messages: history, inputMode: mode, provider }),
           signal: controller.signal,
         });
 
@@ -380,7 +439,7 @@ export function useAdminAgent() {
         setSending(false);
       }
     },
-    [messages, sending],
+    [messages, sending, provider],
   );
 
   return useMemo(
@@ -390,6 +449,8 @@ export function useAdminAgent() {
       error,
       health,
       pending,
+      provider,
+      providers: health?.providers ?? [],
       checkingHealth: health === null,
       send,
       transcribe,
@@ -398,6 +459,7 @@ export function useAdminAgent() {
       stop,
       reset,
       checkHealth,
+      selectProvider,
     }),
     [
       messages,
@@ -405,6 +467,7 @@ export function useAdminAgent() {
       error,
       health,
       pending,
+      provider,
       send,
       transcribe,
       confirmAction,
@@ -412,6 +475,7 @@ export function useAdminAgent() {
       stop,
       reset,
       checkHealth,
+      selectProvider,
     ],
   );
 }

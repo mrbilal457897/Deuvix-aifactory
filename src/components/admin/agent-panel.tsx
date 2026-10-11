@@ -25,7 +25,7 @@ import {
   SheetDescription,
 } from "@/components/ui/sheet";
 import { cn } from "@/lib/utils";
-import { useAdminAgent, type AgentMessage, type AgentToolTrace, type PendingAction } from "@/lib/ai/use-admin-agent";
+import { useAdminAgent, type AgentMessage, type AgentProviderId, type AgentToolTrace, type PendingAction } from "@/lib/ai/use-admin-agent";
 import { useVoiceRecorder } from "@/lib/ai/use-voice-recorder";
 import { useSpeech } from "@/lib/ai/use-speech";
 import {
@@ -193,6 +193,8 @@ export function AdminAgentPanel() {
     error,
     health,
     pending,
+    provider,
+    providers,
     checkingHealth,
     send,
     transcribe,
@@ -201,6 +203,7 @@ export function AdminAgentPanel() {
     stop,
     reset,
     checkHealth,
+    selectProvider,
   } = useAdminAgent();
   const speech = useSpeech(Boolean(health?.tts?.configured));
   const [speakingId, setSpeakingId] = useState<string | null>(null);
@@ -269,6 +272,28 @@ export function AdminAgentPanel() {
             <SheetDescription className="text-xs">
               Ask about leads, bookings, contacts, projects, blog and FAQs. Writes are proposed and need your confirmation.
             </SheetDescription>
+            {providers.length > 0 && (
+              <div className="mt-2 flex items-center gap-2">
+                <span className="text-[11px] text-muted-foreground">Model</span>
+                <select
+                  value={provider}
+                  onChange={(e) => selectProvider(e.target.value as AgentProviderId)}
+                  aria-label="LLM provider"
+                  className="h-8 rounded-lg border border-border bg-card px-2 text-xs text-foreground outline-none disabled:opacity-50"
+                  disabled={sending}
+                >
+                  {providers.map((p) => (
+                    <option key={p.id} value={p.id}>
+                      {p.label}
+                      {p.ready ? "" : " — no key"}
+                    </option>
+                  ))}
+                </select>
+                {health?.model && (
+                  <span className="truncate text-[11px] text-muted-foreground">{health.model}</span>
+                )}
+              </div>
+            )}
           </SheetHeader>
 
           {offline && (
@@ -277,7 +302,7 @@ export function AdminAgentPanel() {
               <div className="flex-1">
                 <p className="font-medium">AI offline</p>
                 <p className="text-muted-foreground">
-                  {health?.error || "Start the local model server (Ollama) and retry."}
+                  {health?.error || "Start the selected model provider and retry."}
                 </p>
               </div>
               <Button

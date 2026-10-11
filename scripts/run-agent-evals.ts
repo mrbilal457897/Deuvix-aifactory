@@ -8,6 +8,8 @@
  * If the model server is unreachable the run is SKIPPED (exit 0) with a clear
  * message, so this is safe to wire into CI without a local Ollama.
  *
+ * Set AI_PROVIDER=gemini|groq|ollama to choose the backend (defaults to Ollama).
+ *
  * The eval modules are imported dynamically, AFTER loadEnvConfig(), because some
  * of them create a Supabase client at import time and would otherwise run before
  * .env.local is read.
@@ -21,13 +23,15 @@ async function main() {
   const { runEvals } = await import("@/lib/ai/evals/run");
 
   const filter = process.argv[2];
+  const provider = process.env.AI_PROVIDER?.trim() || undefined;
   const target = filter ? CASES.filter((c) => c.id.includes(filter) || c.lang === filter) : CASES;
   console.log(
-    `Running ${target.length}/${CASES.length} admin-agent evals${filter ? ` (filter: ${filter})` : ""}…\n`,
+    `Running ${target.length}/${CASES.length} admin-agent evals${filter ? ` (filter: ${filter})` : ""}${provider ? ` on ${provider}` : ""}…\n`,
   );
 
   const summary = await runEvals({
     filter,
+    provider,
     onResult: (r) => {
       const line = `${r.pass ? "PASS" : "FAIL"}  ${r.id.padEnd(24)} [${r.toolNames.join(", ") || "no tools"}]`;
       console.log(r.pass ? line : `${line}\n      -> ${r.failures.join("; ")}`);
@@ -35,7 +39,7 @@ async function main() {
   });
 
   if (!summary.reachable) {
-    console.error("\nModel server unreachable — evals skipped. Start Ollama (or set LLM_BASE_URL) and retry.");
+    console.error("\nModel provider unreachable or unconfigured — evals skipped. Set AI_PROVIDER and its key, or start Ollama, and retry.");
     process.exit(0);
   }
 
