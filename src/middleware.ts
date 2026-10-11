@@ -82,7 +82,11 @@ export async function middleware(request: NextRequest) {
   // Bookings admin has its own credential pair, checked before the
   // next-auth gate so these routes do not need a logged-in session.
   const isBookingsAdmin = pathname === "/admin" || pathname.startsWith("/admin/");
-  const isBookingsAdminApi = pathname.startsWith("/api/admin");
+  // The AI agent API also lives under /api/admin, but it is guarded by next-auth
+  // admin sessions inside its own routes (requireAdmin) — NOT by the bookings
+  // Basic auth. Exempt it so the dashboard does not raise a browser login prompt.
+  const isAgentApi = pathname.startsWith("/api/admin/agent");
+  const isBookingsAdminApi = pathname.startsWith("/api/admin") && !isAgentApi;
   if (isBookingsAdmin || isBookingsAdminApi) {
     return withBasicAuth(request);
   }
