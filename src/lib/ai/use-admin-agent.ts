@@ -39,6 +39,13 @@ export interface AgentHealth {
   error?: string;
   modelMissing?: boolean;
   modelsSeen?: string[];
+  stt?: {
+    ok: boolean;
+    configured: boolean;
+    baseUrl?: string;
+    model?: string;
+    error?: string;
+  };
 }
 
 const MAX_INPUT = 4000;
@@ -106,6 +113,17 @@ export function useAdminAgent() {
     setMessages([]);
     setError(null);
   }, [stop]);
+
+  /** Uploads a recording and returns the transcript. Never sends it. */
+  const transcribe = useCallback(async (blob: Blob, language: string): Promise<string> => {
+    const form = new FormData();
+    form.append("audio", blob, "recording.webm");
+    form.append("language", language);
+    const res = await fetch("/api/admin/agent/transcribe", { method: "POST", body: form });
+    const data = (await res.json().catch(() => null)) as { text?: string; error?: string } | null;
+    if (!res.ok) throw new Error(data?.error || "Transcription failed.");
+    return String(data?.text || "");
+  }, []);
 
   const send = useCallback(
     async (text: string) => {
@@ -272,11 +290,12 @@ export function useAdminAgent() {
       health,
       checkingHealth: health === null,
       send,
+      transcribe,
       stop,
       reset,
       checkHealth,
     }),
-    [messages, sending, error, health, send, stop, reset, checkHealth],
+    [messages, sending, error, health, send, transcribe, stop, reset, checkHealth],
   );
 }
 

@@ -61,4 +61,33 @@ export const aiConfig = {
   get maxToolResultChars() {
     return num("AI_MAX_TOOL_RESULT_CHARS", 12_000);
   },
+
+  /**
+   * Voice input is opt-in: it is only "configured" when STT_BASE_URL is set, so
+   * deployments without a speech server never show a voice UI or an error.
+   */
+  get sttEnabled() {
+    return str("STT_BASE_URL", "").length > 0;
+  },
+  get sttBaseUrl() {
+    return str("STT_BASE_URL", "http://localhost:9000").replace(/\/+$/, "");
+  },
+  /** Optional model override forwarded to the speech server. */
+  get sttModel() {
+    return str("STT_MODEL", "");
+  },
+  get sttApiKey() {
+    return process.env.STT_API_KEY?.trim() || "";
+  },
+  get sttTimeoutMs() {
+    return num("STT_TIMEOUT_MS", 120_000);
+  },
+  /** Hard cap on an uploaded recording, enforced before buffering it. */
+  get sttMaxUploadBytes() {
+    return num("STT_MAX_UPLOAD_BYTES", 8_000_000);
+  },
+  /** Client-side recording cap; a longer recording auto-stops. */
+  get sttMaxSeconds() {
+    return num("STT_MAX_SECONDS", 120);
+  },
 } as const;

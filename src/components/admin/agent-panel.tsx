@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useRef, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import {
   Sparkles,
   Send,
@@ -11,6 +11,7 @@ import {
   X,
   AlertTriangle,
   RefreshCw,
+  Mic,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
@@ -23,6 +24,12 @@ import {
 } from "@/components/ui/sheet";
 import { cn } from "@/lib/utils";
 import { useAdminAgent, type AgentMessage, type AgentToolTrace } from "@/lib/ai/use-admin-agent";
+import { useVoiceRecorder } from "@/lib/ai/use-voice-recorder";
+import {
+  VOICE_LANGUAGES,
+  VOICE_MAX_SECONDS,
+  type VoiceLanguage,
+} from "@/lib/ai/voice-languages";
 
 const EXAMPLES = [
   "How many leads do we have, and who are the newest?",
@@ -111,9 +118,34 @@ function MessageBubble({ message }: { message: AgentMessage }) {
 export function AdminAgentPanel() {
   const [open, setOpen] = useState(false);
   const [input, setInput] = useState("");
-  const { messages, sending, error, health, checkingHealth, send, stop, reset, checkHealth } =
+  const [language, setLanguage] = useState<VoiceLanguage>("auto");
+  const [transcribing, setTranscribing] = useState(false);
+  const [voiceError, setVoiceError] = useState<string | null>(null);
+  const { messages, sending, error, health, checkingHealth, send, transcribe, stop, reset, checkHealth } =
     useAdminAgent();
   const scrollRef = useRef<HTMLDivElement | null>(null);
+
+  const handleAudio = useCallback(
+    async (blob: Blob) => {
+      setVoiceError(null);
+      setTranscribing(true);
+      try {
+        const text = await transcribe(blob, language);
+        if (text) setInput((prev) => (prev ? `${prev} ${text}` : text));
+      } catch (err) {
+        setVoiceError(err instanceof Error ? err.message : "Transcription failed.");
+      } finally {
+        setTranscribing(false);
+      }
+    },
+    [transcribe, language],
+  );
+
+  const recorder = useVoiceRecorder(VOICE_MAX_SECONDS, handleAudio);
+
+  const sttConfigured = Boolean(health?.stt?.configured);
+  const sttOffline = sttConfigured && health?.stt?.ok === false;
+  const showVoice = recorder.supported && sttConfigured;
 
   useEffect(() => {
     if (open) scrollRef.current?.scrollTo({ top: scrollRef.current.scrollHeight });
@@ -200,7 +232,44 @@ export function AdminAgentPanel() {
           )}
 
           <div className="border-t border-border p-3">
+            {(recorder.recording || transcribing || voiceError || sttOffline) && (
+              <div
+                className={cn(
+                  "mb-2 flex items-center gap-1.5 text-[11px]",
+                  voiceError || sttOffline ? "text-destructive" : "text-muted-foreground",
+                )}
+              >
+                {voiceError || sttOffline ? (
+                  <AlertTriangle className="size-3" />
+                ) : (
+                  <Loader2 className="size-3 animate-spin" />
+                )}
+                <span>
+                  {voiceError ||
+                    (sttOffline
+                      ? "Voice offline — the speech service is unreachable."
+                      : transcribing
+                        ? "Transcribing…"
+                        : `Recording… ${recorder.seconds}s (tap stop to transcribe)`)}
+                </span>
+              </div>
+            )}
             <div className="flex items-end gap-2">
+              {showVoice && (
+                <select
+                  value={language}
+                  onChange={(e) => setLanguage(e.target.value as VoiceLanguage)}
+                  disabled={recorder.recording}
+                  aria-label="Transcription language"
+                  className="h-10 rounded-lg border border-border bg-card px-2 text-xs text-foreground outline-none disabled:opacity-50"
+                >
+                  {VOICE_LANGUAGES.map((l) => (
+                    <option key={l.code} value={l.code}>
+                      {l.label}
+                    </option>
+                  ))}
+                </select>
+              )}
               <Textarea
                 value={input}
                 onChange={(e) => setInput(e.target.value)}
@@ -216,6 +285,26 @@ export function AdminAgentPanel() {
                 className="max-h-32 min-h-10 resize-none"
                 disabled={sending}
               />
+              {showVoice && (
+                <Button
+                  size="icon"
+                  variant={recorder.recording ? "destructive" : "outline"}
+                  onClick={() => {
+                    if (recorder.recording) recorder.stop();
+                    else void recorder.start();
+                  }}
+                  disabled={sending || transcribing || sttOffline}
+                  aria-label={recorder.recording ? "Stop recording" : "Record voice input"}
+                >
+                  {transcribing ? (
+                    <Loader2 className="size-4 animate-spin" />
+                  ) : recorder.recording ? (
+                    <Square className="size-4" />
+                  ) : (
+                    <Mic className="size-4" />
+                  )}
+                </Button>
+              )}
               {sending ? (
                 <Button size="icon" variant="outline" onClick={stop} aria-label="Stop">
                   <Square className="size-4" />
