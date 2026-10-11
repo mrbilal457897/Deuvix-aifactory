@@ -7,6 +7,7 @@ import { listContacts } from "@/lib/contacts";
 import { countBookings, listBookings, parseBookingFilter, type BookingFilter } from "@/lib/bookings/queries";
 import { listFollowUps, type FollowUp } from "@/lib/follow-ups";
 import { countFollowUps } from "@/lib/crm";
+import { listRecentActions } from "@/lib/ai/audit";
 import { readSiteConfig } from "@/lib/site-config-server";
 import { supabase } from "@/lib/supabase";
 import { company } from "@config/company";
@@ -218,6 +219,21 @@ const listFollowUpsTool: ToolDefinition<{
   },
 };
 
+const listRecentActionsTool: ToolDefinition<{ limit?: number }> = {
+  name: "list_recent_actions",
+  description:
+    "List the most recent admin-agent interactions (prompt, tools used, outcome) from the audit log. Use to answer 'what have you done lately?' or to review past activity.",
+  risk: "read",
+  roles: ["admin"],
+  inputSchema: z.object({
+    limit: z.number().int().min(1).max(50).optional().describe("Max interactions to return (default 10, max 50)."),
+  }),
+  async execute({ limit }) {
+    const actions = await listRecentActions(limit ?? 10);
+    return { returned: actions.length, actions };
+  },
+};
+
 const listBookingsTool: ToolDefinition<{ filter?: BookingFilter; q?: string; limit?: number }> = {
   name: "list_bookings",
   description:
@@ -400,6 +416,7 @@ export const readTools: ToolDefinition[] = [
   defineTool(getLeadTool),
   defineTool(listContactsTool),
   defineTool(listFollowUpsTool),
+  defineTool(listRecentActionsTool),
   defineTool(listBookingsTool),
   defineTool(listProjectsTool),
   defineTool(listBlogPostsTool),

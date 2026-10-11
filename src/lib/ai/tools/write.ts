@@ -1,6 +1,6 @@
 import { z } from "zod";
 import { ToolExecutionError, defineTool, type ToolDefinition } from "./types";
-import { getLead, updateLeadNotes, updateLeadPriority, updateLeadStatus, type Lead } from "@/lib/leads";
+import { getLead, createLead, updateLeadNotes, updateLeadPriority, updateLeadStatus, type Lead } from "@/lib/leads";
 import { scheduleFollowUp, markFollowUpStatus } from "@/lib/follow-ups";
 
 /**
@@ -124,10 +124,47 @@ const resolveFollowUpTool: ToolDefinition<{
   },
 };
 
+const createLeadTool: ToolDefinition<{
+  name: string;
+  email: string;
+  phone?: string;
+  service?: string;
+  message?: string;
+  status?: Lead["status"];
+  priority?: Lead["priority"];
+}> = {
+  name: "create_lead",
+  description:
+    "Create a new CRM lead from details the admin gives (for example a phone enquiry). Prefer linking an existing contact when one already exists. This is a WRITE: it is proposed to the admin and only runs after they confirm.",
+  risk: "write",
+  roles: ["admin"],
+  inputSchema: z.object({
+    name: z.string().min(1).max(200).describe("The lead's full name."),
+    email: z.string().email().max(200).describe("The lead's email address."),
+    phone: z.string().max(40).optional().describe("Optional phone/WhatsApp number."),
+    service: z.string().max(200).optional().describe("Which service they are interested in."),
+    message: z.string().max(2000).optional().describe("Optional context or the enquiry text."),
+    status: z.enum(["hot", "warm", "cold"]).optional().describe("Initial status (default warm)."),
+    priority: z.enum(["high", "medium", "low"]).optional().describe("Initial priority (default medium)."),
+  }),
+  execute: async (input, ctx) => {
+    const lead = await createLead(input);
+    return {
+      leadId: lead.id,
+      name: lead.name,
+      email: lead.email,
+      status: lead.status,
+      priority: lead.priority,
+      createdBy: ctx.adminEmail,
+    };
+  },
+};
+
 export const writeTools: ToolDefinition[] = [
   defineTool(updateLeadStatusTool),
   defineTool(updateLeadPriorityTool),
   defineTool(updateLeadNotesTool),
   defineTool(scheduleFollowUpTool),
   defineTool(resolveFollowUpTool),
+  defineTool(createLeadTool),
 ];

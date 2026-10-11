@@ -1,3 +1,4 @@
+import { desc } from "drizzle-orm";
 import { getDb, isDatabaseConfigured } from "@/lib/db";
 import { adminAgentAudit, type AdminAgentToolCall } from "@/lib/db/schema";
 import { supabase } from "@/lib/supabase";
@@ -94,4 +95,46 @@ export async function recordAudit(entry: AuditEntry): Promise<void> {
   } catch (err) {
     console.warn("[ai-audit] fallback agent_logs insert failed:", err instanceof Error ? err.message : err);
   }
+}
+
+export interface RecentAction {
+  id: string;
+  adminEmail: string | null;
+  inputMode: string;
+  prompt: string | null;
+  skillsLoaded: string[];
+  toolCalls: Array<Pick<AdminAgentToolCall, "name" | "risk" | "status" | "error">>;
+  status: string;
+  durationMs: number | null;
+  createdAt: string;
+}
+
+/**
+ * Reads the most recent agent interactions for the self-audit read tool.
+ * Returns [] when the database is not configured so the tool degrades quietly.
+ */
+export async function listRecentActions(limit = 10): Promise<RecentAction[]> {
+  if (!isDatabaseConfigured()) return [];
+  const rows = await getDb()
+    .select()
+    .from(adminAgentAudit)
+    .orderBy(desc(adminAgentAudit.createdAt))
+    .limit(Math.min(Math.max(limit, 1), 50));
+
+  return rows.map((row) => ({
+    id: row.id,
+    adminEmail: row.adminEmail,
+    inputMode: row.inputMode,
+    prompt: row.prompt ? row.prompt.slice(0, 200) : null,
+    skillsLoaded: row.skillsLoaded,
+    toolCalls: row.toolCalls.map((tc) => ({
+      name: tc.name,
+      risk: tc.risk,
+      status: tc.status,
+      error: tc.error?.slice(0, 200),
+    })),
+    status: row.status,
+    durationMs: row.durationMs,
+    createdAt: row.createdAt.toISOString(),
+  }));
 }

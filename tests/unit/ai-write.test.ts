@@ -17,6 +17,7 @@ describe("write tool gating", () => {
     "update_lead_notes",
     "schedule_follow_up",
     "resolve_follow_up",
+    "create_lead",
   ];
 
   it("classifies every write tool as a write", () => {

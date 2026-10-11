@@ -87,6 +87,7 @@ function describeAction(toolName: string, result: unknown): string {
         noteCharacters?: number;
         updated?: number;
         note?: string;
+        email?: string;
       }
     | null;
   switch (toolName) {
@@ -102,6 +103,8 @@ function describeAction(toolName: string, result: unknown): string {
       return r?.updated === 0
         ? "Nothing to resolve — no follow-ups matched those ids."
         : `Done — marked ${r?.updated ?? 0} follow-up(s) as "${r?.status ?? "done"}".`;
+    case "create_lead":
+      return `Done — created lead ${r?.leadId ?? ""} for ${r?.email ?? "the contact"}.`;
     default:
       return "Done — the action was applied.";
   }

@@ -39,6 +39,9 @@ disagree.
   and a short subject/body.
 - To see what is queued, call `list_follow_ups`; to clear a reminder once handled,
   propose `resolve_follow_up` (done/skipped).
+- When the admin dictates a brand-new enquiry that has no contact record yet,
+  propose `create_lead` (name + email required); prefer an existing contact when
+  one already exists.
 - Say which lead, from what to what, and why, in one line. Do not claim it is done.
 - If a lead is already in the target status/priority, say so instead of proposing a no-op.
 

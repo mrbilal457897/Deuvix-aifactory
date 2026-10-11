@@ -74,6 +74,34 @@ export async function updateLeadNotes(id: string, notes: string): Promise<void> 
   await supabase.from("leads").update({ notes }).eq("id", id);
 }
 
+export interface NewLeadInput {
+  name: string;
+  email: string;
+  phone?: string;
+  service?: string;
+  message?: string;
+  status?: Lead["status"];
+  priority?: Lead["priority"];
+}
+
+/** Creates a lead from details an admin supplies directly (no contact form). */
+export async function createLead(input: NewLeadInput): Promise<Lead> {
+  const lead: Lead = {
+    id: `lead_${crypto.randomUUID()}`,
+    name: input.name.trim(),
+    email: input.email.trim(),
+    phone: (input.phone ?? "").trim(),
+    service: (input.service ?? "").trim(),
+    message: (input.message ?? "").trim(),
+    score: 0,
+    status: input.status ?? "warm",
+    priority: input.priority ?? "medium",
+    createdAt: new Date().toISOString(),
+  };
+  await saveLead(lead);
+  return lead;
+}
+
 export function leadFromContact(contact: Contact, score: number, status: Lead["status"], priority: Lead["priority"]): Lead {
   return {
     id: `lead_${contact.id}`,
