@@ -1,30 +1,15 @@
 import { NextResponse } from "next/server";
 import { supabase } from "@/lib/supabase";
+import { deleteMedia, listMedia } from "@/lib/media";
 
-interface MediaItem {
-  id: string;
-  filename: string;
-  url: string;
-  uploadedAt: string;
-}
-
-function rowToMedia(row: Record<string, unknown>): MediaItem {
-  return {
-    id: row.id as string,
-    filename: row.filename as string,
-    url: row.url as string,
-    uploadedAt: row.uploaded_at as string,
-  };
-}
-
-export async function GET() {
-  const { data } = await supabase.from("media").select("*").order("uploaded_at", { ascending: false });
-  if (!data) return NextResponse.json([]);
-  return NextResponse.json(data.map(rowToMedia));
-}
+const MAX_MEDIA = 1000;
 
 const ALLOWED_TYPES = new Set(["image/jpeg", "image/png", "image/webp", "image/avif"]);
 const MAX_UPLOAD_BYTES = 10 * 1024 * 1024;
+
+export async function GET() {
+  return NextResponse.json(await listMedia(MAX_MEDIA));
+}
 
 export async function POST(request: Request) {
   const formData = await request.formData();
@@ -63,7 +48,10 @@ export async function POST(request: Request) {
 
   await supabase.from("media").insert(item);
 
-  return NextResponse.json(rowToMedia(item), { status: 201 });
+  return NextResponse.json(
+    { id: item.id, filename: item.filename, url: item.url, uploadedAt: item.uploaded_at },
+    { status: 201 },
+  );
 }
 
 export async function DELETE(request: Request) {
@@ -71,11 +59,8 @@ export async function DELETE(request: Request) {
   const id = searchParams.get("id");
   if (!id) return NextResponse.json({ error: "Missing id" }, { status: 400 });
 
-  const { data: item } = await supabase.from("media").select("filename").eq("id", id).single();
-  if (!item) return NextResponse.json({ error: "Not found" }, { status: 404 });
-
-  await supabase.storage.from("deux").remove([item.filename]);
-  await supabase.from("media").delete().eq("id", id);
+  const ok = await deleteMedia(id);
+  if (!ok) return NextResponse.json({ error: "Not found" }, { status: 404 });
 
   return NextResponse.json({ success: true });
 }

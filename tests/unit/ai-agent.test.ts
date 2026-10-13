@@ -29,6 +29,9 @@ const READ_TOOL_NAMES = [
   "list_recent_actions",
   "list_bookings",
   "list_projects",
+  "list_media",
+  "list_users",
+  "list_image_slots",
   "list_blog_posts",
   "list_faqs",
   "get_company_info",
@@ -133,7 +136,9 @@ describe("ai skills loader", () => {
 
   it("loads the phase-3 playbook skills", () => {
     const names = listSkills().map((s) => s.name);
-    expect(names).toEqual(expect.arrayContaining(["lead-triage", "blog-writing", "faq-maintenance"]));
+    expect(names).toEqual(
+      expect.arrayContaining(["lead-triage", "blog-writing", "faq-maintenance", "admin-dashboard"]),
+    );
   });
 
   it("advertises only the index (name + description) in the prompt", () => {
@@ -158,16 +163,22 @@ describe("ai tool registry", () => {
     for (const name of READ_TOOL_NAMES) expect(names).toContain(name);
   });
 
-  it("enables READ tools plus confirmation-gated WRITE tools", () => {
-    expect(ENABLED_RISKS).toEqual(["read", "write"]);
+  it("enables READ tools plus confirmation-gated WRITE and DESTRUCTIVE tools", () => {
+    expect(ENABLED_RISKS).toEqual(["read", "write", "destructive"]);
     expect(enabledDefinitions().some((t) => t.risk === "read")).toBe(true);
     expect(enabledDefinitions().some((t) => t.risk === "write")).toBe(true);
-    expect(enabledDefinitions().every((t) => t.risk === "read" || t.risk === "write")).toBe(true);
+    expect(enabledDefinitions().some((t) => t.risk === "destructive")).toBe(true);
+    expect(
+      enabledDefinitions().every(
+        (t) => t.risk === "read" || t.risk === "write" || t.risk === "destructive",
+      ),
+    ).toBe(true);
   });
 
   it("resolves a tool's risk class and returns undefined for unknown tools", () => {
     expect(getToolRisk("list_leads")).toBe("read");
     expect(getToolRisk("update_lead_status")).toBe("write");
+    expect(getToolRisk("delete_project")).toBe("destructive");
     expect(getToolRisk("delete_everything")).toBeUndefined();
   });
 

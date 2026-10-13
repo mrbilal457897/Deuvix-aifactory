@@ -18,7 +18,12 @@ describe("write tool gating", () => {
     "schedule_follow_up",
     "resolve_follow_up",
     "create_lead",
+    "create_project",
+    "update_project",
+    "set_site_image",
   ];
+
+  const DESTRUCTIVE_TOOLS = ["delete_project", "delete_media", "delete_user"];
 
   it("classifies every write tool as a write", () => {
     for (const name of WRITE_TOOLS) {
@@ -29,9 +34,15 @@ describe("write tool gating", () => {
     expect(isWriteRisk("read")).toBe(false);
   });
 
+  it("classifies every delete tool as destructive", () => {
+    for (const name of DESTRUCTIVE_TOOLS) {
+      expect(getToolRisk(name), name).toBe("destructive");
+    }
+  });
+
   it("never performs writes from the model-facing toolset", async () => {
     const tools = buildTools(ctx);
-    for (const name of WRITE_TOOLS) {
+    for (const name of [...WRITE_TOOLS, ...DESTRUCTIVE_TOOLS]) {
       const t = tools[name] as unknown as {
         execute: (input: unknown, opts?: unknown) => Promise<unknown>;
       };
@@ -58,5 +69,21 @@ describe("write tool gating", () => {
     await expect(
       executeTool("schedule_follow_up", { leadId: "x", dueInHours: -1, subject: "", body: "" }, ctx),
     ).rejects.toBeInstanceOf(ToolExecutionError);
+  });
+
+  it("validates the new dashboard write tools before executing", async () => {
+    await expect(executeTool("create_project", { title: "", description: "" }, ctx)).rejects.toMatchObject({
+      status: 400,
+    });
+    await expect(executeTool("update_project", { id: "p1" }, ctx)).rejects.toMatchObject({ status: 400 });
+    await expect(
+      executeTool("update_project", { id: "p1", image: "not a url" }, ctx),
+    ).rejects.toMatchObject({ status: 400 });
+    await expect(
+      executeTool("set_site_image", { slot: "not-a-slot", imageUrl: "/images/x.png" }, ctx),
+    ).rejects.toMatchObject({ status: 400 });
+    await expect(
+      executeTool("set_site_image", { slot: "logo", imageUrl: "javascript:alert(1)" }, ctx),
+    ).rejects.toMatchObject({ status: 400 });
   });
 });

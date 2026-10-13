@@ -9,7 +9,10 @@ import { listFollowUps, type FollowUp } from "@/lib/follow-ups";
 import { countFollowUps } from "@/lib/crm";
 import { listRecentActions } from "@/lib/ai/audit";
 import { readSiteConfig } from "@/lib/site-config-server";
-import { supabase } from "@/lib/supabase";
+import { SLOT_KEYS, SLOT_LABELS } from "@/lib/site-config";
+import { listProjects as queryProjects } from "@/lib/projects";
+import { listMedia as queryMedia } from "@/lib/media";
+import { getAllUsers } from "@/lib/users";
 import { company } from "@config/company";
 import { posts } from "@/app/(marketing)/blog/posts";
 import { listSkills, loadSkill } from "@/lib/ai/skills";
@@ -49,21 +52,16 @@ interface ProjectRow {
 }
 
 async function fetchProjects(limit: number): Promise<ProjectRow[]> {
-  const { data, error } = await supabase
-    .from("projects")
-    .select("*")
-    .order("created_at", { ascending: false })
-    .limit(limit);
-  if (error || !data) return [];
-  return data.map((row: Record<string, unknown>) => ({
-    id: row.id as string,
-    title: row.title as string,
-    description: clamp(row.description as string, 300),
-    category: row.category as string,
-    status: row.status as string,
-    image: (row.image as string) || "",
-    url: (row.url as string) || "",
-    createdAt: iso(row.created_at as string),
+  const rows = await queryProjects(limit);
+  return rows.map((p) => ({
+    id: p.id,
+    title: p.title,
+    description: clamp(p.description, 300),
+    category: p.category,
+    status: p.status,
+    image: p.image || "",
+    url: p.url || "",
+    createdAt: iso(p.createdAt),
   }));
 }
 
@@ -288,6 +286,82 @@ const listProjectsTool: ToolDefinition<{ limit?: number }> = {
   },
 };
 
+const listMediaTool: ToolDefinition<{ q?: string; limit?: number }> = {
+  name: "list_media",
+  description:
+    "List images in the media library, newest first, with the public URL to use when attaching an image to a project or a site image slot.",
+  risk: "read",
+  roles: ["admin"],
+  inputSchema: z.object({
+    q: z.string().max(120).optional().describe("Search term matched against the filename or URL."),
+    limit: z.number().int().min(1).max(100).optional().describe("Max images to return (default 30)."),
+  }),
+  async execute({ q, limit }) {
+    const all = await queryMedia(200);
+    const needle = q?.trim().toLowerCase();
+    const filtered = needle
+      ? all.filter((m) => `${m.filename} ${m.url}`.toLowerCase().includes(needle))
+      : all;
+    const capped = filtered.slice(0, limit ?? 30);
+    return {
+      total: filtered.length,
+      returned: capped.length,
+      media: capped.map((m) => ({ id: m.id, filename: m.filename, url: m.url, uploadedAt: iso(m.uploadedAt) })),
+    };
+  },
+};
+
+const listUsersTool: ToolDefinition<{ q?: string; limit?: number }> = {
+  name: "list_users",
+  description:
+    "List dashboard user accounts (name, email, role, provider, created date). Passwords are never returned. Use before delete_user.",
+  risk: "read",
+  roles: ["admin"],
+  inputSchema: z.object({
+    q: z.string().max(120).optional().describe("Search term matched against name or email."),
+    limit: z.number().int().min(1).max(100).optional().describe("Max users to return (default 50)."),
+  }),
+  async execute({ q, limit }) {
+    const all = await getAllUsers();
+    const needle = q?.trim().toLowerCase();
+    const filtered = needle
+      ? all.filter((u) => `${u.name} ${u.email}`.toLowerCase().includes(needle))
+      : all;
+    const capped = filtered.slice(0, limit ?? 50);
+    return {
+      total: filtered.length,
+      returned: capped.length,
+      users: capped.map((u) => ({
+        id: u.id,
+        name: u.name,
+        email: u.email,
+        role: u.role,
+        provider: u.provider,
+        createdAt: iso(u.createdAt),
+      })),
+    };
+  },
+};
+
+const listImageSlotsTool: ToolDefinition<Record<string, never>> = {
+  name: "list_image_slots",
+  description:
+    "List the site's fixed image slots (logo, hero background, team photos, etc.) and the image URL currently set for each. The slot keys returned here are what set_site_image expects.",
+  risk: "read",
+  roles: ["admin"],
+  inputSchema: z.object({}),
+  async execute() {
+    const config = await readSiteConfig();
+    return {
+      slots: SLOT_KEYS.map((slot) => ({
+        slot,
+        label: SLOT_LABELS[slot] || slot,
+        url: config[slot],
+      })),
+    };
+  },
+};
+
 const listBlogPostsTool: ToolDefinition<Record<string, never>> = {
   name: "list_blog_posts",
   description:
@@ -371,7 +445,7 @@ const getSiteStatsTool: ToolDefinition<Record<string, never>> = {
       listContacts(),
       listFollowUps(),
       countBookings(),
-      fetchProjects(1),
+      queryProjects(1000),
     ]);
     const faqCount = parseFaq(readDataFile("deux-faq.md")).length;
     return {
@@ -419,6 +493,9 @@ export const readTools: ToolDefinition[] = [
   defineTool(listRecentActionsTool),
   defineTool(listBookingsTool),
   defineTool(listProjectsTool),
+  defineTool(listMediaTool),
+  defineTool(listUsersTool),
+  defineTool(listImageSlotsTool),
   defineTool(listBlogPostsTool),
   defineTool(listFaqsTool),
   defineTool(getCompanyInfoTool),

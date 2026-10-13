@@ -43,8 +43,8 @@ import {
 const EXAMPLES = [
   "How many leads do we have, and who are the newest?",
   "Show upcoming bookings for this week.",
-  "Summarise the most recent contact messages.",
-  "List our blog posts by category.",
+  "List our portfolio projects and their status.",
+  "Add a project called... with a short description.",
 ];
 
 function ToolStatusIcon({ status }: { status: AgentToolTrace["status"] }) {
@@ -466,8 +466,8 @@ export function AdminAgentPanel() {
                           How can I help?
                         </h3>
                         <p className="text-sm text-muted-foreground">
-                          Ask about leads, bookings, contacts, projects, blog and FAQs. I can propose changes — you
-                          approve them.
+                          Ask about leads, bookings, contacts, projects, media, users, site
+                          images, blog and FAQs. I can propose changes — you approve them.
                         </p>
                       </div>
                       <div className="grid w-full max-w-md gap-2 sm:grid-cols-2">

@@ -14,7 +14,7 @@ export { ToolExecutionError };
 export const ALL_TOOLS: ToolDefinition[] = [...readTools, ...writeTools];
 
 /** Risk classes currently exposed to the model. */
-export const ENABLED_RISKS: readonly ToolRisk[] = ["read", "write"];
+export const ENABLED_RISKS: readonly ToolRisk[] = ["read", "write", "destructive"];
 
 /** Anything that is not a read must be confirmed before it can run. */
 export function isWriteRisk(risk: ToolRisk | undefined): boolean {
