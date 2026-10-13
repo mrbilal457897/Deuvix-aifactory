@@ -50,4 +50,22 @@ describe("chat configuration", () => {
     expect(chatConfig.topKRetrieval).toBeGreaterThan(0);
     expect(chatConfig.topKRetrieval).toBeLessThanOrEqual(12);
   });
+
+  it("falls back to the Google SDK key name, preferring GEMINI_API_KEY", () => {
+    const prevGemini = process.env.GEMINI_API_KEY;
+    const prevGoogle = process.env.GOOGLE_GENERATIVE_AI_API_KEY;
+    try {
+      delete process.env.GEMINI_API_KEY;
+      process.env.GOOGLE_GENERATIVE_AI_API_KEY = "  google-key  ";
+      expect(chatConfig.apiKey).toBe("google-key");
+
+      process.env.GEMINI_API_KEY = " gemini-key ";
+      expect(chatConfig.apiKey).toBe("gemini-key");
+    } finally {
+      if (prevGemini === undefined) delete process.env.GEMINI_API_KEY;
+      else process.env.GEMINI_API_KEY = prevGemini;
+      if (prevGoogle === undefined) delete process.env.GOOGLE_GENERATIVE_AI_API_KEY;
+      else process.env.GOOGLE_GENERATIVE_AI_API_KEY = prevGoogle;
+    }
+  });
 });

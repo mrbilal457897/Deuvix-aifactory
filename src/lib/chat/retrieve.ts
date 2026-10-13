@@ -7,7 +7,7 @@
 import { and, inArray, isNotNull, sql } from "drizzle-orm";
 import { getDb, isDatabaseConfigured } from "@/lib/db";
 import { chatConfig } from "./config";
-import { embedText } from "./gemini";
+import { embedText, ChatModelError, type ChatFailureKind } from "./gemini";
 import { kbChunks, type KbSource } from "@/lib/db/schema";
 
 export interface RetrievedChunk {
@@ -27,6 +27,8 @@ export interface RetrievalResult {
   /** Every URL present in the retrieved text — the only citable links. */
   urls: string[];
   error?: "no_index" | "model";
+  /** Which Gemini failure class caused `error: "model"` (auth, quota, …). */
+  errorKind?: ChatFailureKind;
 }
 
 interface Row {
@@ -52,10 +54,11 @@ export async function retrieve(
   let vector: number[];
   try {
     vector = await embedText(query);
-  } catch {
+  } catch (err) {
     // Quota/auth failures must not silently become "no answer found" — the
     // route turns this into a friendly model-error message instead.
-    return { ...empty, error: "model" };
+    const errorKind: ChatFailureKind = err instanceof ChatModelError ? err.kind : "model";
+    return { ...empty, error: "model", errorKind };
   }
 
   const literal = `[${vector.map((v) => (Number.isFinite(v) ? v : 0)).join(",")}]`;

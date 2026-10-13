@@ -287,7 +287,7 @@ export async function POST(request: Request) {
     }
 
     if (result.error === "model") {
-      logEvent("retrieval_error", { route });
+      logEvent("retrieval_error", { route, kind: result.errorKind ?? "unknown" });
       return sse([
         { type: "error", kind: "model", message: uiStrings.modelError },
         { type: "done" },

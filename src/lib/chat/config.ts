@@ -23,8 +23,19 @@ export const chatConfig = {
   get embeddingModel() {
     return str("GEMINI_EMBEDDING_MODEL", "gemini-embedding-001");
   },
+  /**
+   * The chat speaks to Gemini directly, so it needs a Google API key.
+   * Accept the same two names the admin agent does (providers.ts) — a key
+   * stored only as `GOOGLE_GENERATIVE_AI_API_KEY` (the common Google SDK name)
+   * used to leave the public chatbot broken while every other AI feature
+   * worked.
+   */
   get apiKey() {
-    return process.env.GEMINI_API_KEY || "";
+    return (
+      process.env.GEMINI_API_KEY?.trim() ||
+      process.env.GOOGLE_GENERATIVE_AI_API_KEY?.trim() ||
+      ""
+    );
   },
   get temperature() {
     // Hard ceiling: the spec forbids anything above 0.3.
