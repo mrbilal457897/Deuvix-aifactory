@@ -13,21 +13,35 @@ import {
 import { deleteMedia } from "@/lib/media";
 import { deleteUser, getAllUsers, isOwner } from "@/lib/users";
 import { readSiteConfig, writeSiteConfig } from "@/lib/site-config-server";
-import { SLOT_KEYS, SLOT_LABELS, type SiteConfig } from "@/lib/site-config";
+import { SLOT_KEYS, SLOT_LABELS } from "@/lib/site-config";
 
-/** An absolute http(s) image URL or a site-relative path. */
+/**
+ * An absolute http(s) image URL, a site-relative path, or "" to clear it.
+ *
+ * Kept as a plain string on purpose: a `z.union([z.literal(""), ...])` becomes an
+ * `any_of` with an empty enum, which the Google provider rejects with a 400
+ * ("enum[0]: cannot be empty"), failing the entire request. Format is validated
+ * in `execute` via `assertImageUrl` instead.
+ */
 const imageUrlSchema = z
   .string()
   .trim()
   .max(2048)
-  .refine(
-    (v) => /^(https?:\/\/|\/)/i.test(v),
-    "Must be an http(s) URL or a path starting with '/'.",
-  );
+  .describe("An http(s) URL, a site path starting with '/', or an empty string to clear it.");
 
-const optionalImageUrl = z.union([z.literal(""), imageUrlSchema]).optional();
+const optionalImageUrl = imageUrlSchema.optional();
 
 const projectStatusSchema = z.enum(PROJECT_STATUSES);
+
+function assertImageUrl(value: string | undefined, field: string): void {
+  if (value === undefined || value === "") return;
+  if (!/^(https?:\/\/|\/)/i.test(value)) {
+    throw new ToolExecutionError(
+      `"${field}" must be an http(s) URL or a path starting with '/'.`,
+      400,
+    );
+  }
+}
 
 /**
  * WRITE tools. Their `execute` is the REAL action, but the toolset handed to the
@@ -208,6 +222,8 @@ const createProjectTool: ToolDefinition<{
     url: optionalImageUrl.describe("Optional live project URL."),
   }),
   execute: async (input, ctx) => {
+    assertImageUrl(input.image, "image");
+    assertImageUrl(input.url, "url");
     const project = await createProject(input);
     return {
       projectId: project.id,
@@ -233,28 +249,29 @@ const updateProjectTool: ToolDefinition<{
     "Change one or more fields of an existing portfolio project. Identify it by the id from list_projects and pass only the fields that change (title, description, category, status, image, url). This is a WRITE: it is proposed to the admin and only runs after they confirm.",
   risk: "write",
   roles: ["admin"],
-  inputSchema: z
-    .object({
-      id: z.string().min(1).describe("The project id from list_projects."),
-      title: z.string().min(1).max(200).optional().describe("New title."),
-      description: z.string().min(1).max(4000).optional().describe("New description."),
-      category: z.string().max(80).optional().describe("New category."),
-      status: projectStatusSchema.optional().describe("New status."),
-      image: optionalImageUrl.describe("New cover image URL (pass an empty string to clear it)."),
-      url: optionalImageUrl.describe("New live URL (pass an empty string to clear it)."),
-    })
-    .refine(
-      (v) => Object.keys(v).some((k) => k !== "id"),
-      "Provide at least one field to change besides the id.",
-    ),
+  inputSchema: z.object({
+    id: z.string().min(1).describe("The project id from list_projects."),
+    title: z.string().min(1).max(200).optional().describe("New title."),
+    description: z.string().min(1).max(4000).optional().describe("New description."),
+    category: z.string().max(80).optional().describe("New category."),
+    status: projectStatusSchema.optional().describe("New status."),
+    image: optionalImageUrl.describe("New cover image URL (pass an empty string to clear it)."),
+    url: optionalImageUrl.describe("New live URL (pass an empty string to clear it)."),
+  }),
   execute: async ({ id, ...patch }, ctx) => {
+    const changedFields = Object.keys(patch);
+    if (changedFields.length === 0) {
+      throw new ToolExecutionError("Provide at least one field to change besides the id.", 400);
+    }
+    assertImageUrl(patch.image, "image");
+    assertImageUrl(patch.url, "url");
     const updated = await updateProject(id, patch as ProjectPatch);
     if (!updated) throw new ToolExecutionError(`Project "${id}" was not found.`, 404);
     return {
       projectId: updated.id,
       title: updated.title,
       status: updated.status,
-      changedFields: Object.keys(patch),
+      changedFields,
       updatedBy: ctx.adminEmail,
     };
   },
@@ -271,13 +288,13 @@ const setSiteImageTool: ToolDefinition<{ slot: string; imageUrl: string }> = {
     imageUrl: imageUrlSchema.describe("The new image URL, e.g. from list_media."),
   }),
   execute: async ({ slot, imageUrl }, ctx) => {
+    assertImageUrl(imageUrl, "imageUrl");
     const config = await readSiteConfig();
-    const next: SiteConfig = { ...config, [slot]: imageUrl };
-    await writeSiteConfig(next);
+    config[slot] = imageUrl;
+    await writeSiteConfig(config);
     return {
       slot,
       label: SLOT_LABELS[slot] || slot,
-      previousUrl: config[slot],
       imageUrl,
       updatedBy: ctx.adminEmail,
     };
