@@ -4,6 +4,7 @@ import { useState, useEffect } from "react";
 import { Badge } from "@/components/ui/badge";
 import { Folder, ExternalLink, ArrowRight } from "lucide-react";
 import { ThumbImage, projectPreviewUrl } from "@/components/project-thumb";
+import { LiveWork } from "@/components/sections/live-work";
 
 interface Project {
   id: string;
@@ -48,6 +49,9 @@ export default function ProjectsPage() {
           Explore the AI solutions we&apos;ve built and deployed.
         </p>
       </section>
+
+      {/* Live Work showcase (reused from the home page) */}
+      <LiveWork />
 
       {/* Projects Grid */}
       <section className="py-16 px-6">

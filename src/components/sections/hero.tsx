@@ -123,9 +123,9 @@ export function HeroSection() {
                   Running
                 </span>
               </div>
-              <h3 className="text-[15px] font-normal text-foreground mb-1.5 tracking-[0.1em]">
+              <p className="text-[15px] font-normal text-foreground mb-1.5 tracking-[0.1em]">
                 Outbound Qualification Agent
-              </h3>
+              </p>
               <p className="text-xs leading-[1.45] text-muted-foreground">
                 Screens inbound leads, books qualified calls, and logs every touch to CRM —
                 zero downtime since deployment.

@@ -225,6 +225,16 @@ html.theme-transitioning *::after {
   animation: top-progress 0.4s cubic-bezier(0.22, 1, 0.36, 1) both;
 }
 
+/* ---- Features section: brand colors are tuned for light backgrounds ---- */
+.feature-panel h3 {
+  color: var(--feature-color);
+}
+.dark .feature-panel h3 {
+  /* Brighten the per-feature color in dark mode so large headings keep a
+     >= 3:1 contrast ratio against the dark surface. */
+  color: color-mix(in srgb, var(--feature-color), #ffffff 35%);
+}
+
 /* ---- Respect reduced motion ---- */
 @media (prefers-reduced-motion: reduce) {
   html {

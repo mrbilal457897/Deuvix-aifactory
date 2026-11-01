@@ -195,7 +195,7 @@ export function FeaturesSection() {
 
                 <h3
                   className="font-heading text-3xl sm:text-4xl lg:text-5xl font-bold mb-4 transition-colors duration-700"
-                  style={{ color: feature.color }}
+                  style={{ ["--feature-color" as string]: feature.color }}
                 >
                   {feature.title}
                 </h3>

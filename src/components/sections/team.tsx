@@ -115,10 +115,10 @@ export function TeamSection() {
 
               {/* Member Info - overlapping image bottom */}
               <div className="absolute bottom-0 left-5 right-5 backdrop-blur-md bg-background/80 dark:bg-black/60 border border-border dark:border-white/10 shadow-[0_2px_15px_rgba(0,0,0,0.15)] dark:shadow-[0_2px_15px_rgba(0,0,0,0.3)] px-4 py-5">
-                <h4 className="font-heading text-base font-medium mb-2.5 relative pb-2.5 text-foreground dark:text-white">
+                <h3 className="font-heading text-base font-medium mb-2.5 relative pb-2.5 text-foreground dark:text-white">
                   {member.name}
                   <span className="absolute bottom-0 left-0 w-[50px] h-px bg-muted-foreground/40" />
-                </h4>
+                </h3>
                 <span className="italic text-[13px] text-muted-foreground dark:text-muted-foreground block mb-0">
                   {member.role}
                 </span>
@@ -128,6 +128,7 @@ export function TeamSection() {
                     href={member.socials.linkedin}
                     target="_blank"
                     rel="noopener noreferrer"
+                    aria-label={`${member.name} on LinkedIn`}
                     className="text-[#0A66C2] hover:opacity-80 transition-opacity duration-300"
                   >
                     <svg className="size-4" fill="currentColor" viewBox="0 0 24 24">
@@ -139,6 +140,7 @@ export function TeamSection() {
                     href={member.socials.github}
                     target="_blank"
                     rel="noopener noreferrer"
+                    aria-label={`${member.name} on GitHub`}
                     className="text-[#181717] dark:text-white hover:opacity-80 transition-opacity duration-300"
                   >
                     <svg className="size-4" fill="currentColor" viewBox="0 0 24 24">
@@ -148,6 +150,7 @@ export function TeamSection() {
                   {/* Email */}
                   <a
                     href={member.socials.email}
+                    aria-label={`Email ${member.name}`}
                     className="text-[#EA4335] hover:opacity-80 transition-opacity duration-300"
                   >
                     <svg className="size-4" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24">
