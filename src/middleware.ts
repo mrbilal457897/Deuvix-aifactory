@@ -142,9 +142,14 @@ export async function middleware(request: NextRequest) {
     if (!isAdmin) {
       return NextResponse.redirect(new URL("/", request.url));
     }
-    return NextResponse.redirect(
-      new URL(`${DASHBOARD_PREFIX}${pathname.slice(legacyDashboardPrefix.length)}`, request.url)
-    );
+    // Jab legacy prefix aur current DASHBOARD_PREFIX dono "/deuvix" hon,
+    // toh khud ko redirect na karein (infinite loop se bachne ke liye).
+    // Sirf alag prefix hone par redirect karein; warna isDashboard block se aage badhein.
+    if (legacyDashboardPrefix !== DASHBOARD_PREFIX) {
+      return NextResponse.redirect(
+        new URL(`${DASHBOARD_PREFIX}${pathname.slice(legacyDashboardPrefix.length)}`, request.url)
+      );
+    }
   }
 
   if (isDashboard) {

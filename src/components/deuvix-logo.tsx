@@ -1,6 +1,7 @@
 "use client";
 
 import Image from "next/image";
+import { useEffect, useState } from "react";
 import { cn } from "@/lib/utils";
 import { useTheme } from "next-themes";
 
@@ -20,7 +21,12 @@ export function DeuvixLogo({
   height?: number;
 }) {
   const { resolvedTheme } = useTheme();
-  const isDark = resolvedTheme === "dark";
+  const [isDark, setIsDark] = useState(false);
+
+  useEffect(() => {
+    setIsDark(resolvedTheme === "dark");
+  }, [resolvedTheme]);
+
   const src = isDark ? "/images/logo-deuvix.png" : "/images/logo-deuvix2.png";
 
   return (
@@ -50,7 +56,12 @@ export function DeuvixLogoMark({
   size?: number;
 }) {
   const { resolvedTheme } = useTheme();
-  const isDark = resolvedTheme === "dark";
+  const [isDark, setIsDark] = useState(false);
+
+  useEffect(() => {
+    setIsDark(resolvedTheme === "dark");
+  }, [resolvedTheme]);
+
   const src = isDark ? "/images/logo-deuvix.png" : "/images/logo-deuvix2.png";
 
   return (
