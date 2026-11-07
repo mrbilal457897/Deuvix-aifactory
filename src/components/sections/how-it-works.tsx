@@ -78,16 +78,16 @@ export function HowItWorksSection() {
       <div className="absolute inset-0 bg-background/85 dark:bg-background/80" />
 
       <div className="relative mx-auto max-w-7xl px-6 sm:px-6 lg:px-8">
-        <div className="text-center mb-16">
+        <div className="text-left mb-16">
           <p className="text-sm font-semibold text-accent uppercase tracking-wider mb-3">
             How It Works
           </p>
-          <h2 className="font-heading text-3xl sm:text-4xl lg:text-5xl font-bold mb-4">
+          <h2 className="font-heading text-[48px] font-bold mb-4">
             <CharReveal>
               Simple Steps to <span className="text-gradient">AI Success</span>
             </CharReveal>
           </h2>
-          <p className="mx-auto max-w-2xl text-muted-foreground text-lg">
+          <p className="max-w-2xl text-muted-foreground text-base">
             The spec-driven, human-supervised process for building AI-Native companies.
           </p>
         </div>

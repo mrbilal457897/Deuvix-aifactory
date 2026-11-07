@@ -6,23 +6,23 @@
  * variable degrades to a working build instead of `new URL(undefined)` throwing
  * in layout.tsx. Trailing slashes are stripped because callers append paths.
  *
- * NOTE: `deux.ai` is not live yet — the site currently runs on the Vercel domain,
+ * NOTE: `deuvix.ai` is not live yet — the site currently runs on the Vercel domain,
  * so that is the fallback. Update both this default and SITE_URL in the Vercel
  * project when the real domain is attached.
  */
 import { company, companyLocationLabel } from "@config/company";
 
 export const SITE_URL = (
-  process.env.SITE_URL?.trim() || "https://deux-aicompany.vercel.app"
+  process.env.SITE_URL?.trim() || "https://deuvix-aicompany.vercel.app"
 ).replace(/\/+$/, "");
 
-export const SITE_NAME = "DEUX AI Factory";
+export const SITE_NAME = "Deuvix AI Factory";
 
 export const SITE_DESCRIPTION =
-  "DEUX AI Factory manufactures, deploys, and monetizes Digital FTEs — AI workers that run your business 24/7. From AI chatbots, voice agents, and custom agents to Loop Engineering and FDE consulting.";
+  "Deuvix AI Factory manufactures, deploys, and monetizes Digital FTEs — AI workers that run your business 24/7. From AI chatbots, voice agents, and custom agents to Loop Engineering and FDE consulting.";
 
 export const SITE_KEYWORDS = [
-  "DEUX AI Factory",
+  "Deuvix AI Factory",
   "AI Agent Factory",
   "Digital FTE",
   "AI workers",

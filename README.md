@@ -1,6 +1,6 @@
-# deux-ai
+# deuvix-ai
 
-Marketing site for **DEUX AI Factory**, plus its Gemini-powered support chatbot.
+Marketing site for **Deuvix AI Factory**, plus its Gemini-powered support chatbot.
 
 Next.js 16 (App Router) · React 19 · TypeScript · Tailwind v4 · Drizzle + Supabase Postgres · next-auth (JWT)
 
@@ -22,7 +22,7 @@ The widget mounts on every marketing route (client-only, see `layout-shell.tsx`)
 | --- | --- |
 | SSE pipeline (rate limit → guard → route → retrieve → Gemini → output-guard → re-stream) | `src/app/api/chat/route.ts` |
 | Lead + feedback endpoints | `src/app/api/chat/lead/route.ts`, `src/app/api/chat/feedback/route.ts` |
-| System prompt + brand context | `src/lib/chat/systemPrompt.ts`, `data/deux-company.md`, `data/deux-faq.md` |
+| System prompt + brand context | `src/lib/chat/systemPrompt.ts`, `data/deuvix-company.md`, `data/deuvix-faq.md` |
 | Input guardrails (pricing, payment, injection, abuse, off-topic) | `src/lib/chat/guardrails.ts` |
 | Output guard (prices, unlisted URLs, prompt leaks) | `src/lib/chat/output-guard.ts` |
 | Routing + retrieval | `src/lib/chat/route-classify.ts`, `src/lib/chat/retrieve.ts` |
@@ -62,7 +62,7 @@ founder contact, lead webhook, tuning knobs).
 
 Two sources are stored in `kb_pages` / `kb_chunks`, namespaced by the `source` column:
 
-- **`deux`** — every public page of this site, with the pricing section stripped
+- **`deuvix`** — every public page of this site, with the pricing section stripped
 - **`agentfactory`** — <https://agentfactory.panaversity.org> (build guides, 300 ms
   between fetches, robots.txt honoured, pages pruned when they leave the sitemap)
 
@@ -71,7 +71,7 @@ Re-index after content changes:
 ```bash
 # Source A needs the site running
 npm run dev                                  # in one terminal
-npm run ingest -- --source deux --base-url http://localhost:3000
+npm run ingest -- --source deuvix --base-url http://localhost:3000
 
 # Source B is fetched from the public internet
 npm run ingest -- --source agentfactory
@@ -104,7 +104,7 @@ Notes:
 ## Known content gaps
 
 The chatbot must never invent these. Each one is an explicit `TODO` in
-`data/deux-company.md` / `data/deux-faq.md`, and the assistant answers
+`data/deuvix-company.md` / `data/deuvix-faq.md`, and the assistant answers
 *"I don't have that information"*:
 
 - No FAQ page, no "what we don't do" list

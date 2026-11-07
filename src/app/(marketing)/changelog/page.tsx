@@ -3,10 +3,11 @@ import Link from "next/link";
 import { Badge } from "@/components/ui/badge";
 import { Rocket, Sparkles, Wrench, ShieldCheck, ArrowRight } from "lucide-react";
 import { company } from "@config/company";
+import { Breadcrumb } from "@/components/ui/breadcrumb";
 
 export const metadata: Metadata = {
   title: "Changelog",
-  description: "Product updates, improvements, and fixes from the DEUX AI Factory team.",
+  description: "Product updates, improvements, and fixes from the Deuvix AI Factory team.",
   alternates: { canonical: "/changelog" },
 };
 
@@ -75,17 +76,23 @@ const releases = [
 
 export default function ChangelogPage() {
   return (
-    <div className="pt-24">
-      <section className="py-16 text-center px-6 bg-hero-pattern relative">
+    <div>
+      <section className="pt-8 sm:pt-12 pb-16 bg-hero-pattern relative">
         <div className="absolute inset-0 bg-dots opacity-30" />
+        <div className="relative mx-auto max-w-7xl px-6 sm:px-6 lg:px-8 text-center">
+          <Breadcrumb
+            items={[{ label: "Home", href: "/" }, { label: "Changelog" }]}
+            className="mb-4 sm:mb-6"
+          />
         <Badge className="mb-4 bg-accent/10 text-accent border-accent/20">Changelog</Badge>
-        <h1 className="font-heading text-4xl sm:text-5xl font-bold mb-4">
+        <h1 className="font-heading text-[68px] font-bold mb-4">
           What&apos;s <span className="text-gradient">new</span>
         </h1>
-        <p className="mx-auto max-w-2xl text-muted-foreground text-lg">
-          Every improvement to the DEUX AI Factory platform, documented. We ship continuously so your
+        <p className="mx-auto max-w-2xl text-muted-foreground text-base">
+          Every improvement to the Deuvix AI Factory platform, documented. We ship continuously so your
           AI workforce keeps getting better.
         </p>
+        </div>
       </section>
 
       <section className="py-16 px-6">
@@ -102,7 +109,7 @@ export default function ChangelogPage() {
                   </span>
                   <div>
                     <div className="flex items-center gap-2">
-                      <h2 className="font-heading text-lg font-bold">{release.version}</h2>
+                      <h2 className="font-heading text-[48px] font-bold">{release.version}</h2>
                       <span className="px-2 py-0.5 rounded-full text-xs font-medium bg-primary/10 text-primary">
                         {release.tag}
                       </span>

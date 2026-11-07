@@ -17,14 +17,14 @@ export class FollowUpSchedulerAgent extends BaseAgent {
     const dueInHours = lead.status === "hot" ? 4 : lead.status === "warm" ? 24 : 72;
     const subject =
       lead.status === "hot"
-        ? `Quick question about your ${lead.service || "DEUX AI Factory"} inquiry`
-        : `Following up on your ${lead.service || "DEUX AI Factory"} inquiry`;
+        ? `Quick question about your ${lead.service || "Deuvix AI Factory"} inquiry`
+        : `Following up on your ${lead.service || "Deuvix AI Factory"} inquiry`;
 
     const body =
       `Hi ${lead.name},\n\n` +
-      `Thanks for reaching out to DEUX AI Factory about ${lead.service || "our AI solutions"}. ` +
+      `Thanks for reaching out to Deuvix AI Factory about ${lead.service || "our AI solutions"}. ` +
       `We wanted to follow up on your inquiry and see if you'd like to book a free consultation.\n\n` +
-      `We'll reply to any questions — just hit reply on this email.\n\nBest regards,\nThe DEUX AI Factory Team`;
+      `We'll reply to any questions — just hit reply on this email.\n\nBest regards,\nThe Deuvix AI Factory Team`;
 
     const entry = await scheduleFollowUp({ lead, dueInHours, subject, body });
     await this.log("followup_scheduled", {

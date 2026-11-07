@@ -1,9 +1,16 @@
 "use client";
 
+import { useEffect, useRef } from "react";
 import Link from "next/link";
 import { ChevronRight } from "lucide-react";
 import { BrandLogo } from "@/components/brand-logo";
 import { company, companyLocationLabel } from "@config/company";
+import { gsap } from "gsap";
+import { ScrollTrigger } from "gsap/ScrollTrigger";
+
+if (typeof window !== "undefined") {
+  gsap.registerPlugin(ScrollTrigger);
+}
 
 const socialLinks = [
   ...(company.socials.linkedin
@@ -27,9 +34,9 @@ const footerLinks = {
   Company: [
     { label: "About", href: "/about" },
     { label: "Blog", href: "/blog" },
-{ label: "Careers", href: "/careers" },
-      { label: "Book a Call", href: "/book-a-call" },
-      { label: "Contact", href: "/contact" },
+    { label: "Careers", href: "/careers" },
+    { label: "Book a Call", href: "/book-a-call" },
+    { label: "Discuss", href: "/contact" },
   ],
   Resources: [
     { label: "Documentation", href: "/docs" },
@@ -65,6 +72,151 @@ const socialIconPaths: Record<string, { d: string; color: string }> = {
 };
 
 export function Footer() {
+  const stageRef = useRef<HTMLDivElement>(null);
+  const markRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    if (typeof window === "undefined") return;
+    if (!stageRef.current || !markRef.current) return;
+
+    const stage = stageRef.current;
+    const mark = markRef.current;
+    const letters = Array.from(mark.querySelectorAll<HTMLElement>(".deuvix-in"));
+    if (!letters.length) return;
+
+    const reduced = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+
+    let fitFn: () => void = () => {};
+    let onMoveFn: (e: PointerEvent) => void = () => {};
+    let onLeaveFn: () => void = () => {};
+
+    const ctx = gsap.context(() => {
+      // ---- Fit: scale font so word fills container width ----
+      fitFn = () => {
+        mark.style.fontSize = "26vw";
+        const mw = mark.scrollWidth;
+        const sw = stage.clientWidth;
+        if (mw > 0 && sw > 0) {
+          mark.style.fontSize = `${(26 * (sw / mw) * 0.995)}vw`;
+        }
+      };
+
+      // Call fit immediately, then again after fonts ready
+      fitFn();
+
+      window.addEventListener("resize", fitFn);
+
+      document.fonts.ready.then(() => {
+        fitFn();
+        ScrollTrigger.refresh();
+      });
+
+      // Also refresh after a short delay to ensure DOM is settled
+      setTimeout(() => {
+        fitFn();
+        ScrollTrigger.refresh();
+      }, 100);
+
+      if (reduced) {
+        letters.forEach((el) => {
+          el.style.setProperty("--f", "1");
+          gsap.set(el, { yPercent: 0, rotate: 0 });
+        });
+        return;
+      }
+
+      // ---- Initial state ----
+      gsap.set(letters, { yPercent: 115, rotate: 6, "--f": 0 });
+
+      // ---- Entrance ----
+      const tl = gsap.timeline({
+        scrollTrigger: {
+          trigger: stage,
+          start: "top 92%",
+          once: true,
+        },
+      });
+
+      tl.to(letters, {
+        yPercent: 0,
+        rotate: 0,
+        duration: 1.15,
+        ease: "expo.out",
+        stagger: 0.09,
+      }).to(
+        letters,
+        {
+          "--f": 1,
+          duration: 0.9,
+          ease: "power3.inOut",
+          stagger: 0.12,
+        },
+        "-=0.7"
+      );
+
+      // ---- Loop: color wave D to x ----
+      const loop = gsap.timeline({ repeat: -1, repeatDelay: 2.2 });
+      loop.to(letters, {
+        "--c": "var(--primary)",
+        duration: 0.35,
+        ease: "power2.out",
+        stagger: 0.12,
+      }).to(
+        letters,
+        {
+          "--c": "var(--foreground)",
+          duration: 0.6,
+          ease: "power2.inOut",
+          stagger: 0.12,
+        },
+        "-=0.15"
+      );
+
+      // ---- Cursor reaction ----
+      const quickTos = letters.map((el) =>
+        gsap.quickTo(el, "y", { duration: 0.5, ease: "power3.out" })
+      );
+
+      onMoveFn = (e: PointerEvent) => {
+        letters.forEach((el, i) => {
+          const er = el.getBoundingClientRect();
+          const cx = er.left + er.width / 2;
+          const dx = Math.abs(e.clientX - cx);
+          const k = Math.max(0, 1 - dx / (er.width * 1.3));
+          quickTos[i](-k * er.height * 0.14);
+        });
+      };
+
+      onLeaveFn = () => quickTos.forEach((qt) => qt(0));
+
+      stage.addEventListener("pointermove", onMoveFn);
+      stage.addEventListener("pointerleave", onLeaveFn);
+
+      // ---- Parallax ----
+      gsap.fromTo(
+        mark,
+        { y: 40 },
+        {
+          y: -10,
+          ease: "none",
+          scrollTrigger: {
+            trigger: stage,
+            start: "top bottom",
+            end: "bottom bottom",
+            scrub: 0.6,
+          },
+        }
+      );
+    });
+
+    return () => {
+      ctx.revert();
+      if (fitFn) window.removeEventListener("resize", fitFn);
+      if (onMoveFn) stage.removeEventListener("pointermove", onMoveFn);
+      if (onLeaveFn) stage.removeEventListener("pointerleave", onLeaveFn);
+    };
+  }, []);
+
   return (
     <footer className="border-t border-border bg-surface">
       <div className="mx-auto max-w-7xl px-6 sm:px-6 lg:px-8">
@@ -137,6 +289,22 @@ export function Footer() {
           <p className="text-xs text-muted-foreground">
             Built with AI
           </p>
+        </div>
+
+        <div className="deuvix-stage" ref={stageRef} aria-label="Deuvix">
+          <div className="deuvix-mark" ref={markRef} aria-hidden="true">
+            {["D", "e", "u", "v", "i", "x"].map((letter, i) => (
+              <span key={i} className="deuvix-ch">
+                <span
+                  className="deuvix-in"
+                  data-l={letter}
+                  style={{ "--c": "var(--foreground)" } as React.CSSProperties}
+                >
+                  {letter}
+                </span>
+              </span>
+            ))}
+          </div>
         </div>
       </div>
     </footer>

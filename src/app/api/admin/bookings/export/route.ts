@@ -20,7 +20,7 @@ export async function GET(request: NextRequest) {
     return new Response(bookingsToCsv(rows), {
       headers: {
         "Content-Type": "text/csv; charset=utf-8",
-        "Content-Disposition": `attachment; filename="deux-bookings-${filter}-${stamp}.csv"`,
+        "Content-Disposition": `attachment; filename="deuvix-bookings-${filter}-${stamp}.csv"`,
         "Cache-Control": "no-store",
       },
     });

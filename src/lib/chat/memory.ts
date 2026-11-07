@@ -113,7 +113,7 @@ export async function ensureConversation(userId: string, conversationId?: string
 export async function persistTurn(
   userId: string,
   conversationId: string,
-  turn: { role: "user" | "assistant"; content: string; sources?: Array<{ title: string; url: string; source: "deux" | "agentfactory" }> },
+  turn: { role: "user" | "assistant"; content: string; sources?: Array<{ title: string; url: string; source: "deuvix" | "agentfactory" }> },
 ): Promise<string | null> {
   if (!isDatabaseConfigured() || !userId || !conversationId) return null;
   const db = getDb();

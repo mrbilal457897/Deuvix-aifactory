@@ -7,7 +7,7 @@ export interface MediaItem {
   uploadedAt: string;
 }
 
-const BUCKET = "deux";
+const BUCKET = "deuvix";
 
 function rowToMedia(row: Record<string, unknown>): MediaItem {
   return {

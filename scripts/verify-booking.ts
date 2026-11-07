@@ -35,7 +35,7 @@ const real = {
     startTime: "2026-02-10T06:00:00.000Z",
     endTime: "2026-02-10T06:30:00.000Z",
     timezone: "Europe/London",
-    location: { type: "integrations:jitsi", link: "https://meet.jit.si/deux-abc" },
+    location: { type: "integrations:jitsi", link: "https://meet.jit.si/deuvix-abc" },
     attendees: [
       { name: "Ayesha Khan", email: "ayesha@example.com", timeZone: "Europe/London", phoneNumber: "+44 7700 900123" },
     ],
@@ -55,7 +55,7 @@ ok("attendee tz wins over payload tz", n.timezone === "Europe/London");
 ok("attendee name/email", n.name === "Ayesha Khan" && n.email === "ayesha@example.com");
 ok("phone preferred over whatsapp field", n.whatsapp === "+44 7700 900123");
 ok("company extracted", n.company === "Northwind Ltd");
-ok("meeting url extracted", n.meetingUrl === "https://meet.jit.si/deux-abc");
+ok("meeting url extracted", n.meetingUrl === "https://meet.jit.si/deuvix-abc");
 ok("notes extracted", (n.notes ?? "").includes("billing"));
 
 const noPhone = normalizeCalBooking(calWebhookSchema.parse({ triggerEvent: "BOOKING_CREATED", payload: { uid: "u2", startTime: "2026-02-10T06:00:00Z", endTime: "2026-02-10T06:30:00Z", bookingFieldsResponses: { whatsapp: "0300-1234567" } } }));

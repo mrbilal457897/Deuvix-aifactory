@@ -13,7 +13,7 @@ export default function LoginPage() {
   const callbackUrl =
     searchParams.get("callbackUrl") && searchParams.get("callbackUrl")!.startsWith("/")
       ? searchParams.get("callbackUrl")!
-      : "/deux";
+      : "/deuvix";
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
   const [email, setEmail] = useState("");
@@ -90,7 +90,7 @@ export default function LoginPage() {
           <div className="inline-flex items-center justify-center size-14 rounded-2xl bg-primary mb-4">
             <Zap className="size-7 text-primary-foreground" />
           </div>
-          <h1 className="font-heading text-2xl font-bold text-foreground">Welcome</h1>
+          <h1 className="font-heading text-[48px] font-bold text-foreground">Welcome</h1>
           <p className="text-sm text-muted-foreground mt-1">Sign in to your account</p>
         </div>
 

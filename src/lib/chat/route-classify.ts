@@ -11,19 +11,19 @@
  *  3. A tie routes to "mixed", which retrieves both and labels them separately.
  */
 
-export type QueryRoute = "deux" | "agentfactory" | "mixed" | "out_of_scope";
+export type QueryRoute = "deuvix" | "agentfactory" | "mixed" | "out_of_scope";
 
 /** Words that only make sense as questions about the company. */
-const DEUX_MARKERS = [
-  "deux", "deux ai", "deuxai", "your company", "your team", "your services",
+const DEUVIX_MARKERS = [
+  "deuvix", "deuvix ai", "deuvixai", "your company", "your team", "your services",
   "your pricing", "your price", "your process", "your office", "your hours",
-  "who are you", "who r u", "who is deux", "about you", "about your",
+  "who are you", "who r u", "who is deuvix", "about you", "about your",
   "do you offer", "do you provide", "do you build", "can you build",
   "your founders", "your case studies", "your portfolio", "your clients",
   "work with you", "hire you", "hire your", "contact you", "reach you",
   "book a call", "your team members", "bilal", "asad", "asadullah",
-  "what does deux", "what services", "services does", "case stud",
-  "ap kya", "ap ki company", "tumhari", "tumhara company", "deux kya",
+  "what does deuvix", "what services", "services does", "case stud",
+  "ap kya", "ap ki company", "tumhari", "tumhara company", "deuvix kya",
 ];
 
 /** Words that only make sense as build/technical guidance. */
@@ -69,26 +69,26 @@ export function classifyLocally(raw: string): QueryRoute | null {
 
   if (score(text, OUT_OF_SCOPE_MARKERS) > 0) return "out_of_scope";
 
-  const deux = score(text, DEUX_MARKERS);
+  const deuvix = score(text, DEUVIX_MARKERS);
   const build = score(text, BUILD_MARKERS);
 
-  if (deux > 0 && build === 0) return "deux";
-  if (build > 0 && deux === 0) return "agentfactory";
-  if (deux > 0 && build > 0) return "mixed";
+  if (deuvix > 0 && build === 0) return "deuvix";
+  if (build > 0 && deuvix === 0) return "agentfactory";
+  if (deuvix > 0 && build > 0) return "mixed";
 
   return null;
 }
 
 /**
- * Score-based fallback. `deuxTop` / `afTop` are the best cosine similarities
+ * Score-based fallback. `deuvixTop` / `afTop` are the best cosine similarities
  * from each namespace (1 = identical, 0 = unrelated). A small margin is
  * required before we commit to a single source; otherwise we read it as mixed.
  */
-export function routeByScores(deuxTop: number, afTop: number): QueryRoute {
+export function routeByScores(deuvixTop: number, afTop: number): QueryRoute {
   const MARGIN = 0.06;
-  if (deuxTop <= 0 && afTop <= 0) return "mixed";
-  if (deuxTop - afTop >= MARGIN) return "deux";
-  if (afTop - deuxTop >= MARGIN) return "agentfactory";
+  if (deuvixTop <= 0 && afTop <= 0) return "mixed";
+  if (deuvixTop - afTop >= MARGIN) return "deuvix";
+  if (afTop - deuvixTop >= MARGIN) return "agentfactory";
   return "mixed";
 }
 
@@ -96,13 +96,13 @@ export function routeByScores(deuxTop: number, afTop: number): QueryRoute {
  * Decide which namespaces to search given a local classification.
  * Company questions search Source A only, per §2D.
  */
-export function namespacesFor(route: QueryRoute): Array<"deux" | "agentfactory"> {
+export function namespacesFor(route: QueryRoute): Array<"deuvix" | "agentfactory"> {
   switch (route) {
-    case "deux":
-      return ["deux"];
+    case "deuvix":
+      return ["deuvix"];
     case "agentfactory":
       return ["agentfactory"];
     default:
-      return ["deux", "agentfactory"];
+      return ["deuvix", "agentfactory"];
   }
 }

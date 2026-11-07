@@ -3,6 +3,7 @@ import { Roboto, Raleway } from "next/font/google";
 import { ThemeProvider } from "@/components/theme-provider";
 import { Providers } from "@/components/providers";
 import { LayoutShell } from "@/components/layout-shell";
+import { BookCallProvider } from "@/components/book-call-provider";
 import { LoadingSplash } from "@/components/loading-splash";
 import { SITE_URL, SITE_NAME, SITE_DESCRIPTION, SITE_KEYWORDS, OG_IMAGE, organizationJsonLd } from "@/lib/seo";
 import "./globals.css";
@@ -15,7 +16,7 @@ const roboto = Roboto({
 });
 
 const raleway = Raleway({
-  weight: ["300", "600", "700"],
+  weight: ["200", "300", "600", "700", "800"],
   subsets: ["latin"],
   variable: "--font-raleway",
   display: "swap",
@@ -95,7 +96,9 @@ export default function RootLayout({
         <LoadingSplash />
         <Providers>
           <ThemeProvider>
-            <LayoutShell>{children}</LayoutShell>
+            <BookCallProvider>
+              <LayoutShell>{children}</LayoutShell>
+            </BookCallProvider>
           </ThemeProvider>
         </Providers>
       </body>

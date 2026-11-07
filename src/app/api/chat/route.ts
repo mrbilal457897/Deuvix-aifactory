@@ -59,7 +59,7 @@ type Body = z.infer<typeof bodySchema>;
 interface MetaEvent {
   type: "meta";
   route: QueryRoute | "blocked";
-  sources: Array<{ title: string; url: string; source: "deux" | "agentfactory" }>;
+  sources: Array<{ title: string; url: string; source: "deuvix" | "agentfactory" }>;
   conversationId: string | null;
   abuseStrikes: number;
   ended: boolean;
@@ -263,7 +263,7 @@ export async function POST(request: Request) {
     // §6F: politely decline before spending a retrieval call.
     if (localRoute === "out_of_scope") {
       logEvent("guardrail", { rule: "off_topic" });
-      return cannedReply(uiStrings.boundary("topics outside AI agents and what Deux does"), {
+      return cannedReply(uiStrings.boundary("topics outside AI agents and what Deuvix does"), {
         conversationId: history.conversationId,
         strikes: history.abuseStrikes,
         reason: "off_topic",
@@ -278,7 +278,7 @@ export async function POST(request: Request) {
     let result = first;
 
     if (!localRoute) {
-      route = routeByScores(result.topScores.deux ?? 0, result.topScores.agentfactory ?? 0);
+      route = routeByScores(result.topScores.deuvix ?? 0, result.topScores.agentfactory ?? 0);
       const wanted = namespacesFor(route);
       if (wanted.join(",") !== namespaces.join(",")) {
         namespaces = wanted;
@@ -294,7 +294,7 @@ export async function POST(request: Request) {
       ]);
     }
 
-    const contextFor = (source: "deux" | "agentfactory") =>
+    const contextFor = (source: "deuvix" | "agentfactory") =>
       result.chunks
         .filter((c) => c.source === source)
         .map(formatChunk)
@@ -303,7 +303,7 @@ export async function POST(request: Request) {
     logEvent("retrieval", {
       route,
       chunks: result.chunks.length,
-      deux: result.chunks.filter((c) => c.source === "deux").length,
+      deuvix: result.chunks.filter((c) => c.source === "deuvix").length,
       af: result.chunks.filter((c) => c.source === "agentfactory").length,
     });
 
@@ -338,8 +338,8 @@ export async function POST(request: Request) {
       history: historyText,
       profile: renderProfile(profile),
       route,
-      ...(result.chunks.some((c) => c.source === "deux")
-        ? { deuxContext: contextFor("deux") }
+      ...(result.chunks.some((c) => c.source === "deuvix")
+        ? { deuvixContext: contextFor("deuvix") }
         : {}),
       ...(result.chunks.some((c) => c.source === "agentfactory")
         ? { agentFactoryContext: contextFor("agentfactory") }
@@ -452,8 +452,8 @@ function formatChunk(c: RetrievedChunk): string {
 
 function dedupeSources(
   chunks: RetrievedChunk[],
-): Array<{ title: string; url: string; source: "deux" | "agentfactory" }> {
-  const seen = new Map<string, { title: string; url: string; source: "deux" | "agentfactory" }>();
+): Array<{ title: string; url: string; source: "deuvix" | "agentfactory" }> {
+  const seen = new Map<string, { title: string; url: string; source: "deuvix" | "agentfactory" }>();
   for (const c of chunks) {
     if (!c.url || seen.has(c.url)) continue;
     seen.set(c.url, {
@@ -492,7 +492,7 @@ async function persistForUser(
   userId: string,
   conversationId: string | null,
   content: string,
-  sources: Array<{ title: string; url: string; source: "deux" | "agentfactory" }>,
+  sources: Array<{ title: string; url: string; source: "deuvix" | "agentfactory" }>,
   role?: "user" | "assistant",
 ): Promise<string | null> {
   if (!userId || !conversationId || !role) return null;

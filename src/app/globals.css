@@ -44,6 +44,8 @@
   --color-nexus-dark: #1F4A30;
   --color-nexus-accent: #2F6B46;
   --color-nexus-warm: #2F6B46;
+  --section-bg-top: #242424;
+  --section-bg-bottom: var(--background);
   --color-surface: var(--surface);
   --color-surface-hover: var(--surface-hover);
   --radius-sm: calc(var(--radius) * 0.6);
@@ -59,23 +61,23 @@
   --font-sans: var(--font-roboto), ui-sans-serif, system-ui, -apple-system, "Segoe UI", sans-serif;
   --font-heading: var(--font-raleway), ui-sans-serif, system-ui, -apple-system, "Segoe UI", sans-serif;
   --font-mono: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
-  --background: #F8FAFC;
-  --foreground: #0F172A;
+  --background: #FFFFFF;
+  --foreground: #171717;
   --card: #FFFFFF;
-  --card-foreground: #0F172A;
+  --card-foreground: #171717;
   --popover: #FFFFFF;
-  --popover-foreground: #0F172A;
+  --popover-foreground: #171717;
   --primary: #4CAF7D;
   --primary-foreground: #0F0F0B;
-  --secondary: #F1F5F9;
-  --secondary-foreground: #0F172A;
-  --muted: #F1F5F9;
-  --muted-foreground: #475569;
+  --secondary: #FAFAF9;
+  --secondary-foreground: #525252;
+  --muted: #F5F5F4;
+  --muted-foreground: #737373;
   --accent: #4CAF7D;
   --accent-foreground: #0F0F0B;
   --destructive: #DC2626;
-  --border: #E2E8F0;
-  --input: #CBD5E1;
+  --border: #E7E5E4;
+  --input: #D4D4D4;
   --ring: #4CAF7D;
   --chart-1: #4CAF7D;
   --chart-2: #4CAF7D;
@@ -84,14 +86,14 @@
   --chart-5: #10B981;
   --radius: 0.5rem;
   --surface: #F8FAFC;
-  --surface-hover: #F1F5F9;
+  --surface-hover: #F5F5F4;
   --sidebar: #FFFFFF;
-  --sidebar-foreground: #0F172A;
+  --sidebar-foreground: #171717;
   --sidebar-primary: #4CAF7D;
   --sidebar-primary-foreground: #0F0F0B;
-  --sidebar-accent: #F1F5F9;
-  --sidebar-accent-foreground: #0F172A;
-  --sidebar-border: #E2E8F0;
+  --sidebar-accent: #FAFAF9;
+  --sidebar-accent-foreground: #171717;
+  --sidebar-border: #E7E5E4;
   --sidebar-ring: #4CAF7D;
 }
 
@@ -140,6 +142,7 @@
   }
   html {
     @apply scroll-smooth;
+    scroll-padding-top: 90px;
   }
 }
 
@@ -501,4 +504,50 @@ html.theme-transitioning *::after {
   .trust-marquee-copy {
     display: none;
   }
+}
+
+/* ===== Deuvix wordmark (footer) ===== */
+.deuvix-stage {
+  padding-top: 48px;
+  user-select: none;
+  width: 100%;
+}
+
+.deuvix-mark {
+  display: flex;
+  justify-content: center;
+  font-weight: 800;
+  letter-spacing: -0.03em;
+  line-height: 1;
+  white-space: nowrap;
+  font-family: var(--font-heading);
+}
+
+.deuvix-ch {
+  display: inline-block;
+  overflow: hidden;
+  padding: 0.04em 0.005em 0;
+}
+
+.deuvix-in {
+  display: block;
+  position: relative;
+  color: transparent;
+  -webkit-text-stroke: 2px color-mix(in srgb, var(--foreground), transparent 60%);
+}
+
+@media (max-width: 760px) {
+  .deuvix-in {
+    -webkit-text-stroke: 1.2px color-mix(in srgb, var(--foreground), transparent 60%);
+  }
+}
+
+.deuvix-in::after {
+  content: attr(data-l);
+  position: absolute;
+  left: 0;
+  top: 0;
+  color: var(--c, var(--foreground));
+  -webkit-text-stroke: none;
+  clip-path: inset(calc((1 - var(--f, 0)) * 100%) 0 0 0);
 }

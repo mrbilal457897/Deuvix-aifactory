@@ -14,7 +14,7 @@ interface SiteConfig {
 }
 
 const DEFAULTS: SiteConfig = {
-  logo: "/images/D.png",
+  logo: "/images/logo-deuvix.png",
   "hero-bg": "/images/hero-bg.jpg",
   "cta-bg": "/images/cta-bg.jpg",
   "about-main": "/images/about1.jpg",

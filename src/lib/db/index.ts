@@ -6,8 +6,8 @@ import { SUPABASE_CA_PEM } from "./supabase-ca";
 type Database = NodePgDatabase<typeof schema>;
 
 const globalForDb = globalThis as unknown as {
-  __deuxPgPool?: Pool;
-  __deuxDb?: Database;
+  __deuvixPgPool?: Pool;
+  __deuvixDb?: Database;
 };
 
 export function isDatabaseConfigured(): boolean {
@@ -15,7 +15,7 @@ export function isDatabaseConfigured(): boolean {
 }
 
 export function getPool(): Pool {
-  if (globalForDb.__deuxPgPool) return globalForDb.__deuxPgPool;
+  if (globalForDb.__deuvixPgPool) return globalForDb.__deuvixPgPool;
 
   const connectionString = process.env.DATABASE_URL;
   if (!connectionString) {
@@ -50,14 +50,14 @@ export function getPool(): Pool {
     console.error("[db] idle client error:", err instanceof Error ? err.message : err);
   });
 
-  globalForDb.__deuxPgPool = pool;
+  globalForDb.__deuvixPgPool = pool;
   return pool;
 }
 
 export function getDb(): Database {
-  if (globalForDb.__deuxDb) return globalForDb.__deuxDb;
+  if (globalForDb.__deuvixDb) return globalForDb.__deuvixDb;
   const db = drizzle(getPool(), { schema });
-  globalForDb.__deuxDb = db;
+  globalForDb.__deuvixDb = db;
   return db;
 }
 

@@ -1,4 +1,4 @@
-# DEUX AI Factory — company brief
+# Deuvix AI Factory — company brief
 
 > Hand-maintained facts for the chatbot. Everything here is injected into the
 > system prompt, so **only write things you are willing the bot to state as
@@ -10,18 +10,18 @@
 
 ## Identity
 
-- Company / product name: **DEUX AI Factory** (styled with a trade mark in the
+- Company / product name: **Deuvix AI Factory** (styled with a trade mark in the
   header lockup).
-- Website: https://deux-aicompany.vercel.app
+- Website: https://deuvix-aicompany.vercel.app
 - What it does: an AI-native software company. The public site describes work
   around AI agents, a "Digital FTE" concept, AI-native development,
   spec-driven development and "Forward Deployed Engineer" (FDE) practices.
 
 ## Contact routes (safe to quote)
 
-- Contact page: https://deux-aicompany.vercel.app/contact
-- Book a call: https://deux-aicompany.vercel.app/book-a-call
-- Public contact email shown on the site: `deuxaiinfo786@gmail.com`
+- Contact page: https://deuvix-aicompany.vercel.app/contact
+- Book a call: https://deuvix-aicompany.vercel.app/book-a-call
+- Public contact email shown on the site: `team.deuvix@gmail.com`
 - TODO: no phone number is published anywhere on the site.
 - TODO: no office address, timezone, or business hours are published anywhere
   on the site. Do not state either.
@@ -76,5 +76,5 @@ that information and point at the contact route — it must not guess.
   sponsorship with Agent Factory or Panaversity** anywhere.
 - The chatbot may draw on Agent Factory documentation purely as an independent
   learning reference, described as "the Agent Factory guide".
-- Never say, imply, or accept a claim that DEUX owns, runs, partners with, or
+- Never say, imply, or accept a claim that Deuvix owns, runs, partners with, or
   is endorsed by Agent Factory or Panaversity.

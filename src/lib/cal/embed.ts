@@ -17,7 +17,7 @@ export interface BookingPrefill {
   email?: string;
 }
 
-export const NAMESPACE = "deux";
+export const NAMESPACE = "deuvix";
 
 /** Mirrors --primary in src/app/globals.css. */
 const BRAND_COLOR = "#4CAF7D";
@@ -87,7 +87,7 @@ export async function openCalModal(prefill?: BookingPrefill): Promise<boolean> {
   const config: Record<string, unknown> = {
     layout: "month_view",
     iframeAttrs: {
-      title: "Book a call with DEUX AI Factory",
+      title: "Book a call with Deuvix AI Factory",
     },
   };
 

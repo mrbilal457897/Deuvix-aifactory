@@ -13,6 +13,7 @@ import { TrustBar } from "@/components/sections/trust-bar";
 import GridRevealImage from "@/components/grid-reveal-image";
 import { useSiteConfig } from "@/hooks/use-site-config";
 import { company } from "@config/company";
+import { Breadcrumb } from "@/components/ui/breadcrumb";
 
 if (typeof window !== "undefined") {
   gsap.registerPlugin(ScrollTrigger);
@@ -26,7 +27,7 @@ const values = [
 ];
 
 const timeline = [
-  { year: "2026", title: "Founded", description: "DEUX AI Factory started as an AI research project." },
+  { year: "2026", title: "Founded", description: "Deuvix AI Factory started as an AI research project." },
   { year: "2022", title: "First Agent", description: "Deployed our first Digital FTE, serving early adopters." },
   { year: "2023", title: "FDE Launch", description: "Launched Forward Deployed Engineer services for enterprise clients." },
   { year: "2024", title: "AI E-books", description: "Published the AI Agent Factory guide, reaching 10,000+ readers." },
@@ -38,7 +39,7 @@ const leaders = [
   {
     name: "Bilal Ali",
     role: "Co-founder & CEO",
-    description: "Turns AI research into revenue — architect of DEUX AI Factory's Manufacture-Deploy-Monetize model and the strategy behind every Digital FTE that ships to production.",
+    description: "Turns AI research into revenue — architect of Deuvix AI Factory's Manufacture-Deploy-Monetize model and the strategy behind every Digital FTE that ships to production.",
     slot: "team-bilal",
   },
   {
@@ -79,18 +80,24 @@ export default function AboutPage() {
   }, []);
 
   return (
-    <div className="pt-24">
-      <section className="py-16 text-center px-6 bg-hero-pattern relative">
+    <div>
+      <section className="pt-8 sm:pt-12 pb-16 bg-hero-pattern relative">
         <div className="absolute inset-0 bg-dots opacity-30" />
-        <Badge className="mb-4 bg-primary/10 text-primary border-primary/20">About Us</Badge>
-        <h1 className="font-heading text-4xl sm:text-5xl font-bold mb-4">
+        <div className="relative mx-auto max-w-7xl px-6 sm:px-6 lg:px-8 text-left">
+          <Breadcrumb
+            items={[{ label: "Home", href: "/" }, { label: "About" }]}
+            className="mb-4 sm:mb-6"
+          />
+
+        <h1 className="font-heading text-[68px] font-bold mb-4">
           <CharReveal>
-            Building the <span className="text-gradient">DEUX AI Factory</span>
+            Building the <span className="text-gradient">Deuvix AI Factory</span>
           </CharReveal>
         </h1>
-        <p className="mx-auto max-w-2xl text-muted-foreground text-lg">
+        <p className="max-w-2xl text-muted-foreground text-base">
           We help businesses manufacture, deploy, and monetize Digital FTEs — the AI workers that run the next generation of enterprises.
         </p>
+        </div>
       </section>
 
       <TrustBar showBuiltWith={false} />
@@ -99,11 +106,11 @@ export default function AboutPage() {
         <div className="mx-auto max-w-7xl">
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-16 items-center">
             <div>
-              <h2 className="font-heading text-3xl sm:text-4xl font-bold mb-6">
+              <h2 className="font-heading text-[48px] font-bold mb-6">
                 <CharReveal>Our <span className="text-gradient">Story</span></CharReveal>
               </h2>
               <div className="space-y-4 text-muted-foreground leading-relaxed">
-                <p>DEUX AI Factory was born from a simple observation: the most powerful AI technologies were locked behind walls of complexity.</p>
+                <p>Deuvix AI Factory was born from a simple observation: the most powerful AI technologies were locked behind walls of complexity.</p>
                 <p>We set out to change that. Our platform helps businesses manufacture, deploy, and monetize Digital FTEs — AI workers that operate 24/7 at a fraction of human cost.</p>
                 <p>From spec-driven development to production-ready deployment, we build the AI workforce your company needs to thrive in the agent era.</p>
               </div>
@@ -112,14 +119,14 @@ export default function AboutPage() {
               <div className="absolute -inset-3 rounded-2xl border-2 border-primary/10" />
               <GridRevealImage
                 src={img("about-main")}
-                alt="DEUX AI Factory story"
+                alt="Deuvix AI Factory story"
                 className="relative aspect-[4/3] rounded-2xl border border-border overflow-hidden"
                 sizes="(max-width: 1024px) 100vw, 50vw"
               />
               <div className="absolute -bottom-4 -right-4 size-28 rounded-xl bg-card border border-border flex items-center justify-center shadow-sm overflow-hidden">
                 <Image
                   src={img("about-secondary")}
-                  alt="DEUX AI Factory award"
+                  alt="Deuvix AI Factory award"
                   fill
                   className="object-cover"
                   sizes="112px"
@@ -133,7 +140,7 @@ export default function AboutPage() {
       <section className="py-24 px-6 bg-section">
         <div className="mx-auto max-w-7xl">
           <div className="text-center mb-16">
-            <h2 className="font-heading text-3xl sm:text-4xl font-bold mb-4">
+            <h2 className="font-heading text-[48px] font-bold mb-4">
               Our <span className="text-gradient">Values</span>
             </h2>
           </div>
@@ -154,11 +161,11 @@ export default function AboutPage() {
       <section className="py-24 px-6">
         <div className="mx-auto max-w-7xl">
           <div className="text-center mb-16">
-            <h2 className="font-heading text-3xl sm:text-4xl font-bold mb-4">
+            <h2 className="font-heading text-[48px] font-bold mb-4">
               Leadership <span className="text-gradient">Team</span>
             </h2>
-            <p className="mx-auto max-w-2xl text-muted-foreground text-lg">
-              The minds behind DEUX AI Factory.
+            <p className="mx-auto max-w-2xl text-muted-foreground text-base">
+              The minds behind Deuvix AI Factory.
             </p>
           </div>
           <div className="flex flex-col sm:flex-row items-start justify-center gap-12 max-w-3xl mx-auto">
@@ -199,7 +206,7 @@ export default function AboutPage() {
                     sizes="112px"
                   />
                 </div>
-                <h3 className="font-heading font-medium text-lg">{leaders[0].name}</h3>
+                <h3 className="font-heading font-medium text-[24px]">{leaders[0].name}</h3>
                 <p className="text-sm text-primary mb-2">{leaders[0].role}</p>
                 <p className="text-xs text-muted-foreground">{leaders[0].description}</p>
               </div>
@@ -218,7 +225,7 @@ export default function AboutPage() {
                     sizes="112px"
                   />
                 </div>
-                <h3 className="font-heading font-medium text-lg">{leaders[1].name}</h3>
+                <h3 className="font-heading font-medium text-[24px]">{leaders[1].name}</h3>
                 <p className="text-sm text-primary mb-2">{leaders[1].role}</p>
                 <p className="text-xs text-muted-foreground">{leaders[1].description}</p>
               </div>
@@ -254,7 +261,7 @@ export default function AboutPage() {
       <section className="py-24 px-6 bg-section overflow-hidden">
         <div className="mx-auto max-w-4xl">
           <div className="text-center mb-16">
-            <h2 className="font-heading text-3xl sm:text-4xl font-bold mb-4">
+            <h2 className="font-heading text-[48px] font-bold mb-4">
               Our <span className="text-gradient">Journey</span>
             </h2>
           </div>

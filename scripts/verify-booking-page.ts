@@ -86,16 +86,16 @@ console.log("\n[cal link parsing]");
 delete process.env.CAL_EVENT_KIND;
 delete process.env.CAL_ORGANIZATION_SLUG;
 ok("user/slug", (() => {
-  const r = parseCalLink("bilal-sheikh-3qvs54/deux");
-  return r?.username === "bilal-sheikh-3qvs54" && r?.eventTypeSlug === "deux";
+  const r = parseCalLink("bilal-sheikh-3qvs54/deuvix");
+  return r?.username === "bilal-sheikh-3qvs54" && r?.eventTypeSlug === "deuvix";
 })());
 ok("bare slug has no username", (() => {
-  const r = parseCalLink("deux");
-  return r?.eventTypeSlug === "deux" && r?.username === undefined;
+  const r = parseCalLink("deuvix");
+  return r?.eventTypeSlug === "deuvix" && r?.username === undefined;
 })());
 ok("leading/trailing slashes tolerated", (() => {
-  const r = parseCalLink("/bilal-sheikh-3qvs54/deux/");
-  return r?.username === "bilal-sheikh-3qvs54" && r?.eventTypeSlug === "deux";
+  const r = parseCalLink("/bilal-sheikh-3qvs54/deuvix/");
+  return r?.username === "bilal-sheikh-3qvs54" && r?.eventTypeSlug === "deuvix";
 })());
 ok("literal team/ prefix strips the prefix", (() => {
   const r = parseCalLink("team/acme/intro");

@@ -34,7 +34,7 @@ export function StatsSection() {
               <CountUp
                 value={stat.value}
                 suffix={stat.suffix}
-                className="font-heading text-3xl sm:text-4xl font-bold text-primary whitespace-nowrap"
+                className="font-heading text-[48px] font-bold text-primary whitespace-nowrap"
               />
               <span className="text-sm text-muted-foreground font-medium whitespace-nowrap">
                 {stat.label}

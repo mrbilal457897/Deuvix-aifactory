@@ -49,7 +49,7 @@ export interface TechLogo extends TrustLogo {
 export const clients: ClientLogo[] = [];
 
 /**
- * Technologies DEUX AI Factory actually builds with.
+ * Technologies Deuvix AI Factory actually builds with.
  *
  * TODO(owner): confirm each technology below is in active use and remove any
  * that are not, so the trust bar stays honest.

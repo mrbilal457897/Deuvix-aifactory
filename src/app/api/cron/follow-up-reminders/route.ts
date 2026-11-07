@@ -11,7 +11,7 @@ export const dynamic = "force-dynamic";
  *
  * This route deliberately CANNOT email anyone. It counts what is due, writes a
  * line to agent_logs, and returns the list. Outbound mail stays a human action
- * in /deux/leads, because the stored follow-up bodies are generic boilerplate
+ * in /deuvix/leads, because the stored follow-up bodies are generic boilerplate
  * and the queue contains test mailboxes and our own accounts.
  */
 
@@ -81,7 +81,7 @@ async function run(request: Request) {
         subject: row.subject,
         rows: row.duplicateCount,
       })),
-      hint: "No mail was sent. Open /deux/leads to draft replies.",
+      hint: "No mail was sent. Open /deuvix/leads to draft replies.",
     });
   } catch (err) {
     console.error(

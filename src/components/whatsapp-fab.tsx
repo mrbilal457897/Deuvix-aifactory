@@ -12,7 +12,7 @@ import { buildBusinessChatLink } from "@/lib/notify/whatsapp";
 export function WhatsAppFab() {
   const [hovered, setHovered] = useState(false);
 
-  const message = "Hi DEUX AI Factory, I'd like to talk about building AI agents for my business.";
+  const message = "Hi Deuvix AI Factory, I'd like to talk about building AI agents for my business.";
   const href = buildBusinessChatLink(message);
 
   if (!href) return null;
@@ -22,7 +22,7 @@ export function WhatsAppFab() {
       href={href}
       target="_blank"
       rel="noopener noreferrer"
-      aria-label="Chat with DEUX AI Factory on WhatsApp"
+      aria-label="Chat with Deuvix AI Factory on WhatsApp"
       onMouseEnter={() => setHovered(true)}
       onMouseLeave={() => setHovered(false)}
       onFocus={() => setHovered(true)}

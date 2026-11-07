@@ -69,15 +69,15 @@ check("notificationSent true", flagged[0].notificationSent, true);
 
 console.log("\n== follow-up dedup: 3 identical rows -> 1 ==");
 const followUps: FollowUp[] = [
-  f({ id: "f1", email: "t@x.com", subject: "Following up on your Deux inquiry", dueAt: "2026-08-22T00:00:00.000+00:00" }),
-  f({ id: "f2", email: "t@x.com", subject: "Following up on your Deux inquiry", dueAt: "2026-08-22T00:00:00.000+00:00" }),
-  f({ id: "f3", email: "t@x.com", subject: "Following up on your Deux inquiry", dueAt: "2026-08-22T00:00:00.000+00:00" }),
+  f({ id: "f1", email: "t@x.com", subject: "Following up on your Deuvix inquiry", dueAt: "2026-08-22T00:00:00.000+00:00" }),
+  f({ id: "f2", email: "t@x.com", subject: "Following up on your Deuvix inquiry", dueAt: "2026-08-22T00:00:00.000+00:00" }),
+  f({ id: "f3", email: "t@x.com", subject: "Following up on your Deuvix inquiry", dueAt: "2026-08-22T00:00:00.000+00:00" }),
   f({ id: "f4", email: "t@x.com", subject: "Different subject", dueAt: "2026-08-21T00:00:00.000+00:00" }),
   f({ id: "f5", email: "t@x.com", subject: "Resolved one", status: "done", dueAt: "2026-08-20T00:00:00.000+00:00" }),
 ];
 const fu = summariseFollowUps(followUps, new Date("2026-10-01T00:00:00.000Z"));
 check("pending groups only", fu.length, 2);
-const dup = fu.find((r) => r.subject === "Following up on your Deux inquiry");
+const dup = fu.find((r) => r.subject === "Following up on your Deuvix inquiry");
 check("duplicateCount is 3", dup?.duplicateCount, 3);
 check("duplicateIds clears all 3", dup?.duplicateIds.sort(), ["f1", "f2", "f3"]);
 check("most overdue represents group", fu[0].subject, "Different subject");

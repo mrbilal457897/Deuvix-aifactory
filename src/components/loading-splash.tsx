@@ -28,7 +28,7 @@ export function LoadingSplash() {
       )}
     >
       <div className="flex flex-col items-center gap-4 splash-content">
-        <BrandLogo />
+        <BrandLogo size="sm" />
         <div className="h-1 w-24 overflow-hidden rounded-full bg-muted">
           <div className="h-full w-full origin-left rounded-full bg-primary splash-bar" />
         </div>

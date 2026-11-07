@@ -1,4 +1,4 @@
--- Chat + knowledge base (Source A = "deux", Source B = "agentfactory").
+-- Chat + knowledge base (Source A = "deuvix", Source B = "agentfactory").
 -- pgvector ships with Supabase; safe to CREATE EXTENSION on a project that has it.
 
 CREATE EXTENSION IF NOT EXISTS vector;
@@ -8,7 +8,7 @@ CREATE EXTENSION IF NOT EXISTS vector;
 -- and for deleting chunks whose page disappeared upstream.
 -- ---------------------------------------------------------------------------
 CREATE TABLE IF NOT EXISTS kb_pages (
-  source       text        NOT NULL CHECK (source IN ('deux', 'agentfactory')),
+  source       text        NOT NULL CHECK (source IN ('deuvix', 'agentfactory')),
   url          text        NOT NULL,
   title        text,
   content_hash text        NOT NULL,
@@ -23,7 +23,7 @@ CREATE TABLE IF NOT EXISTS kb_pages (
 -- ---------------------------------------------------------------------------
 CREATE TABLE IF NOT EXISTS kb_chunks (
   id          uuid        PRIMARY KEY DEFAULT gen_random_uuid(),
-  source      text        NOT NULL CHECK (source IN ('deux', 'agentfactory')),
+  source      text        NOT NULL CHECK (source IN ('deuvix', 'agentfactory')),
   url         text        NOT NULL,
   chunk_index integer     NOT NULL,
   title       text,

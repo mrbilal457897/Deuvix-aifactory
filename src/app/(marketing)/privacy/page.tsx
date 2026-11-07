@@ -10,7 +10,7 @@ import type { Metadata } from "next";
 export const metadata: Metadata = {
   title: "Privacy Policy",
   description:
-    "How DEUX AI Factory collects, uses, and protects your information when you use our website and services.",
+    "How Deuvix AI Factory collects, uses, and protects your information when you use our website and services.",
   alternates: { canonical: "/privacy" },
 };
 
@@ -19,12 +19,12 @@ export default function PrivacyPolicyPage() {
     <LegalPage
       badge="Legal"
       title="Privacy Policy"
-      description="How DEUX AI Factory collects, uses, and protects your information when you use our website and services."
+      description="How Deuvix AI Factory collects, uses, and protects your information when you use our website and services."
       lastUpdated="14 August 2026"
     >
       <LegalSection heading="1. Who We Are">
         <LegalParagraph>
-          DEUX AI Factory (“we”, “our”, “us”) manufactures, deploys, and
+          Deuvix AI Factory (“we”, “our”, “us”) manufactures, deploys, and
           monetize Digital FTEs — AI workers that help run the next generation of
           enterprises. This Privacy Policy explains what information we collect on this
           website, why we collect it, and how you can control it.
@@ -40,8 +40,8 @@ export default function PrivacyPolicyPage() {
         <LegalList
           items={[
             <>
-              <strong className="text-foreground">Contact details</strong> — when you use
-              the contact form, we receive your name, email address, phone number,
+              <strong className="text-foreground">Discuss details</strong> — when you use
+              the discussion form, we receive your name, email address, phone number,
               selected service, optional website or portfolio link, and message.
             </>,
             <>
@@ -78,7 +78,7 @@ export default function PrivacyPolicyPage() {
         <LegalParagraph>
           Submitted leads and follow-ups are stored in secured files on our servers and
           are accessible only to authorized team members. Messages submitted through the
-          contact form are delivered to our team via email. We use industry-standard
+          discussion form is delivered to our team via email. We use industry-standard
           safeguards, including encryption in transit, and never sell your personal
           information.
         </LegalParagraph>
@@ -91,7 +91,7 @@ export default function PrivacyPolicyPage() {
         </LegalParagraph>
         <LegalList
           items={[
-            "Our email provider, used to deliver contact-form messages.",
+            "Our email provider, used to deliver discussion-form messages.",
             "OAuth providers (Google, GitHub), used only when you sign in.",
             "Hosting and infrastructure providers that keep the site running.",
           ]}
@@ -118,14 +118,14 @@ export default function PrivacyPolicyPage() {
           ]}
         />
         <LegalParagraph>
-          To exercise any of these rights, contact us at <CompanyEmailLink />.
+          To exercise any of these rights, discuss with us at <CompanyEmailLink />.
         </LegalParagraph>
       </LegalSection>
 
-      <LegalSection heading="8. Contact Us">
+      <LegalSection heading="8. Discuss">
         <LegalParagraph>
           Questions about this policy? Reach us at <CompanyEmailLink /> or via our{" "}
-          <a href="/contact" className="text-primary hover:underline">contact page</a>.
+          <a href="/contact" className="text-primary hover:underline">discussion page</a>.
         </LegalParagraph>
       </LegalSection>
     </LegalPage>

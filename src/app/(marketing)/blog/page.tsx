@@ -8,6 +8,7 @@ import { User, FolderOpen, ArrowRight, ChevronLeft, ChevronRight } from "lucide-
 import Link from "next/link";
 import Image from "next/image";
 import { CharReveal } from "@/components/split-text";
+import { Breadcrumb } from "@/components/ui/breadcrumb";
 import { blogCategories, posts } from "./posts";
 
 if (typeof window !== "undefined") {
@@ -43,22 +44,27 @@ export default function BlogPage() {
   }, [activeCategory, currentPage]);
 
   return (
-    <div className="pt-24">
+    <div>
       {/* Hero */}
-      <section className="py-16 text-center px-6 bg-hero-pattern relative">
+      <section className="pt-8 sm:pt-12 pb-16 bg-hero-pattern relative">
         <div className="absolute inset-0 bg-dots opacity-30" />
-        <Badge className="mb-4 bg-accent/10 text-accent border-accent/20">Blog</Badge>
-        <h1 className="font-heading text-4xl sm:text-5xl font-bold mb-4">
+        <div className="relative mx-auto max-w-7xl px-6 sm:px-6 lg:px-8 text-left">
+        <Breadcrumb
+          items={[{ label: "Home", href: "/" }, { label: "Blog" }]}
+          className="mb-4 sm:mb-6"
+        />
+        <h1 className="font-heading text-[68px] font-bold mb-4">
           <CharReveal>Insights & <span className="text-gradient">AI-Native</span></CharReveal>
         </h1>
-        <p className="mx-auto max-w-2xl text-muted-foreground text-lg">
+        <p className="max-w-2xl text-muted-foreground text-base">
           Deep dives into building AI-Native companies, Digital FTEs, and the future of intelligent work.
         </p>
+        </div>
       </section>
 
       {/* Category Filters */}
       <section className="pt-12 pb-8 px-6">
-        <div className="mx-auto max-w-6xl">
+        <div className="mx-auto max-w-7xl">
           <div className="flex flex-wrap justify-center gap-2">
             {blogCategories.map((cat) => (
               <button
@@ -82,7 +88,7 @@ export default function BlogPage() {
 
       {/* Blog Grid */}
       <section className="pb-16 px-6">
-        <div className="mx-auto max-w-6xl" ref={gridRef}>
+        <div className="mx-auto max-w-7xl" ref={gridRef}>
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
             {paginatedPosts.map((post) => (
               <Link
@@ -106,7 +112,7 @@ export default function BlogPage() {
 
                 {/* Content */}
                 <div className="p-5 flex flex-col flex-1">
-                  <h3 className="font-heading text-lg font-bold text-foreground group-hover:text-primary transition-colors duration-200 mb-2 line-clamp-2">
+                  <h3 className="font-heading text-[24px] font-bold text-foreground group-hover:text-primary transition-colors duration-200 mb-2 line-clamp-2">
                     {post.title}
                   </h3>
 

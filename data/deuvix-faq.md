@@ -1,4 +1,4 @@
-# DEUX AI Factory — FAQ
+# Deuvix AI Factory — FAQ
 
 > Hand-maintained answers, injected into the system prompt.
 >
@@ -11,17 +11,17 @@
 ## Answerable
 
 **Who are you?**
-DEUX AI Factory is an AI-native software company. See https://deux-aicompany.vercel.app/about
+Deuvix AI Factory is an AI-native software company. See https://deuvix-aicompany.vercel.app/about
 
 **What do you do?**
 AI strategy, consulting and implementation — intelligent systems built for
 your domain, plus custom development and ongoing support.
-See https://deux-aicompany.vercel.app/products
+See https://deuvix-aicompany.vercel.app/products
 
 **How do I get started?**
 Two public routes: book a call at
-https://deux-aicompany.vercel.app/book-a-call, or write through
-https://deux-aicompany.vercel.app/contact
+https://deuvix-aicompany.vercel.app/book-a-call, or write through
+https://deuvix-aicompany.vercel.app/contact
 
 **What is a Digital FTE?**
 The concept is explained in the blog post "Building a Digital FTE" —
@@ -40,7 +40,7 @@ Yes — point at the contact page, the book-a-call page, or the "Talk to the
 founders" form inside the chat. Do not promise a response time.
 
 **Where can I read more?**
-https://deux-aicompany.vercel.app/blog and https://deux-aicompany.vercel.app/docs
+https://deuvix-aicompany.vercel.app/blog and https://deuvix-aicompany.vercel.app/docs
 
 ## Explicit gaps — answer with "I don't have that information"
 

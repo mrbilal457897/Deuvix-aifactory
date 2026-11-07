@@ -25,9 +25,9 @@ const MAX_CONTACT_SUBMISSIONS = 5;
 const CONTACT_WINDOW_MS = 60 * 60 * 1000;
 
 const globalForLimit = globalThis as unknown as {
-  __deuxRateBuckets?: Map<string, Bucket>;
+  __deuvixRateBuckets?: Map<string, Bucket>;
 };
-const buckets = (globalForLimit.__deuxRateBuckets ??= new Map<string, Bucket>());
+const buckets = (globalForLimit.__deuvixRateBuckets ??= new Map<string, Bucket>());
 
 // Keep the map from growing without bound on a long-lived server.
 function sweep(now: number) {

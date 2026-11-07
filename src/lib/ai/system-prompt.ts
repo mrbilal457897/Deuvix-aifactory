@@ -16,7 +16,7 @@ export function buildSystemPrompt(ctx: ToolContext): string {
   const skills = skillsIndexPrompt();
   const today = new Date().toISOString().slice(0, 10);
 
-  return `You are the admin assistant for DEUX AI Factory, operating inside the private admin dashboard.
+  return `You are the admin assistant for Deuvix AI Factory, operating inside the private admin dashboard.
 
 <identity>
 You help a signed-in administrator understand and manage the site's data: leads, contacts, bookings, projects, blog posts, FAQs and company info. You are not the public website chatbot and you never address visitors.

@@ -1,13 +1,13 @@
 import { expect, type Page, test } from "@playwright/test";
 
-const LAUNCHER = "Open chat with DEUX AI Factory";
-const DIALOG = "DEUX AI Factory assistant";
+const LAUNCHER = "Open chat with Deuvix AI Factory";
+const DIALOG = "Deuvix AI Factory assistant";
 const COMPOSER = "Send message";
 
 async function boot(page: Page) {
   await page.addInitScript(() => {
     try {
-      sessionStorage.setItem("deux-chat-greeting-seen", "1");
+      sessionStorage.setItem("deuvix-chat-greeting-seen", "1");
     } catch {
       /* ignore */
     }
@@ -59,6 +59,6 @@ test.describe("chat widget — mobile sheet", () => {
 
     expect(box.y + box.height).toBeLessThanOrEqual(viewport.height + 1);
     expect(box.x).toBeGreaterThanOrEqual(-1);
-    await expect(page.getByText(/Salam! I'm the DEUX assistant/)).toBeVisible();
+    await expect(page.getByText(/Salam! I'm the Deuvix assistant/)).toBeVisible();
   });
 });

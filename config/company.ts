@@ -14,9 +14,9 @@
 
 export const company = {
   /** TODO(owner): confirm the legal entity name exactly as registered. */
-  legalName: "DEUX AI Factory",
+  legalName: "Deuvix AI Factory",
   /** Public brand name. */
-  tradingName: "DEUX AI Factory",
+  tradingName: "Deuvix AI Factory",
   /** TODO(owner): company / registration number from the registrar. */
   registrationNumber: "",
   /** TODO(owner): confirm. Matches the existing site copy. */
@@ -32,7 +32,7 @@ export const company = {
    */
   businessEmail:
     (typeof process !== "undefined" ? process.env.NEXT_PUBLIC_CONTACT_EMAIL?.trim() : undefined) ||
-    "deuxaiinfo786@gmail.com",
+    "team.deuvix@gmail.com",
   /** TODO(owner): business phone number in international format. */
   phone: "",
   /** Optional tax identifier (VAT, NTN, ...). TODO(owner). */

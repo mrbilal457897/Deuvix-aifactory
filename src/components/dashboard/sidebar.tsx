@@ -8,10 +8,10 @@ import { Zap, Folder, ArrowLeft, LogOut, Menu, X, ImageIcon, Settings, Users } f
 import { cn } from "@/lib/utils";
 
 const sidebarLinks = [
-  { href: "/deux", label: "Projects", icon: Folder },
-  { href: "/deux/users", label: "Users", icon: Users },
-  { href: "/deux/media", label: "Media Library", icon: ImageIcon },
-  { href: "/deux/images", label: "Image Settings", icon: Settings },
+  { href: "/deuvix", label: "Projects", icon: Folder },
+  { href: "/deuvix/users", label: "Users", icon: Users },
+  { href: "/deuvix/media", label: "Media Library", icon: ImageIcon },
+  { href: "/deuvix/images", label: "Image Settings", icon: Settings },
 ];
 
 function SidebarNav({ onNavigate }: { onNavigate: () => void }) {
@@ -27,7 +27,7 @@ function SidebarNav({ onNavigate }: { onNavigate: () => void }) {
             <Zap className="size-4 text-primary-foreground" />
           </div>
           <span className="text-lg font-heading font-bold text-foreground tracking-tight">
-            DEUX AI Factory
+            Deuvix AI Factory
           </span>
         </Link>
         <p className="text-xs text-muted-foreground mt-1 ml-[42px]">Admin Panel</p>

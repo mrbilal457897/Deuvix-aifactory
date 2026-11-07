@@ -16,7 +16,7 @@ export type Role = "user" | "assistant";
 export interface ChatSource {
   title: string;
   url: string;
-  source: "deux" | "agentfactory";
+  source: "deuvix" | "agentfactory";
 }
 
 export interface ChatMessage {
@@ -40,9 +40,9 @@ export interface ChatState {
 }
 
 const GUEST_HISTORY_MAX = 12;
-const HISTORY_KEY = "deux-chat-guest";
-const SESSION_KEY = "deux-chat-session";
-const CONVERSATION_KEY = "deux-chat-conversation";
+const HISTORY_KEY = "deuvix-chat-guest";
+const SESSION_KEY = "deuvix-chat-session";
+const CONVERSATION_KEY = "deuvix-chat-conversation";
 
 function safeStorage(): Storage | null {
   try {

@@ -2,11 +2,11 @@
  * Every user-facing string in the chat widget, in one file (§8.4).
  */
 export const uiStrings = {
-  launcherLabel: "Open chat with DEUX AI Factory",
+  launcherLabel: "Open chat with Deuvix AI Factory",
   launcherGreeting: "Need help building an AI agent?",
   launcherGreetingDismiss: "Dismiss",
 
-  dialogLabel: "DEUX AI Factory assistant",
+  dialogLabel: "Deuvix AI Factory assistant",
   statusOnline: "Online · Replies instantly",
   statusSaved: "History is saved",
   statusGuest: "Guest mode · not saved",
@@ -31,9 +31,9 @@ export const uiStrings = {
   charLimit: (n: number, max: number) => `${n}/${max}`,
 
   greeting:
-    "Salam! I'm the DEUX assistant. I can explain what Deux does, or help you plan how to build an AI agent for your business.",
+    "Salam! I'm the Deuvix assistant. I can explain what Deuvix does, or help you plan how to build an AI agent for your business.",
   quickReplies: [
-    "What does Deux offer?",
+    "What does Deuvix offer?",
     "Who are you?",
     "How do I build an AI agent?",
     "Explore Agent Factory",
@@ -43,7 +43,7 @@ export const uiStrings = {
 
   typing: "Assistant is typing",
   sourcesLabel: "Sources",
-  sourceDeux: "Deux",
+  sourceDeuvix: "Deuvix",
   sourceAgentFactory: "Agent Factory",
 
   emptyAnswer: "I couldn't put that together. Please try again.",
@@ -58,7 +58,7 @@ export const uiStrings = {
   noAnswer:
     "I don't have that information. The founders can help — use the contact options below.",
   boundary: (topic: string) =>
-    `Let's keep this about building AI agents and what Deux does. I can't help with ${topic}.`,
+    `Let's keep this about building AI agents and what Deuvix does. I can't help with ${topic}.`,
   abuseBoundary:
     "Let's keep this respectful. I'm happy to help with building AI agents — what are you working on?",
   sessionEnded:

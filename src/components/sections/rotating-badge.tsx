@@ -53,7 +53,7 @@ export function RotatingBadge({ className }: { className?: string }) {
           filter="url(#emboss)"
         >
           <textPath href="#trademark-circle">
-            DEUX AI FACTORY · DIGITAL FTE · SECURE · TRUSTED · AI NATIVE ·
+            Deuvix AI Factory · Digital FTE · Secure · Trusted · AI Native ·
           </textPath>
         </text>
       </svg>

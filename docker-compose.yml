@@ -3,13 +3,13 @@ services:
     image: postgres:16-alpine
     restart: unless-stopped
     environment:
-      POSTGRES_USER: ${POSTGRES_USER:-deux}
+      POSTGRES_USER: ${POSTGRES_USER:-deuvix}
       POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:?set POSTGRES_PASSWORD in .env}
-      POSTGRES_DB: ${POSTGRES_DB:-deux}
+      POSTGRES_DB: ${POSTGRES_DB:-deuvix}
     volumes:
-      - deux-pgdata:/var/lib/postgresql/data
+      - deuvix-pgdata:/var/lib/postgresql/data
     healthcheck:
-      test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER:-deux} -d ${POSTGRES_DB:-deux}"]
+      test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER:-deuvix} -d ${POSTGRES_DB:-deuvix}"]
       interval: 10s
       timeout: 5s
       retries: 10
@@ -28,7 +28,7 @@ services:
       db:
         condition: service_healthy
     environment:
-      DATABASE_URL: postgres://${POSTGRES_USER:-deux}:${POSTGRES_PASSWORD}@db:5432/${POSTGRES_DB:-deux}
+      DATABASE_URL: postgres://${POSTGRES_USER:-deuvix}:${POSTGRES_PASSWORD}@db:5432/${POSTGRES_DB:-deuvix}
       CAL_WEBHOOK_SECRET: ${CAL_WEBHOOK_SECRET:?required}
       SMTP_HOST: ${SMTP_HOST:?required}
       SMTP_PORT: ${SMTP_PORT:-587}
@@ -56,4 +56,4 @@ services:
       - "${WEB_PORT:-3000}:3000"
 
 volumes:
-  deux-pgdata:
+  deuvix-pgdata:

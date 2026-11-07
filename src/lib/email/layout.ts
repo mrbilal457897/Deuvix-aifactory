@@ -7,7 +7,7 @@
 import { escapeHtml } from "./index";
 
 export const BRAND = {
-  name: "DEUX AI Factory",
+  name: "Deuvix AI Factory",
   primary: "#4CAF7D",
   primaryDark: "#3d9066",
   ink: "#0F0F0B",

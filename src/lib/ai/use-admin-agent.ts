@@ -80,7 +80,7 @@ export interface AgentHealth {
 
 const MAX_INPUT = 4000;
 const HISTORY_WINDOW = 12;
-const PROVIDER_KEY = "deux.admin-agent.provider";
+const PROVIDER_KEY = "deuvix.admin-agent.provider";
 
 function readStoredProvider(): AgentProviderId | null {
   try {

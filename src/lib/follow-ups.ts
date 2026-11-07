@@ -73,7 +73,7 @@ export async function listFollowUps(): Promise<FollowUp[]> {
 /**
  * Resolves follow-ups as done or skipped.
  *
- * Only ever called when an admin clicks the button in /deux/leads — never on a
+ * Only ever called when an admin clicks the button in /deuvix/leads — never on a
  * schedule. Accepts every id in a collapsed duplicate group so one click clears
  * the lot. Returns the number of rows actually updated.
  */

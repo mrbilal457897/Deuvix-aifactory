@@ -79,7 +79,7 @@ async function deliverLead(data: { name: string; contact: string; summary: strin
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
-          source: "deux-chat",
+          source: "deuvix-chat",
           ...data,
           consent: true,
           at: new Date().toISOString(),

@@ -11,10 +11,11 @@ import {
   Zap,
 } from "lucide-react";
 import { company } from "@config/company";
+import { Breadcrumb } from "@/components/ui/breadcrumb";
 
 export const metadata: Metadata = {
   title: "Careers",
-  description: "Join DEUX AI Factory and build the AI workforce that runs the next generation of enterprises.",
+  description: "Join Deuvix AI Factory and build the AI workforce that runs the next generation of enterprises.",
   alternates: { canonical: "/careers" },
 };
 
@@ -30,7 +31,7 @@ const roles = [
     title: "AI Agent Developer",
     type: "Full-time · Remote",
     description:
-      "Build chatbots, voice agents, and autonomous loops using the DEUX AI Factory platform. You turn business workflows into reliable, always-on digital workers.",
+      "Build chatbots, voice agents, and autonomous loops using the Deuvix AI Factory platform. You turn business workflows into reliable, always-on digital workers.",
     icon: Bot,
   },
   {
@@ -69,22 +70,28 @@ const perks = [
 
 export default function CareersPage() {
   return (
-    <div className="pt-24">
-      <section className="py-16 text-center px-6 bg-hero-pattern relative">
+    <div>
+      <section className="pt-8 sm:pt-12 pb-16 bg-hero-pattern relative">
         <div className="absolute inset-0 bg-dots opacity-30" />
+        <div className="relative mx-auto max-w-7xl px-6 sm:px-6 lg:px-8 text-center">
+          <Breadcrumb
+            items={[{ label: "Home", href: "/" }, { label: "Careers" }]}
+            className="mb-4 sm:mb-6"
+          />
         <Badge className="mb-4 bg-accent/10 text-accent border-accent/20">Careers</Badge>
-        <h1 className="font-heading text-4xl sm:text-5xl font-bold mb-4">
+        <h1 className="font-heading text-[68px] font-bold mb-4">
           Build the <span className="text-gradient">AI workforce</span>
         </h1>
-        <p className="mx-auto max-w-2xl text-muted-foreground text-lg">
-          DEUX AI Factory manufactures, deploys, and monetizes Digital FTEs. Join us
+        <p className="max-w-2xl text-muted-foreground text-base">
+          Deuvix AI Factory manufactures, deploys, and monetizes Digital FTEs. Join us
           to build the systems that run the next generation of enterprises.
         </p>
+        </div>
       </section>
 
       <section className="py-16 px-6">
         <div className="mx-auto max-w-4xl">
-          <h2 className="font-heading text-2xl sm:text-3xl font-bold text-center mb-10">
+          <h2 className="font-heading text-[48px] font-bold text-center mb-10">
             Open Roles
           </h2>
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
@@ -101,7 +108,7 @@ export default function CareersPage() {
                     {role.type}
                   </span>
                 </div>
-                <h3 className="font-heading text-lg font-bold mb-2 group-hover:text-primary transition-colors">
+                <h3 className="font-heading text-[24px] font-bold mb-2 group-hover:text-primary transition-colors">
                   {role.title}
                 </h3>
                 <p className="text-sm text-muted-foreground leading-relaxed">{role.description}</p>
@@ -110,8 +117,8 @@ export default function CareersPage() {
           </div>
 
           <div className="mt-14">
-            <h2 className="font-heading text-2xl sm:text-3xl font-bold text-center mb-10">
-              Why DEUX AI Factory
+            <h2 className="font-heading text-[48px] font-bold text-center mb-10">
+              Why Deuvix AI Factory
             </h2>
             <div className="grid grid-cols-1 sm:grid-cols-3 gap-6">
               {perks.map((perk) => (
@@ -127,7 +134,7 @@ export default function CareersPage() {
           </div>
 
           <div className="mt-14 p-8 rounded-2xl bg-primary text-primary-foreground text-center">
-            <h2 className="font-heading text-2xl font-bold mb-2">Don&apos;t see your role?</h2>
+            <h2 className="font-heading text-[48px] font-bold mb-2">Don&apos;t see your role?</h2>
             <p className="text-sm opacity-90 mb-6 max-w-xl mx-auto">
               We are always looking for exceptional people. Tell us what you build and how you want
               to help shape the AI workforce.

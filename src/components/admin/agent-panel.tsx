@@ -371,7 +371,7 @@ export function AdminAgentPanel() {
                     </div>
                     <div className="min-w-0 flex-1">
                       <h2 className="font-heading text-base font-semibold leading-tight text-foreground">
-                        DEUX AI Agent
+                        Deuvix AI Agent
                       </h2>
                       <p className="flex items-center gap-1.5 text-xs text-muted-foreground">
                         <span>{statusText}</span>

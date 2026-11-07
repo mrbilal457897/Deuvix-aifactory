@@ -1,5 +1,5 @@
 /**
- * Read-only CRM aggregation for the /deux/leads dashboard.
+ * Read-only CRM aggregation for the /deuvix/leads dashboard.
  *
  * Every function here is pure — no database, no network. All timestamps are
  * normalised to ISO so the dashboard's string sort (components/dashboard/

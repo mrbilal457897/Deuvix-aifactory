@@ -24,6 +24,7 @@ import { CharReveal } from "@/components/split-text";
 import { TrustBar } from "@/components/sections/trust-bar";
 import { buildBusinessChatLink } from "@/lib/notify/whatsapp";
 import { company } from "@config/company";
+import { Breadcrumb } from "@/components/ui/breadcrumb";
 import "@/app/loop-anim.css";
 
 if (typeof window !== "undefined") {
@@ -102,21 +103,21 @@ const products = [
 const plans = [
   {
     name: "Starter",
-    price: "500",
+    price: "Pay as you go",
     description: "For small teams getting started with AI",
     features: ["1 Digital FTE", "Basic Agent Setup", "Email support", "Community access"],
     popular: false,
   },
   {
     name: "Professional",
-    price: "2,000",
+    price: "Pay as you go",
     description: "Full power for growing AI-Native companies",
     features: ["5 Digital FTEs", "Custom Agent Training", "Priority support", "FDE consultation", "Analytics dashboard"],
     popular: true,
   },
   {
     name: "Enterprise",
-    price: "Custom",
+    price: "Pay as you go",
     description: "Tailored solutions with dedicated support",
     features: ["Unlimited FTEs", "Dedicated FDE team", "SLA guarantee", "On-premise option", "Custom integrations"],
     popular: false,
@@ -287,20 +288,23 @@ export default function ProductsPage() {
   const ActiveIcon = active.icon;
 
   return (
-    <div className="pt-24">
-      <section className="py-16 text-center px-6 relative overflow-hidden">
+    <div>
+      <section className="pt-8 sm:pt-12 pb-16 relative overflow-hidden">
         <div className="absolute inset-0">
           <div className="absolute inset-0 bg-background/85" />
           <div className="absolute inset-0 bg-dots opacity-30" />
         </div>
-        <div className="relative">
-        <Badge className="mb-4 bg-primary/10 text-primary border-primary/20">Services</Badge>
-        <h1 className="font-heading text-4xl sm:text-5xl font-bold mb-4">
-          <CharReveal>AI-Native <span className="text-gradient">Solutions</span></CharReveal>
-        </h1>
-        <p className="mx-auto max-w-2xl text-muted-foreground text-lg">
-          From Digital FTEs to full business transformation — we build the AI workforce your company needs.
-        </p>
+        <div className="relative mx-auto max-w-7xl px-6 sm:px-6 lg:px-8 text-left">
+          <Breadcrumb
+            items={[{ label: "Home", href: "/" }, { label: "Services" }]}
+            className="mb-4 sm:mb-6"
+          />
+          <h1 className="font-heading text-[68px] font-bold mb-4">
+            <CharReveal>AI-Native <span className="text-gradient">Solutions</span></CharReveal>
+          </h1>
+          <p className="max-w-2xl text-muted-foreground text-base">
+            From Digital FTEs to full business transformation — we build the AI workforce your company needs.
+          </p>
         </div>
       </section>
 
@@ -334,7 +338,7 @@ export default function ProductsPage() {
                   <Sparkles className="size-5" />
                 </div>
                 <Badge variant="secondary" className="mb-3 text-xs">{product.category}</Badge>
-                <h3 className="font-heading text-lg font-semibold mb-2">{product.title}</h3>
+                <h3 className="font-heading text-[24px] font-semibold mb-2">{product.title}</h3>
                 <p className="text-muted-foreground text-sm leading-relaxed mb-4">{product.description}</p>
                 <ul className="space-y-1.5 mb-5">
                   {product.features.map((f) => (
@@ -380,10 +384,10 @@ export default function ProductsPage() {
         <div className="relative mx-auto max-w-7xl">
           <div className="text-center mb-16">
             <Badge className="mb-4 border-sky-400/30 bg-sky-400/10 text-sky-300" data-loop-reveal>Methodology</Badge>
-            <h2 className="font-heading text-3xl sm:text-4xl font-bold mb-4 text-white" data-loop-reveal>
+            <h2 className="font-heading text-[48px] font-bold mb-4 text-white" data-loop-reveal>
               Loop <span className="bg-gradient-to-r from-sky-400 via-indigo-400 to-violet-400 bg-clip-text text-transparent">Engineering</span>
             </h2>
-            <p className="mx-auto max-w-2xl text-slate-400 text-lg" data-loop-reveal>
+            <p className="mx-auto max-w-2xl text-slate-400 text-base" data-loop-reveal>
               A loop starts work, checks it, records the result, and repeats on its own. The prompt was yesterday — today we design the loop. Each beat runs unattended; you only see the calls that matter.
             </p>
           </div>
@@ -417,7 +421,7 @@ export default function ProductsPage() {
                 <div className="mt-3 flex size-12 items-center justify-center rounded-full bg-gradient-to-br from-sky-500 to-violet-600 shadow-lg shadow-indigo-500/40">
                   <ActiveIcon className="size-5 text-white" />
                 </div>
-                <h3 className="mt-3 font-heading text-lg font-semibold text-white">{active.title}</h3>
+                <h3 className="mt-3 font-heading text-[24px] font-semibold text-white">{active.title}</h3>
                 <p className="mt-2 text-xs leading-relaxed text-slate-400">{active.description}</p>
                 <span className="mt-3 rounded-full border border-sky-400/30 bg-sky-400/10 px-3 py-1 text-[10px] font-medium text-sky-300">{active.role}</span>
               </div>
@@ -548,10 +552,10 @@ export default function ProductsPage() {
         <div className="mx-auto max-w-7xl">
           <div className="text-center mb-16">
             <Badge className="mb-4 bg-amber-500/10 text-amber-600 border-amber-500/20">Pricing</Badge>
-            <h2 className="font-heading text-3xl sm:text-4xl font-bold mb-4">
+            <h2 className="font-heading text-[48px] font-bold mb-4">
               Simple, <span className="text-gradient">Transparent</span> Pricing
             </h2>
-            <p className="mx-auto max-w-2xl text-muted-foreground text-lg">
+            <p className="mx-auto max-w-2xl text-muted-foreground text-base">
               Start with one Digital FTE, scale to an entire AI workforce.
             </p>
           </div>
@@ -576,10 +580,7 @@ export default function ProductsPage() {
                   {plan.description}
                 </p>
                 <div className="mb-6">
-                  <span className="text-4xl font-heading font-bold">${plan.price}</span>
-                  {plan.price !== "Custom" && (
-                    <span className={`text-sm ${plan.popular ? "text-primary-foreground/60" : "text-muted-foreground"}`}>/month</span>
-                  )}
+                  <span className="text-2xl font-heading font-bold">{plan.price}</span>
                 </div>
                 <ul className="space-y-2.5 mb-8">
                   {plan.features.map((f) => (

@@ -4,10 +4,9 @@ import { useEffect } from "react";
 import dynamic from "next/dynamic";
 import { gsap } from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
-import { Header } from "@/components/layout/header";
+import { Navbar } from "@/components/layout/navbar";
 import { Footer } from "@/components/layout/footer";
 import { BackToTop } from "@/components/back-to-top";
-import { BookCallProvider } from "@/components/book-call-provider";
 import { WhatsAppFab } from "@/components/whatsapp-fab";
 import { usePathname } from "next/navigation";
 
@@ -26,8 +25,8 @@ if (typeof window !== "undefined") {
   gsap.registerPlugin(ScrollTrigger);
 }
 
-  const noFooterRoutes = ["/login", "/deux"];
-const noHeaderRoutes = ["/login", "/deux"];
+  const noFooterRoutes = ["/login", "/deuvix"];
+const noHeaderRoutes = ["/login", "/deuvix"];
 
 export function LayoutShell({ children }: { children: React.ReactNode }) {
   const pathname = usePathname();
@@ -66,13 +65,15 @@ export function LayoutShell({ children }: { children: React.ReactNode }) {
   }, []);
 
   return (
-    <BookCallProvider>
-      {!hideHeader && <Header />}
-      <main className="flex-1">{children}</main>
+    <>
+      {!hideHeader && <Navbar />}
+      <main id="main-content" className={hideHeader ? "flex-1" : "flex-1 pt-16"}>
+        {children}
+      </main>
       {!hideFooter && <Footer />}
       {!hideFooter && <Chat />}
       {!hideFooter && <WhatsAppFab />}
       {!hideFooter && <BackToTop />}
-    </BookCallProvider>
+    </>
   );
 }

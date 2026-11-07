@@ -64,7 +64,7 @@ export function isCalApiConfigured(): boolean {
 }
 
 export interface CalEventRef {
-  /** `deux` */
+  /** `deuvix` */
   eventTypeSlug: string;
   /** `bilal-sheikh-3qvs54` */
   username?: string;

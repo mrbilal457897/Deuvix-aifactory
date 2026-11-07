@@ -1,71 +1,50 @@
 "use client";
 
-import { useState } from "react";
 import Image from "next/image";
 import { cn } from "@/lib/utils";
-import { useSiteConfig } from "@/hooks/use-site-config";
+import { DeuvixLogoMark } from "@/components/deuvix-logo";
 
 type LogoSize = "xs" | "sm" | "md" | "lg";
 
-const SIZES = {
-  xs: { mark: "size-10 text-xs", px: 40, name: "text-base", sub: "text-[8px]", pull: "-ml-[13px]" },
-  sm: { mark: "size-12 text-sm", px: 48, name: "text-lg", sub: "text-[9px]", pull: "-ml-[15px]" },
-  md: { mark: "size-18 text-xl", px: 72, name: "text-2xl", sub: "text-[10px]", pull: "-ml-[23px]" },
-  lg: { mark: "size-24 text-3xl", px: 96, name: "text-4xl", sub: "text-xs", pull: "-ml-[30px]" },
+const LOGO_SIZES: Record<LogoSize, { w: number; h: number }> = {
+  xs: { w: 100, h: 34 },
+  sm: { w: 130, h: 43 },
+  md: { w: 160, h: 53 },
+  lg: { w: 200, h: 67 },
 };
 
-interface LogoMarkProps {
-  className?: string;
-  size?: LogoSize;
+/**
+ * LogoMark (icon only) — used independently in dashboard collapsed state.
+ */
+export function LogoMark({ className, size = "sm" }: { className?: string; size?: LogoSize }) {
+  const MARK_SIZES: Record<LogoSize, number> = { xs: 20, sm: 24, md: 32, lg: 40 };
+  return <DeuvixLogoMark size={MARK_SIZES[size]} className={className} />;
 }
 
-export function LogoMark({ className, size = "sm" }: LogoMarkProps) {
-  const { img } = useSiteConfig();
-  const src = img("logo");
-  const [failedSrc, setFailedSrc] = useState<string | null>(null);
-  const showImage = Boolean(src) && src !== failedSrc;
-
-  const s = SIZES[size];
-
+/**
+ * BrandLogo — main logo with "AI FACTORY" text directly below it.
+ * Uses logo-deuvix.png for both light and dark mode.
+ */
+export function BrandLogo({ className, size = "md" }: { className?: string; size?: LogoSize }) {
+  const { w, h } = LOGO_SIZES[size];
   return (
-    <span className={cn("flex shrink-0 items-center justify-center", s.mark, className)}>
-      {showImage ? (
-        <Image
-          src={src}
-          alt=""
-          width={s.px}
-          height={s.px}
-          onError={() => setFailedSrc(src)}
-          className="size-full object-contain dark:invert"
-        />
-      ) : (
-        <span className="flex size-full items-center justify-center bg-foreground font-extrabold tracking-[0.5px] text-background">
-          D2
+    <>
+      <span className={cn("inline-flex flex-col items-center leading-none", className)}>
+        <span className="flex shrink-0 items-center justify-center">
+          <Image
+            src="/images/logo-deuvix.png"
+            alt="Deuvix AI Factory"
+            width={w}
+            height={h}
+            className="block shrink-0 object-contain"
+            priority
+            unoptimized
+          />
         </span>
-      )}
-    </span>
-  );
-}
-
-interface BrandLogoProps {
-  className?: string;
-  size?: LogoSize;
-}
-
-export function BrandLogo({ className, size = "md" }: BrandLogoProps) {
-  const s = SIZES[size];
-
-  return (
-    <span className={cn("inline-flex items-center gap-2", className)}>
-      <LogoMark size={size} />
-      <span className={cn("leading-none text-left", s.pull)}>
-        <span className={cn("block font-heading font-extrabold tracking-[0.5px]", s.name)}>
-          DEUX
-        </span>
-        <span className={cn("block uppercase text-muted-foreground tracking-[0.2em]", s.sub)}>
-          AI Factory&trade;
+        <span className="text-[10px] text-muted-foreground uppercase tracking-widest font-medium leading-none mt-[1.5px] mb-0 pb-0">
+          AI FACTORY
         </span>
       </span>
-    </span>
+    </>
   );
 }

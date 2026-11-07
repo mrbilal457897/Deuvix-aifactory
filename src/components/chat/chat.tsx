@@ -6,7 +6,7 @@ import { ChatWindow, LauncherGreeting } from "@/components/chat/chat-window";
 import { useChat } from "@/lib/chat/use-chat";
 import { uiStrings } from "@/lib/chat/ui-strings";
 
-const GREETING_SEEN = "deux-chat-greeting-seen";
+const GREETING_SEEN = "deuvix-chat-greeting-seen";
 const FOCUSABLE =
   'a[href], button:not([disabled]), textarea:not([disabled]), input:not([disabled]), select:not([disabled]), [tabindex]:not([tabindex="-1"])';
 

@@ -15,7 +15,7 @@ const testimonials = [
     name: "Sarah Chen",
     role: "CTO, TechFlow Inc",
     content:
-      "DEUX AI Factory's Digital FTEs replaced 3 manual workflows in our ops team. 85% cost savings and the agents run 24/7 without fatigue.",
+      "Deuvix AI Factory's Digital FTEs replaced 3 manual workflows in our ops team. 85% cost savings and the agents run 24/7 without fatigue.",
     rating: 5,
   },
   {
@@ -29,7 +29,7 @@ const testimonials = [
     name: "Aisha Patel",
     role: "Founder, GreenTech AI",
     content:
-      "As a startup, we needed scalable AI solutions. DEUX AI Factory gave us enterprise-level Digital FTEs at a fraction of hiring human engineers.",
+      "As a startup, we needed scalable AI solutions. Deuvix AI Factory gave us enterprise-level Digital FTEs at a fraction of hiring human engineers.",
     rating: 5,
   },
 ];
@@ -69,12 +69,12 @@ export function TestimonialsSection() {
           <p className="text-sm font-semibold text-primary uppercase tracking-wider mb-3">
             Testimonials
           </p>
-          <h2 className="font-heading text-3xl sm:text-4xl lg:text-5xl font-bold mb-4">
+          <h2 className="font-heading text-[48px] font-bold mb-4">
             <CharReveal>Trusted by{" "}
               <span className="text-gradient">Industry Leaders</span></CharReveal>
           </h2>
-          <p className="mx-auto max-w-2xl text-muted-foreground text-lg">
-            See what our clients say about working with DEUX AI Factory.
+          <p className="mx-auto max-w-2xl text-muted-foreground text-base">
+            See what our clients say about working with Deuvix AI Factory.
           </p>
         </div>
 

@@ -10,7 +10,7 @@ import { scoreCase, type CapturedRun, type CaseResult } from "./score";
 
 const EVAL_CTX: ToolContext = {
   adminId: "eval",
-  adminEmail: "eval@deux.local",
+  adminEmail: "eval@deuvix.local",
   role: "admin",
 };
 

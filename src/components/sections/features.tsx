@@ -122,15 +122,17 @@ export function FeaturesSection() {
 
   return (
     <section className="bg-section">
-      <div className="text-center pt-24 sm:pt-32 pb-8">
-        <p className="text-sm font-semibold text-primary uppercase tracking-wider mb-3">
-          Features
-        </p>
-        <h2 className="font-heading text-3xl sm:text-4xl lg:text-5xl font-bold mb-4">
-          <CharReveal>
-            Everything You Need to <span className="text-gradient">Build AI-Native</span>
-          </CharReveal>
-        </h2>
+      <div className="relative mx-auto max-w-[1440px] px-6 sm:px-10 lg:px-14 w-full">
+        <div className="text-left pt-24 sm:pt-32 pb-8">
+          <p className="text-sm font-semibold text-primary uppercase tracking-wider mb-3">
+            Features
+          </p>
+          <h2 className="font-heading text-[48px] font-bold mb-4">
+            <CharReveal>
+              Everything You Need to <span className="text-gradient">Build AI-Native</span>
+            </CharReveal>
+          </h2>
+        </div>
       </div>
 
       <div
@@ -194,13 +196,13 @@ export function FeaturesSection() {
                 </div>
 
                 <h3
-                  className="font-heading text-3xl sm:text-4xl lg:text-5xl font-bold mb-4 transition-colors duration-700"
+                  className="font-heading text-[32px] font-bold mb-4 transition-colors duration-700"
                   style={{ ["--feature-color" as string]: feature.color }}
                 >
                   {feature.title}
                 </h3>
 
-                <p className="text-muted-foreground text-lg sm:text-xl leading-relaxed max-w-xl mx-auto">
+                <p className="text-muted-foreground text-base leading-relaxed max-w-xl mx-auto">
                   {feature.description}
                 </p>
               </div>

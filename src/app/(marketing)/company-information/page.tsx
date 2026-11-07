@@ -18,11 +18,12 @@ import {
   companyLocationLabel,
   companyWorkHoursRows,
 } from "@config/company";
+import { Breadcrumb } from "@/components/ui/breadcrumb";
 
 export const metadata: Metadata = {
   title: "Company Information",
   description:
-    "The legal and public identity of DEUX AI Factory — company name, registration, location, contact details, and working hours.",
+    "The legal and public identity of Deuvix AI Factory — company name, registration, location, discussion details, and working hours.",
   alternates: { canonical: "/company-information" },
 };
 
@@ -71,19 +72,25 @@ export default function CompanyInformationPage() {
   const hourRows = companyWorkHoursRows();
 
   return (
-    <div className="pt-24">
+    <div>
       {/* Hero */}
-      <section className="py-16 text-center px-6 bg-hero-pattern relative">
+      <section className="pt-8 sm:pt-12 pb-16 bg-hero-pattern relative">
         <div className="absolute inset-0 bg-dots opacity-30" />
+        <div className="relative mx-auto max-w-7xl px-6 sm:px-6 lg:px-8 text-center">
+          <Breadcrumb
+            items={[{ label: "Home", href: "/" }, { label: "Company Information" }]}
+            className="mb-4 sm:mb-6"
+          />
         <Badge className="mb-4 bg-primary/10 text-primary border-primary/20">Company</Badge>
-        <h1 className="font-heading text-4xl sm:text-5xl font-bold mb-4">
+        <h1 className="font-heading text-[68px] font-bold mb-4">
           <CharReveal>
             Company <span className="text-gradient">Information</span>
           </CharReveal>
         </h1>
-        <p className="mx-auto max-w-2xl text-muted-foreground text-lg">
+        <p className="mx-auto max-w-2xl text-muted-foreground text-base">
           The legal and public identity of {company.tradingName}.
         </p>
+        </div>
       </section>
 
       {/* Identity */}
@@ -95,7 +102,7 @@ export default function CompanyInformationPage() {
                 <div className="inline-flex items-center justify-center size-10 rounded-lg bg-primary/5 border border-primary/10 mb-4">
                   <card.icon className="size-5 text-primary" />
                 </div>
-                <h3 className="font-heading text-sm font-semibold text-muted-foreground mb-1">{card.label}</h3>
+                <h3 className="font-heading text-[24px] font-semibold text-muted-foreground mb-1">{card.label}</h3>
                 {card.href ? (
                   <a href={card.href} className="text-sm font-medium text-primary hover:underline break-words">
                     {card.value}
@@ -111,7 +118,7 @@ export default function CompanyInformationPage() {
             <div className="mt-6 p-6 rounded-xl card-solid">
               <div className="flex items-center gap-2 mb-4">
                 <Clock className="size-5 text-primary" />
-                <h3 className="font-heading text-sm font-semibold text-foreground">Working hours</h3>
+                <h3 className="font-heading text-[24px] font-semibold text-foreground">Working hours</h3>
               </div>
               <ul className="space-y-2 text-sm max-w-sm">
                 {hourRows.map((row) => (

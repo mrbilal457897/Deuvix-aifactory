@@ -1,5 +1,6 @@
 import Link from "next/link";
 import { BookCallButton } from "@/components/book-call-button";
+import { Breadcrumb } from "@/components/ui/breadcrumb";
 import Image from "next/image";
 import { notFound } from "next/navigation";
 import type { Metadata } from "next";
@@ -58,11 +59,20 @@ export default async function BlogPostPage({
   const related = posts.filter((p) => p.slug !== post.slug).slice(0, 3);
 
   return (
-    <div className="pt-24">
+    <div>
       {/* Hero */}
-      <section className="py-16 px-6 bg-hero-pattern relative">
+      <section className="pt-8 sm:pt-12 pb-16 bg-hero-pattern relative">
         <div className="absolute inset-0 bg-dots opacity-30" />
-        <div className="relative mx-auto max-w-3xl text-center">
+        <div className="relative mx-auto max-w-7xl px-6 sm:px-6 lg:px-8">
+          <Breadcrumb
+            items={[
+              { label: "Home", href: "/" },
+              { label: "Blog", href: "/blog" },
+              { label: post.title },
+            ]}
+            className="mb-4 sm:mb-6"
+          />
+          <div className="relative mx-auto max-w-3xl text-center">
           <Link
             href="/blog"
             className="inline-flex items-center gap-1.5 text-sm text-muted-foreground hover:text-foreground transition-colors mb-6"
@@ -74,7 +84,7 @@ export default async function BlogPostPage({
             <Badge className="bg-primary/10 text-primary border-primary/20">{post.category}</Badge>
             <span className="text-sm text-muted-foreground">{post.date}</span>
           </div>
-          <h1 className="font-heading text-3xl sm:text-4xl lg:text-5xl font-bold mb-6 leading-tight">
+          <h1 className="font-heading text-[68px] font-bold mb-6 leading-tight">
             {post.title}
           </h1>
           <div className="flex items-center justify-center gap-2 text-sm text-muted-foreground">
@@ -87,6 +97,7 @@ export default async function BlogPostPage({
               <FolderOpen className="size-4" />
               {post.category}
             </span>
+          </div>
           </div>
         </div>
       </section>
@@ -110,12 +121,12 @@ export default async function BlogPostPage({
       {/* Body */}
       <section className="py-12 px-6">
         <div className="mx-auto max-w-3xl">
-          <p className="text-lg text-foreground/90 leading-relaxed">{post.excerpt}</p>
+          <p className="text-base text-foreground/90 leading-relaxed">{post.excerpt}</p>
 
           <div className="mt-10 p-6 rounded-2xl bg-card border border-border">
-            <h2 className="font-heading text-lg font-bold mb-3">Ready to put this into practice?</h2>
+            <h2 className="font-heading text-[48px] font-bold mb-3">Ready to put this into practice?</h2>
             <p className="text-sm text-muted-foreground mb-5">
-              Book a free consultation to see how DEUX AI Factory can apply these principles to your business.
+              Book a free consultation to see how Deuvix AI Factory can apply these principles to your business.
             </p>
             <BookCallButton
               icon={null}
@@ -140,7 +151,7 @@ export default async function BlogPostPage({
       {/* Related Posts */}
       <section className="pb-16 px-6">
         <div className="mx-auto max-w-6xl">
-          <h2 className="font-heading text-2xl font-bold mb-8 text-center">More Articles</h2>
+          <h2 className="font-heading text-[48px] font-bold mb-8 text-center">More Articles</h2>
           <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
             {related.map((p) => (
               <Link

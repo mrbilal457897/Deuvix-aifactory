@@ -8,7 +8,7 @@ name: Booking reminders
 #   Settings -> Secrets and variables -> Actions -> Variables -> SITE_URL
 # Both are required. CRON_SECRET must exactly match CRON_SECRET in the site's
 # own environment; SITE_URL must be the site's public origin, for example
-# https://deux-aicompany.vercel.app
+# https://deuvix-aicompany.vercel.app
 on:
   schedule:
     - cron: "*/15 * * * *"

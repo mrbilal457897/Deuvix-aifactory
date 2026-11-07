@@ -76,7 +76,7 @@ export interface BookingChatContext {
 export function buildClientChatLink(clientNumber?: string | null, context?: BookingChatContext): string | null {
   const parts: string[] = [];
   if (context?.name) parts.push(`Hi ${context.name},`);
-  parts.push("I just booked a call with DEUX AI Factory.");
+  parts.push("I just booked a call with Deuvix AI Factory.");
   if (context?.startTime) {
     const when = context.startTime instanceof Date ? context.startTime : new Date(context.startTime);
     if (!Number.isNaN(when.getTime())) {
@@ -89,7 +89,7 @@ export function buildClientChatLink(clientNumber?: string | null, context?: Book
 
 /** Message the client sends us via the "Confirm on WhatsApp" button. */
 export function buildConfirmMessage(context?: BookingChatContext): string {
-  const parts: string[] = ["Hello DEUX AI Factory, I would like to confirm my booking."];
+  const parts: string[] = ["Hello Deuvix AI Factory, I would like to confirm my booking."];
   if (context?.startTime) {
     const when = context.startTime instanceof Date ? context.startTime : new Date(context.startTime);
     if (!Number.isNaN(when.getTime())) {

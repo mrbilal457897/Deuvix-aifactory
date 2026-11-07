@@ -5,12 +5,12 @@ import { uiStrings } from "@/lib/chat/ui-strings";
 import { cn } from "@/lib/utils";
 
 const SOURCE_STYLE: Record<ChatSource["source"], string> = {
-  deux: "border-primary/30 bg-primary/8 text-primary",
+  deuvix: "border-primary/30 bg-primary/8 text-primary",
   agentfactory: "border-sky-500/30 bg-sky-500/10 text-sky-700 dark:text-sky-300",
 };
 
 const SOURCE_LABEL: Record<ChatSource["source"], string> = {
-  deux: uiStrings.sourceDeux,
+  deuvix: uiStrings.sourceDeuvix,
   agentfactory: uiStrings.sourceAgentFactory,
 };
 

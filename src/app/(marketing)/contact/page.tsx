@@ -1,374 +1,709 @@
 "use client";
 
-import { useState, useEffect } from "react";
-import { Badge } from "@/components/ui/badge";
+import { useCallback, useEffect, useState } from "react";
+import Link from "next/link";
+import Image from "next/image";
+import { BrandLogo } from "@/components/brand-logo";
 import { Button } from "@/components/ui/button";
-import { BookCallButton } from "@/components/book-call-button";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
-import { Mail, MapPin, Send, CheckCircle, Clock } from "lucide-react";
-import { CharReveal } from "@/components/split-text";
+import { Card } from "@/components/ui/card";
+import { Separator } from "@/components/ui/separator";
+import { Mail, Phone, MessageCircle } from "lucide-react";
+import { useTheme } from "next-themes";
 import { useSiteConfig } from "@/hooks/use-site-config";
-import {
-  company,
-  companyLocationLabel,
-  companyWorkHoursRows,
-} from "@config/company";
+import { Breadcrumb } from "@/components/ui/breadcrumb";
+import { CharReveal } from "@/components/split-text";
 
-const contactCards = [
-  {
-    icon: MapPin,
-    label: "Visit Us",
-    value: companyLocationLabel() ?? "Worldwide",
-    sub: "Remote-first, serving globally",
-  },
-  {
-    icon: Mail,
-    label: "Email Us",
-    value: company.businessEmail,
-    sub: "We reply within 24 hours",
-  },
-];
+/* -------------------------------------------------------------------------- */
+/* Constants                                                                  */
+/* -------------------------------------------------------------------------- */
 
-const EMAIL_REGEX = /^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/;
-
-const FALLBACK_ERROR = `Something went wrong. Please try again or email us at ${company.businessEmail}.`;
-
-const EMPTY_FORM = {
-  name: "",
-  email: "",
-  phone: "",
-  service: "",
-  portfolio: "",
-  message: "",
-  website: "",
-};
-
-const reasons = [
-  "Free initial consultation",
-  "Response within 24 hours",
-  "No sales pressure — ever",
-  "Spec-driven development approach",
-  "Production-ready from day one",
-];
-
-const services = [
-  "Select a service",
+const UNIT_LIST: string[] = [
   "Digital FTE Deployment",
-  "FDE Consulting",
   "AI Chatbots",
   "Voice Agents",
   "Custom Agents",
   "Loop Engineering",
-  "AI Agent E-books",
+  "FDE Consulting",
   "AI-Powered Web Apps",
-  "Business AI Solutions",
+  "Not sure yet",
 ];
 
-export default function ContactPage() {
-  const [formData, setFormData] = useState(EMPTY_FORM);
-  const [submitting, setSubmitting] = useState(false);
-  const [status, setStatus] = useState<"idle" | "success" | "error">("idle");
-  const [errorMessage, setErrorMessage] = useState("");
-  const [errors, setErrors] = useState<Record<string, string>>({});
-  const { img } = useSiteConfig();
+const START_WHEN_LIST: string[] = ["ASAP", "1–2 months", "Just exploring"];
 
-  useEffect(() => {
-    const params = new URLSearchParams(window.location.search);
-    const preselected = params.get("service");
-    if (preselected && services.includes(preselected)) {
-      queueMicrotask(() => {
-        setFormData((prev) => ({ ...prev, service: preselected }));
-      });
-    }
-  }, []);
+const VIA_LIST: string[] = ["Email", "WhatsApp", "Call"];
 
-  const validate = () => {
-    const next: Record<string, string> = {};
-    if (!formData.name.trim()) next.name = "Please enter your name.";
-    if (!formData.email.trim()) next.email = "Please enter your email.";
-    else if (!EMAIL_REGEX.test(formData.email.trim())) next.email = "Please enter a valid email address.";
-    if (!formData.service) next.service = "Please select a service.";
-    if (!formData.message.trim()) next.message = "Please enter a message.";
-    else if (formData.message.trim().length < 10) next.message = "Message should be at least 10 characters.";
-    setErrors(next);
-    return Object.keys(next).length === 0;
-  };
+const SLOT_LIST: string[] = ["Morning", "Afternoon", "Evening"];
 
-  const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
-    setStatus("idle");
-    setErrorMessage("");
-    if (!validate()) return;
-    setSubmitting(true);
-    try {
-      const res = await fetch("/api/contact", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(formData),
-      });
-      const data = await res.json().catch(() => null);
+const CHANNEL_LIST: string[] = ["WhatsApp", "Website chat", "Phone calls", "Email", "CRM", "Spreadsheets"];
 
-      if (res.ok) {
-        setStatus("success");
-        setFormData(EMPTY_FORM);
-        setErrors({});
-        return;
+const OFFICE_HOURS = [
+  { label: "Monday – Friday", value: "9:00 AM – 6:00 PM" },
+  { label: "Saturday", value: "10:00 AM – 2:00 PM" },
+  { label: "Sunday", value: "Closed" },
+];
+
+const QUICK_FILL_CHIPS = [
+  "Automate lead follow-ups",
+  "Answer customer calls",
+  "Cut manual reporting",
+  "Reply to WhatsApp enquiries",
+];
+
+function pakNow(): Date {
+  return new Date(Date.now() + 5 * 60 * 60 * 1000);
+}
+
+function computeExpectedReplyAt(): string {
+  const now = new Date(Date.now() + 5 * 60 * 60 * 1000);
+  let expected = new Date(now.getTime() + 24 * 60 * 60 * 1000);
+  if (expected.getUTCDay() === 0) {
+    expected = new Date(expected.getTime() + 24 * 60 * 60 * 1000);
+  }
+  return expected.toISOString();
+}
+
+function isOfficeHoursOpen(now: Date): boolean {
+  const localHour = (now.getUTCHours() + 5) % 24;
+  const day = now.getUTCDay();
+  if (day >= 1 && day <= 5 && localHour >= 9 && localHour < 18) return true;
+  if (day === 6 && localHour >= 10 && localHour < 14) return true;
+  return false;
+}
+
+function computeLiveStatus(now: Date): { online: boolean; text: string } {
+  const localHour = (now.getUTCHours() + 5) % 24;
+  const day = now.getUTCDay();
+  if (day >= 1 && day <= 5 && localHour >= 9 && localHour < 18) {
+    return { online: true, text: "Team online now · usually replies within hours" };
+  }
+  if (day === 6 && localHour >= 10 && localHour < 14) {
+    return { online: true, text: "Team online now · usually replies within hours" };
+  }
+  return { online: false, text: "Offline now · we reply next business day" };
+}
+
+type InquiryData = {
+  units: string[];
+  brief: string;
+  channels: string[];
+  startWhen: string | null;
+  website: string | null;
+  name: string;
+  email: string;
+  company: string | null;
+  phone: string | null;
+  via: string;
+  slot: string | null;
+  nda: boolean;
+};
+
+type Step = 1 | 2;
+
+type FieldErrors = Record<string, string>;
+
+function PillChip({ children, active, onClick, disabled }: { children: React.ReactNode; active: boolean; onClick?: () => void; disabled?: boolean }) {
+  return (
+    <button
+      type="button"
+      onClick={disabled ? undefined : onClick}
+      disabled={disabled}
+      aria-pressed={active}
+      className={`inline-flex items-center gap-2 rounded-full border px-3 py-1.5 text-xs font-medium transition-colors ${
+        active
+          ? "bg-foreground text-background border-foreground"
+          : "bg-card border-border text-foreground/70 hover:text-foreground hover:border-foreground"
+      }`}
+    >
+      {children}
+    </button>
+  );
+}
+
+function TextField({ label, value, onChange, error, type = "text", placeholder, required }: { label: string; value: string; onChange: (v: string) => void; error?: string; type?: string; placeholder?: string; required?: boolean }) {
+  return (
+    <div className="space-y-1.5">
+      <label className="text-[11px] font-semibold text-foreground/80 dark:text-white/80 mb-1 block uppercase tracking-[0.05em]">
+        {label}{required ? " *" : ""}
+      </label>
+      <Input
+        type={type}
+        value={value}
+        onChange={(e) => onChange(e.target.value)}
+        placeholder={placeholder}
+        className="w-full h-10 rounded-lg border bg-background dark:bg-white/10 border-border dark:border-white/20 text-foreground dark:text-white placeholder:text-muted-foreground dark:placeholder:text-white/40 focus:border-primary focus:outline-none"
+        aria-invalid={Boolean(error)}
+        required={required}
+      />
+      {error && <p className="text-[11px] text-destructive mt-1">{error}</p>}
+    </div>
+  );
+}
+
+function PillField({ label, options, value, onChange, multi, error }: { label: string; options: string[]; value: string[]; onChange: (selected: string[]) => void; multi?: boolean; error?: string }) {
+  const isSelected = (v: string) => value.includes(v);
+  const toggle = (v: string) => {
+    if (isSelected(v)) {
+      onChange(value.filter((x) => x !== v));
+    } else {
+      if (!multi && value.length > 0) {
+        onChange([v]);
+      } else {
+        onChange([...value, v]);
       }
-
-      setStatus("error");
-      // The API explains partial failures (e.g. 502 "saved but not notified")
-      // rather than leaving us to guess, so surface its message verbatim.
-      setErrorMessage(typeof data?.message === "string" ? data.message : FALLBACK_ERROR);
-      console.error(data?.error || "Failed to send message");
-      // `saved` means the row is already in the database — keep the form filled
-      // otherwise, but clear it here so the user does not send a duplicate.
-      if (data?.saved) setFormData(EMPTY_FORM);
-    } catch {
-      setStatus("error");
-      setErrorMessage(
-        `We could not reach the server. Please check your connection and try again, or email us at ${company.businessEmail}.`,
-      );
-    } finally {
-      setSubmitting(false);
     }
   };
 
   return (
-    <div className="relative dark">
-      {/* Full background image */}
-      <div
-        className="fixed inset-0 -z-10 bg-no-repeat"
-        style={{
-          backgroundImage: `url(${img("contact-bg")})`,
-          backgroundSize: "cover",
-          backgroundPosition: "center 25%",
-        }}
-      >
-        <div className="absolute inset-0 bg-white/60 dark:bg-black/40" />
+    <div className="space-y-1.5">
+      <div className="flex justify-between items-start">
+        <label className="text-[11px] font-semibold text-foreground/80 dark:text-white/80 mb-1 block uppercase tracking-[0.05em]">
+          {label}{" *"}
+        </label>
+        {multi && (
+          <span className="text-[10px] text-muted-foreground dark:text-white/60">Choose one or more</span>
+        )}
+      </div>
+      <div className="flex flex-wrap gap-2">
+        {options.map((opt) => (
+          <PillChip
+            key={opt}
+            active={isSelected(opt)}
+            onClick={() => toggle(opt)}
+            disabled={multi && value.includes("Not sure yet") && !isSelected(opt) && value.length > 0}
+          >
+            {opt}
+          </PillChip>
+        ))}
+      </div>
+      {error && <p className="text-[11px] text-destructive mt-1">{error}</p>}
+    </div>
+  );
+}
+
+function ReviewCard({ data }: { data: InquiryData }) {
+  return (
+    <div className="rounded-xl border border-border dark:border-white/20 bg-card p-4">
+      <h3 className="font-heading text-lg font-bold text-foreground mb-3">Your request</h3>
+      <div className="space-y-3 text-sm text-muted-foreground dark:text-white/70">
+        <div className="flex justify-between">
+          <span>Units</span>
+          <span className="text-foreground font-medium">{data.units.join(", ")}</span>
+        </div>
+        <div className="flex justify-between">
+          <span className="text-muted-foreground">Start when</span>
+          <span className="text-foreground font-medium">{data.startWhen || "—"}</span>
+        </div>
+        <div className="flex justify-between">
+          <span className="text-muted-foreground">Reply via</span>
+          <span className="text-foreground font-medium">{data.via}{data.slot ? ` · ${data.slot}` : ""}</span>
+        </div>
+        {data.nda && (
+          <div className="flex justify-between">
+            <span className="text-muted-foreground">NDA requested</span>
+            <span className="text-foreground font-medium">Yes</span>
+          </div>
+        )}
+      </div>
+    </div>
+  );
+}
+
+/* -------------------------------------------------------------------------- */
+/* Page                                                                       */
+/* -------------------------------------------------------------------------- */
+
+export default function ContactPage() {
+  const [step, setStep] = useState<Step>(1);
+  const [formData, setFormData] = useState<InquiryData>({
+    units: [],
+    brief: "",
+    channels: [],
+    startWhen: null,
+    website: null,
+    name: "",
+    email: "",
+    company: null,
+    phone: null,
+    via: "Email",
+    slot: null,
+    nda: false,
+  });
+  const [errors, setErrors] = useState<FieldErrors>({});
+  const [submitStatus, setSubmitStatus] = useState<"idle" | "submitting" | "success" | "error">("idle");
+  const [submitError, setSubmitError] = useState("");
+  const [pageLoadedAt, setPageLoadedAt] = useState<number | null>(null);
+
+  useEffect(() => {
+    setPageLoadedAt(Date.now());
+  }, []);
+
+  // Draft persistence
+  useEffect(() => {
+    try {
+      localStorage.setItem("deuvix_contact_draft", JSON.stringify({ step, formData, updatedAt: Date.now() }));
+    } catch {
+      // ignore
+    }
+  }, [step, formData]);
+
+  useEffect(() => {
+    try {
+      const raw = localStorage.getItem("deuvix_contact_draft");
+      if (raw) {
+        const parsed = JSON.parse(raw);
+        if (parsed.formData && parsed.step) {
+          setFormData(parsed.formData);
+          setStep(parsed.step);
+        }
+      }
+    } catch {
+      // ignore
+    }
+  }, []);
+
+  // Live status pill
+  const [liveStatus, setLiveStatus] = useState<{ online: boolean; text: string }>({ online: false, text: "Checking…" });
+
+  useEffect(() => {
+    const update = () => setLiveStatus(computeLiveStatus(pakNow()));
+    update();
+    const timer = window.setInterval(update, 60_000);
+    return () => window.clearInterval(timer);
+  }, []);
+
+  // Validation
+  function validateStep(stepNo: Step): boolean {
+    const next: FieldErrors = {};
+    if (stepNo === 1) {
+      if (formData.units.length === 0) next.units = "Pick at least one unit to continue.";
+      if (!formData.brief.trim()) next.brief = "Please add a short description (at least 15 characters).";
+      else if (formData.brief.trim().length < 15) next.brief = "Please add a short description (at least 15 characters).";
+      if (!formData.startWhen) next.startWhen = "Please select when you want to start.";
+    } else if (stepNo === 2) {
+      if (!formData.name.trim()) next.name = "Please enter your name.";
+      else if (formData.name.trim().length < 2) next.name = "Name must be at least 2 characters.";
+      if (!formData.email.trim()) next.email = "Please enter your email.";
+      else if (!/^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/.test(formData.email.trim())) next.email = "Please enter a valid email address.";
+      if (formData.phone && !/^[\d\s\+\-]{7,20}$/.test(formData.phone)) next.phone = "Please enter a valid phone number.";
+      if (formData.website && !/^https?:\/\/.+/.test(formData.website)) next.website = "Please enter a valid URL.";
+    }
+    setErrors(next);
+    return Object.keys(next).length === 0;
+  }
+
+  const canAdvance = step === 1 ? formData.units.length > 0 && formData.brief.trim().length >= 15 && !!formData.startWhen : true;
+
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!validateStep(step)) return;
+    if (step === 1) {
+      setStep(2);
+      return;
+    }
+
+    setSubmitStatus("submitting");
+    setSubmitError("");
+
+    try {
+      const res = await fetch("/api/contact", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          ...formData,
+          pageLoadedAt,
+        }),
+      });
+
+      const data = await res.json().catch(() => null);
+
+      if (res.ok && data?.ok) {
+        try { localStorage.removeItem("deuvix_contact_draft"); } catch {}
+        setSubmitStatus("success");
+      } else {
+        setSubmitStatus("error");
+        setSubmitError(
+          data?.message || "Something went wrong. Your answers are saved — try again or email team.deuvix@gmail.com.",
+        );
+      }
+    } catch {
+      setSubmitStatus("error");
+      setSubmitError("Network error. Your answers are saved — try again or email team.deuvix@gmail.com.");
+    } finally {
+      setSubmitStatus("idle");
+    }
+  };
+
+  const handleFieldChange = (key: string, value: string | string[] | boolean | null) => {
+    setFormData((prev) => ({ ...prev, [key]: value }));
+    if (errors[key as string]) {
+      setErrors((prev) => { const next = { ...prev }; delete next[key as string]; return next; });
+    }
+  };
+
+  // Wrapper for PillChip sourceDeux which expects (selected: string[]) => void
+  const handleFieldChangeWrapper = (value: string[]) => {
+    handleFieldChange("sourceDeux", value);
+  };
+
+  const briefCharCount = formData.brief.trim().length;
+
+  const briefHint =
+    briefCharCount === 0
+      ? "Tip: say who it serves and roughly how many a week."
+      : briefCharCount < 15
+      ? "A little more detail helps us reply faster."
+      : /\d/.test(formData.brief)
+      ? "Great brief. That’s enough for a useful first reply."
+      : "Nice. Adding a rough volume (e.g. 200 chats a week) sharpens our estimate.";
+
+  // ---- Step 1 UI ----
+  const step1Content = (
+    <>
+      <h2 className="font-heading text-[28px] font-bold text-foreground dark:text-white mb-2">
+        What should we build?
+      </h2>
+      <p className="text-[14px] text-muted-foreground dark:text-white/70 mb-6">
+        Pick your unit, then tell us about the job.
+      </p>
+
+      <div className="space-y-4">
+        <PillField
+          label="Pick your unit"
+          options={UNIT_LIST}
+          value={formData.units}
+          onChange={(v) => {
+            if (v.includes("Not sure yet")) {
+              handleFieldChange("units", ["Not sure yet"]);
+            } else if (formData.units.includes("Not sure yet")) {
+              handleFieldChange("units", v);
+            } else {
+              handleFieldChange("units", v);
+            }
+          }}
+          multi
+          error={errors.units}
+        />
+
+        <div className="space-y-1.5">
+          <div className="flex justify-between items-start">
+            <label className="text-[11px] font-semibold text-foreground/80 dark:text-white/80 mb-1 block uppercase tracking-[0.05em]">
+              Describe the job *
+            </label>
+            <span className="text-[10px] font-mono text-muted-foreground dark:text-white/60">
+              {briefCharCount} / 500
+            </span>
+          </div>
+          <Textarea
+            value={formData.brief}
+            onChange={(e) => handleFieldChange("brief", e.target.value)}
+            placeholder="Tell us about the job you want to build…"
+            rows={4}
+            className="resize-none rounded-lg border bg-background dark:bg-white/10 border-border dark:border-white/20 text-foreground dark:text-white placeholder:text-muted-foreground dark:placeholder:text-white/40 focus:border-primary focus:outline-none"
+          />
+          <p className="text-[11px] leading-5 text-muted-foreground dark:text-white/60 flex items-center gap-1.5 mt-1.5">
+            <span className="size-1.5 rounded-full bg-[#4CAF7D]" />
+            {briefHint}
+          </p>
+          {errors.brief && <p className="text-[11px] text-destructive mt-1">{errors.brief}</p>}
+        </div>
+
+        <div className="space-y-1.5">
+          <PillField
+            label="Where does the work happen today?"
+            options={CHANNEL_LIST}
+            value={formData.channels}
+            onChange={(selected) => handleFieldChange("channels", selected)}
+            multi
+          />
+        </div>
+
+        <div className="space-y-1.5">
+          <PillField
+            label="When do you want to start?"
+            options={START_WHEN_LIST}
+            value={formData.startWhen ? [formData.startWhen] : []}
+            onChange={(v) => handleFieldChange("startWhen", v[0] ?? null)}
+            error={errors.startWhen}
+          />
+        </div>
+
+        <TextField
+          label="Website or portfolio (optional)"
+          value={formData.website || ""}
+          onChange={(v) => handleFieldChange("website", v || null)}
+          type="url"
+          placeholder="https://yourwebsite.com"
+        />
+
+        <div className="border-t border-border mt-6 pt-6 flex justify-between items-start gap-4">
+          <button
+            type="button"
+            disabled={step === 1}
+            onClick={() => setStep(1)}
+            className="text-[11px] text-muted-foreground dark:text-white/60 hover:text-foreground underline underline-offset-4"
+            aria-hidden={step === 1}
+          >
+            ← Back
+          </button>
+          <Button
+            type="button"
+            onClick={() => {
+              if (!validateStep(1)) return;
+              setStep(2);
+            }}
+            disabled={!canAdvance}
+            className="bg-foreground text-background border-foreground px-6 py-3 rounded-xl font-medium hover:bg-foreground/90 disabled:opacity-50 disabled:pointer-events-none"
+          >
+            Next: your details →
+          </Button>
+        </div>
+      </div>
+    </>
+  );
+
+  const step2Content = (
+    <>
+      <h2 className="font-heading text-[28px] font-bold text-foreground dark:text-white mb-2">
+        Where do we reach you?
+      </h2>
+      <p className="text-[14px] text-muted-foreground dark:text-white/70 mb-6">
+        We only use this to reply to your ticket.
+      </p>
+
+      <div className="space-y-5">
+        <div className="grid grid-cols-2 gap-4">
+          <TextField
+            label="Full name"
+            value={formData.name}
+            onChange={(v) => handleFieldChange("name", v)}
+            required
+          />
+          <TextField
+            label="Email"
+            value={formData.email}
+            onChange={(v) => handleFieldChange("email", v)}
+            type="email"
+            required
+          />
+        </div>
+        <div className="grid grid-cols-2 gap-4">
+          <TextField
+            label="Company (optional)"
+            value={formData.company || ""}
+            onChange={(v) => handleFieldChange("company", v || null)}
+          />
+          <TextField
+            label="WhatsApp / phone (optional)"
+            value={formData.phone || ""}
+            onChange={(v) => handleFieldChange("phone", v || null)}
+            type="tel"
+            placeholder="+92 3xx xxx xxxx"
+          />
+        </div>
+        <div className="space-y-1.5">
+          <PillField
+            label="Preferred way to reply"
+            options={VIA_LIST}
+            value={formData.via ? [formData.via] : []}
+            onChange={(v) => handleFieldChange("via", v[0] ?? "Email")}
+          />
+        </div>
+        <div className="space-y-1.5">
+          <PillField
+            label="Best time (Pakistan time)"
+            options={SLOT_LIST}
+            value={formData.slot ? [formData.slot] : []}
+            onChange={(v) => handleFieldChange("slot", v[0] ?? null)}
+          />
+        </div>
+        <button
+          type="button"
+          onClick={() => handleFieldChange("nda", !formData.nda)}
+          className={`w-full flex items-center gap-3 rounded-xl border p-4 text-left transition-colors ${
+            formData.nda
+              ? "border-foreground bg-background/20"
+              : "border-border text-foreground/60 hover:text-foreground hover:border-foreground"
+          }`}
+        >
+          <span
+            className={`size-5 rounded border flex items-center justify-center ${
+              formData.nda ? "bg-foreground text-background border-foreground" : "border-border text-foreground/40"
+            }`}
+          >
+            {formData.nda ? "✓" : ""}
+          </span>
+          <span className="text-sm font-medium text-foreground dark:text-white">
+            I’d like to sign an NDA before sharing details
+          </span>
+        </button>
+        <p className="text-[11px] text-muted-foreground dark:text-white/60">
+          Free and no obligation. By sending, you agree to our{" "}
+          <Link href="/privacy" className="text-foreground dark:text-white underline underline-offset-2 hover:text-primary">
+            privacy policy
+          </Link>
+          .
+        </p>
       </div>
 
-      {/* Hero */}
-      <section className="relative pt-32 pb-16 text-center px-6">
-        <Badge className="mb-4 bg-primary/10 text-primary border-primary/20 backdrop-blur-sm">Contact</Badge>
-        <h1 className="font-heading text-4xl sm:text-5xl font-bold text-foreground dark:text-white mb-4">
-          <CharReveal>Let&apos;s <span className="text-gradient">Connect</span></CharReveal>
-        </h1>
-        <p className="mx-auto max-w-2xl text-muted-foreground text-lg">
-          Have a question or want to discuss a project? We&apos;d love to hear from you.
-        </p>
-      </section>
+      <div className="border-t border-border mt-8 pt-6 flex justify-between items-start gap-4">
+        <button
+          type="button"
+          onClick={() => setStep(1)}
+          className="text-[11px] text-muted-foreground dark:text-white/60 hover:text-foreground underline underline-offset-4"
+        >
+          ← Back
+        </button>
+        <Button
+          type="submit"
+          disabled={submitStatus === "submitting"}
+          className="bg-foreground text-background border-foreground px-6 py-3 rounded-xl font-medium hover:bg-foreground/90 disabled:opacity-50 disabled:pointer-events-none relative"
+        >
+          {submitStatus === "submitting" ? (
+            <span className="flex items-center gap-2">
+              Sending…
+              <svg className="size-4 animate-spin" viewBox="0 0 24 24">
+                <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" fill="none" />
+                <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.303V4.403a7.8 7.8 0 0115.8-3.702a7.36 7.36 0 010 5.704l-.001.001a7.36 7.36 0 01-15.8-3.702v5.701a7.8 7.8 0 0115.8 3.701z" />
+              </svg>
+            </span>
+          ) : (
+            <span className="flex items-center gap-2">
+              Send my request →
+              <svg className="size-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M5 12h14M12 5l7 7-7 7" />
+              </svg>
+            </span>
+          )}
+        </Button>
+      </div>
+    </>
+  );
 
-      {/* Info Cards */}
-      <section className="relative pb-12 px-6">
-        <div className="mx-auto max-w-5xl">
-          <div className="mx-auto grid grid-cols-1 sm:grid-cols-2 gap-4 max-w-2xl">
-            {contactCards.map((card) => (
-              <div
-                key={card.label}
-                className="text-center p-6 rounded-2xl bg-card/80 dark:bg-white/10 backdrop-blur-md border border-border dark:border-white/20 hover:bg-card dark:hover:bg-white/15 transition-all duration-300"
-              >
-                <div className="size-12 rounded-xl bg-primary/10 dark:bg-white/10 flex items-center justify-center mx-auto mb-3">
-                  <card.icon className="size-6 text-primary dark:text-white" />
-                </div>
-                <h5 className="font-heading font-semibold text-foreground dark:text-white mb-1">{card.label}</h5>
-                <p className="text-sm text-foreground/90 dark:text-white/90 font-medium">{card.value}</p>
-                {card.sub && (
-                  <p className="text-xs text-muted-foreground dark:text-white/50 mt-1">{card.sub}</p>
-                )}
-              </div>
-            ))}
+  return (
+    <div className="relative min-h-[calc(100dvh-4rem)]">
+      {/* Hero */}
+      <section className="relative pt-8 sm:pt-12 pb-8">
+        <div className="relative mx-auto max-w-7xl px-6 sm:px-6 lg:px-8 text-left">
+          <Breadcrumb items={[{ label: "Home", href: "/" }, { label: "Contact" }]} className="mb-4 sm:mb-6" />
+          <h1 className="font-heading text-[clamp(36px,5.6vw,68px)] font-bold leading-[1] tracking-[-0.04em] text-foreground dark:text-white mb-4 max-w-[760px]">
+            Tell us what you want to automate.
+          </h1>
+          <p className="text-[17px] leading-relaxed text-muted-foreground dark:text-white/70 max-w-[560px] mb-8">
+            Two quick steps. No sales pressure: a real person reads your ticket and replies within one business day with questions and a time to talk.
+          </p>
+          <div className="flex items-center gap-3 text-[13px] text-muted-foreground dark:text-white/60">
+            <span className="flex items-center gap-1 text-primary dark:text-green-400">✓</span>
+            <span>Free first consultation</span>
+            <span className="w-px h-3 bg-border dark:border-white/20 mx-3" />
+            <span className="flex items-center gap-1 text-primary dark:text-green-400">✓</span>
+            <span>Reply within 24 hours</span>
+            <span className="w-px h-3 bg-border dark:border-white/20 mx-3" />
+            <span className="flex items-center gap-1 text-primary dark:text-green-400">✓</span>
+            <span>NDA on request</span>
+          </div>
+          <div className="mt-8 inline-flex items-center gap-2 rounded-xl border border-border dark:border-white/20 bg-card dark:bg-white/10 px-3 py-2">
+            <span className="size-1.5 rounded-full bg-[#10b981] animate-pulse" />
+            <span className="text-[11px] font-mono text-foreground dark:text-white">
+              {liveStatus.online ? "Team online now · usually replies within hours" : "Offline now · we reply next business day"}
+            </span>
           </div>
         </div>
       </section>
 
-      {/* Split Section: Form + Side Panel */}
-      <section className="relative py-12 px-6 pb-24">
-        <div className="mx-auto max-w-6xl">
-          <div className="flex flex-col lg:flex-row gap-6">
-            {/* Form - Left Side */}
-            <div className="flex-[7] p-8 sm:p-10 rounded-2xl bg-card/80 dark:bg-white/10 backdrop-blur-md border border-border dark:border-white/20">
-              <span className="text-sm font-semibold text-primary uppercase tracking-wider mb-2 block">Send a Message</span>
-              <h2 className="font-heading text-2xl sm:text-3xl font-bold text-foreground dark:text-white mb-2">
-                Book a <span className="text-gradient">Free Consultation</span>
-              </h2>
-              <p className="text-sm text-muted-foreground dark:text-white/60 mb-8">
-                Fill in the form and we&apos;ll contact you within one business day.
-              </p>
-
-              <form onSubmit={handleSubmit} noValidate className="space-y-4">
-                {/* Honeypot (anti-spam) — intentionally hidden from humans. Bots fill this and the API silently discards the submission. */}
-                <div className="hidden" aria-hidden="true">
-                  <label htmlFor="website">Website</label>
-                  <input
-                    id="website"
-                    type="text"
-                    name="website"
-                    tabIndex={-1}
-                    autoComplete="off"
-                    value={formData.website || ""}
-                    onChange={(e) => setFormData({ ...formData, website: e.target.value })}
-                  />
-                </div>
-                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                  <div>
-                    <label className="text-sm font-medium text-foreground/80 dark:text-white/80 mb-1.5 block">Full Name</label>
-                    <Input
-                      value={formData.name}
-                      onChange={(e) => setFormData({ ...formData, name: e.target.value })}
-                      placeholder="Your full name"
-                      aria-invalid={Boolean(errors.name)}
-                      className="bg-background dark:bg-white/10 border-border dark:border-white/20 text-foreground dark:text-white placeholder:text-muted-foreground dark:placeholder:text-white/40 focus:border-primary"
-                      required
-                    />
-                    {errors.name && <p className="text-xs text-destructive mt-1">{errors.name}</p>}
+      {/* Main grid */}
+      <section className="relative pb-[72px] px-6">
+        <div className="relative mx-auto max-w-[1200px] px-4 sm:px-6 lg:px-8 w-full">
+          <div className="grid grid-cols-1 lg:grid-cols-12 gap-[28px] items-start">
+            {/* Left: Form card */}
+            <div className="lg:col-span-7">
+              <div className="rounded-2xl border border-border dark:border-white/20 bg-card dark:bg-white/10 p-[28px] sm:p-[30px] pb-[26px] min-h-[560px] flex flex-col">
+                {step === 1 ? step1Content : step2Content}
+                {submitError && (
+                  <div className="mt-4 rounded-xl border border-destructive/30 bg-destructive/5 px-4 py-3 text-sm text-destructive">
+                    {submitError}
                   </div>
-                  <div>
-                    <label className="text-sm font-medium text-foreground/80 dark:text-white/80 mb-1.5 block">Email Address</label>
-                    <Input
-                      type="email"
-                      value={formData.email}
-                      onChange={(e) => setFormData({ ...formData, email: e.target.value })}
-                      placeholder="Your email"
-                      aria-invalid={Boolean(errors.email)}
-                      className="bg-background dark:bg-white/10 border-border dark:border-white/20 text-foreground dark:text-white placeholder:text-muted-foreground dark:placeholder:text-white/40 focus:border-primary"
-                      required
-                    />
-                    {errors.email && <p className="text-xs text-destructive mt-1">{errors.email}</p>}
-                  </div>
-                </div>
-                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                  <div>
-                    <label className="text-sm font-medium text-foreground/80 dark:text-white/80 mb-1.5 block">Phone Number</label>
-                    <Input
-                      type="tel"
-                      value={formData.phone}
-                      onChange={(e) => setFormData({ ...formData, phone: e.target.value })}
-                      placeholder="Your phone"
-                      className="bg-background dark:bg-white/10 border-border dark:border-white/20 text-foreground dark:text-white placeholder:text-muted-foreground dark:placeholder:text-white/40 focus:border-primary"
-                    />
-                  </div>
-                  <div>
-                    <label className="text-sm font-medium text-foreground/80 dark:text-white/80 mb-1.5 block">Service Interested In</label>
-                    <select
-                      value={formData.service}
-                      onChange={(e) => setFormData({ ...formData, service: e.target.value })}
-                      aria-invalid={Boolean(errors.service)}
-                      className="w-full h-10 px-3 rounded-md bg-background dark:bg-white/10 border border-border dark:border-white/20 text-foreground dark:text-white text-sm focus:border-primary focus:outline-none"
-                      required
-                    >
-                      {services.map((s) => (
-                        <option key={s} value={s === "Select a service" ? "" : s} className="bg-card dark:bg-gray-900 text-foreground dark:text-white">
-                          {s}
-                        </option>
-                      ))}
-                    </select>
-                    {errors.service && <p className="text-xs text-destructive mt-1">{errors.service}</p>}
-                  </div>
-                </div>
-                <div>
-                  <label className="text-sm font-medium text-foreground/80 dark:text-white/80 mb-1.5 block">
-                    Website / Portfolio <span className="text-muted-foreground">(optional)</span>
-                  </label>
-                  <Input
-                    type="url"
-                    value={formData.portfolio}
-                    onChange={(e) => setFormData({ ...formData, portfolio: e.target.value })}
-                    placeholder="https://yourwebsite.com"
-                    className="bg-background dark:bg-white/10 border-border dark:border-white/20 text-foreground dark:text-white placeholder:text-muted-foreground dark:placeholder:text-white/40 focus:border-primary"
-                  />
-                </div>
-                <div>
-                  <label className="text-sm font-medium text-foreground/80 dark:text-white/80 mb-1.5 block">Your Message</label>
-                  <Textarea
-                    value={formData.message}
-                    onChange={(e) => setFormData({ ...formData, message: e.target.value })}
-                    placeholder="Tell us about your project..."
-                    rows={5}
-                    aria-invalid={Boolean(errors.message)}
-                    className="resize-none bg-background dark:bg-white/10 border-border dark:border-white/20 text-foreground dark:text-white placeholder:text-muted-foreground dark:placeholder:text-white/40 focus:border-primary"
-                    required
-                  />
-                  {errors.message && <p className="text-xs text-destructive mt-1">{errors.message}</p>}
-                </div>
-                <Button
-                  type="submit"
-                  disabled={submitting}
-                  className="bg-primary text-primary-foreground hover:bg-primary/90 font-medium px-8 py-6 text-base rounded-xl shadow-lg shadow-primary/20"
-                >
-                  {submitting ? (
-                    "Sending..."
-                  ) : status === "success" ? (
-                    "Message Sent!"
-                  ) : (
-                    <>Send Message <Send className="size-5 ml-2" /></>
-                  )}
-                </Button>
-
-                <div className="flex flex-wrap items-center gap-3 pt-1">
-                  <span className="text-sm text-muted-foreground dark:text-white/60">
-                    Prefer to pick a slot?
-                  </span>
-                  <BookCallButton variant="outline" className="px-6 py-3 h-auto text-sm font-semibold rounded-xl">
-                    Book a Call
-                  </BookCallButton>
-                </div>
-                {status === "success" && (
-                  <p className="text-sm text-emerald-600 dark:text-emerald-400">
-                    Thank you! Your message has been sent. We&apos;ll get back to you within one business day.
-                  </p>
                 )}
-                {status === "error" && (
-                  <p className="text-sm text-destructive">
-                    {errorMessage}
-                  </p>
-                )}
-              </form>
+              </div>
             </div>
 
-            {/* Side Panel - Right Side */}
-            <div className="flex-[3] space-y-6">
-              {/* Why Choose Us */}
-              <div className="p-6 rounded-2xl bg-card/80 dark:bg-white/10 backdrop-blur-md border border-border dark:border-white/20">
-                <h4 className="font-heading font-bold text-foreground dark:text-white mb-4">Why Choose DEUX AI Factory</h4>
-                <ul className="space-y-3">
-                  {reasons.map((reason) => (
-                    <li key={reason} className="flex items-center gap-3">
-                      <CheckCircle className="size-5 text-primary shrink-0" />
-                      <span className="text-sm text-foreground/80 dark:text-white/80">{reason}</span>
-                    </li>
-                  ))}
-                </ul>
+            {/* Right: Side column */}
+            <div className="lg:col-span-5">
+              {/* Contact cards */}
+              <div className="mt-6 space-y-3">
+                <div className="rounded-16 border border-border dark:border-white/20 bg-card dark:bg-white/10 p-4 flex items-start gap-3 cursor-pointer">
+                  <div className="size-10 rounded-xl bg-[#25D366] text-white flex items-center justify-center shrink-0">
+                    <MessageCircle className="size-5" />
+                  </div>
+                  <div className="min-w-0 flex-1">
+                    <div className="text-[14px] font-semibold text-foreground dark:text-white">WhatsApp</div>
+                    <div className="text-[12.5px] text-muted-foreground dark:text-white/60 leading-relaxed">Quick question? Chat now</div>
+                  </div>
+                  <span className="text-[#25D366] text-[11px] ml-auto">→</span>
+                </div>
+                <div className="rounded-16 border border-border dark:border-white/20 bg-card dark:bg-white/10 p-4 flex items-start gap-3 cursor-pointer">
+                  <div className="size-10 rounded-xl bg-[#4CAF7D] text-background flex items-center justify-center shrink-0">
+                    <Phone className="size-5" />
+                  </div>
+                  <div className="min-w-0 flex-1">
+                    <div className="text-[14px] font-semibold text-foreground dark:text-white">Book a call</div>
+                    <div className="text-[12.5px] text-muted-foreground dark:text-white/60 leading-relaxed">Pick a slot yourself</div>
+                  </div>
+                  <span className="text-[#4CAF7D] text-[11px] ml-auto">→</span>
+                </div>
+                <div className="rounded-16 border border-border dark:border-white/20 bg-card dark:bg-white/10 p-4 flex items-start gap-3 cursor-pointer">
+                  <div className="size-10 rounded-xl bg-[#4CAF7D] text-background flex items-center justify-center shrink-0">
+                    <Mail className="size-5" />
+                  </div>
+                  <div className="min-w-0 flex-1">
+                    <div className="text-[14px] font-semibold text-foreground dark:text-white">team.deuvix@gmail.com</div>
+                    <div className="text-[12.5px] text-muted-foreground dark:text-white/60 leading-relaxed">Click to copy</div>
+                  </div>
+                  <span className="text-[#4CAF7D] text-[11px] ml-auto">→</span>
+                </div>
               </div>
 
-              {/* Office Hours */}
-              <div className="p-6 rounded-2xl bg-card/80 dark:bg-white/10 backdrop-blur-md border border-border dark:border-white/20">
-                <div className="flex items-center gap-2 mb-4">
-                  <Clock className="size-5 text-primary" />
-                  <h5 className="font-heading font-bold text-foreground dark:text-white">Office Hours</h5>
+              {/* Office hours */}
+              <div className="mt-6 rounded-2xl border border-border dark:border-white/20 bg-card dark:bg-white/10 p-4">
+                <div className="mb-3">
+                  <span className="text-[11px] font-mono text-muted-foreground dark:text-white/60 uppercase tracking-[0.05em]">
+                    Office hours · PKT
+                  </span>
                 </div>
-                <ul className="space-y-2 text-sm">
-                  {companyWorkHoursRows().map((row) => (
-                    <li
+                {OFFICE_HOURS.map((row) => {
+                  const now = pakNow();
+                  const localHour = (now.getUTCHours() + 5) % 24;
+                  const day = now.getUTCDay();
+                  const isToday =
+                    (day >= 1 && day <= 5 && row.label === "Monday – Friday") ||
+                    (day === 6 && row.label === "Saturday") ||
+                    (day === 0 && row.label === "Sunday");
+                  const isOpen = isOfficeHoursOpen(now);
+                  return (
+                    <div
                       key={row.label}
-                      className="flex justify-between text-muted-foreground dark:text-white/70"
+                      className={`flex justify-between text-[13px] ${
+                        isToday && isOpen
+                          ? "text-foreground dark:text-white font-medium"
+                          : "text-muted-foreground dark:text-white/60"
+                      }`}
                     >
                       <span>{row.label}</span>
-                      <span
-                        className={
-                          row.value === "Closed"
-                            ? "text-muted-foreground dark:text-white/50"
-                            : "text-foreground/90 dark:text-white/90 font-medium"
-                        }
-                      >
-                        {row.value}
-                      </span>
-                    </li>
-                  ))}
-                </ul>
-                <p className="text-[11px] text-muted-foreground dark:text-white/40 mt-3">
-                  Timezone: {company.workingHours.timezone} ({company.workingHours.timezoneAbbr})
-                </p>
+                      <span>{row.value}</span>
+                    </div>
+                  );
+                })}
+              </div>
+
+              {/* Reassurance */}
+              <div className="mt-6 rounded-2xl border border-border dark:border-white/20 bg-card dark:bg-white/10 p-4">
+                <div className="flex items-start gap-3">
+                  <span className="text-[14px] font-medium text-foreground dark:text-white">🔒</span>
+                  <div className="text-sm text-muted-foreground dark:text-white/70 leading-relaxed">
+                    Your details stay private. We never share or sell your information.
+                  </div>
+                </div>
               </div>
             </div>
           </div>

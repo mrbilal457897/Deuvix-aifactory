@@ -10,7 +10,7 @@ import { countFollowUps } from "@/lib/crm";
 import { listRecentActions } from "@/lib/ai/audit";
 import { readSiteConfig } from "@/lib/site-config-server";
 import { SLOT_KEYS, SLOT_LABELS } from "@/lib/site-config";
-import { listProjects as queryProjects } from "@/lib/projects";
+import { listProjects as queryProjects, getProject } from "@/lib/projects";
 import { listMedia as queryMedia } from "@/lib/media";
 import { getAllUsers } from "@/lib/users";
 import { company } from "@config/company";
@@ -65,7 +65,7 @@ async function fetchProjects(limit: number): Promise<ProjectRow[]> {
   }));
 }
 
-/** Parses the hand-maintained data/deux-faq.md into question/answer pairs. */
+/** Parses the hand-maintained data/deuvix-faq.md into question/answer pairs. */
 function parseFaq(markdown: string): Array<{ question: string; answer: string }> {
   const cleaned = markdown.replace(/\r/g, "");
   const out: Array<{ question: string; answer: string }> = [];
@@ -395,7 +395,7 @@ const listFaqsTool: ToolDefinition<{ query?: string }> = {
     query: z.string().max(120).optional().describe("Optional keyword to filter questions/answers."),
   }),
   async execute({ query }) {
-    const faqs = parseFaq(readDataFile("deux-faq.md"));
+    const faqs = parseFaq(readDataFile("deuvix-faq.md"));
     const q = query?.trim().toLowerCase();
     const filtered = q
       ? faqs.filter((f) => `${f.question} ${f.answer}`.toLowerCase().includes(q))
@@ -447,7 +447,7 @@ const getSiteStatsTool: ToolDefinition<Record<string, never>> = {
       countBookings(),
       queryProjects(1000),
     ]);
-    const faqCount = parseFaq(readDataFile("deux-faq.md")).length;
+    const faqCount = parseFaq(readDataFile("deuvix-faq.md")).length;
     return {
       leads: {
         total: leads.length,
@@ -484,7 +484,23 @@ const loadSkillTool: ToolDefinition<{ name: string }> = {
   },
 };
 
-/** Every READ tool, in registration order. */
+/** One project in full, including its Markdown case-study body. */
+const getProjectTool: ToolDefinition<{ id: string }> = {
+  name: "get_project",
+  description:
+    "Read one 'Our live Work' project in full — including its Markdown case-study content — so you can rewrite or improve it without losing the rest.",
+  risk: "read",
+  roles: ["admin"],
+  inputSchema: z.object({
+    id: z.string().min(1).describe("The project id from list_projects."),
+  }),
+  async execute({ id }) {
+    const project = await getProject(id);
+    if (!project) throw new Error(`Project "${id}" was not found.`);
+    return project;
+  },
+};
+
 export const readTools: ToolDefinition[] = [
   defineTool(listLeadsTool),
   defineTool(getLeadTool),
@@ -493,6 +509,7 @@ export const readTools: ToolDefinition[] = [
   defineTool(listRecentActionsTool),
   defineTool(listBookingsTool),
   defineTool(listProjectsTool),
+  defineTool(getProjectTool),
   defineTool(listMediaTool),
   defineTool(listUsersTool),
   defineTool(listImageSlotsTool),

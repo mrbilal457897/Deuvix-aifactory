@@ -223,7 +223,7 @@ export function bookingReminderEmail(
   if (audience === "client") {
     const meetingUrl = safeUrl(data.meetingUrl);
     const waBusiness = buildBusinessChatLink(
-      `Reminder: my call with DEUX AI Factory is at ${formatInTimezone(data.startTime, clientZone)}.`,
+      `Reminder: my call with Deuvix AI Factory is at ${formatInTimezone(data.startTime, clientZone)}.`,
     );
 
     return {

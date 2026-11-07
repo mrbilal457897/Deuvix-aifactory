@@ -1,7 +1,7 @@
 /**
  * Knowledge-base ingest for the chatbot (§2A/§2B).
  *
- *   npm run ingest -- --source deux --base-url http://localhost:3000
+ *   npm run ingest -- --source deuvix --base-url http://localhost:3000
  *   npm run ingest -- --source agentfactory
  *   npm run ingest -- --all --base-url http://localhost:3000
  *
@@ -61,7 +61,7 @@ const SOURCE_A_PATHS = [
 ];
 
 const AGENT_FACTORY_ORIGIN = "https://agentfactory.panaversity.org";
-const AGENT_FACTORY_UA = "DeuxChatbotBot/1.0 (+https://deux-aicompany.vercel.app)";
+const AGENT_FACTORY_UA = "DeuvixChatbotBot/1.0 (+https://deuvix-aicompany.vercel.app)";
 
 /* -------------------------------------------------------------------------- */
 /* CLI                                                                        */
@@ -80,7 +80,7 @@ interface Args {
 
 function parseArgs(argv: string[]): Args {
   const args: Args = {
-    source: "deux",
+    source: "deuvix",
     baseUrl: process.env.SITE_URL || "http://localhost:3000",
     limit: null,
     dryRun: false,
@@ -95,7 +95,7 @@ function parseArgs(argv: string[]): Args {
     const next = () => argv[++i];
     switch (flag) {
       case "--source":
-        args.source = (next() || "deux") as Args["source"];
+        args.source = (next() || "deuvix") as Args["source"];
         break;
       case "--all":
         args.source = "all";
@@ -132,7 +132,7 @@ function parseArgs(argv: string[]): Args {
         console.log(
           [
             "Usage: tsx scripts/ingest.ts [options]",
-            "  --source deux|agentfactory   which namespace to fill (default: deux)",
+            "  --source deuvix|agentfactory   which namespace to fill (default: deuvix)",
             "  --all                        fill both",
             "  --base-url <url>             origin to fetch Source A from",
             "  --limit <n>                  only process the first n pages",
@@ -153,8 +153,8 @@ function parseArgs(argv: string[]): Args {
     }
   }
 
-  if (args.source !== "deux" && args.source !== "agentfactory" && args.source !== "all") {
-    console.error(`Unknown --source "${args.source}". Use deux, agentfactory or all.`);
+  if (args.source !== "deuvix" && args.source !== "agentfactory" && args.source !== "all") {
+    console.error(`Unknown --source "${args.source}". Use deuvix, agentfactory or all.`);
     process.exit(1);
   }
   args.baseUrl = args.baseUrl.replace(/\/+$/, "");
@@ -405,7 +405,7 @@ async function prune(source: KbSource, seen: Set<string>, stats: Stats) {
 
 async function ingestSourceA(args: Args, stats: Stats) {
   const base = args.baseUrl;
-  console.log(`\nSource A — DEUX site (${base})`);
+  console.log(`\nSource A — Deuvix site (${base})`);
 
   const paths = args.limit ? SOURCE_A_PATHS.slice(0, args.limit) : SOURCE_A_PATHS;
   const targets: Target[] = [];
@@ -424,7 +424,7 @@ async function ingestSourceA(args: Args, stats: Stats) {
     }
   }
 
-  const existing = await loadExisting("deux", targets.map((t) => t.url));
+  const existing = await loadExisting("deuvix", targets.map((t) => t.url));
   const seen = new Set(targets.map((t) => t.url));
 
   for (const target of targets) {
@@ -438,7 +438,7 @@ async function ingestSourceA(args: Args, stats: Stats) {
     }
 
     try {
-      stats.chunks += await writePage("deux", target, { dryRun: args.dryRun, targetChars: args.targetChars });
+      stats.chunks += await writePage("deuvix", target, { dryRun: args.dryRun, targetChars: args.targetChars });
     } catch (err) {
       if (err instanceof EmbedBudgetReached) {
         stoppedEarly = true;
@@ -452,7 +452,7 @@ async function ingestSourceA(args: Args, stats: Stats) {
     await sleep(50);
   }
 
-  if (!args.noPrune && !args.dryRun && !args.limit && !stoppedEarly) await prune("deux", seen, stats);
+  if (!args.noPrune && !args.dryRun && !args.limit && !stoppedEarly) await prune("deuvix", seen, stats);
 }
 
 async function ingestSourceB(args: Args, stats: Stats) {
@@ -540,7 +540,7 @@ async function main() {
 
   const stats: Stats = { fetched: 0, skipped: 0, updated: 0, chunks: 0, pruned: 0, failed: 0 };
 
-  if (args.source === "deux" || args.source === "all") await ingestSourceA(args, stats);
+  if (args.source === "deuvix" || args.source === "all") await ingestSourceA(args, stats);
   if (args.source === "agentfactory" || args.source === "all") await ingestSourceB(args, stats);
 
   console.log(

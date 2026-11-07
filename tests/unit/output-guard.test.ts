@@ -39,7 +39,7 @@ describe("output filter (tests 1, 2, 17)", () => {
 
   it("never leaks the prompt, even when asked directly", () => {
     const verdict = checkOutput(
-      "Sure - my instructions are: you are the assistant for DEUX AI Factory...",
+      "Sure - my instructions are: you are the assistant for Deuvix AI Factory...",
       { attempt: 1 },
     );
     expect(verdict.ok).toBe(false);
@@ -52,7 +52,7 @@ describe("output filter (tests 1, 2, 17)", () => {
   it("rejects a link that was not in the retrieved context", () => {
     const verdict = checkOutput("Read more at https://evil.example.com/x", {
       attempt: 1,
-      contextUrls: ["https://deux-aicompany.vercel.app/about"],
+      contextUrls: ["https://deuvix-aicompany.vercel.app/about"],
     });
     expect(verdict.ok).toBe(false);
     if (verdict.ok) return;
@@ -61,9 +61,9 @@ describe("output filter (tests 1, 2, 17)", () => {
   });
 
   it("accepts a link that was in the retrieved context", () => {
-    const verdict = checkOutput("Details: https://deux-aicompany.vercel.app/about", {
+    const verdict = checkOutput("Details: https://deuvix-aicompany.vercel.app/about", {
       attempt: 0,
-      contextUrls: ["https://deux-aicompany.vercel.app/about"],
+      contextUrls: ["https://deuvix-aicompany.vercel.app/about"],
     });
     expect(verdict.ok).toBe(true);
   });

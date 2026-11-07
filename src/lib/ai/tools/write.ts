@@ -32,6 +32,8 @@ const imageUrlSchema = z
 const optionalImageUrl = imageUrlSchema.optional();
 
 const projectStatusSchema = z.enum(PROJECT_STATUSES);
+const projectContentSchema = z.string().max(20_000).optional()
+  .describe("Markdown case-study content for the project detail page.");
 
 function assertImageUrl(value: string | undefined, field: string): void {
   if (value === undefined || value === "") return;
@@ -204,22 +206,24 @@ const createProjectTool: ToolDefinition<{
   title: string;
   description: string;
   category?: string;
-  status?: "Active" | "Planning" | "Completed";
+  status?: "draft" | "published";
   image?: string;
   url?: string;
+  content?: string;
 }> = {
   name: "create_project",
   description:
-    "Create a portfolio/case-study project that appears on the public site. Give a title and description; category defaults to AI and status to Active. `image` is an image URL (from list_media or an external URL) and `url` is the project's live link. This is a WRITE: it is proposed to the admin and only runs after they confirm.",
+    "Create a portfolio/case-study project that appears in 'Our live Work'. Give a title and description; status defaults to draft. A project only goes public once BOTH a desktop and a mobile screenshot exist, so a record created here stays a draft until the admin uploads them. `image` seeds the desktop screenshot and `url` is the project's live link. Pass `content` as finished Markdown for the full case study when the admin has asked you to write it. This is a WRITE: it is proposed to the admin and only runs after they confirm.",
   risk: "write",
   roles: ["admin"],
   inputSchema: z.object({
     title: z.string().min(1).max(200).describe("The project title."),
     description: z.string().min(1).max(4000).describe("A short description of the project."),
     category: z.string().max(80).optional().describe("Category label, e.g. AI, Data, Web (default General)."),
-    status: projectStatusSchema.optional().describe("Project status (default Active)."),
-    image: optionalImageUrl.describe("Optional cover image URL, e.g. from list_media."),
+    status: projectStatusSchema.optional().describe("draft (default) or published."),
+    image: optionalImageUrl.describe("Optional desktop screenshot URL, e.g. from list_media."),
     url: optionalImageUrl.describe("Optional live project URL."),
+    content: projectContentSchema,
   }),
   execute: async (input, ctx) => {
     assertImageUrl(input.image, "image");
@@ -240,13 +244,14 @@ const updateProjectTool: ToolDefinition<{
   title?: string;
   description?: string;
   category?: string;
-  status?: "Active" | "Planning" | "Completed";
+  status?: "draft" | "published";
   image?: string;
   url?: string;
+  content?: string;
 }> = {
   name: "update_project",
   description:
-    "Change one or more fields of an existing portfolio project. Identify it by the id from list_projects and pass only the fields that change (title, description, category, status, image, url). This is a WRITE: it is proposed to the admin and only runs after they confirm.",
+    "Change one or more fields of an existing 'Our live Work' project. Identify it by the id from list_projects and pass only the fields that change (title, description, category, status, image, url, content). Setting status to published requires both screenshots to exist. Pass content as finished Markdown for the case-study detail page. This is a WRITE: it is proposed to the admin and only runs after they confirm.",
   risk: "write",
   roles: ["admin"],
   inputSchema: z.object({
@@ -254,9 +259,10 @@ const updateProjectTool: ToolDefinition<{
     title: z.string().min(1).max(200).optional().describe("New title."),
     description: z.string().min(1).max(4000).optional().describe("New description."),
     category: z.string().max(80).optional().describe("New category."),
-    status: projectStatusSchema.optional().describe("New status."),
-    image: optionalImageUrl.describe("New cover image URL (pass an empty string to clear it)."),
+    status: projectStatusSchema.optional().describe("New status (draft/published)."),
+    image: optionalImageUrl.describe("New desktop screenshot URL (pass an empty string to clear it)."),
     url: optionalImageUrl.describe("New live URL (pass an empty string to clear it)."),
+    content: projectContentSchema,
   }),
   execute: async ({ id, ...patch }, ctx) => {
     const changedFields = Object.keys(patch);

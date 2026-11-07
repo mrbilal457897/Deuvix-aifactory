@@ -11,10 +11,11 @@ import {
   Cpu,
 } from "lucide-react";
 import { company } from "@config/company";
+import { Breadcrumb } from "@/components/ui/breadcrumb";
 
 export const metadata: Metadata = {
   title: "Documentation",
-  description: "Guides to building, deploying, and managing Digital FTEs and AI agents with DEUX AI Factory.",
+  description: "Guides to building, deploying, and managing Digital FTEs and AI agents with Deuvix AI Factory.",
   alternates: { canonical: "/docs" },
 };
 
@@ -22,7 +23,7 @@ const sections = [
   {
     title: "Getting Started",
     description:
-      "New to DEUX AI Factory? Start here. Learn what Digital FTEs are, how the platform works, and how to deploy your first agent in minutes.",
+      "New to Deuvix AI Factory? Start here. Learn what Digital FTEs are, how the platform works, and how to deploy your first agent in minutes.",
     links: [
       { label: "What is a Digital FTE?", href: "/blog/human-vs-digital-fte" },
       { label: "Building Digital FTEs", href: "/blog/building-digital-fte" },
@@ -55,7 +56,7 @@ const sections = [
   {
     title: "Deployment & Integration",
     description:
-      "Connect DEUX AI Factory agents to your CRM, databases, and business tools. Learn deployment patterns that scale from pilot to full workforce.",
+      "Connect Deuvix AI Factory agents to your CRM, databases, and business tools. Learn deployment patterns that scale from pilot to full workforce.",
     links: [
       { label: "Forward deployed engineering", href: "/blog/fde-practices" },
       { label: "Case studies", href: "/projects" },
@@ -66,7 +67,7 @@ const sections = [
   {
     title: "Platform & Admin",
     description:
-      "Using the DEUX AI Factory dashboard. Manage users, monitor agent performance, and keep your AI operations running 24/7.",
+      "Using the Deuvix AI Factory dashboard. Manage users, monitor agent performance, and keep your AI operations running 24/7.",
     links: [
       { label: "Sign in to the dashboard", href: "/login" },
       { label: "Privacy & data handling", href: "/privacy" },
@@ -77,9 +78,9 @@ const sections = [
   {
     title: "API Reference",
     description:
-      "Integrate with DEUX AI Factory programmatically. Endpoints, authentication, and webhooks for teams that build on top of the platform.",
+      "Integrate with Deuvix AI Factory programmatically. Endpoints, authentication, and webhooks for teams that build on top of the platform.",
     links: [
-      { label: "Contact us for API access", href: "/contact" },
+      { label: "Discuss API access", href: "/contact" },
       { label: "Changelog", href: "/changelog" },
       { label: "Status updates", href: "/blog" },
     ],
@@ -89,17 +90,23 @@ const sections = [
 
 export default function DocsPage() {
   return (
-    <div className="pt-24">
-      <section className="py-16 text-center px-6 bg-hero-pattern relative">
+    <div>
+      <section className="pt-8 sm:pt-12 pb-16 bg-hero-pattern relative">
         <div className="absolute inset-0 bg-dots opacity-30" />
+        <div className="relative mx-auto max-w-7xl px-6 sm:px-6 lg:px-8 text-center">
+          <Breadcrumb
+            items={[{ label: "Home", href: "/" }, { label: "Docs" }]}
+            className="mb-4 sm:mb-6"
+          />
         <Badge className="mb-4 bg-accent/10 text-accent border-accent/20">Documentation</Badge>
-        <h1 className="font-heading text-4xl sm:text-5xl font-bold mb-4">
-          DEUX AI Factory <span className="text-gradient">Docs</span>
+        <h1 className="font-heading text-[68px] font-bold mb-4">
+          Deuvix AI Factory <span className="text-gradient">Docs</span>
         </h1>
-        <p className="mx-auto max-w-2xl text-muted-foreground text-lg">
+        <p className="mx-auto max-w-2xl text-muted-foreground text-base">
           Everything you need to manufacture, deploy, and monetize Digital FTEs — from first
           principles to production.
         </p>
+        </div>
       </section>
 
       <section className="py-16 px-6">
@@ -113,7 +120,7 @@ export default function DocsPage() {
                 <span className="inline-flex items-center justify-center size-11 rounded-xl bg-primary/10 text-primary mb-4">
                   <section.icon className="size-5" />
                 </span>
-                <h2 className="font-heading text-lg font-bold mb-2">{section.title}</h2>
+                <h2 className="font-heading text-[48px] font-bold mb-2">{section.title}</h2>
                 <p className="text-sm text-muted-foreground leading-relaxed mb-4">
                   {section.description}
                 </p>
@@ -135,7 +142,7 @@ export default function DocsPage() {
           </div>
 
           <div className="mt-12 p-8 rounded-2xl bg-card border border-border text-center">
-            <h2 className="font-heading text-2xl font-bold mb-2">Still stuck?</h2>
+            <h2 className="font-heading text-[48px] font-bold mb-2">Still stuck?</h2>
             <p className="text-sm text-muted-foreground mb-6 max-w-xl mx-auto">
               Our team ships production agent systems every week. Ask us anything about your
               use case.

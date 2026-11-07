@@ -126,5 +126,5 @@ export const URL_ALLOWLIST: readonly string[] = [
   "/login",
 ];
 
-export const SITE_ORIGIN = (process.env.SITE_URL || "https://deux-aicompany.vercel.app")
+export const SITE_ORIGIN = (process.env.SITE_URL || "https://deuvix-aicompany.vercel.app")
   .replace(/\/+$/, "");

@@ -9,7 +9,7 @@ import type { Metadata } from "next";
 
 export const metadata: Metadata = {
   title: "Terms of Service",
-  description: "The terms that govern your use of the DEUX AI Factory website and our services.",
+  description: "The terms that govern your use of the Deuvix AI Factory website and our services.",
   alternates: { canonical: "/terms" },
 };
 
@@ -18,12 +18,12 @@ export default function TermsOfServicePage() {
     <LegalPage
       badge="Legal"
       title="Terms of Service"
-      description="The terms that govern your use of the DEUX AI Factory website and our services."
+      description="The terms that govern your use of the Deuvix AI Factory website and our services."
       lastUpdated="14 August 2026"
     >
       <LegalSection heading="1. Acceptance of Terms">
         <LegalParagraph>
-          By accessing or using the DEUX AI Factory website, you agree to be bound by these Terms
+          By accessing or using the Deuvix AI Factory website, you agree to be bound by these Terms
           of Service. If you do not agree, please do not use the site. We may update
           these terms from time to time; continued use after changes means you accept
           the revised terms.
@@ -32,7 +32,7 @@ export default function TermsOfServicePage() {
 
       <LegalSection heading="2. About Our Services">
         <LegalParagraph>
-          DEUX AI Factory manufactures, deploys, and monetizes Digital
+          Deuvix AI Factory manufactures, deploys, and monetizes Digital
           FTEs — AI workers that operate as the workforce for modern enterprises. Our
           services include:
         </LegalParagraph>
@@ -67,7 +67,7 @@ export default function TermsOfServicePage() {
       <LegalSection heading="4. Intellectual Property">
         <LegalParagraph>
           All content on this website — including text, graphics, logos, and code — is
-          the property of DEUX AI Factory unless stated otherwise. You may view and share our
+          the property of Deuvix AI Factory unless stated otherwise. You may view and share our
           public content for informational purposes, but you may not reproduce or
           redistribute it commercially without our written consent.
         </LegalParagraph>
@@ -85,7 +85,7 @@ export default function TermsOfServicePage() {
 
       <LegalSection heading="6. Limitation of Liability">
         <LegalParagraph>
-          To the maximum extent permitted by law, DEUX AI Factory will not be liable for any
+          To the maximum extent permitted by law, Deuvix AI Factory will not be liable for any
           indirect, incidental, or consequential damages arising from your use of the
           website or any service engagement, even if we were advised of the possibility
           of such damages.
@@ -106,10 +106,10 @@ export default function TermsOfServicePage() {
         </LegalParagraph>
       </LegalSection>
 
-      <LegalSection heading="9. Contact">
+      <LegalSection heading="9. Discuss">
         <LegalParagraph>
           Questions about these terms? Reach us at <CompanyEmailLink /> or via our{" "}
-          <a href="/contact" className="text-primary hover:underline">contact page</a>.
+          <a href="/contact" className="text-primary hover:underline">discussion page</a>.
         </LegalParagraph>
         <CompanyIdentityBlock />
       </LegalSection>

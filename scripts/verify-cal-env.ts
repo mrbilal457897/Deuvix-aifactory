@@ -10,8 +10,8 @@ const ok = (name: string, cond: boolean) => (cond ? (pass++, console.log(`  PASS
 console.log("\n[cal embed]");
 ok("isCalConfigured() === true", isCalConfigured());
 ok("calOrigin is bare origin", getCalOrigin() === "https://cal.com");
-ok("calLink is slug only (no origin, no slash)", getCalLink() === "bilal-sheikh-3qvs54/deux");
-console.log(`  -> iframe URL: ${getCalOrigin()}/${getCalLink()}/embed?embed=deux`);
+ok("calLink is slug only (no origin, no slash)", getCalLink() === "bilal-sheikh-3qvs54/deuvix");
+console.log(`  -> iframe URL: ${getCalOrigin()}/${getCalLink()}/embed?embed=deuvix`);
 
 console.log("\n[email + secrets present]");
 for (const k of [
@@ -21,7 +21,7 @@ for (const k of [
 
 ok("SMTP_PASS matches GMAIL_APP_PASSWORD", process.env.SMTP_PASS === process.env.GMAIL_APP_PASSWORD);
 ok("SMTP_USER matches GMAIL_USER", process.env.SMTP_USER === process.env.GMAIL_USER);
-ok("EMAIL_FROM uses the DEUX AI Factory brand", (process.env.EMAIL_FROM ?? "").includes("DEUX AI Factory"));
+ok("EMAIL_FROM uses the Deuvix AI Factory brand", (process.env.EMAIL_FROM ?? "").includes("Deuvix AI Factory"));
 
 console.log("\n[whatsapp]");
 const wa = normalizeWhatsAppNumber(process.env.NEXT_PUBLIC_WHATSAPP_NUMBER ?? "");

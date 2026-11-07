@@ -62,7 +62,7 @@ export const now = sql`now()`;
 /* Chat: knowledge base                                                       */
 /* -------------------------------------------------------------------------- */
 
-export type KbSource = "deux" | "agentfactory";
+export type KbSource = "deuvix" | "agentfactory";
 
 export const kbPages = pgTable(
   "kb_pages",
@@ -235,3 +235,56 @@ export const adminAgentAudit = pgTable(
 );
 
 export type AdminAgentAuditRow = typeof adminAgentAudit.$inferSelect;
+
+/* -------------------------------------------------------------------------- */
+/* Chatbot: contact tickets (job ticket form on /contact)                      */
+/* -------------------------------------------------------------------------- */
+
+/* -------------------------------------------------------------------------- */
+/* Chatbot: contact inquiries (contact form on /contact)                      */
+/* -------------------------------------------------------------------------- */
+
+export const inquiryStatus = pgEnum("contact_inquiry_status", [
+  "new",
+  "replied",
+  "archived",
+]);
+
+export const contactInquiries = pgTable("contact_inquiries", {
+  id: uuid("id").primaryKey().defaultRandom(),
+  inquiryId: text("inquiry_id").notNull().unique(),
+  status: inquiryStatus("status").notNull().default("new"),
+  emailError: text("email_error"),
+  sourcePath: text("source_path").notNull().default("/contact"),
+  ipHash: text("ip_hash"),
+  userAgent: text("user_agent"),
+
+  units: text("units").notNull().default("[]"),
+  brief: text("brief").notNull(),
+  channels: text("channels").notNull().default("[]"),
+  startWhen: text("start_when"),
+  website: text("website"),
+  name: text("name").notNull(),
+  email: text("email").notNull(),
+  company: text("company"),
+  phone: text("phone"),
+  via: text("via").notNull().default("Email"),
+  slot: text("slot"),
+  nda: boolean("nda").notNull().default(false),
+
+  expectedReplyAt: timestamp("expected_reply_at", { withTimezone: true }).notNull(),
+
+  notes: text("notes"),
+  createdAt: timestamp("created_at", { withTimezone: true }).notNull().defaultNow(),
+  updatedAt: timestamp("updated_at", { withTimezone: true }).notNull().defaultNow(),
+  },
+  (table) => [
+    index("contact_inquiries_inquiry_id_idx").on(table.inquiryId),
+    index("contact_inquiries_status_idx").on(table.status),
+    index("contact_inquiries_created_idx").on(table.createdAt),
+    index("contact_inquiries_email_idx").on(table.email),
+  ],
+);
+
+export type ContactInquiry = typeof contactInquiries.$inferSelect;
+export type NewContactInquiry = typeof contactInquiries.$inferInsert;

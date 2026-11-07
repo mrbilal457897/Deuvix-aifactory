@@ -16,6 +16,7 @@ import { BookCallButton } from "@/components/book-call-button";
 import { TimezoneSelect } from "@/components/booking/timezone-select";
 import { LocalTime } from "@/components/booking/local-time";
 import { buildBusinessChatLink } from "@/lib/notify/whatsapp";
+import { Breadcrumb } from "@/components/ui/breadcrumb";
 import {
   BOOKING_CONTACT_EMAIL,
   LANGUAGES,
@@ -279,9 +280,13 @@ export function BookingPage({
   );
 
   return (
-    // pt-24 clears the fixed h-16 header, same as every other marketing page.
-    <div className="mx-auto w-full max-w-5xl overflow-x-clip px-4 pb-8 pt-24 sm:pb-14">
-      <div className="grid gap-8 md:grid-cols-[minmax(0,1fr)_320px]">
+    // Header is in the document flow, so no page-level header offset is needed.
+    <div className="mx-auto w-full max-w-7xl overflow-x-clip px-6 sm:px-6 lg:px-8 pb-8 pt-8 sm:pt-12 sm:pb-14">
+      <Breadcrumb
+        items={[{ label: "Home", href: "/" }, { label: "Book a Call" }]}
+        className="mb-4 sm:mb-6"
+      />
+      <div className="mx-auto max-w-5xl grid gap-8 md:grid-cols-[minmax(0,1fr)_320px]">
         {/* ---------------- main column ---------------- */}
         <div className="min-w-0">
           <header className="mb-6">
@@ -598,7 +603,7 @@ export function BookingPage({
         {/* ---------------- summary sidebar ---------------- */}
         <aside className="h-fit min-w-0 md:sticky md:top-24">
           <div className="border-border bg-card rounded-[min(var(--radius-lg),16px)] border p-4 sm:p-5">
-            <BrandLogo className="mb-4 h-6 w-auto" />
+            <BrandLogo size="sm" className="mb-4" />
             <p className="font-medium break-words">{eventTitle}</p>
             <dl className="text-muted-foreground mt-3 space-y-2 text-sm">
               <div className="flex items-baseline justify-between gap-3">

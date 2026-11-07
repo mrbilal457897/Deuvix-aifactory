@@ -113,7 +113,7 @@ function offTopicLabel(text: string): string {
   if (/\b(invest|stock|trading|crypto|forex|lottery)\b/i.test(text)) return "financial advice";
   if (/\b(hack|phish|crack|steal|malware|ransomware)\b/i.test(text)) return "anything harmful or illegal";
   if (/\b(girlfriend|boyfriend|dating|nsfw|porn|sex)\b/i.test(text)) return "that topic";
-  return "topics outside AI agents and what Deux does";
+  return "topics outside AI agents and what Deuvix does";
 }
 
 /* -------------------------------------------------------------------------- */
@@ -235,4 +235,4 @@ export function evaluateInput(raw: string): PreModelVerdict {
 }
 
 export const INJECTION_REPLY =
-  "I can't show you my instructions, configuration, or internal details — and I won't change how I work because a message asks me to.\n\nI can help with building AI agents or with what Deux does. What would you like to know?";
+  "I can't show you my instructions, configuration, or internal details — and I won't change how I work because a message asks me to.\n\nI can help with building AI agents or with what Deuvix does. What would you like to know?";

@@ -69,7 +69,7 @@ export function TeamSection() {
     <section id="team" className="py-24 px-6 bg-surface dark:bg-transparent" ref={sectionRef}>
       {/* Section Title */}
       <div className="text-center mb-14">
-        <h2 className="font-heading text-3xl sm:text-4xl font-bold mb-3 text-foreground dark:text-white"><CharReveal>Team</CharReveal></h2>
+        <h2 className="font-heading text-[48px] font-bold mb-3 text-foreground dark:text-white"><CharReveal>Team</CharReveal></h2>
         <p className="text-muted-foreground text-sm uppercase tracking-widest font-medium">
           Meet Our Team
         </p>

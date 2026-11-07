@@ -19,7 +19,7 @@ const googleCache = new Map<string, ReturnType<typeof createGoogleGenerativeAI>>
 function openaiClient(baseUrl: string, apiKey: string) {
   let client = openaiCache.get(baseUrl);
   if (!client) {
-    client = createOpenAI({ name: "deux-llm", baseURL: baseUrl, apiKey });
+    client = createOpenAI({ name: "deuvix-llm", baseURL: baseUrl, apiKey });
     openaiCache.set(baseUrl, client);
   }
   return client;

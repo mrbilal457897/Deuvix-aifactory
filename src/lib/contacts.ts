@@ -95,7 +95,7 @@ export async function saveContact(input: {
     replyTo: contact.email,
     html: `
       <div style="font-family:Arial,sans-serif;max-width:600px;margin:0 auto;padding:24px;border:1px solid #e5e7eb;border-radius:12px">
-        <h2 style="margin-top:0;color:#2F6B46">New Contact Request — DEUX AI Factory</h2>
+        <h2 style="margin-top:0;color:#2F6B46">New Contact Request — Deuvix AI Factory</h2>
         <table style="width:100%;border-collapse:collapse;font-size:14px">
           <tr><td style="padding:6px 0;color:#6b7280;width:110px">Name</td><td style="padding:6px 0;font-weight:600">${escapeHtml(contact.name)}</td></tr>
           <tr><td style="padding:6px 0;color:#6b7280">Email</td><td style="padding:6px 0"><a href="mailto:${escapeHtml(contact.email)}">${escapeHtml(contact.email)}</a></td></tr>
@@ -104,7 +104,7 @@ export async function saveContact(input: {
           <tr><td style="padding:6px 0;color:#6b7280">Website</td><td style="padding:6px 0">${contact.portfolio ? `<a href="${escapeHtml(contact.portfolio)}">${escapeHtml(contact.portfolio)}</a>` : "—"}</td></tr>
         </table>
         <div style="margin-top:16px;padding:14px;background:#f9fafb;border-radius:8px;font-size:14px;white-space:pre-wrap">${escapeHtml(contact.message)}</div>
-        <p style="margin-top:16px;font-size:12px;color:#9ca3af">Sent via deux-site contact form at ${new Date(contact.createdAt).toUTCString()}</p>
+        <p style="margin-top:16px;font-size:12px;color:#9ca3af">Sent via deuvix-site contact form at ${new Date(contact.createdAt).toUTCString()}</p>
       </div>
     `,
     text: `New contact request from ${contact.name}\n\nName: ${contact.name}\nEmail: ${contact.email}\nPhone: ${contact.phone || "—"}\nService: ${contact.service || "—"}\nWebsite: ${contact.portfolio || "—"}\n\nMessage:\n${contact.message}\n\nSent: ${contact.createdAt}`,

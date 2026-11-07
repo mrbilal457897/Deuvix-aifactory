@@ -15,7 +15,7 @@ import {
   Settings,
   Users,
   ContactRound,
-  ChevronRight,
+  FileText,
   Search,
   Bell,
   Sun,
@@ -23,14 +23,16 @@ import {
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { LogoMark } from "@/components/brand-logo";
+import { Breadcrumb } from "@/components/ui/breadcrumb";
 import { AdminAgentPanel } from "@/components/admin/agent-panel";
 import { useState, createContext, useContext } from "react";
 
-const DASHBOARD_PREFIX = "/deux";
+const DASHBOARD_PREFIX = "/deuvix";
 
 const sidebarLinks = [
-  { href: DASHBOARD_PREFIX, label: "Projects", icon: Folder },
+  { href: DASHBOARD_PREFIX, label: "Our live Work", icon: Folder },
   { href: `${DASHBOARD_PREFIX}/leads`, label: "Leads", icon: ContactRound },
+  { href: `${DASHBOARD_PREFIX}/tickets`, label: "Tickets", icon: FileText },
   { href: `${DASHBOARD_PREFIX}/users`, label: "Users", icon: Users },
   { href: `${DASHBOARD_PREFIX}/media`, label: "Media Library", icon: ImageIcon },
   { href: `${DASHBOARD_PREFIX}/images`, label: "Image Settings", icon: Settings },
@@ -38,33 +40,19 @@ const sidebarLinks = [
 
 const SidebarCtx = createContext<{ collapsed: boolean; toggle: () => void }>({ collapsed: false, toggle: () => {} });
 
-function Breadcrumbs() {
+function AdminBreadcrumbs() {
   const pathname = usePathname();
   const segments = pathname.replace(DASHBOARD_PREFIX, "").split("/").filter(Boolean);
-  const crumbs = [{ label: "Dashboard", href: DASHBOARD_PREFIX }];
+  const items = [{ label: "Our live Work", href: DASHBOARD_PREFIX }];
   if (segments[0]) {
-    const link = sidebarLinks.find((l) => l.href.endsWith(segments[0]));
-    crumbs.push({ label: link?.label || segments[0], href: `${DASHBOARD_PREFIX}/${segments[0]}` });
+    const link = sidebarLinks.find((item) => item.href.endsWith(segments[0]));
+    items.push({
+      label: link?.label || segments[0],
+      href: `${DASHBOARD_PREFIX}/${segments[0]}`,
+    });
   }
 
-  return (
-    <nav className="flex items-center gap-1.5 text-sm">
-      {crumbs.map((c, i) => (
-        <span key={c.href} className="flex items-center gap-1.5">
-          {i > 0 && <ChevronRight className="size-3.5 text-muted-foreground/50" />}
-          <Link
-            href={c.href}
-            className={cn(
-              "transition-colors",
-              i === crumbs.length - 1 ? "text-foreground font-medium" : "text-muted-foreground hover:text-foreground"
-            )}
-          >
-            {c.label}
-          </Link>
-        </span>
-      ))}
-    </nav>
-  );
+  return <Breadcrumb items={items} className="min-w-0 text-xs sm:text-sm" />;
 }
 
 function ThemeToggle() {
@@ -92,7 +80,7 @@ function SidebarNav({ onNavigate }: { onNavigate: () => void }) {
         <LogoMark size={collapsed ? "xs" : "sm"} />
         {!collapsed && (
           <div>
-            <span className="text-[15px] font-heading font-bold text-foreground tracking-tight">DEUX AI Factory</span>
+            <span className="text-[15px] font-heading font-bold text-foreground tracking-tight">Deuvix AI Factory</span>
             <p className="text-[10px] text-muted-foreground uppercase tracking-widest">Admin Panel</p>
           </div>
         )}
@@ -209,7 +197,7 @@ export function DashboardShell({ children }: { children: React.ReactNode }) {
               <button onClick={() => setMobileOpen(true)} className="lg:hidden p-1.5 -ml-1 rounded-lg text-muted-foreground hover:text-foreground hover:bg-muted">
                 <Menu className="size-4" />
               </button>
-              <Breadcrumbs />
+              <AdminBreadcrumbs />
               <nav className="hidden md:flex items-center gap-1 ml-4">
                 {[
                   { href: "/", label: "Home" },
@@ -217,7 +205,7 @@ export function DashboardShell({ children }: { children: React.ReactNode }) {
                   { href: "/projects", label: "Projects" },
                   { href: "/about", label: "About" },
                   { href: "/blog", label: "Blog" },
-                  { href: "/contact", label: "Contact" },
+                  { href: "/contact", label: "Discuss" },
                 ].map((link) => (
                   <Link
                     key={link.href}

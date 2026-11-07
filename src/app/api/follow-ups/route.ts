@@ -9,7 +9,7 @@ export const dynamic = "force-dynamic";
  * GET /api/follow-ups — pending follow-ups, identical rows collapsed.
  *
  * PATCH resolves them as done/skipped. That write only happens when an admin
- * clicks the button in /deux/leads: this route never sends an email, so no
+ * clicks the button in /deuvix/leads: this route never sends an email, so no
  * prospect is contacted without a human pressing Send in their own mail client.
  *
  * Auth comes from src/middleware.ts (admin session required — not allow-listed).

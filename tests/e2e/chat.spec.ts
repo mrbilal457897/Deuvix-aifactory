@@ -1,14 +1,14 @@
 import { expect, type Page, test } from "@playwright/test";
 
-const LAUNCHER = "Open chat with DEUX AI Factory";
-const DIALOG = "DEUX AI Factory assistant";
+const LAUNCHER = "Open chat with Deuvix AI Factory";
+const DIALOG = "Deuvix AI Factory assistant";
 const COMPOSER = "Send message";
 
 /** Kill the 4.5s launcher greeting so it never steals focus mid-test. */
 async function boot(page: Page) {
   await page.addInitScript(() => {
     try {
-      sessionStorage.setItem("deux-chat-greeting-seen", "1");
+      sessionStorage.setItem("deuvix-chat-greeting-seen", "1");
     } catch {
       /* ignore */
     }
@@ -36,7 +36,7 @@ test.describe("chat widget — desktop", () => {
     await expect(page.getByRole("textbox", { name: COMPOSER })).toBeFocused();
     // The launcher unmounts while the sheet is open.
     await expect(launcher).toHaveCount(0);
-    await expect(dialog.getByText(/Salam! I'm the DEUX assistant/)).toBeVisible();
+    await expect(dialog.getByText(/Salam! I'm the Deuvix assistant/)).toBeVisible();
   });
 
   test("Escape closes it and hands focus back to the launcher", async ({ page }) => {
@@ -119,7 +119,7 @@ test.describe("chat widget — desktop", () => {
     await composer.fill("   ");
     await expect(send).toBeDisabled();
 
-    await composer.fill("What does Deux offer?");
+    await composer.fill("What does Deuvix offer?");
     await expect(send).toBeEnabled();
     await expect(page.getByText(/^1000\/1000$/)).toHaveCount(0);
   });

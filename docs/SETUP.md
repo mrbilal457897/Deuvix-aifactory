@@ -1,6 +1,6 @@
 # Book a Call — Setup Guide
 
-Self-hosted Cal.com booking flow for DEUX AI Factory. No proprietary SaaS:
+Self-hosted Cal.com booking flow for Deuvix AI Factory. No proprietary SaaS:
 PostgreSQL + Drizzle for storage, Nodemailer over SMTP for email, `wa.me`
 click-to-chat links for WhatsApp.
 
@@ -67,12 +67,12 @@ cp .env.example .env.local
 | `CAL_API_KEY` | `cal_xxx` | **Server-side only, never `NEXT_PUBLIC_`.** Powers the `/book-a-call` page. Create in Cal.com -> Settings -> Integrations -> API Keys. |
 | `CAL_ORGANIZATION_SLUG` | `acme-corp` | Only if the Cal.com account is inside an organization. |
 | `CAL_EVENT_KIND` | `user` | `user` or `team`. Disambiguates a two-segment `CAL_LINK` like `acme/intro`. |
-| `DATABASE_URL` | `postgres://deux:pw@localhost:5432/deux` | No TLS parameters; TLS is configured in code with the CA (3.1a). |
+| `DATABASE_URL` | `postgres://deuvix:pw@localhost:5432/deuvix` | No TLS parameters; TLS is configured in code with the CA (3.1a). |
 | `SMTP_HOST` | `smtp.yourhost.com` | Any SMTP server. |
 | `SMTP_PORT` | `587` | `465` switches to implicit TLS automatically. |
 | `SMTP_USER` | `hello@yourdomain.com` | |
 | `SMTP_PASS` | app password | Not the account password. |
-| `EMAIL_FROM` | `DEUX AI Factory <hello@yourdomain.com>` | Sender shown to the client. Must be a real, replyable mailbox. |
+| `EMAIL_FROM` | `Deuvix AI Factory <hello@yourdomain.com>` | Sender shown to the client. Must be a real, replyable mailbox. |
 | `NOTIFY_EMAIL` | `sobber.id@gmail.com` | Where the full-detail notification goes. |
 | `CONTACT_TO_EMAIL` | `a@x.com, b@x.com` | Internal recipient(s) for new contact submissions. Comma-separated; blanks fall back to `DEFAULT_CONTACT_TO` in `src/lib/email/index.ts`. |
 | `NEXT_PUBLIC_WHATSAPP_NUMBER` | `923001234567` | Digits only, country code, no `+`. |
@@ -225,7 +225,7 @@ dropping submissions. It logs
 >
 > ```
 > NEXT_PUBLIC_CAL_ORIGIN=https://cal.com
-> NEXT_PUBLIC_CAL_LINK=bilal-sheikh-3qvs54/deux
+> NEXT_PUBLIC_CAL_LINK=bilal-sheikh-3qvs54/deuvix
 > ```
 >
 > Note `CAL_LINK` is the slug **only** — never a full URL. The embed SDK builds
@@ -391,7 +391,7 @@ curl -fsS -H "Authorization: Bearer YOUR_CRON_SECRET" https://yourdomain.com/api
 ```powershell
 $action = New-ScheduledTaskAction -Execute 'curl.exe' -Argument '-fsS -H "Authorization: Bearer YOUR_CRON_SECRET" https://yourdomain.com/api/cron/reminders'
 $trigger = New-ScheduledTaskTrigger -Once -At (Get-Date) -RepetitionInterval (New-TimeSpan -Minutes 15)
-Register-ScheduledTask -TaskName deux-reminders -Action $action -Trigger $trigger
+Register-ScheduledTask -TaskName deuvix-reminders -Action $action -Trigger $trigger
 ```
 
 ---
@@ -480,9 +480,9 @@ your own compose file.
 
 ```bash
 cat > .env <<'EOF'
-POSTGRES_USER=deux
+POSTGRES_USER=deuvix
 POSTGRES_PASSWORD=change-me
-POSTGRES_DB=deux
+POSTGRES_DB=deuvix
 WEB_PORT=3000
 EOF
 # then append every variable from .env.example

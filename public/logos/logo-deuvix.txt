@@ -1,0 +1,11 @@
+Deuvix Brand Logo
+
+Original uploaded logo image: `logo-deuvix.png`
+- D symbol in brand green (#22C55E)
+- "euv" in white
+- "i" with dot in white
+- "x" in brand green (#22C55E)
+- Transparent background
+
+Usage: Import and use as an <img> or Next.js <Image> component.
+Do not recreate or modify the logo.

@@ -3,7 +3,7 @@ import type { NextRequest } from "next/server";
 import { getToken } from "next-auth/jwt";
 import { isAdminEmail } from "@/lib/admin-emails";
 
-const DASHBOARD_PREFIX = process.env.DASHBOARD_PREFIX || "/deux";
+const DASHBOARD_PREFIX = process.env.DASHBOARD_PREFIX || "/deuvix";
 
 /**
  * Constant-time string compare.
@@ -50,7 +50,7 @@ function withBasicAuth(request: NextRequest): NextResponse {
 
   return new NextResponse("Authentication required.", {
     status: 401,
-    headers: { "WWW-Authenticate": 'Basic realm="DEUX Bookings", charset="UTF-8"' },
+    headers: { "WWW-Authenticate": 'Basic realm="Deuvix Bookings", charset="UTF-8"' },
   });
 }
 
@@ -110,12 +110,16 @@ export async function middleware(request: NextRequest) {
 
   const isApi = pathname.startsWith("/api/");
 
-  // Match dashboard routes: exact prefix, prefix/sub, or legacy /dashboard
+  // Match dashboard routes: exact prefix, prefix/sub, legacy /dashboard or
+  // /deuvix (the pre-rename admin path).
+  const legacyDashboardPrefix = ["/dashboard", "/deuvix"].find(
+    (prefix) => pathname === prefix || pathname.startsWith(prefix + "/")
+  );
   const isDashboard =
     pathname === DASHBOARD_PREFIX ||
     pathname.startsWith(DASHBOARD_PREFIX + "/") ||
-    pathname.startsWith("/dashboard");
-  const isLegacyDashboard = pathname.startsWith("/dashboard");
+    legacyDashboardPrefix !== undefined;
+  const isLegacyDashboard = legacyDashboardPrefix !== undefined;
 
   const isAdmin = token ? isAdminEmail(token.email as string) : false;
 
@@ -138,7 +142,9 @@ export async function middleware(request: NextRequest) {
     if (!isAdmin) {
       return NextResponse.redirect(new URL("/", request.url));
     }
-    return NextResponse.redirect(new URL(`${DASHBOARD_PREFIX}${pathname.slice("/dashboard".length)}`, request.url));
+    return NextResponse.redirect(
+      new URL(`${DASHBOARD_PREFIX}${pathname.slice(legacyDashboardPrefix.length)}`, request.url)
+    );
   }
 
   if (isDashboard) {
@@ -162,7 +168,9 @@ export const config = {
     "/admin",
     "/dashboard/:path*",
     "/dashboard",
-    "/deux/:path*",
-    "/deux",
+    "/deuvix/:path*",
+    "/deuvix",
+    "/deuvix/:path*",
+    "/deuvix",
   ],
 };
