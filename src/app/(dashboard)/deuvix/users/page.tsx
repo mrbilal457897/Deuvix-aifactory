@@ -53,7 +53,7 @@ export default function UsersPage() {
       render: (u) => (
         <div className="flex items-center gap-3">
           {u.image ? (
-            <Image src={u.image} alt={u.name} width={36} height={36} className="size-9 rounded-full ring-1 ring-border" />
+            <Image src={u.image} alt={u.name} width={36} height={36} sizes="36px" className="size-9 rounded-full ring-1 ring-border" />
           ) : (
             <div className="size-9 rounded-full bg-gradient-to-br from-primary to-primary/70 flex items-center justify-center text-primary-foreground text-xs font-bold">
               {u.name.charAt(0).toUpperCase()}
@@ -93,7 +93,7 @@ export default function UsersPage() {
       className: "w-16 text-right",
       render: (u) =>
         u.role !== "admin" ? (
-          <button onClick={(e) => { e.stopPropagation(); handleDelete(u.id); }} className="p-2 rounded-lg text-muted-foreground hover:text-destructive hover:bg-destructive/5 transition-colors opacity-0 group-hover:opacity-100" title="Remove">
+          <button onClick={(e) => { e.stopPropagation(); handleDelete(u.id); }} className="btn-sharp p-2 rounded-none text-muted-foreground hover:text-destructive hover:bg-destructive/5 transition-colors opacity-0 group-hover:opacity-100" title="Remove">
             <Trash2 className="size-4" />
           </button>
         ) : null,
@@ -103,7 +103,7 @@ export default function UsersPage() {
   return (
     <div>
       <div className="mb-6">
-        <h1 className="font-heading text-2xl font-bold text-foreground">Users</h1>
+        <h1 className="font-heading h1 text-foreground">Users</h1>
         <p className="text-sm text-muted-foreground mt-1">
           Signed in as <span className="text-foreground font-medium">{session?.user?.email}</span>
         </p>

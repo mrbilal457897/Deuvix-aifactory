@@ -123,7 +123,7 @@ export function ChatWidget() {
       {!isOpen && (
         <button
           onClick={() => setIsOpen(true)}
-          className="fixed bottom-6 right-6 z-50 size-14 rounded-full bg-primary text-primary-foreground shadow-lg shadow-primary/25 hover:bg-primary/90 transition-all duration-200 flex items-center justify-center hover:scale-105"
+          className="fixed bottom-6 right-6 z-50 size-14 rounded-[4px] bg-primary text-primary-foreground shadow-lg shadow-primary/25 hover:bg-primary/90 transition-all duration-200 flex items-center justify-center hover:scale-105"
         >
           <MessageCircle className="size-6" />
         </button>
@@ -140,13 +140,13 @@ export function ChatWidget() {
                 <Sparkles className="size-5 text-primary-foreground" />
               </div>
               <div>
-                <h3 className="font-semibold text-sm">Deuvix AI Factory</h3>
+                <h3 className="h3-sm">Deuvix AI Factory</h3>
                 <p className="text-xs text-muted-foreground">Assistant · Online</p>
               </div>
             </div>
             <button
               onClick={() => setIsOpen(false)}
-              className="size-11 flex items-center justify-center rounded-lg hover:bg-muted transition-colors"
+              className="btn-sharp size-11 flex items-center justify-center rounded-none hover:bg-muted transition-colors"
               aria-label="Close chat"
             >
               <X className="size-4" />
@@ -208,7 +208,7 @@ export function ChatWidget() {
                   <button
                     key={action}
                     onClick={() => sendMessage(action)}
-                    className="px-3 py-1 text-xs rounded-full bg-primary/5 border border-primary/15 text-primary hover:bg-primary/10 transition-colors"
+                    className="btn-sharp px-3 py-1 text-xs rounded-none bg-primary/5 border border-primary/15 text-primary hover:bg-primary/10 transition-colors"
                   >
                     {action}
                   </button>
@@ -242,7 +242,7 @@ export function ChatWidget() {
                 type="submit"
                 size="icon"
                 disabled={!input.trim() || isTyping}
-                className="size-11 rounded-xl bg-primary text-primary-foreground hover:bg-primary/90 shrink-0"
+                className="size-11 bg-primary text-primary-foreground hover:bg-primary/90 shrink-0"
               >
                 <Send className="size-4" />
               </Button>

@@ -23,7 +23,7 @@ const features = [
     title: "Spec-Driven Development",
     description:
       "Write specifications that both humans and AI understand. Specs become executable blueprints for intelligent systems.",
-    color: "#2F6B46",
+    color: "#4299e1",
     glow: "rgba(47,107,70,0.15)",
   },
   {
@@ -31,7 +31,7 @@ const features = [
     title: "Co-Learning Partnership",
     description:
       "You and AI teach each other through iteration. Not just using AI as a tool, but co-creating where both learn together.",
-    color: "#3D8A5C",
+    color: "#4299e1",
     glow: "rgba(245,158,11,0.15)",
   },
   {
@@ -39,7 +39,7 @@ const features = [
     title: "Production-Ready Architecture",
     description:
       "Cloud-native deployment with Docker, Kubernetes, and Dapr. Scalable, secure, fault-tolerant systems from day one.",
-    color: "#10b981",
+    color: "#4299e1",
     glow: "rgba(16,185,129,0.15)",
   },
   {
@@ -122,12 +122,12 @@ export function FeaturesSection() {
 
   return (
     <section className="bg-section">
-      <div className="relative mx-auto max-w-[1440px] px-6 sm:px-10 lg:px-14 w-full">
-        <div className="text-left pt-24 sm:pt-32 pb-8">
+      <div className="relative mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 w-full">
+        <div className="text-left pt-16 md:pt-24 pb-8">
           <p className="text-sm font-semibold text-primary uppercase tracking-wider mb-3">
             Features
           </p>
-          <h2 className="font-heading text-[48px] font-bold mb-4">
+          <h2 className="font-heading page-h2 mb-4">
             <CharReveal>
               Everything You Need to <span className="text-gradient">Build AI-Native</span>
             </CharReveal>
@@ -159,9 +159,9 @@ export function FeaturesSection() {
           ))}
         </div>
 
-        <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 pointer-events-none select-none">
+        <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 pointer-events-none select-none" aria-hidden="true">
           <span
-            className="font-heading text-[12rem] sm:text-[16rem] lg:text-[20rem] font-bold opacity-[0.04] leading-none transition-colors duration-700"
+            className="font-heading text-[10rem] sm:text-[14rem] lg:text-[18rem] font-bold opacity-[0.04] leading-none transition-colors duration-700"
             style={{ color: features[active].color }}
           >
             {String(active + 1).padStart(2, "0")}
@@ -196,7 +196,7 @@ export function FeaturesSection() {
                 </div>
 
                 <h3
-                  className="font-heading text-[32px] font-bold mb-4 transition-colors duration-700"
+                  className="font-heading page-h3 font-semibold mb-4 transition-colors duration-700"
                   style={{ ["--feature-color" as string]: feature.color }}
                 >
                   {feature.title}
@@ -212,7 +212,7 @@ export function FeaturesSection() {
         </div>
       </div>
 
-      <div className="h-16" />
+      <div className="h-16 md:h-24" />
     </section>
   );
 }

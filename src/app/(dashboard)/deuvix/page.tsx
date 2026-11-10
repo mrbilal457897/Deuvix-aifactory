@@ -219,7 +219,7 @@ export default function DashboardPage() {
     <div>
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-6">
         <div>
-          <h1 className="font-heading text-2xl font-bold text-foreground">Our live Work</h1>
+          <h1 className="font-heading h1 text-foreground">Our live Work</h1>
           <p className="text-sm text-muted-foreground mt-1">
             Welcome back,{" "}
             <span className="text-foreground font-medium">
@@ -275,7 +275,7 @@ export default function DashboardPage() {
               role="tab"
               aria-selected={statusFilter === value}
               onClick={() => setStatusFilter(value)}
-              className={`rounded-lg px-3 py-1.5 text-sm capitalize transition-colors ${
+              className={`btn-sharp rounded-none px-3 py-1.5 text-sm capitalize transition-colors ${
                 statusFilter === value
                   ? "bg-card text-foreground shadow-sm"
                   : "text-muted-foreground hover:text-foreground"
@@ -342,7 +342,7 @@ export default function DashboardPage() {
                       onClick={() => moveTo(index, index - 1)}
                       disabled={index === 0}
                       aria-label={`Move ${project.name} up`}
-                      className="p-0.5 rounded hover:text-foreground disabled:opacity-30"
+                      className="btn-sharp p-0.5 rounded hover:text-foreground disabled:opacity-30"
                     >
                       <ChevronUp className="size-3" />
                     </button>
@@ -351,7 +351,7 @@ export default function DashboardPage() {
                       onClick={() => moveTo(index, index + 1)}
                       disabled={index === filtered.length - 1}
                       aria-label={`Move ${project.name} down`}
-                      className="p-0.5 rounded hover:text-foreground disabled:opacity-30"
+                      className="btn-sharp p-0.5 rounded hover:text-foreground disabled:opacity-30"
                     >
                       <ChevronDown className="size-3" />
                     </button>
@@ -393,7 +393,7 @@ export default function DashboardPage() {
                   aria-checked={project.featured}
                   aria-label={`${project.featured ? "Unfeature" : "Feature"} ${project.name} on the home page`}
                   onClick={() => void patchProject(project, { featured: !project.featured }, "Featured")}
-                  className={`relative h-6 w-11 shrink-0 rounded-full transition-colors ${
+                  className={`relative h-6 w-11 shrink-0 rounded-none transition-colors ${
                     project.featured ? "bg-primary" : "bg-muted border border-border"
                   }`}
                 >
@@ -420,7 +420,7 @@ export default function DashboardPage() {
                     type="button"
                     onClick={() => void duplicate(project)}
                     title="Duplicate as draft"
-                    className="p-2 rounded-lg text-muted-foreground hover:text-foreground hover:bg-muted transition-colors"
+                    className="btn-sharp p-2 rounded-none text-muted-foreground hover:text-foreground hover:bg-muted transition-colors"
                   >
                     <Copy className="size-4" />
                   </button>
@@ -428,7 +428,7 @@ export default function DashboardPage() {
                     type="button"
                     onClick={() => setEditing(project)}
                     title="Edit"
-                    className="p-2 rounded-lg text-muted-foreground hover:text-foreground hover:bg-muted transition-colors"
+                    className="btn-sharp p-2 rounded-none text-muted-foreground hover:text-foreground hover:bg-muted transition-colors"
                   >
                     <Pencil className="size-4" />
                   </button>
@@ -436,7 +436,7 @@ export default function DashboardPage() {
                     type="button"
                     onClick={() => void remove(project)}
                     title="Delete"
-                    className="p-2 rounded-lg text-muted-foreground hover:text-destructive hover:bg-destructive/5 transition-colors"
+                    className="btn-sharp p-2 rounded-none text-muted-foreground hover:text-destructive hover:bg-destructive/5 transition-colors"
                   >
                     <Trash2 className="size-4" />
                   </button>

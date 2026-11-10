@@ -13,7 +13,7 @@ import {
   listPublishedProjects,
   resolvePreviousSlug,
 } from "@/lib/projects";
-import { SITE_NAME, SITE_URL } from "@/lib/seo";
+import { SITE_NAME, SITE_URL, fullTitle } from "@/lib/seo";
 import { company } from "@config/company";
 import "@/app/live-work.css";
 
@@ -33,6 +33,7 @@ export async function generateMetadata({
   if (!project) return {};
 
   const canonical = `/projects/${project.slug}`;
+  const socialTitle = fullTitle(project.name);
   const image = project.desktopThumbnail?.url;
 
   return {
@@ -42,7 +43,7 @@ export async function generateMetadata({
     keywords: project.tags.length > 0 ? project.tags : undefined,
     openGraph: {
       type: "article",
-      title: project.name,
+      title: socialTitle,
       description: project.description,
       url: canonical,
       siteName: SITE_NAME,
@@ -50,7 +51,7 @@ export async function generateMetadata({
     },
     twitter: {
       card: "summary_large_image",
-      title: project.name,
+      title: socialTitle,
       description: project.description,
       images: image ? [image] : undefined,
     },
@@ -101,7 +102,7 @@ export default async function ProjectDetailPage({
           <Breadcrumb
             items={[
               { label: "Home", href: "/" },
-              { label: "Projects", href: "/projects" },
+              { label: "Work", href: "/projects" },
               { label: project.name },
             ]}
             className="mb-4 sm:mb-6"
@@ -111,11 +112,11 @@ export default async function ProjectDetailPage({
             className="inline-flex items-center gap-1.5 text-sm text-muted-foreground hover:text-foreground transition-colors mb-8"
           >
             <ArrowLeft className="size-4" />
-            Back to Projects
+            Back to Work
           </Link>
 
-          {/* The project name is the page's single h1 — small, as in a block. */}
-          <h1 className="lw-name font-medium">
+          {/* The project name is the page's single h1. */}
+          <h1 className="h1">
             <span className="lw-name-dot" aria-hidden="true" />
             {project.name}
             {project.unitId ? <span className="lw-unit"> {project.unitId}</span> : null}
@@ -143,7 +144,7 @@ export default async function ProjectDetailPage({
       {gallery.length > 0 && (
         <section className="px-6 pb-14">
           <div className="mx-auto max-w-5xl">
-            <h2 className="font-heading text-[48px] font-bold mb-6">Gallery</h2>
+            <h2 className="font-heading h2-lg mb-6">Gallery</h2>
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
               {gallery.map((image, index) => (
                 <div
@@ -170,7 +171,7 @@ export default async function ProjectDetailPage({
       {/* Prev / next by `order` */}
       <section className="px-6 pb-14">
         <nav
-          aria-label="Project navigation"
+          aria-label="Work navigation"
           className="mx-auto max-w-5xl grid grid-cols-1 sm:grid-cols-2 gap-4 border-t border-border pt-8"
         >
           {previous ? (
@@ -209,7 +210,7 @@ export default async function ProjectDetailPage({
       {/* Book a Call band */}
       <section className="px-6 pb-20">
         <div className="mx-auto max-w-5xl rounded-3xl bg-card border border-border p-8 sm:p-12 text-center">
-          <h2 className="font-heading text-[48px] font-bold mb-3">
+          <h2 className="font-heading h2-sm mb-3">
             Want a Digital FTE like this one?
           </h2>
           <p className="mx-auto max-w-xl text-muted-foreground text-base mb-6">
@@ -218,7 +219,7 @@ export default async function ProjectDetailPage({
           </p>
           <BookCallButton
             icon={null}
-            className="inline-flex items-center gap-2 px-6 py-3 rounded-xl bg-primary text-primary-foreground text-sm font-semibold hover:bg-primary/90 transition-colors h-auto"
+            className="inline-flex items-center gap-2 px-6 py-3 rounded-none bg-primary text-primary-foreground text-sm font-semibold hover:bg-primary/90 transition-colors h-auto"
           >
             Book a Call
             <ArrowRight className="size-4" />

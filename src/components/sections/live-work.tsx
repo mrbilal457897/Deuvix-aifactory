@@ -49,7 +49,7 @@ export function LiveWork({ projects, showViewAll = false, className = "" }: Live
         {showViewAll && (
           <div className="lw-more">
             <Link className="lw-more-link" href="/projects">
-              View all projects
+              View all work
               <span aria-hidden="true">→</span>
             </Link>
           </div>

@@ -20,7 +20,7 @@ export function SourceChips({ sources, className }: { sources: ChatSource[]; cla
 
   return (
     <div className={cn("mt-2 flex flex-wrap items-center gap-1.5", className)}>
-      <span className="text-[10px] uppercase tracking-wider text-muted-foreground/70">
+      <span className="text-xs uppercase tracking-wider text-muted-foreground/70">
         {uiStrings.sourcesLabel}
       </span>
       {sources.map((s) => (
@@ -31,7 +31,7 @@ export function SourceChips({ sources, className }: { sources: ChatSource[]; cla
           rel="noreferrer noopener"
           title={s.title}
           className={cn(
-            "max-w-[160px] truncate rounded-full border px-2 py-0.5 text-[10.5px] font-medium transition-colors hover:opacity-80",
+            "max-w-[160px] truncate rounded-none border px-2 py-0.5 text-[10.5px] font-medium transition-colors hover:opacity-80",
             SOURCE_STYLE[s.source],
           )}
         >

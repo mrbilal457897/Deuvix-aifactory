@@ -466,8 +466,7 @@ export default function ImageCropper({
             nudge(NUDGE_DIRS[dirName]);
           }
         }}
-        className={cn(
-          "flex size-9 shrink-0 items-center justify-center rounded-lg border border-border bg-card text-muted-foreground transition-colors hover:bg-muted hover:text-foreground active:bg-primary/20 active:text-foreground disabled:opacity-40 touch-none select-none",
+        className={cn("btn-sharp flex size-9 shrink-0 items-center justify-center rounded-none border border-border bg-card text-muted-foreground transition-colors hover:bg-muted hover:text-foreground active:bg-primary/20 active:text-foreground disabled:opacity-40 touch-none select-none",
           className
         )}
       >
@@ -487,14 +486,14 @@ export default function ImageCropper({
       >
         <div className="flex items-center justify-between gap-3 border-b border-border px-5 py-4">
           <div className="min-w-0">
-            <h3 className="font-heading text-base font-semibold text-foreground">
+            <h3 className="font-heading h3-sm text-foreground">
               Adjust Image
             </h3>
             <p className="mt-0.5 truncate text-xs text-muted-foreground">{fileName}</p>
           </div>
           <button
             onClick={onCancel}
-            className="shrink-0 rounded-lg p-1.5 text-muted-foreground transition-colors hover:bg-muted hover:text-foreground"
+            className="btn-sharp shrink-0 rounded-none p-1.5 text-muted-foreground transition-colors hover:bg-muted hover:text-foreground"
             aria-label="Close"
           >
             <X className="size-5" />
@@ -512,8 +511,7 @@ export default function ImageCropper({
                     type="button"
                     onClick={() => applyRatio(preset.value)}
                     disabled={!ready}
-                    className={cn(
-                      "rounded-md px-2 py-1 font-medium transition-colors disabled:opacity-50",
+                    className={cn("btn-sharp rounded-none px-2 py-1 font-medium transition-colors disabled:opacity-50",
                       ratio !== null && Math.abs(ratio - preset.value) < 0.001
                         ? "bg-primary text-primary-foreground"
                         : "text-muted-foreground hover:bg-muted hover:text-foreground"
@@ -526,8 +524,7 @@ export default function ImageCropper({
                   type="button"
                   onClick={() => applyRatio(null)}
                   disabled={!ready}
-                  className={cn(
-                    "rounded-md px-2 py-1 font-medium transition-colors disabled:opacity-50",
+                  className={cn("btn-sharp rounded-none px-2 py-1 font-medium transition-colors disabled:opacity-50",
                     ratio === null
                       ? "bg-primary text-primary-foreground"
                       : "text-muted-foreground hover:bg-muted hover:text-foreground"
@@ -547,8 +544,7 @@ export default function ImageCropper({
                     type="button"
                     onClick={() => setNudgeStep(step)}
                     disabled={!ready}
-                    className={cn(
-                      "rounded-md px-2 py-1 font-medium transition-colors disabled:opacity-50",
+                    className={cn("btn-sharp rounded-none px-2 py-1 font-medium transition-colors disabled:opacity-50",
                       nudgeStep === step
                         ? "bg-primary text-primary-foreground"
                         : "text-muted-foreground hover:bg-muted hover:text-foreground"
@@ -567,8 +563,7 @@ export default function ImageCropper({
                     type="button"
                     onClick={() => setOutputSize(size)}
                     disabled={!ready}
-                    className={cn(
-                      "rounded-md px-2 py-1 font-medium transition-colors disabled:opacity-50",
+                    className={cn("btn-sharp rounded-none px-2 py-1 font-medium transition-colors disabled:opacity-50",
                       outputSize === size
                         ? "bg-primary text-primary-foreground"
                         : "text-muted-foreground hover:bg-muted hover:text-foreground"
@@ -587,8 +582,7 @@ export default function ImageCropper({
                     type="button"
                     onClick={() => setFormat(value)}
                     disabled={!ready}
-                    className={cn(
-                      "rounded-md px-2 py-1 font-medium transition-colors disabled:opacity-50",
+                    className={cn("btn-sharp rounded-none px-2 py-1 font-medium transition-colors disabled:opacity-50",
                       format === value
                         ? "bg-primary text-primary-foreground"
                         : "text-muted-foreground hover:bg-muted hover:text-foreground"

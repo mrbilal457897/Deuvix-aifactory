@@ -41,15 +41,41 @@ export function dedupeSlug(base: string, taken: Iterable<string>): string {
   return `${root}-${n}`;
 }
 
-/** Absolute http(s) only — relative paths are rejected on purpose. */
+/** Absolute https only — relative paths and http are rejected on purpose. */
 const httpsUrl = z
   .string()
   .trim()
   .min(1)
   .max(2048)
-  .refine((value) => /^https?:\/\/\S+$/.test(value), {
-    message: "Must be an http(s) URL",
+  .refine((value) => /^https:\/\/\S+$/.test(value), {
+    message: "Must be an https:// URL",
+  })
+  .refine((value) => !/(localhost|127\.0\.0\.1|0\.0\.0\.0)/i.test(value), {
+    message: "Local URLs are not allowed",
   });
+
+/** Internal path (/...) or a public https:// URL — no local hosts. */
+const pathOrHttpsUrl = z
+  .string()
+  .trim()
+  .min(1)
+  .max(2048)
+  .refine((value) => value.startsWith("/") || /^https:\/\/\S+$/.test(value), {
+    message: "Must start with / or be an https:// URL",
+  })
+  .refine((value) => !/(localhost|127\.0\.0\.1|0\.0\.0\.0)/i.test(value), {
+    message: "Local URLs are not allowed",
+  });
+
+/** Free text that may not point at a local dev server. */
+const noLocalhostText = (max: number) =>
+  z
+    .string()
+    .trim()
+    .max(max)
+    .refine((value) => !/(localhost|127\.0\.0\.1|0\.0\.0\.0)/i.test(value), {
+      message: "Local URLs are not allowed",
+    });
 
 export const thumbnailSchema = z.object({
   url: httpsUrl,
@@ -104,11 +130,11 @@ export const projectInputSchema = z.object({
   tags: z.array(z.string().trim().min(1).max(24)).max(TAGS_MAX, `Max ${TAGS_MAX} tags`).default([]),
   desktopThumbnail: thumbnailSchema,
   mobileThumbnail: thumbnailSchema,
-  liveUrl: optText(500),
-  caseStudyUrl: optText(500),
-  browserUrlLabel: optText(120),
-  chipTitle: optText(60),
-  chipSubtitle: optText(80),
+  liveUrl: httpsUrl.optional(),
+  caseStudyUrl: pathOrHttpsUrl.optional(),
+  browserUrlLabel: noLocalhostText(120).optional(),
+  chipTitle: noLocalhostText(60).optional(),
+  chipSubtitle: noLocalhostText(80).optional(),
   content: z.string().max(20000).default(""),
   gallery: z.array(thumbnailSchema).max(GALLERY_MAX).default([]),
   category: optText(80),

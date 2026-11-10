@@ -117,7 +117,7 @@ export function TimezoneSelect({
           setQuery("");
           setOpen(true);
         }}
-        className="border-border bg-background text-foreground flex h-11 w-full min-w-0 items-center justify-between gap-2 rounded-[min(var(--radius-md),12px)] border px-2.5 text-left text-sm sm:h-8"
+        className="btn-sharp border-border bg-background text-foreground flex h-11 w-full min-w-0 items-center justify-between gap-2 rounded-none border px-2.5 text-left text-sm sm:h-8"
       >
         <span className="min-w-0 truncate">{zoneLabel(value)}</span>
         <ChevronDown className="text-muted-foreground size-4 shrink-0" aria-hidden="true" />

@@ -1,11 +1,13 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { cn } from "@/lib/utils";
-import { BrandLogo } from "@/components/brand-logo";
+import { DeuvixLogo } from "@/components/brand/DeuvixLogo";
+import { logoLoader } from "@/lib/logo-animations";
 
 export function LoadingSplash() {
   const [phase, setPhase] = useState<"visible" | "fading" | "gone">("visible");
+  const svgRef = useRef<SVGSVGElement>(null);
 
   useEffect(() => {
     const prefersReduced = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
@@ -14,6 +16,16 @@ export function LoadingSplash() {
     return () => {
       clearTimeout(timer);
       clearTimeout(remove);
+    };
+  }, []);
+
+  // Breathing pulse on the logo while it is visible; killed on unmount.
+  useEffect(() => {
+    const svg = svgRef.current;
+    if (!svg) return;
+    const tween = logoLoader(svg);
+    return () => {
+      tween.kill();
     };
   }, []);
 
@@ -28,7 +40,12 @@ export function LoadingSplash() {
       )}
     >
       <div className="flex flex-col items-center gap-4 splash-content">
-        <BrandLogo size="sm" />
+        <div className="flex flex-col items-center gap-1.5 leading-none">
+          <DeuvixLogo ref={svgRef} style={{ height: 40, width: "auto" }} aria-hidden="true" role={undefined} />
+          <span className="text-[9px] text-muted-foreground uppercase tracking-[0.22em] font-medium leading-none">
+            AI Factory
+          </span>
+        </div>
         <div className="h-1 w-24 overflow-hidden rounded-full bg-muted">
           <div className="h-full w-full origin-left rounded-full bg-primary splash-bar" />
         </div>

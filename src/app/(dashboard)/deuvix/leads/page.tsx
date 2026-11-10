@@ -318,7 +318,7 @@ export default function LeadsPage() {
             type="button"
             onClick={() => resolve(row, "done")}
             disabled={busyKey !== null}
-            className="inline-flex items-center gap-1.5 rounded-lg border border-emerald-500/30 bg-emerald-500/10 px-2.5 py-1 text-xs font-medium text-emerald-600 transition-colors hover:bg-emerald-500/20 disabled:opacity-40 dark:text-emerald-400"
+            className="btn-sharp inline-flex items-center gap-1.5 rounded-none border border-emerald-500/30 bg-emerald-500/10 px-2.5 py-1 text-xs font-medium text-emerald-600 transition-colors hover:bg-emerald-500/20 disabled:opacity-40 dark:text-emerald-400"
           >
             <Check className="size-3.5" />
             {busyKey === `done:${row.id}` ? "Saving…" : "Done"}
@@ -327,7 +327,7 @@ export default function LeadsPage() {
             type="button"
             onClick={() => resolve(row, "skipped")}
             disabled={busyKey !== null}
-            className="inline-flex items-center gap-1.5 rounded-lg border border-border bg-card px-2.5 py-1 text-xs font-medium text-muted-foreground transition-colors hover:bg-muted/50 disabled:opacity-40"
+            className="btn-sharp inline-flex items-center gap-1.5 rounded-none border border-border bg-card px-2.5 py-1 text-xs font-medium text-muted-foreground transition-colors hover:bg-muted/50 disabled:opacity-40"
           >
             <Ban className="size-3.5" />
             {busyKey === `skipped:${row.id}` ? "Saving…" : "Skip"}
@@ -340,7 +340,7 @@ export default function LeadsPage() {
   return (
     <div className="space-y-6">
       <div>
-        <h1 className="text-2xl font-heading font-bold text-foreground">Leads</h1>
+        <h1 className="font-heading h1 text-foreground">Leads</h1>
         <p className="text-sm text-muted-foreground mt-1">
           Who reached out, and when — plus the follow-ups waiting on you.
         </p>
@@ -359,8 +359,7 @@ export default function LeadsPage() {
             key={item.id}
             type="button"
             onClick={() => setTab(item.id)}
-            className={cn(
-              "rounded-xl px-4 py-2 text-sm font-medium transition-colors",
+            className={cn("btn-sharp rounded-none px-4 py-2 text-sm font-medium transition-colors",
               tab === item.id
                 ? "bg-primary text-primary-foreground"
                 : "border border-border bg-card text-muted-foreground hover:bg-primary/5 hover:text-foreground",
@@ -397,7 +396,7 @@ export default function LeadsPage() {
             <button
               type="button"
               onClick={() => setShowInternal((v) => !v)}
-              className="inline-flex items-center gap-2 rounded-xl border border-border bg-card px-3 py-1.5 text-xs font-medium text-muted-foreground transition-colors hover:bg-muted/50"
+              className="btn-sharp inline-flex items-center gap-2 rounded-none border border-border bg-card px-3 py-1.5 text-xs font-medium text-muted-foreground transition-colors hover:bg-muted/50"
             >
               {showInternal ? <EyeOff className="size-3.5" /> : <Eye className="size-3.5" />}
               {showInternal

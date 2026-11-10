@@ -5,13 +5,14 @@ import {
   LegalList,
 } from "@/components/legal-page";
 import { CompanyEmailLink } from "@/components/legal-company";
-import type { Metadata } from "next";
+import { pageMetadata } from "@/lib/seo";
 
-export const metadata: Metadata = {
+export const metadata = pageMetadata({
   title: "Cookie Policy",
-  description: "What cookies we use on the Deuvix AI Factory website, why, and how to control them.",
-  alternates: { canonical: "/cookies" },
-};
+  description:
+    "What cookies we use on the Deuvix AI Factory website, why, and how to control them.",
+  path: "/cookies",
+});
 
 export default function CookiePolicyPage() {
   return (

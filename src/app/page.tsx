@@ -1,5 +1,5 @@
-import { HeroSection } from "@/components/sections/hero";
-import { FeaturesSection } from "@/components/sections/features";
+import { HeroSection } from "@/components/sections/HeroSection";
+import { FeaturesSection } from "@/components/sections/FeaturesSection";
 import { LiveWork } from "@/components/sections/live-work";
 import { HowItWorksSection } from "@/components/sections/how-it-works";
 import { StatsSection } from "@/components/sections/stats";

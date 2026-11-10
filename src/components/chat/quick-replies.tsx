@@ -20,7 +20,7 @@ export function QuickReplies({ onPick, className }: Props) {
           key={text}
           type="button"
           onClick={() => onPick(text)}
-          className="rounded-full border border-primary/25 bg-primary/5 px-3 py-1.5 text-xs font-medium text-primary transition-colors hover:bg-primary/12"
+          className="btn-sharp rounded-none border border-primary/25 bg-primary/5 px-3 py-1.5 text-xs font-medium text-primary transition-colors hover:bg-primary/12"
         >
           {text}
         </button>

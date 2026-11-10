@@ -115,8 +115,8 @@ export default function ImagePicker({ open, onClose, onSelect, aspectRatio = 1 }
         onClick={(e) => e.stopPropagation()}
       >
         <div className="flex items-center justify-between p-4 border-b border-border">
-          <h3 className="font-heading font-semibold text-lg">Select Image</h3>
-          <button onClick={handleClose} className="p-1 rounded-lg hover:bg-muted transition-colors" aria-label="Close">
+          <h3 className="font-heading h3-sm">Select Image</h3>
+          <button onClick={handleClose} className="btn-sharp p-1 rounded-none hover:bg-muted transition-colors" aria-label="Close">
             <X className="size-5" />
           </button>
         </div>
@@ -126,7 +126,7 @@ export default function ImagePicker({ open, onClose, onSelect, aspectRatio = 1 }
           <button
             onClick={() => fileRef.current?.click()}
             disabled={uploading}
-            className="inline-flex items-center gap-2 px-4 py-2 rounded-lg bg-primary text-primary-foreground text-sm font-medium hover:bg-primary/90 transition-colors disabled:opacity-50"
+            className="btn-sharp inline-flex items-center gap-2 px-4 py-2 rounded-none bg-primary text-primary-foreground text-sm font-medium hover:bg-primary/90 transition-colors disabled:opacity-50"
           >
             <Upload className="size-4" />
             Upload New Image
@@ -145,14 +145,14 @@ export default function ImagePicker({ open, onClose, onSelect, aspectRatio = 1 }
                   <div className="absolute inset-0 bg-black/0 group-hover:bg-black/40 transition-colors flex items-center justify-center gap-2 opacity-0 group-hover:opacity-100">
                     <button
                       onClick={() => handleSelectExisting(img.url)}
-                      className="p-2 rounded-full bg-primary text-primary-foreground hover:bg-primary/80 transition-colors"
+                      className="btn-sharp p-2 rounded-none bg-primary text-primary-foreground hover:bg-primary/80 transition-colors"
                       aria-label="Use this image"
                     >
                       <Check className="size-4" />
                     </button>
                     <button
                       onClick={() => handleDelete(img.id)}
-                      className="p-2 rounded-full bg-destructive text-destructive-foreground hover:bg-destructive/80 transition-colors"
+                      className="btn-sharp p-2 rounded-none bg-destructive text-destructive-foreground hover:bg-destructive/80 transition-colors"
                       aria-label="Delete this image"
                     >
                       <Trash2 className="size-4" />

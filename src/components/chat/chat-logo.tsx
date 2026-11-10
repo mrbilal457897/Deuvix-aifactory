@@ -1,10 +1,10 @@
 "use client";
 
 import { cn } from "@/lib/utils";
-import { DeuvixLogoMark } from "@/components/deuvix-logo";
+import { DeuvixMark } from "@/components/brand/DeuvixMark";
 
 /**
- * Compact brand mark for the chat header — uses the original uploaded image.
+ * Compact brand mark for the chat header — solid primary tile with the D mark.
  */
 export function ChatLogo({ className }: { className?: string }) {
   return (
@@ -13,9 +13,10 @@ export function ChatLogo({ className }: { className?: string }) {
         "flex size-9 shrink-0 items-center justify-center overflow-hidden rounded-lg bg-primary text-primary-foreground",
         className,
       )}
+      style={{ ["--logo-accent" as string]: "var(--primary-foreground)" }}
       aria-hidden="true"
     >
-      <DeuvixLogoMark size={28} className="size-full" />
+      <DeuvixMark className="size-6" />
     </span>
   );
 }

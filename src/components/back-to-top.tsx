@@ -23,7 +23,7 @@ export function BackToTop() {
       onClick={scrollToTop}
       aria-label="Back to top"
       className={cn(
-        "fixed bottom-24 right-6 z-50 size-11 rounded-full bg-primary/90 text-primary-foreground shadow-lg shadow-primary/25 hover:bg-primary transition-all duration-200 flex items-center justify-center hover:scale-105",
+        "fixed bottom-24 right-6 z-50 size-11 rounded-[4px] bg-primary/90 text-primary-foreground shadow-lg shadow-primary/25 hover:bg-primary transition-all duration-200 flex items-center justify-center hover:scale-105",
         visible ? "opacity-100 translate-y-0" : "opacity-0 translate-y-3 pointer-events-none"
       )}
     >

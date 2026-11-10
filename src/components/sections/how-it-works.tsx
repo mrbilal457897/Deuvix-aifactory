@@ -66,8 +66,8 @@ export function HowItWorksSection() {
   }, []);
 
   return (
-    <section ref={sectionRef} className="relative py-24 sm:py-32 overflow-hidden">
-      {/* Background Image */}
+    <section ref={sectionRef} className="relative py-16 md:py-24 overflow-hidden">
+      {/* Background image + gradient overlay (keeps text at AA contrast in both themes) */}
       <Image
         src="/images/building.jpg"
         alt=""
@@ -75,14 +75,14 @@ export function HowItWorksSection() {
         className="object-cover"
         sizes="100vw"
       />
-      <div className="absolute inset-0 bg-background/85 dark:bg-background/80" />
+      <div className="absolute inset-0 bg-gradient-to-b from-surface/95 via-surface/85 to-surface/70" />
 
-      <div className="relative mx-auto max-w-7xl px-6 sm:px-6 lg:px-8">
+      <div className="relative mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
         <div className="text-left mb-16">
-          <p className="text-sm font-semibold text-accent uppercase tracking-wider mb-3">
+          <p className="text-sm font-semibold text-secondary uppercase tracking-wider mb-3">
             How It Works
           </p>
-          <h2 className="font-heading text-[48px] font-bold mb-4">
+          <h2 className="font-heading h2-lg mb-4">
             <CharReveal>
               Simple Steps to <span className="text-gradient">AI Success</span>
             </CharReveal>
@@ -98,16 +98,16 @@ export function HowItWorksSection() {
               {i < steps.length - 1 && (
                 <div className="hidden lg:block absolute top-8 left-[calc(50%+32px)] w-[calc(100%-24px)] h-px bg-border" />
               )}
-              <div className="relative p-6 rounded-xl backdrop-blur-md bg-card/60 dark:bg-white/10 border border-border dark:border-white/15 text-center">
-                <div className="inline-flex items-center justify-center size-16 rounded-full bg-primary/10 dark:bg-white/10 border border-primary/20 dark:border-white/20 mb-4">
-                  <span className="font-heading text-xl font-bold text-primary">
+              <div className="relative p-6 rounded-xl backdrop-blur-md bg-card/85 border border-border text-center">
+                <div className="inline-flex items-center justify-center size-16 rounded-full bg-secondary/10 border border-secondary/30 mb-4">
+                  <span className="font-heading text-lg font-bold text-secondary">
                     {step.step}
                   </span>
                 </div>
-                <h3 className="font-heading text-base font-semibold mb-2 text-foreground dark:text-white">
+                <h3 className="font-heading h3-sm mb-2 text-foreground">
                   {step.title}
                 </h3>
-                <p className="text-sm text-muted-foreground dark:text-white/70 leading-relaxed">
+                <p className="text-sm text-muted-foreground leading-relaxed">
                   {step.description}
                 </p>
               </div>

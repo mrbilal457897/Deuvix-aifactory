@@ -514,7 +514,7 @@ export function LiveWorkForm({
         <form onSubmit={submit} noValidate>
           <header className="flex items-center justify-between gap-4 border-b border-border px-6 py-4">
             <div>
-              <h2 id="lw-form-title" className="font-heading text-lg font-bold text-foreground">
+              <h2 id="lw-form-title" className="font-heading h2-sm text-foreground">
                 {project ? "Edit project" : "New project"}
               </h2>
               <p className="text-xs text-muted-foreground mt-0.5">
@@ -535,7 +535,7 @@ export function LiveWorkForm({
                 type="button"
                 onClick={close}
                 aria-label="Close"
-                className="p-2 rounded-lg text-muted-foreground hover:text-foreground hover:bg-muted"
+                className="btn-sharp p-2 rounded-none text-muted-foreground hover:text-foreground hover:bg-muted"
               >
                 ✕
               </button>
@@ -720,7 +720,7 @@ export function LiveWorkForm({
                   <Input
                     value={state.browserUrlLabel}
                     onChange={(event) => patch({ browserUrlLabel: event.target.value })}
-                    placeholder="deuvix-aicompany.vercel.app"
+                    placeholder="deuvix-aifactory-3yqx.vercel.app"
                     className="bg-muted border-border text-foreground"
                   />
                 </Field>
@@ -804,7 +804,7 @@ export function LiveWorkForm({
                             patch({ gallery: state.gallery.filter((_, i) => i !== index) })
                           }
                           aria-label="Remove gallery image"
-                          className="absolute top-1 right-1 size-5 rounded-full bg-black/60 flex items-center justify-center text-white hover:bg-black/80"
+                          className="btn-sharp absolute top-1 right-1 size-5 rounded-none bg-black/60 flex items-center justify-center text-white hover:bg-black/80"
                         >
                           ✕
                         </button>
@@ -947,7 +947,7 @@ function ImageField({
               <button
                 type="button"
                 onClick={onClear}
-                className="ml-auto text-xs text-destructive hover:underline"
+                className="btn-sharp ml-auto text-xs text-destructive hover:underline"
               >
                 Remove
               </button>

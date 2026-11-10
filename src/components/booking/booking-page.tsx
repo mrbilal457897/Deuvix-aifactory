@@ -11,7 +11,7 @@ import {
 import { Button, buttonVariants } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
-import { BrandLogo } from "@/components/brand-logo";
+import { LogoLockup } from "@/components/brand/LogoLockup";
 import { BookCallButton } from "@/components/book-call-button";
 import { TimezoneSelect } from "@/components/booking/timezone-select";
 import { LocalTime } from "@/components/booking/local-time";
@@ -291,7 +291,7 @@ export function BookingPage({
         <div className="min-w-0">
           <header className="mb-6">
             <p className="text-muted-foreground text-sm font-medium">Book a call</p>
-            <h1 className="mt-1 text-2xl font-semibold tracking-tight text-balance break-words sm:text-3xl">
+            <h1 className="mt-1 h1 text-balance break-words">
               {eventTitle}
             </h1>
             <p className="text-muted-foreground mt-1 text-sm">{durationMinutes} minutes</p>
@@ -393,7 +393,7 @@ export function BookingPage({
                         onClick={() => chooseDay(dateKey)}
                         aria-pressed={active}
                         aria-label={formatDateInZone(`${dateKey}T12:00:00Z`, "UTC")}
-                        className={[
+                        className={[ "btn-sharp",
                           "relative flex h-14 min-w-0 flex-col items-center justify-center text-sm transition-colors sm:h-16",
                           open ? "hover:bg-muted cursor-pointer" : "text-muted-foreground/40 cursor-default",
                           active ? "bg-primary text-primary-foreground" : "",
@@ -459,7 +459,7 @@ export function BookingPage({
                   {/* day strip */}
                   {!selectedDate && (
                     <section className="mt-6">
-                      <h2 className="mb-2 text-sm font-medium">Available days</h2>
+                      <h2 className="mb-2 h3-lg">Available days</h2>
                       {visibleDays.length === 0 ? (
                         <p className="text-muted-foreground text-sm">
                           No open days this month. Try the next one.
@@ -471,7 +471,7 @@ export function BookingPage({
                               key={day.date}
                               type="button"
                               onClick={() => chooseDay(day.date)}
-                              className="border-border hover:border-primary min-w-[4.5rem] shrink-0 snap-start rounded-[min(var(--radius-md),12px)] border px-2.5 py-2.5 text-left sm:min-w-[5.5rem] sm:px-3"
+                              className="btn-sharp border-border hover:border-primary min-w-[4.5rem] shrink-0 snap-start rounded-none border px-2.5 py-2.5 text-left sm:min-w-[5.5rem] sm:px-3"
                             >
                               <span className="text-muted-foreground block text-xs">
                                 {formatDateInZone(`${day.date}T12:00:00Z`, "UTC").split(",")[0]}
@@ -489,7 +489,7 @@ export function BookingPage({
                   {/* slots */}
                   {selectedDate && step === "pick" && (
                     <section className="mt-6">
-                      <h2 className="mb-2 text-sm font-medium">
+                      <h2 className="mb-2 h3-lg">
                         {formatDateInZone(`${selectedDate}T12:00:00Z`, "UTC")}
                       </h2>
                       <div className="grid grid-cols-2 gap-2 min-[360px]:grid-cols-3 sm:flex sm:flex-wrap">
@@ -510,7 +510,7 @@ export function BookingPage({
                   {/* details */}
                   {step === "details" && selectedDate && selectedTime && (
                     <form ref={formRef} onSubmit={submit} className="mt-6 space-y-3">
-                      <h2 className="text-sm font-medium">Your details</h2>
+                      <h2 className="h3-lg">Your details</h2>
                       <Input
                         required
                         minLength={2}
@@ -603,7 +603,7 @@ export function BookingPage({
         {/* ---------------- summary sidebar ---------------- */}
         <aside className="h-fit min-w-0 md:sticky md:top-24">
           <div className="border-border bg-card rounded-[min(var(--radius-lg),16px)] border p-4 sm:p-5">
-            <BrandLogo size="sm" className="mb-4" />
+            <LogoLockup height={26} className="mb-4" />
             <p className="font-medium break-words">{eventTitle}</p>
             <dl className="text-muted-foreground mt-3 space-y-2 text-sm">
               <div className="flex items-baseline justify-between gap-3">
@@ -701,7 +701,7 @@ function Confirmation({
   return (
     <div className="space-y-4">
       <div className="border-primary/40 bg-primary/5 rounded-[min(var(--radius-lg),16px)] border p-5 sm:p-6">
-        <h2 className="text-lg font-semibold">You&apos;re booked</h2>
+        <h2 className="h2-sm">You&apos;re booked</h2>
         <p className="text-muted-foreground mt-1 text-sm">
           Your slot is confirmed and a confirmation email is on its way.
         </p>

@@ -243,9 +243,9 @@ export default function TicketsPage() {
   return (
     <div className="space-y-6">
       <div>
-        <h1 className="text-2xl font-heading font-bold text-foreground">Contact tickets</h1>
+        <h1 className="font-heading h1 text-foreground">Discuss tickets</h1>
         <p className="text-sm text-muted-foreground mt-1">
-          Job ticket submissions from the site contact form.
+          Job ticket submissions from the site discuss form.
         </p>
       </div>
 
@@ -290,8 +290,7 @@ export default function TicketsPage() {
               role="tab"
               aria-selected={statusFilter === value}
               onClick={() => setStatusFilter(value)}
-              className={cn(
-                "rounded-lg px-3 py-1.5 text-sm font-medium transition-colors",
+              className={cn("btn-sharp rounded-none px-3 py-1.5 text-sm font-medium transition-colors",
                 statusFilter === value
                   ? "bg-primary text-primary-foreground"
                   : "border border-border bg-card text-muted-foreground hover:bg-primary/5 hover:text-foreground",

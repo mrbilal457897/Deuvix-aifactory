@@ -52,7 +52,7 @@ describe("output filter (tests 1, 2, 17)", () => {
   it("rejects a link that was not in the retrieved context", () => {
     const verdict = checkOutput("Read more at https://evil.example.com/x", {
       attempt: 1,
-      contextUrls: ["https://deuvix-aicompany.vercel.app/about"],
+      contextUrls: ["https://deuvix-aifactory-3yqx.vercel.app/about"],
     });
     expect(verdict.ok).toBe(false);
     if (verdict.ok) return;
@@ -61,9 +61,9 @@ describe("output filter (tests 1, 2, 17)", () => {
   });
 
   it("accepts a link that was in the retrieved context", () => {
-    const verdict = checkOutput("Details: https://deuvix-aicompany.vercel.app/about", {
+    const verdict = checkOutput("Details: https://deuvix-aifactory-3yqx.vercel.app/about", {
       attempt: 0,
-      contextUrls: ["https://deuvix-aicompany.vercel.app/about"],
+      contextUrls: ["https://deuvix-aifactory-3yqx.vercel.app/about"],
     });
     expect(verdict.ok).toBe(true);
   });

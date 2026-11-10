@@ -4,7 +4,7 @@ import { useCallback, useEffect, useLayoutEffect, useRef, useState } from "react
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { ThemeToggle } from "@/components/layout/theme-toggle";
-import { BrandLogo } from "@/components/brand-logo";
+import { LogoLockup } from "@/components/brand/LogoLockup";
 import { DiscussButton } from "@/components/layout/discuss-button";
 import styles from "./navbar.module.css";
 
@@ -18,7 +18,7 @@ import styles from "./navbar.module.css";
 const LINKS = [
   { href: "/", label: "Home" },
   { href: "/products", label: "Services" },
-  { href: "/projects", label: "Projects" },
+  { href: "/projects", label: "Work" },
   { href: "/about", label: "About" },
   { href: "/blog", label: "Blog" },
 ] as const;
@@ -82,6 +82,16 @@ export function Navbar() {
     window.addEventListener("popstate", onPopState);
     return () => window.removeEventListener("popstate", onPopState);
   }, [closeMenu]);
+
+  // Body scroll lock while the mobile panel is open
+  useEffect(() => {
+    if (!open) return;
+    const previous = document.body.style.overflow;
+    document.body.style.overflow = "hidden";
+    return () => {
+      document.body.style.overflow = previous;
+    };
+  }, [open]);
 
   useEffect(() => {
     let frame = 0;
@@ -173,7 +183,7 @@ export function Navbar() {
   return (
     <header
       ref={headerRef}
-      className={`${styles.header} ${scrolled ? styles.scrolled : ""}`}
+      className={`${styles.header} navbar ${scrolled ? styles.scrolled : ""}`}
       aria-label="Primary navbar"
     >
       <a href="#main-content" className={styles.skipLink}>
@@ -181,9 +191,9 @@ export function Navbar() {
       </a>
 
       <div className={styles.inner}>
-        <Link href="/" className={styles.logoLink} aria-label="Deuvix AI Factory — home">
-          <BrandLogo size="sm" className={styles.brandLogo} />
-        </Link>
+        <div className={styles.logoLink}>
+          <LogoLockup intro height={20} />
+        </div>
 
         <nav className={styles.nav} aria-label="Primary">
           <ul
@@ -216,21 +226,24 @@ export function Navbar() {
           <div className={styles.themeToggle} aria-hidden="false">
             <ThemeToggle />
           </div>
-          <DiscussButton
-            size="sm"
-            variant="outline"
-            className="discussBar h-9 rounded-xl border-border bg-background/60 px-4 font-medium backdrop-blur-sm hover:bg-muted"
-          />
+          <DiscussButton variant="outline" size="sm" className="discussBar !rounded-full border-[#4299e1] dark:border-[#4299e1]" />
           <Link href="/book-a-call" className={styles.bookButton} aria-label="Book a Call">
             Book a Call
             <span className={styles.bookArrow} aria-hidden="true">→</span>
           </Link>
         </div>
 
+        <Link
+          href="/book-a-call"
+          className={styles.mobileCta}
+          aria-label="Book a Call"
+        >
+          Book a Call
+        </Link>
         <button
           ref={buttonRef}
           type="button"
-          className={styles.menuButton}
+          className={`${styles.menuButton} btn-sharp`}
           aria-expanded={open}
           aria-controls="navbar-panel"
           aria-label={open ? "Close menu" : "Open menu"}
@@ -265,12 +278,12 @@ export function Navbar() {
                 {item.label}
               </Link>
             ))}
-            <Link href="/contact" className={styles.panelDiscuss} onClick={closeMenu}>
+            <Link href="/contact" className={`${styles.panelDiscuss} btn-sharp`} onClick={closeMenu}>
               Discuss
               <span className={styles.bookArrow} aria-hidden="true">→</span>
             </Link>
             <div className={styles.divider} aria-hidden="true" />
-            <Link href="/book-a-call" className={styles.panelButton} onClick={closeMenu}>
+            <Link href="/book-a-call" className={`${styles.panelButton} btn-sharp`} onClick={closeMenu}>
               Book a Call
               <span className={styles.bookArrow} aria-hidden="true">→</span>
             </Link>

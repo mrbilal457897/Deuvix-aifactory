@@ -69,7 +69,7 @@ export function TestimonialsSection() {
           <p className="text-sm font-semibold text-primary uppercase tracking-wider mb-3">
             Testimonials
           </p>
-          <h2 className="font-heading text-[48px] font-bold mb-4">
+          <h2 className="font-heading h2-lg mb-4">
             <CharReveal>Trusted by{" "}
               <span className="text-gradient">Industry Leaders</span></CharReveal>
           </h2>

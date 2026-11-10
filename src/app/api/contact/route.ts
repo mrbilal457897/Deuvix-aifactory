@@ -48,6 +48,8 @@ const UNIT_LIST = [
   "Loop Engineering",
   "FDE Consulting",
   "AI-Powered Web Apps",
+  "AI Agent E-books",
+  "Business AI Solutions",
   "Not sure yet",
 ] as const;
 

@@ -126,9 +126,21 @@ export function ProjectBlock({
     return teardown;
   }, [reveal, revealed]);
 
-  const stats = project.stats.slice(0, 3);
+  const seen = new Set<string>();
+  const stats = project.stats
+    .filter((stat) => {
+      const key = `${stat.label}|${stat.value}`.toLowerCase();
+      if (seen.has(key)) return false;
+      seen.add(key);
+      return true;
+    })
+    .slice(0, 3);
   const tags = project.tags.slice(0, 4);
-  const caseStudyHref = project.caseStudyUrl?.trim() || `/projects/${project.slug}`;
+  const storedHref = project.caseStudyUrl?.trim();
+  const caseStudyHref =
+    storedHref && storedHref.startsWith("/")
+      ? storedHref
+      : `/projects/${project.slug}`;
 
   return (
     <article
@@ -142,7 +154,9 @@ export function ProjectBlock({
       ]
         .filter(Boolean)
         .join(" ")}
-      {...(hideName ? {} : { "aria-labelledby": `lw-name-${project.id}` })}
+      {...(hideName
+        ? { "aria-label": project.name }
+        : { "aria-labelledby": `lw-name-${project.id}` })}
     >
       <div className="lw-block-text">
         {!hideName && (
@@ -179,7 +193,7 @@ export function ProjectBlock({
         <div className="lw-ctas">
           {project.liveUrl && (
             <a
-              className="lw-cta lw-cta-primary"
+              className="lw-cta lw-cta-primary btn-sharp"
               href={project.liveUrl}
               target="_blank"
               rel="noopener noreferrer"
@@ -190,7 +204,7 @@ export function ProjectBlock({
               </span>
             </a>
           )}
-          <a className="lw-cta lw-cta-secondary" href={caseStudyHref}>
+          <a className="lw-cta lw-cta-secondary btn-sharp" href={caseStudyHref}>
             Read case study
           </a>
         </div>

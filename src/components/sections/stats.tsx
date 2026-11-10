@@ -3,15 +3,15 @@
 import { CountUp } from "@/components/animations/count-up";
 
 const stats = [
-  { value: 168, suffix: "hrs/wk", label: "Digital FTE Uptime" },
-  { value: 85, suffix: "%", label: "Cost Savings per Task" },
-  { value: 99, suffix: "%+", label: "Task Consistency" },
-  { value: 4, suffix: "x", label: "More Output vs Human" },
+  { value: 168, suffix: "hrs/wk", label: "Digital FTE uptime" },
+  { value: 85, suffix: "%", label: "Cost savings per task" },
+  { value: 99, suffix: "%+", label: "Task consistency" },
+  { value: 4, suffix: "x", label: "More output vs human" },
 ];
 
 export function StatsSection() {
   return (
-    <section className="relative py-8 overflow-hidden bg-background">
+    <section className="relative py-8 overflow-hidden bg-background" aria-label="Key metrics">
       <div className="absolute inset-0">
         <div
           className="absolute inset-0 opacity-[0.07]"
@@ -29,19 +29,26 @@ export function StatsSection() {
 
       <div className="relative z-10">
         <div className="marquee-track flex items-center gap-12 sm:gap-16">
-          {[...stats, ...stats, ...stats].map((stat, i) => (
-            <div key={`${stat.label}-${i}`} className="flex items-center gap-3 shrink-0">
-              <CountUp
-                value={stat.value}
-                suffix={stat.suffix}
-                className="font-heading text-[48px] font-bold text-primary whitespace-nowrap"
-              />
-              <span className="text-sm text-muted-foreground font-medium whitespace-nowrap">
-                {stat.label}
-              </span>
-              <div className="w-px h-8 bg-border ml-6" />
-            </div>
-          ))}
+          {[...stats, ...stats, ...stats].map((stat, i) => {
+            const decorative = i >= stats.length;
+            return (
+              <div
+                key={`${stat.label}-${i}`}
+                className="flex items-center gap-3 shrink-0"
+                {...(decorative ? { "aria-hidden": true, inert: true } : {})}
+              >
+                <CountUp
+                  value={stat.value}
+                  suffix={stat.suffix}
+                  className="font-heading text-2xl md:text-[2rem] font-bold text-primary whitespace-nowrap"
+                />
+                <span className="text-sm text-muted-foreground font-medium whitespace-nowrap">
+                  {stat.label}
+                </span>
+                <div className="w-px h-8 bg-border ml-6" />
+              </div>
+            );
+          })}
         </div>
       </div>
 
@@ -63,6 +70,15 @@ export function StatsSection() {
 
         .marquee-track:hover {
           animation-play-state: paused;
+        }
+
+        @media (prefers-reduced-motion: reduce) {
+          .marquee-track {
+            animation: none;
+            flex-wrap: wrap;
+            justify-content: center;
+            width: auto;
+          }
         }
 
         @keyframes marqueeScroll {

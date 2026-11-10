@@ -1,11 +1,11 @@
-import type { Metadata } from "next";
+import { pageMetadata } from "@/lib/seo";
 
-export const metadata: Metadata = {
+export const metadata = pageMetadata({
   title: "Blog — AI Agents, Digital FTEs & Loop Engineering Guides",
   description:
     "Guides and deep-dives from Deuvix AI Factory: Digital FTEs, Forward Deployed Engineering, AI agents, Loop Engineering, and building AI-Native companies.",
-  alternates: { canonical: "/blog" },
-};
+  path: "/blog",
+});
 
 export default function BlogLayout({
   children,

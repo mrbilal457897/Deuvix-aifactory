@@ -61,8 +61,8 @@ export function ChatWindow({ api, windowRef, inputRef, onClose }: Props) {
       <div className="flex shrink-0 items-center gap-3 border-b border-border bg-surface px-4 py-3">
         <ChatLogo />
         <div className="min-w-0 flex-1">
-          <h3 className="truncate font-heading text-sm font-semibold leading-tight">Deuvix AI Factory</h3>
-          <p className="flex items-center gap-1 text-[11px] leading-tight text-muted-foreground">
+          <h3 className="truncate font-heading h3-sm">Deuvix AI Factory</h3>
+          <p className="flex items-center gap-1 text-xs leading-tight text-muted-foreground">
             <span className="size-1.5 rounded-full bg-emerald-500" aria-hidden="true" />
             {api.ended ? uiStrings.sessionEnded : uiStrings.statusOnline}
           </p>
@@ -71,7 +71,7 @@ export function ChatWindow({ api, windowRef, inputRef, onClose }: Props) {
         <DropdownMenu>
           <DropdownMenuTrigger
             aria-label={uiStrings.menu}
-            className="flex size-9 items-center justify-center rounded-lg text-muted-foreground transition-colors hover:bg-muted hover:text-foreground outline-none"
+            className="btn-sharp flex size-9 items-center justify-center rounded-none text-muted-foreground transition-colors hover:bg-muted hover:text-foreground outline-none"
           >
             <MoreVertical className="size-4" />
           </DropdownMenuTrigger>
@@ -91,7 +91,7 @@ export function ChatWindow({ api, windowRef, inputRef, onClose }: Props) {
           type="button"
           onClick={onClose}
           aria-label={uiStrings.close}
-          className="flex size-9 items-center justify-center rounded-lg text-muted-foreground transition-colors hover:bg-muted hover:text-foreground"
+          className="btn-sharp flex size-9 items-center justify-center rounded-none text-muted-foreground transition-colors hover:bg-muted hover:text-foreground"
         >
           <X className="size-4" />
         </button>
@@ -114,7 +114,7 @@ export function ChatWindow({ api, windowRef, inputRef, onClose }: Props) {
           <button
             type="button"
             onClick={jumpToLatest}
-            className="sticky bottom-0 left-1/2 -translate-x-1/2 rounded-full border border-border bg-background px-3 py-1 text-xs shadow-md"
+            className="btn-sharp sticky bottom-0 left-1/2 -translate-x-1/2 rounded-none border border-border bg-background px-3 py-1 text-xs shadow-md"
           >
             {uiStrings.jumpToLatest}
           </button>
@@ -136,7 +136,7 @@ export function ChatWindow({ api, windowRef, inputRef, onClose }: Props) {
           <button
             type="button"
             onClick={() => setShowLead(true)}
-            className="inline-flex items-center gap-1.5 text-[11.5px] font-medium text-primary hover:underline"
+            className="btn-sharp inline-flex items-center gap-1.5 text-[11.5px] font-medium text-primary hover:underline"
           >
             <Users className="size-3.5" />
             {uiStrings.leadCardTitle}
@@ -149,7 +149,7 @@ export function ChatWindow({ api, windowRef, inputRef, onClose }: Props) {
           <button
             type="button"
             onClick={api.startNewChat}
-            className="inline-flex h-9 w-full items-center justify-center gap-2 rounded-lg bg-primary text-sm font-medium text-primary-foreground hover:bg-primary/85"
+            className="btn-sharp inline-flex h-9 w-full items-center justify-center gap-2 rounded-none bg-primary text-sm font-medium text-primary-foreground hover:bg-primary/85"
           >
             <RefreshCw className="size-4" />
             {uiStrings.startNewChat}
@@ -187,7 +187,7 @@ export function LauncherGreeting({ onDismiss, className }: { onDismiss: () => vo
       <button
         type="button"
         onClick={onDismiss}
-        className="mt-1.5 text-[10.5px] text-muted-foreground hover:text-foreground"
+        className="btn-sharp mt-1.5 text-[10.5px] text-muted-foreground hover:text-foreground"
       >
         {uiStrings.launcherGreetingDismiss}
       </button>

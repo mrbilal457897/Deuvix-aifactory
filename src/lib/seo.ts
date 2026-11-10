@@ -1,19 +1,17 @@
 /**
  * Canonical origin used for sitemap.xml, robots.txt, metadataBase and OG tags.
  *
- * Server-only (never NEXT_PUBLIC_) so the domain can change in the Vercel env
- * without a code edit. It falls back to the Vercel deployment URL so a missing
- * variable degrades to a working build instead of `new URL(undefined)` throwing
- * in layout.tsx. Trailing slashes are stripped because callers append paths.
- *
- * NOTE: `deuvix.ai` is not live yet — the site currently runs on the Vercel domain,
- * so that is the fallback. Update both this default and SITE_URL in the Vercel
- * project when the real domain is attached.
+ * Server-and-client safe resolution order: NEXT_PUBLIC_SITE_URL (the public,
+ * build-time site URL) → SITE_URL → the production origin. Trailing slashes
+ * are stripped because callers append paths.
  */
 import { company, companyLocationLabel } from "@config/company";
+import type { Metadata } from "next";
 
 export const SITE_URL = (
-  process.env.SITE_URL?.trim() || "https://deuvix-aicompany.vercel.app"
+  process.env.NEXT_PUBLIC_SITE_URL?.trim() ||
+  process.env.SITE_URL?.trim() ||
+  "https://deuvix-aifactory-3yqx.vercel.app"
 ).replace(/\/+$/, "");
 
 export const SITE_NAME = "Deuvix AI Factory";
@@ -41,6 +39,58 @@ export const SITE_KEYWORDS = [
 ];
 
 export const OG_IMAGE = "/images/hero-bg.jpg";
+export const OG_IMAGE_ABSOLUTE = `${SITE_URL}${OG_IMAGE}`;
+
+/** Absolute URL for a path on this origin (path begins with `/`). */
+export function absoluteUrl(path: string): string {
+  return `${SITE_URL}${path}`;
+}
+
+/** Title matching what root `title.template` (%s | Deuvix AI Factory) renders. */
+export function fullTitle(title: string): string {
+  return title.includes(` | ${SITE_NAME}`) ? title : `${title} | ${SITE_NAME}`;
+}
+
+export interface PageMetaInput {
+  title: string;
+  description: string;
+  /** Path including leading slash, e.g. `/about`. Used for canonical + og:url. */
+  path: string;
+  keywords?: string | string[];
+  /** Absolute og:image; defaults to the site-wide hero image. */
+  image?: string;
+}
+
+/**
+ * Builds page-level metadata where title, description, canonical, og:* and
+ * twitter:* all describe THIS page — not the homepage.
+ */
+export function pageMetadata({ title, description, path, keywords, image }: PageMetaInput): Metadata {
+  const url = `${SITE_URL}${path}`;
+  const img = image || OG_IMAGE_ABSOLUTE;
+  const socialTitle = fullTitle(title);
+  return {
+    title,
+    description,
+    ...(keywords ? { keywords } : {}),
+    alternates: { canonical: path },
+    openGraph: {
+      type: "website",
+      siteName: SITE_NAME,
+      title: socialTitle,
+      description,
+      url,
+      locale: "en_US",
+      images: [{ url: img, width: 1920, height: 1080, alt: `${SITE_NAME}` }],
+    },
+    twitter: {
+      card: "summary_large_image",
+      title: socialTitle,
+      description,
+      images: [img],
+    },
+  };
+}
 
 /**
  * Organization JSON-LD, generated from config/company.ts. Only the fields the
@@ -56,7 +106,11 @@ export function organizationJsonLd(): Record<string, unknown> | null {
     url: SITE_URL,
   };
 
-  if (company.logo?.trim()) node.logo = new URL(company.logo, SITE_URL).toString();
+  // JSON-LD logo must be an absolute URL on the production origin; fall back to
+  // the exported wordmark PNG when the owner has not configured one.
+  node.logo = company.logo?.trim()
+    ? new URL(company.logo, SITE_URL).toString()
+    : absoluteUrl("/images/logo-light.png");
   if (company.tradingName?.trim() && company.tradingName !== company.legalName) {
     node.alternateName = company.tradingName;
   }

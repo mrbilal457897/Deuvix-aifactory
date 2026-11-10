@@ -27,7 +27,7 @@ export function LegalPage({
         <Badge className="mb-4 bg-primary/10 text-primary border-primary/20 backdrop-blur-sm">
           {badge}
         </Badge>
-        <h1 className="font-heading text-[68px] font-bold text-foreground mb-4">
+        <h1 className="font-heading h1 text-foreground mb-4">
           {title}
         </h1>
         <p className="mx-auto max-w-2xl text-muted-foreground text-base">
@@ -52,7 +52,7 @@ export function LegalSection({
 }) {
   return (
     <section>
-      <h2 className="font-heading text-[48px] font-bold text-foreground mb-3">
+      <h2 className="font-heading h2-lg text-foreground mb-3">
         {heading}
       </h2>
       <div className="h-px w-12 bg-primary mb-5" />

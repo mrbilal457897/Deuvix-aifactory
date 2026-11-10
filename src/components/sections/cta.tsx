@@ -4,12 +4,36 @@ import { useCallback, useEffect, useRef, useState } from "react";
 import Link from "next/link";
 import { BookCallButton } from "@/components/book-call-button";
 import { company } from "@config/company";
-import { Button } from "@/components/ui/button";
+import { buttonVariants } from "@/components/ui/button";
 
 export function CTASection() {
   const sectionRef = useRef<HTMLDivElement>(null);
   const videoRef = useRef<HTMLVideoElement>(null);
   const [split, setSplit] = useState(0);
+  const [shouldMountVideo, setShouldMountVideo] = useState(false);
+
+  // Mount the video only when the section nears the viewport — it is a large
+  // asset and most sessions never scroll this far. Server and first client
+  // render agree on the placeholder, so hydration stays consistent.
+  useEffect(() => {
+    const section = sectionRef.current;
+    if (!section || shouldMountVideo) return;
+    if (typeof IntersectionObserver === "undefined") {
+      const timer = window.setTimeout(() => setShouldMountVideo(true), 0);
+      return () => window.clearTimeout(timer);
+    }
+    const observer = new IntersectionObserver(
+      (entries) => {
+        if (entries.some((entry) => entry.isIntersecting)) {
+          setShouldMountVideo(true);
+          observer.disconnect();
+        }
+      },
+      { rootMargin: "600px 0px" }
+    );
+    observer.observe(section);
+    return () => observer.disconnect();
+  }, [shouldMountVideo]);
 
   const measure = useCallback(() => {
     const section = sectionRef.current;
@@ -35,7 +59,7 @@ export function CTASection() {
     return () => {
       ro.disconnect();
     };
-  }, [measure]);
+  }, [measure, shouldMountVideo]);
 
   useEffect(() => {
     if (sectionRef.current) {
@@ -46,56 +70,65 @@ export function CTASection() {
   return (
     <section
       ref={sectionRef}
+      aria-labelledby="cta-heading"
       className="relative overflow-hidden"
       style={{
         background: `linear-gradient(to bottom, var(--section-bg-top) 0, var(--section-bg-top) var(--split), var(--section-bg-bottom) var(--split), var(--section-bg-bottom) 100%)`,
       }}
     >
-      <div className="relative mx-auto max-w-[1160px] px-[20px] lg:px-6 py-[56px] lg:py-[88px] w-full">
+      <div className="relative mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 py-16 md:py-24 w-full">
         <div className="grid grid-cols-1 lg:grid-cols-[1.25fr_1fr] gap-[64px]">
-          {/* Video column */}
+          {/* Video column — lazy-mounted near the viewport */}
           <div className="relative aspect-video w-full">
-            <video
-              ref={videoRef}
-              controls
-              playsInline
-              className="w-full h-full rounded-[20px] border border-border/60 dark:border-white/20 shadow-[0_24px_50px_rgba(0,0,0,0.4)] object-cover"
-              src="/uploads/deuvix.mp4"
-              poster="/uploads/deuvix-poster.jpg"
-              preload="metadata"
-            />
+            {shouldMountVideo ? (
+              <video
+                ref={videoRef}
+                controls
+                playsInline
+                preload="metadata"
+                className="w-full h-full rounded-[20px] border border-border/60 dark:border-border shadow-[0_24px_50px_rgba(0,0,0,0.4)] object-cover"
+                src="/uploads/deuvix.mp4"
+                poster="/uploads/deuvix-poster.jpg"
+                aria-label="Deuvix AI Factory — company introduction video"
+              />
+            ) : (
+              <img
+                src="/uploads/deuvix-poster.jpg"
+                alt="Deuvix AI Factory — company introduction video"
+                loading="lazy"
+                className="w-full h-full rounded-[20px] border border-border/60 dark:border-border shadow-[0_24px_50px_rgba(0,0,0,0.4)] object-cover"
+              />
+            )}
           </div>
 
           {/* Text column */}
           <div>
-            <h2 className="font-heading text-[48px] sm:text-[56px] font-bold text-foreground mb-6 leading-tight">
+            <h2 id="cta-heading" className="font-heading h2-lg text-foreground mb-6">
               Start your AI journey
             </h2>
-            <p className="text-muted-foreground dark:text-white/70 text-[18px] leading-[1.6] max-w-[44ch] mb-8">
+            <p className="text-muted-foreground text-lg leading-[1.6] max-w-[44ch] mb-8">
               Join businesses building AI-Native companies with Deuvix AI Factory. Manufacture, deploy, and monetize Digital FTEs.
             </p>
             <div className="flex flex-col sm:flex-row gap-4">
               <BookCallButton
                 icon={null}
-                className="bg-primary text-primary-foreground font-semibold px-8 py-6 text-base rounded-xl hover:bg-primary/90 hover:-translate-y-[2px] transition-all duration-200"
+                size="lg"
+                className="font-semibold text-sm"
               >
                 Book a consultation
               </BookCallButton>
-              <Link href="/products">
-                <Button
-                  variant="outline"
-                  size="lg"
-                  className="border-border dark:border-white/30 text-foreground dark:text-white font-semibold px-8 py-6 text-base rounded-xl hover:bg-muted dark:hover:bg-white/10 transition-all duration-200"
-                >
-                  View our work
-                </Button>
+              <Link
+                href="/projects"
+                className={buttonVariants({ variant: "outline", size: "lg" }) + " text-sm"}
+              >
+                View our work
               </Link>
             </div>
-            <p className="mt-6 text-sm text-muted-foreground dark:text-white/60">
+            <p className="mt-6 text-sm text-muted-foreground">
               Prefer email? Write to{" "}
               <a
                 href={`mailto:${company.businessEmail}`}
-                className="font-medium text-primary dark:text-white hover:underline"
+                className="font-medium text-primary hover:underline"
               >
                 {company.businessEmail}
               </a>

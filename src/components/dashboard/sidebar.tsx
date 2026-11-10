@@ -8,7 +8,7 @@ import { Zap, Folder, ArrowLeft, LogOut, Menu, X, ImageIcon, Settings, Users } f
 import { cn } from "@/lib/utils";
 
 const sidebarLinks = [
-  { href: "/deuvix", label: "Projects", icon: Folder },
+  { href: "/deuvix", label: "Work", icon: Folder },
   { href: "/deuvix/users", label: "Users", icon: Users },
   { href: "/deuvix/media", label: "Media Library", icon: ImageIcon },
   { href: "/deuvix/images", label: "Image Settings", icon: Settings },
@@ -23,7 +23,7 @@ function SidebarNav({ onNavigate }: { onNavigate: () => void }) {
       {/* Logo */}
       <div className="p-5 border-b border-border">
         <Link href="/" className="flex items-center gap-2.5">
-          <div className="flex items-center justify-center size-8 rounded-lg bg-primary">
+          <div className="flex items-center justify-center size-8 rounded-none bg-primary">
             <Zap className="size-4 text-primary-foreground" />
           </div>
           <span className="text-lg font-heading font-bold text-foreground tracking-tight">
@@ -43,7 +43,7 @@ function SidebarNav({ onNavigate }: { onNavigate: () => void }) {
               href={link.href}
               onClick={onNavigate}
               className={cn(
-                "flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium transition-colors",
+                "flex items-center gap-3 px-3 py-2.5 rounded-none text-sm font-medium transition-colors",
                 isActive
                   ? "bg-primary text-primary-foreground"
                   : "text-muted-foreground hover:text-foreground hover:bg-muted"
@@ -66,6 +66,7 @@ function SidebarNav({ onNavigate }: { onNavigate: () => void }) {
                 alt={session.user.name || "User"}
                 width={36}
                 height={36}
+                sizes="36px"
                 className="size-9 rounded-full border-2 border-primary/50"
               />
             ) : (
@@ -89,14 +90,14 @@ function SidebarNav({ onNavigate }: { onNavigate: () => void }) {
       <div className="p-3 border-t border-border space-y-1">
         <Link
           href="/"
-          className="flex items-center gap-3 px-3 py-3 rounded-lg text-sm font-medium text-muted-foreground hover:text-foreground hover:bg-muted transition-colors"
+          className="flex items-center gap-3 px-3 py-3 rounded-none text-sm font-medium text-muted-foreground hover:text-foreground hover:bg-muted transition-colors"
         >
           <ArrowLeft className="size-4" />
           Back to Site
         </Link>
         <button
           onClick={() => signOut({ callbackUrl: "/" })}
-          className="flex items-center gap-3 px-3 py-3 rounded-lg text-sm font-medium text-muted-foreground hover:text-destructive hover:bg-destructive/5 transition-colors w-full"
+          className="btn-sharp flex items-center gap-3 px-3 py-3 rounded-none text-sm font-medium text-muted-foreground hover:text-destructive hover:bg-destructive/5 transition-colors w-full"
         >
           <LogOut className="size-4" />
           Sign Out
@@ -121,7 +122,7 @@ export function DashboardSidebar({ mobileOpen, setMobileOpen }: { mobileOpen: bo
           <aside className="absolute inset-y-0 left-0 w-64 bg-card border-r border-border flex flex-col pt-16">
             <button
               onClick={() => setMobileOpen(false)}
-              className="absolute top-20 right-4 size-11 flex items-center justify-center rounded-lg text-muted-foreground hover:text-foreground z-10"
+              className="btn-sharp absolute top-20 right-4 size-11 flex items-center justify-center rounded-none text-muted-foreground hover:text-foreground z-10"
               aria-label="Close sidebar"
             >
               <X className="size-5" />
@@ -141,7 +142,7 @@ export function DashboardMobileTopBar({ onMenuClick }: { onMenuClick: () => void
     <div className="lg:hidden sticky top-16 z-30 flex items-center gap-3 px-4 h-14 bg-background/80 backdrop-blur-xl border-b border-border">
       <button
         onClick={onMenuClick}
-        className="size-11 rounded-lg text-muted-foreground hover:text-foreground hover:bg-muted"
+        className="btn-sharp size-11 rounded-none text-muted-foreground hover:text-foreground hover:bg-muted"
       >
         <Menu className="size-5" />
       </button>
@@ -157,6 +158,7 @@ export function DashboardMobileTopBar({ onMenuClick }: { onMenuClick: () => void
           alt={session.user.name || "User"}
           width={28}
           height={28}
+          sizes="28px"
           className="size-7 rounded-full border border-border ml-auto"
         />
       )}

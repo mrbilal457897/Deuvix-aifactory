@@ -1,11 +1,11 @@
-import type { Metadata } from "next";
-import { Roboto, Raleway } from "next/font/google";
+import type { Metadata, Viewport } from "next";
+import { Roboto, Raleway, Space_Grotesk, Inter } from "next/font/google";
 import { ThemeProvider } from "@/components/theme-provider";
 import { Providers } from "@/components/providers";
 import { LayoutShell } from "@/components/layout-shell";
 import { BookCallProvider } from "@/components/book-call-provider";
 import { LoadingSplash } from "@/components/loading-splash";
-import { SITE_URL, SITE_NAME, SITE_DESCRIPTION, SITE_KEYWORDS, OG_IMAGE, organizationJsonLd } from "@/lib/seo";
+import { SITE_URL, SITE_NAME, SITE_DESCRIPTION, SITE_KEYWORDS, OG_IMAGE_ABSOLUTE, organizationJsonLd } from "@/lib/seo";
 import "./globals.css";
 
 const roboto = Roboto({
@@ -16,11 +16,32 @@ const roboto = Roboto({
 });
 
 const raleway = Raleway({
-  weight: ["200", "300", "600", "700", "800"],
+  weight: ["200", "300", "400", "500", "600", "700", "800"],
   subsets: ["latin"],
   variable: "--font-raleway",
   display: "swap",
 });
+
+const spaceGrotesk = Space_Grotesk({
+  weight: ["500", "600", "700"],
+  subsets: ["latin"],
+  variable: "--font-space-grotesk",
+  display: "swap",
+});
+
+const inter = Inter({
+  weight: ["400", "500"],
+  subsets: ["latin"],
+  variable: "--font-inter",
+  display: "swap",
+});
+
+export const viewport: Viewport = {
+  width: "device-width",
+  initialScale: 1,
+  viewportFit: "cover",
+  maximumScale: 5,
+};
 
 export const metadata: Metadata = {
   metadataBase: new URL(SITE_URL),
@@ -33,6 +54,13 @@ export const metadata: Metadata = {
   alternates: {
     canonical: "/",
   },
+  icons: {
+    icon: [
+      { url: "/icon.svg", type: "image/svg+xml" },
+      { url: "/apple-icon.png", sizes: "180x180", type: "image/png" },
+    ],
+    apple: [{ url: "/apple-icon.png", sizes: "180x180", type: "image/png" }],
+  },
   openGraph: {
     type: "website",
     siteName: SITE_NAME,
@@ -41,7 +69,7 @@ export const metadata: Metadata = {
     url: "/",
     images: [
       {
-        url: OG_IMAGE,
+        url: OG_IMAGE_ABSOLUTE,
         width: 1920,
         height: 1080,
         alt: `${SITE_NAME}`,
@@ -53,7 +81,7 @@ export const metadata: Metadata = {
     card: "summary_large_image",
     title: `${SITE_NAME} | Digital FTEs & AI Agents`,
     description: SITE_DESCRIPTION,
-    images: [OG_IMAGE],
+    images: [OG_IMAGE_ABSOLUTE],
   },
   robots: {
     index: true,
@@ -86,13 +114,19 @@ export default function RootLayout({
             __html: `(function(){try{var s=document.documentElement;var t=localStorage.getItem("theme");if(t==="light"){s.classList.remove("dark")}else if(t==="dark"){s.classList.add("dark")}else if(window.matchMedia&&window.matchMedia("(prefers-color-scheme: dark)").matches){s.classList.add("dark")}else{s.classList.remove("dark")}}catch(e){}})();`,
           }}
         />
+        {/* Flash-of-unstyled-logo guard — mirrors the theme script. Adds .logo-intro only on first visit of the session. */}
+        <script
+          dangerouslySetInnerHTML={{
+            __html: `try{if(!sessionStorage.getItem("dx-logo-intro")&&!matchMedia("(prefers-reduced-motion: reduce)").matches)document.documentElement.classList.add("logo-intro")}catch(e){}`,
+          }}
+        />
         {/* Organization schema generated from config/company.ts */}
         <script
           type="application/ld+json"
           dangerouslySetInnerHTML={{ __html: JSON.stringify(organizationJsonLd()) }}
         />
       </head>
-      <body className={`${roboto.variable} ${raleway.variable} min-h-full flex flex-col bg-background font-sans antialiased`}>
+      <body className={`${roboto.variable} ${raleway.variable} ${spaceGrotesk.variable} ${inter.variable} min-h-full flex flex-col bg-background font-sans antialiased`}>
         <LoadingSplash />
         <Providers>
           <ThemeProvider>

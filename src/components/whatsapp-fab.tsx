@@ -28,7 +28,7 @@ export function WhatsAppFab() {
       onFocus={() => setHovered(true)}
       onBlur={() => setHovered(false)}
       className={cn(
-        "group fixed bottom-40 right-6 z-50 flex size-14 items-center justify-center rounded-full bg-primary text-primary-foreground shadow-lg shadow-primary/25 transition-all duration-200 hover:bg-primary/90 hover:scale-105",
+        "group fixed bottom-40 right-6 z-50 flex size-14 items-center justify-center rounded-[4px] bg-primary text-primary-foreground shadow-lg shadow-primary/25 transition-all duration-200 hover:bg-primary/90 hover:scale-105",
         "focus-visible:outline-none focus-visible:ring-3 focus-visible:ring-ring/50",
       )}
     >

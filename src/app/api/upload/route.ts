@@ -14,9 +14,25 @@ export async function POST(request: Request) {
     const filename = `${Date.now()}.${ext}`;
     const buffer = Buffer.from(await file.arrayBuffer());
 
+    // Resize images to at most 1920px wide when sharp is available.
+    let outBuffer: Buffer = buffer;
+    if (/^(png|jpe?g|webp)$/i.test(ext)) {
+      try {
+        const { default: sharp } = await import("sharp");
+        const meta = await sharp(buffer, { failOn: "none" }).metadata();
+        if (meta.width && meta.width > 1920) {
+          outBuffer = await sharp(buffer, { failOn: "none" })
+            .resize({ width: 1920, withoutEnlargement: true })
+            .toBuffer();
+        }
+      } catch {
+        // sharp unavailable — upload the original bytes.
+      }
+    }
+
     const { error } = await supabase.storage
       .from("deuvix")
-      .upload(filename, buffer, { contentType: file.type });
+      .upload(filename, outBuffer, { contentType: file.type });
 
     if (error) throw error;
 

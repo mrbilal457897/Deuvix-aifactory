@@ -22,7 +22,8 @@ import {
   Moon,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
-import { LogoMark } from "@/components/brand-logo";
+import { LogoLockup } from "@/components/brand/LogoLockup";
+import { DeuvixMark } from "@/components/brand/DeuvixMark";
 import { Breadcrumb } from "@/components/ui/breadcrumb";
 import { AdminAgentPanel } from "@/components/admin/agent-panel";
 import { useState, createContext, useContext } from "react";
@@ -60,7 +61,7 @@ function ThemeToggle() {
   return (
     <button
       onClick={() => setTheme(resolvedTheme === "dark" ? "light" : "dark")}
-      className="p-2 rounded-lg text-muted-foreground hover:text-foreground hover:bg-muted transition-colors relative"
+      className="btn-sharp p-2 rounded-none text-muted-foreground hover:text-foreground hover:bg-muted transition-colors relative"
       aria-label="Toggle theme"
     >
       <Sun className="size-4 rotate-0 scale-100 transition-all dark:-rotate-90 dark:scale-0" />
@@ -77,11 +78,14 @@ function SidebarNav({ onNavigate }: { onNavigate: () => void }) {
   return (
     <>
       <div className={cn("flex items-center gap-3 border-b border-border", collapsed ? "px-3 py-4 justify-center" : "px-5 py-4")}>
-        <LogoMark size={collapsed ? "xs" : "sm"} />
-        {!collapsed && (
-          <div>
-            <span className="text-[15px] font-heading font-bold text-foreground tracking-tight">Deuvix AI Factory</span>
-            <p className="text-[10px] text-muted-foreground uppercase tracking-widest">Admin Panel</p>
+        {collapsed ? (
+          <DeuvixMark className="size-7" aria-hidden="true" />
+        ) : (
+          <div className="leading-none">
+            <LogoLockup height={24} />
+            <span className="mt-1.5 block text-[10px] text-muted-foreground uppercase tracking-widest leading-none">
+              Admin Panel
+            </span>
           </div>
         )}
       </div>
@@ -97,7 +101,7 @@ function SidebarNav({ onNavigate }: { onNavigate: () => void }) {
               href={link.href}
               onClick={onNavigate}
               className={cn(
-                "group flex items-center gap-3 rounded-xl text-sm font-medium transition-all duration-150",
+                "group flex items-center gap-3 rounded-none text-sm font-medium transition-all duration-150",
                 collapsed ? "px-3 py-2.5 justify-center" : "px-3.5 py-2.5",
                 isActive
                   ? "bg-primary/10 text-primary shadow-[inset_3px_0_0_0_#4CAF7D]"
@@ -113,10 +117,10 @@ function SidebarNav({ onNavigate }: { onNavigate: () => void }) {
       </nav>
 
       {!collapsed && session?.user && (
-        <div className="mx-3 mb-3 p-3 rounded-xl bg-muted border border-border">
+        <div className="mx-3 mb-3 p-3 rounded-none bg-muted border border-border">
           <div className="flex items-center gap-3">
             {session.user.image ? (
-              <Image src={session.user.image} alt="" width={32} height={32} className="size-8 rounded-full ring-2 ring-primary/20" />
+              <Image src={session.user.image} alt="" width={32} height={32} sizes="32px" className="size-8 rounded-full ring-2 ring-primary/20" />
             ) : (
               <div className="size-8 rounded-full bg-primary flex items-center justify-center text-primary-foreground text-xs font-bold">
                 {session.user.name?.charAt(0) || "A"}
@@ -132,20 +136,19 @@ function SidebarNav({ onNavigate }: { onNavigate: () => void }) {
 
       <div className={cn("border-t border-border p-3 space-y-0.5", collapsed && "flex flex-col items-center")}>
         {!collapsed && (
-          <Link href="/" className="flex items-center gap-3 px-3.5 py-2 rounded-xl text-sm text-muted-foreground hover:text-foreground hover:bg-muted transition-colors">
+          <Link href="/" className="flex items-center gap-3 px-3.5 py-2 rounded-none text-sm text-muted-foreground hover:text-foreground hover:bg-muted transition-colors">
             <ArrowLeft className="size-[18px]" />
             Back to Site
           </Link>
         )}
         {collapsed && (
-          <Link href="/" className="flex items-center justify-center p-2.5 rounded-xl text-muted-foreground hover:text-foreground hover:bg-muted transition-colors" title="Back to Site">
+          <Link href="/" className="flex items-center justify-center p-2.5 rounded-none text-muted-foreground hover:text-foreground hover:bg-muted transition-colors" title="Back to Site">
             <ArrowLeft className="size-[18px]" />
           </Link>
         )}
         <button
           onClick={() => { signOut({ callbackUrl: "/" }); onNavigate(); }}
-          className={cn(
-            "flex items-center gap-3 rounded-xl text-sm text-muted-foreground hover:text-destructive hover:bg-destructive/5 transition-colors w-full",
+          className={cn("btn-sharp flex items-center gap-3 rounded-none text-sm text-muted-foreground hover:text-destructive hover:bg-destructive/5 transition-colors w-full",
             collapsed ? "px-0 py-2.5 justify-center" : "px-3.5 py-2.5"
           )}
           title={collapsed ? "Sign Out" : undefined}
@@ -181,7 +184,7 @@ export function DashboardShell({ children }: { children: React.ReactNode }) {
           <div className="lg:hidden fixed inset-0 z-50">
             <div className="absolute inset-0 bg-black/50 backdrop-blur-sm" onClick={() => setMobileOpen(false)} />
             <aside className="absolute inset-y-0 left-0 w-64 bg-card border-r border-border flex flex-col">
-              <button onClick={() => setMobileOpen(false)} className="absolute top-4 right-4 p-2 rounded-lg text-muted-foreground hover:text-foreground hover:bg-muted z-10">
+              <button onClick={() => setMobileOpen(false)} className="btn-sharp absolute top-4 right-4 p-2 rounded-none text-muted-foreground hover:text-foreground hover:bg-muted z-10">
                 <X className="size-5" />
               </button>
               <SidebarNav onNavigate={() => setMobileOpen(false)} />
@@ -194,7 +197,7 @@ export function DashboardShell({ children }: { children: React.ReactNode }) {
           {/* Floating Top Navbar */}
           <div className="sticky top-0 z-30 p-3">
             <header className="flex items-center gap-4 h-12 px-4 bg-card/80 backdrop-blur-xl border border-border rounded-2xl shadow-sm">
-              <button onClick={() => setMobileOpen(true)} className="lg:hidden p-1.5 -ml-1 rounded-lg text-muted-foreground hover:text-foreground hover:bg-muted">
+              <button onClick={() => setMobileOpen(true)} className="btn-sharp lg:hidden p-1.5 -ml-1 rounded-none text-muted-foreground hover:text-foreground hover:bg-muted">
                 <Menu className="size-4" />
               </button>
               <AdminBreadcrumbs />
@@ -202,7 +205,7 @@ export function DashboardShell({ children }: { children: React.ReactNode }) {
                 {[
                   { href: "/", label: "Home" },
                   { href: "/products", label: "Services" },
-                  { href: "/projects", label: "Projects" },
+                  { href: "/projects", label: "Work" },
                   { href: "/about", label: "About" },
                   { href: "/blog", label: "Blog" },
                   { href: "/contact", label: "Discuss" },
@@ -211,23 +214,23 @@ export function DashboardShell({ children }: { children: React.ReactNode }) {
                     key={link.href}
                     href={link.href}
                     target={link.href === "/" ? "_self" : "_self"}
-                    className="px-3 py-1.5 rounded-lg text-xs font-medium text-muted-foreground hover:text-foreground hover:bg-muted transition-colors"
+                    className="px-3 py-1.5 rounded-none text-xs font-medium text-muted-foreground hover:text-foreground hover:bg-muted transition-colors"
                   >
                     {link.label}
                   </Link>
                 ))}
               </nav>
               <div className="flex items-center gap-0.5 ml-auto">
-                <button className="p-2 rounded-lg text-muted-foreground hover:text-foreground hover:bg-muted transition-colors">
+                <button className="btn-sharp p-2 rounded-none text-muted-foreground hover:text-foreground hover:bg-muted transition-colors">
                   <Search className="size-4" />
                 </button>
-                <button className="p-2 rounded-lg text-muted-foreground hover:text-foreground hover:bg-muted transition-colors relative">
+                <button className="btn-sharp p-2 rounded-none text-muted-foreground hover:text-foreground hover:bg-muted transition-colors relative">
                   <Bell className="size-4" />
                   <span className="absolute top-1.5 right-1.5 size-1.5 rounded-full bg-primary" />
                 </button>
                 <ThemeToggle />
                 {session?.user?.image ? (
-                  <Image src={session.user.image} alt="" width={28} height={28} className="size-7 rounded-full ring-1 ring-border ml-1" />
+                  <Image src={session.user.image} alt="" width={28} height={28} sizes="28px" className="size-7 rounded-full ring-1 ring-border ml-1" />
                 ) : (
                   <div className="size-7 rounded-full bg-primary flex items-center justify-center text-primary-foreground text-[10px] font-bold ml-1">
                     {session?.user?.name?.charAt(0) || "A"}

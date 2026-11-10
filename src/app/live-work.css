@@ -30,12 +30,19 @@
 }
 
 .lw-heading {
-  font-weight: 700;
-  font-size: clamp(34px, 4.6vw, 58px);
-  line-height: 1.02;
-  letter-spacing: -0.035em;
+  font-weight: 500;
+  font-size: 40px;
+  line-height: 46px;
+  letter-spacing: normal;
   text-align: left;
   margin: 0 0 56px;
+  color: var(--foreground);
+}
+@media (min-width: 1024px) {
+  .lw-heading {
+    font-size: 48px;
+    line-height: 54px;
+  }
 }
 
 /* --------------------------------------------------------------- blocks -- */
@@ -45,9 +52,9 @@
   flex-direction: column;
 }
 
+/* Devices left (7fr), the context column right (5fr) — desktop */
 .lw-block {
   display: grid;
-  /* Devices left (7fr), the context column right (5fr) — every project. */
   grid-template-columns: minmax(0, 7fr) minmax(0, 5fr);
   gap: 56px;
   align-items: center;
@@ -72,6 +79,39 @@
 
 .lw-block-mirrored .lw-block-text {
   order: 0;
+}
+
+/* Mobile: stack devices on top, text below (≤899px).
+   Must come after the desktop rules so it wins the cascade. */
+@media (max-width: 899px) {
+  .lw-block {
+    grid-template-columns: minmax(0, 1fr);
+    gap: 24px;
+    padding: 32px 0;
+    text-align: left;
+  }
+  .lw-block-text {
+    order: 2;
+  }
+  .lw-block-mirrored {
+    grid-template-columns: minmax(0, 1fr);
+  }
+  .lw-block-mirrored .lw-block-text {
+    order: 2;
+  }
+  .lw-ctas {
+    flex-direction: column;
+    align-items: stretch;
+    gap: 10px;
+  }
+  .lw-cta {
+    justify-content: center;
+    min-height: 44px;
+    padding: 8px 16px;
+  }
+  .lw-stat-value {
+    font-size: 18px;
+  }
 }
 
 /* Scroll reveal — plays once, then unobserves. */
@@ -123,7 +163,7 @@
 }
 
 .lw-desc {
-  font-size: clamp(22px, 2.3vw, 31px);
+  font-size: clamp(1.5rem, 2.3vw, 2rem);
   font-weight: 500;
   line-height: 1.38;
   letter-spacing: -0.025em;
@@ -156,7 +196,7 @@
 
 .lw-stat-label {
   font-family: var(--lw-mono);
-  font-size: 11px;
+  font-size: 12px;
   letter-spacing: 0.08em;
   text-transform: uppercase;
   color: var(--lw-muted);
@@ -165,7 +205,7 @@
 
 .lw-stat-value {
   font-family: var(--font-heading, var(--font-sans));
-  font-size: 22px;
+  font-size: 24px;
   font-weight: 700;
   letter-spacing: -0.02em;
   color: var(--lw-ink);
@@ -185,7 +225,7 @@
 
 .lw-tag {
   font-family: var(--lw-mono);
-  font-size: 11px;
+  font-size: 12px;
   letter-spacing: 0.06em;
   text-transform: uppercase;
   color: var(--lw-muted);
@@ -209,11 +249,11 @@
   gap: 10px;
   min-height: 44px;
   padding: 8px 8px 8px 20px;
-  border-radius: 999px;
+  border-radius: 0;
   font-size: 14px;
   font-weight: 600;
   text-decoration: none;
-  transition: transform 0.25s ease, background-color 0.25s ease, border-color 0.25s ease;
+  transition: transform 160ms ease-out, box-shadow 160ms ease-out, background-color 160ms ease-out, border-color 160ms ease-out;
 }
 
 .lw-cta:focus-visible {
@@ -233,7 +273,7 @@
   justify-content: center;
   width: 30px;
   height: 30px;
-  border-radius: 50%;
+  border-radius: 0;
   background: var(--lw-accent);
   color: var(--lw-accent-ink);
   font-size: 14px;
@@ -245,10 +285,6 @@
   color: var(--lw-ink);
   border: 1px solid var(--lw-line);
   padding: 8px 20px;
-}
-
-.lw-cta:hover {
-  transform: translateY(-2px);
 }
 
 .lw-cta-secondary:hover {
@@ -268,7 +304,7 @@
   align-items: center;
   gap: 10px;
   min-height: 44px;
-  font-size: 15px;
+  font-size: 14px;
   font-weight: 600;
   color: var(--lw-ink);
   text-decoration: none;
@@ -282,7 +318,7 @@
 .lw-more-link:focus-visible {
   outline: 2px solid var(--lw-ring);
   outline-offset: 3px;
-  border-radius: 4px;
+  border-radius: 0;
 }
 
 /* ---------------------------------------------------------------- stage -- */
@@ -517,7 +553,7 @@
   gap: 2cqw;
   margin: 0 6cqw;
   padding: 3cqw 6cqw;
-  border-radius: 999px;
+  border-radius: 0;
   font-size: 4cqw;
   font-weight: 600;
   line-height: 1.2;
@@ -646,7 +682,7 @@
 
 .lw-chip-sub {
   font-family: var(--lw-mono);
-  font-size: 10px;
+  font-size: 12px;
   color: var(--lw-muted);
   white-space: nowrap;
 }
@@ -801,9 +837,5 @@
   .lw-stage-mirrored:hover .lw-mac,
   .lw-stage-mirrored .lw-mac {
     transform: perspective(1800px) rotateY(-5deg) rotateX(1.5deg);
-  }
-
-  .lw-cta:hover {
-    transform: none;
   }
 }

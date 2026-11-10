@@ -5,7 +5,7 @@ import { authOptions } from "@/lib/auth";
 import { checkRateLimit, getClientIp } from "@/lib/rate-limit";
 import { chatConfig } from "@/lib/chat/config";
 import { evaluateInput, isAbusive } from "@/lib/chat/guardrails";
-import { checkOutput, RESTRICTED_RESPONSE } from "@/lib/chat/output-guard";
+import { checkOutput } from "@/lib/chat/output-guard";
 import { classifyLocally, routeByScores, namespacesFor, type QueryRoute } from "@/lib/chat/route-classify";
 import { retrieve, type RetrievedChunk } from "@/lib/chat/retrieve";
 import { SYSTEM_PROMPT, buildUserPrompt, STRICT_REGEN_INSTRUCTION } from "@/lib/chat/systemPrompt";
@@ -520,4 +520,4 @@ async function safeProfile(
   }
 }
 
-export { RESTRICTED_RESPONSE };
+

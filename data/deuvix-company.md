@@ -12,15 +12,15 @@
 
 - Company / product name: **Deuvix AI Factory** (styled with a trade mark in the
   header lockup).
-- Website: https://deuvix-aicompany.vercel.app
+- Website: https://deuvix-aifactory-3yqx.vercel.app
 - What it does: an AI-native software company. The public site describes work
   around AI agents, a "Digital FTE" concept, AI-native development,
   spec-driven development and "Forward Deployed Engineer" (FDE) practices.
 
 ## Contact routes (safe to quote)
 
-- Contact page: https://deuvix-aicompany.vercel.app/contact
-- Book a call: https://deuvix-aicompany.vercel.app/book-a-call
+- Contact page: https://deuvix-aifactory-3yqx.vercel.app/contact
+- Book a call: https://deuvix-aifactory-3yqx.vercel.app/book-a-call
 - Public contact email shown on the site: `team.deuvix@gmail.com`
 - TODO: no phone number is published anywhere on the site.
 - TODO: no office address, timezone, or business hours are published anywhere

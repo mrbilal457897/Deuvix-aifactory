@@ -1,6 +1,26 @@
 import Image from "next/image";
 import type { Thumbnail } from "@/lib/live-work/types";
+import { SITE_URL } from "@/lib/seo";
 import "@/app/live-work.css";
+
+/** Hostname of the configured site origin — the default URL pill label. */
+const DEFAULT_HOST = new URL(SITE_URL).hostname;
+
+/** A bare host is never useful as a pill; localhost-family values are too. */
+const LOCAL_HOST = /^(localhost|127\.\d+\.\d+\.\d+|0\.0\.0\.0|\[::1\])$/i;
+
+/** Reduce any stored URL-ish value to a bare hostname for the decorative window pill. */
+function pillHost(value?: string | null): string {
+  const raw = value?.trim();
+  if (!raw) return DEFAULT_HOST;
+  try {
+    const host = new URL(raw).hostname.trim();
+    return host && !LOCAL_HOST.test(host) ? host : DEFAULT_HOST;
+  } catch {
+    const bare = raw.replace(/^[a-z][a-z0-9+.-]*:\/\//i, "").split(/[/?#]/)[0].trim();
+    return bare && !LOCAL_HOST.test(bare) ? bare : DEFAULT_HOST;
+  }
+}
 
 /**
  * The MacBook + phone + floating glass chip stage.
@@ -111,7 +131,7 @@ export function DeviceStage({
               <span className="lw-winbar-dot" style={{ background: "#ff5f57" }} />
               <span className="lw-winbar-dot" style={{ background: "#febc2e" }} />
               <span className="lw-winbar-dot" style={{ background: "#28c840" }} />
-              <span className="lw-winbar-url">{browserUrlLabel || "deuvix-aicompany.vercel.app"}</span>
+              <span className="lw-winbar-url">{pillHost(browserUrlLabel)}</span>
             </div>
             <div className="lw-shot lw-shot-desktop">
               <Shot image={desktop} sizes={DESKTOP_SIZES} priority={priority} />

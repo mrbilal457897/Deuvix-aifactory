@@ -61,7 +61,7 @@ const SOURCE_A_PATHS = [
 ];
 
 const AGENT_FACTORY_ORIGIN = "https://agentfactory.panaversity.org";
-const AGENT_FACTORY_UA = "DeuvixChatbotBot/1.0 (+https://deuvix-aicompany.vercel.app)";
+const AGENT_FACTORY_UA = "DeuvixChatbotBot/1.0 (+https://deuvix-aifactory-3yqx.vercel.app)";
 
 /* -------------------------------------------------------------------------- */
 /* CLI                                                                        */

@@ -94,7 +94,7 @@ export function LeadCard({ className }: { className?: string }) {
             maxLength={80}
             className={fieldClass(errors.name)}
           />
-          {errors.name && <p className="mt-1 text-[11px] text-destructive">{errors.name}</p>}
+          {errors.name && <p className="mt-1 text-xs text-destructive">{errors.name}</p>}
         </div>
 
         <div>
@@ -108,7 +108,7 @@ export function LeadCard({ className }: { className?: string }) {
             maxLength={120}
             className={fieldClass(errors.contact)}
           />
-          {errors.contact && <p className="mt-1 text-[11px] text-destructive">{errors.contact}</p>}
+          {errors.contact && <p className="mt-1 text-xs text-destructive">{errors.contact}</p>}
         </div>
 
         <div>
@@ -122,7 +122,7 @@ export function LeadCard({ className }: { className?: string }) {
             maxLength={500}
             className={cn(fieldClass(errors.summary), "resize-none")}
           />
-          {errors.summary && <p className="mt-1 text-[11px] text-destructive">{errors.summary}</p>}
+          {errors.summary && <p className="mt-1 text-xs text-destructive">{errors.summary}</p>}
         </div>
 
         <label className="flex cursor-pointer items-start gap-2 text-xs leading-snug">
@@ -134,14 +134,14 @@ export function LeadCard({ className }: { className?: string }) {
           />
           <span className={cn(errors.consent && "text-destructive")}>{uiStrings.leadConsent}</span>
         </label>
-        {errors.consent && <p className="text-[11px] text-destructive">{errors.consent}</p>}
+        {errors.consent && <p className="text-xs text-destructive">{errors.consent}</p>}
 
-        {errors.form && <p className="text-[11px] text-destructive">{errors.form}</p>}
+        {errors.form && <p className="text-xs text-destructive">{errors.form}</p>}
 
         <button
           type="submit"
           disabled={state === "sending"}
-          className="inline-flex h-9 w-full items-center justify-center gap-2 rounded-lg bg-primary px-3 text-sm font-medium text-primary-foreground transition-colors hover:bg-primary/85 disabled:opacity-60"
+          className="btn-sharp inline-flex h-9 w-full items-center justify-center gap-2 rounded-none bg-primary px-3 text-sm font-medium text-primary-foreground transition-colors hover:bg-primary/85 disabled:opacity-60"
         >
           {state === "sending" ? (
             <>

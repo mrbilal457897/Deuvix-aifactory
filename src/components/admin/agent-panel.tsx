@@ -150,7 +150,7 @@ function MessageBubble({
             type="button"
             onClick={() => (speaking ? onStop?.() : onSpeak(message.content))}
             aria-label={speaking ? "Stop reading" : "Read reply aloud"}
-            className="flex items-center gap-1 rounded-full px-1.5 text-[11px] text-muted-foreground transition-colors hover:text-foreground"
+            className="btn-sharp flex items-center gap-1 rounded-none px-1.5 text-[11px] text-muted-foreground transition-colors hover:text-foreground"
           >
             {speaking ? <VolumeX className="size-3.5" /> : <Volume2 className="size-3.5" />}
             {speaking ? "Stop" : "Listen"}
@@ -321,7 +321,7 @@ export function AdminAgentPanel() {
         whileHover={reduceMotion ? undefined : { scale: 1.04 }}
         whileTap={reduceMotion ? undefined : { scale: 0.95 }}
         transition={panelTransition}
-        className="group fixed bottom-6 right-6 z-40 flex items-center gap-2 rounded-full bg-gradient-to-br from-primary to-nexus-dark px-4 py-3 text-sm font-medium text-primary-foreground shadow-lg shadow-primary/30 ring-1 ring-primary/40"
+        className="group fixed bottom-6 right-6 z-40 flex items-center gap-2 rounded-[4px] bg-gradient-to-br from-primary to-nexus-dark px-4 py-3 text-sm font-medium text-primary-foreground shadow-lg shadow-primary/30 ring-1 ring-primary/40"
       >
         <span className="relative flex size-5 items-center justify-center">
           <Sparkles className="size-5" />
@@ -370,7 +370,7 @@ export function AdminAgentPanel() {
                       />
                     </div>
                     <div className="min-w-0 flex-1">
-                      <h2 className="font-heading text-base font-semibold leading-tight text-foreground">
+                      <h2 className="font-heading h2-sm text-foreground">
                         Deuvix AI Agent
                       </h2>
                       <p className="flex items-center gap-1.5 text-xs text-muted-foreground">
@@ -388,7 +388,7 @@ export function AdminAgentPanel() {
                       onClick={() => void checkHealth()}
                       disabled={checkingHealth}
                       aria-label="Recheck connection"
-                      className="flex size-8 items-center justify-center rounded-lg text-muted-foreground transition-colors hover:bg-muted hover:text-foreground disabled:opacity-50"
+                      className="btn-sharp flex size-8 items-center justify-center rounded-none text-muted-foreground transition-colors hover:bg-muted hover:text-foreground disabled:opacity-50"
                     >
                       <RefreshCw className={cn("size-4", checkingHealth && "animate-spin")} />
                     </button>
@@ -396,7 +396,7 @@ export function AdminAgentPanel() {
                       type="button"
                       onClick={() => setOpen(false)}
                       aria-label="Close agent"
-                      className="flex size-8 items-center justify-center rounded-lg text-muted-foreground transition-colors hover:bg-muted hover:text-foreground"
+                      className="btn-sharp flex size-8 items-center justify-center rounded-none text-muted-foreground transition-colors hover:bg-muted hover:text-foreground"
                     >
                       <X className="size-4" />
                     </button>
@@ -416,7 +416,7 @@ export function AdminAgentPanel() {
                           onChange={(e) => selectProvider(e.target.value as AgentProviderId)}
                           aria-label="LLM provider"
                           disabled={sending}
-                          className="h-8 cursor-pointer appearance-none rounded-full border border-border bg-background/70 pl-6 pr-7 text-xs font-medium text-foreground outline-none transition-colors hover:bg-muted focus-visible:border-primary/50 disabled:cursor-not-allowed disabled:opacity-50"
+                          className="h-8 cursor-pointer appearance-none rounded-none border border-border bg-background/70 pl-6 pr-7 text-xs font-medium text-foreground outline-none transition-colors hover:bg-muted focus-visible:border-primary/50 disabled:cursor-not-allowed disabled:opacity-50"
                         >
                           {providers.map((p) => (
                             <option key={p.id} value={p.id}>
@@ -462,7 +462,7 @@ export function AdminAgentPanel() {
                         <Sparkles className="size-7 text-primary" />
                       </div>
                       <div className="max-w-sm space-y-1.5">
-                        <h3 className="font-heading text-lg font-semibold text-foreground">
+                        <h3 className="font-heading h3-sm text-foreground">
                           How can I help?
                         </h3>
                         <p className="text-sm text-muted-foreground">
@@ -476,7 +476,7 @@ export function AdminAgentPanel() {
                             key={ex}
                             type="button"
                             onClick={() => void send(ex)}
-                            className="group flex items-start gap-2 rounded-xl border border-border bg-card px-3 py-2.5 text-left text-xs text-foreground transition-all hover:border-primary/40 hover:bg-primary/[0.04] hover:shadow-sm"
+                            className="btn-sharp group flex items-start gap-2 rounded-none border border-border bg-card px-3 py-2.5 text-left text-xs text-foreground transition-all hover:border-primary/40 hover:bg-primary/[0.04] hover:shadow-sm"
                           >
                             <ArrowUpRight className="mt-0.5 size-3.5 shrink-0 text-muted-foreground transition-colors group-hover:text-primary" />
                             <span>{ex}</span>
@@ -600,7 +600,7 @@ export function AdminAgentPanel() {
                           variant="outline"
                           onClick={stop}
                           aria-label="Stop"
-                          className="size-8 rounded-xl"
+                          className="size-8"
                         >
                           <Square className="size-3.5" />
                         </Button>
@@ -610,7 +610,7 @@ export function AdminAgentPanel() {
                           onClick={submit}
                           disabled={!input.trim()}
                           aria-label="Send"
-                          className="size-8 rounded-xl shadow-sm shadow-primary/25"
+                          className="size-8 shadow-sm shadow-primary/25"
                         >
                           <Send className="size-4" />
                         </Button>
@@ -624,7 +624,7 @@ export function AdminAgentPanel() {
                       <button
                         type="button"
                         onClick={reset}
-                        className="flex items-center gap-1 rounded-md px-1.5 py-0.5 transition-colors hover:bg-muted hover:text-foreground"
+                        className="btn-sharp flex items-center gap-1 rounded-none px-1.5 py-0.5 transition-colors hover:bg-muted hover:text-foreground"
                       >
                         <Eraser className="size-3" />
                         Clear

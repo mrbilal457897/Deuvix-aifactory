@@ -14,7 +14,7 @@ interface SiteConfig {
 }
 
 const DEFAULTS: SiteConfig = {
-  logo: "/images/logo-deuvix.png",
+  logo: "/images/logo-light.png",
   "hero-bg": "/images/hero-bg.jpg",
   "cta-bg": "/images/cta-bg.jpg",
   "about-main": "/images/about1.jpg",
@@ -106,15 +106,15 @@ export default function ImagesSettingsPage() {
     <div>
       <div className="flex flex-wrap items-center justify-between gap-3 mb-6">
         <div>
-          <h1 className="font-heading text-2xl font-bold text-foreground">Image Settings</h1>
+          <h1 className="font-heading h1 text-foreground">Image Settings</h1>
           <p className="text-sm text-muted-foreground mt-1">Assign images to different parts of your website.</p>
         </div>
         <div className="flex gap-2">
-          <button onClick={() => setConfig({ ...DEFAULTS })} className="inline-flex items-center gap-2 px-4 py-2.5 rounded-xl border border-border text-sm text-muted-foreground hover:text-foreground hover:bg-muted transition-colors">
+          <button onClick={() => setConfig({ ...DEFAULTS })} className="btn-sharp inline-flex items-center gap-2 px-4 py-2.5 rounded-none border border-border text-sm text-muted-foreground hover:text-foreground hover:bg-muted transition-colors">
             <RotateCcw className="size-4" />
             Reset
           </button>
-          <button onClick={handleSave} disabled={saving} className="inline-flex items-center gap-2 px-5 py-2.5 rounded-xl bg-gradient-to-r from-primary to-primary/80 text-primary-foreground text-sm font-medium hover:from-primary/90 hover:to-primary/70 transition-all shadow-lg shadow-primary/20 disabled:opacity-50">
+          <button onClick={handleSave} disabled={saving} className="btn-sharp inline-flex items-center gap-2 px-5 py-2.5 rounded-none bg-gradient-to-r from-primary to-primary/80 text-primary-foreground text-sm font-medium hover:from-primary/90 hover:to-primary/70 transition-all shadow-lg shadow-primary/20 disabled:opacity-50">
             {saving ? <div className="size-4 border-2 border-primary-foreground border-t-transparent rounded-full animate-spin" /> : saved ? <Check className="size-4" /> : <Save className="size-4" />}
             {saving ? "Saving..." : saved ? "Saved!" : "Save Changes"}
           </button>
@@ -145,7 +145,7 @@ export default function ImagesSettingsPage() {
                 </div>
                 <button
                   onClick={() => { setActiveSlot(slot); setPickerOpen(true); }}
-                  className="px-3 py-1.5 rounded-lg border border-border text-xs font-medium text-muted-foreground hover:text-foreground hover:bg-muted transition-colors shrink-0 ml-3"
+                  className="btn-sharp px-3 py-1.5 rounded-none border border-border text-xs font-medium text-muted-foreground hover:text-foreground hover:bg-muted transition-colors shrink-0 ml-3"
                 >
                   Change
                 </button>

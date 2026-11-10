@@ -56,25 +56,24 @@ export function FoundersSection() {
     <section
       ref={sectionRef}
       aria-labelledby="founders-heading"
-      className="relative py-[100px] px-[5vw] bg-background dark:bg-transparent"
+      className="relative py-16 md:py-24 px-4 sm:px-6 lg:px-8 bg-background"
     >
-      <div className="relative mx-auto max-w-[1440px] w-full">
+      <div className="relative mx-auto max-w-7xl w-full">
         <div className="flex flex-col xl:flex-row gap-10 xl:gap-16 items-start">
           {/* Left column: label + heading + description */}
           <div className="flex-1 xl:flex-none shrink-0 max-w-md">
             <span
-              className="inline-block text-[13px] font-semibold tracking-[0.24em] uppercase text-primary mb-0 block leading-none"
+              className="inline-block text-xs font-semibold tracking-[0.24em] uppercase text-secondary mb-4 leading-none"
             >
               LEADERSHIP
             </span>
             <h2
               id="founders-heading"
-              className="font-heading text-[clamp(40px,4.6vw,64px)] font-[200] leading-[1.05] text-foreground dark:text-white mb-0 tracking-tight"
-              style={{ fontWeight: "200" }}
+              className="font-heading h2-lg text-foreground mb-0"
             >
               Meet the Founders
             </h2>
-            <p className="text-[17px] leading-[1.75] text-muted-foreground dark:text-white/70 max-w-[320px] font-thin mt-0">
+            <p className="text-base leading-relaxed text-muted-foreground max-w-[44ch] mt-4 font-normal">
               Big companies begin with bold people who refuse to wait for the future. These two are building it today, turning ambitious ideas into AI workers that run around the clock, one Digital FTE at a time.
             </p>
           </div>
@@ -109,7 +108,7 @@ export function FoundersSection() {
                       <span className="font-heading font-bold text-white block text-2xl sm:text-3xl leading-none tracking-tight">
                         {f.name}
                       </span>
-                      <span className="text-[12px] sm:text-[13px] font-semibold tracking-[0.16em] uppercase text-primary block mt-2 leading-none">
+                      <span className="text-xs font-semibold tracking-[0.16em] uppercase text-secondary block mt-2 leading-none">
                         {f.role}
                       </span>
                     </span>

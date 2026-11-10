@@ -80,7 +80,7 @@ export function Composer({ sending, ended, onSend, onStop, inputRef }: Props) {
               onClick={onStop}
               aria-label={uiStrings.stop}
               title={uiStrings.stop}
-              className="flex size-9 shrink-0 items-center justify-center rounded-xl bg-muted text-foreground transition-colors hover:bg-muted/70"
+              className="btn-sharp flex size-9 shrink-0 items-center justify-center rounded-none bg-muted text-foreground transition-colors hover:bg-muted/70"
             >
               <Square className="size-4 fill-current" />
             </button>
@@ -90,7 +90,7 @@ export function Composer({ sending, ended, onSend, onStop, inputRef }: Props) {
               disabled={!ready}
               aria-label={uiStrings.send}
               title={uiStrings.send}
-              className="flex size-9 shrink-0 items-center justify-center rounded-xl bg-primary text-primary-foreground transition-all hover:bg-primary/85 disabled:pointer-events-none disabled:opacity-35"
+              className="btn-sharp flex size-9 shrink-0 items-center justify-center rounded-none bg-primary text-primary-foreground transition-all hover:bg-primary/85 disabled:pointer-events-none disabled:opacity-35"
             >
               <Send className="size-4" />
             </button>
@@ -115,7 +115,7 @@ export function Composer({ sending, ended, onSend, onStop, inputRef }: Props) {
         )}
       </div>
 
-      <p className="mt-1 px-1 text-[10px] leading-tight text-muted-foreground/50">
+      <p className="mt-1 px-1 text-xs leading-tight text-muted-foreground/50">
         Powered by Google Gemini · AI can make mistakes
       </p>
     </div>

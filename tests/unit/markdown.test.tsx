@@ -51,11 +51,11 @@ describe("Markdown rendering", () => {
 
     it("keeps a safe external link and marks it to open safely", () => {
       const { container } = render(
-        <Markdown content={"[about](https://deuvix-aicompany.vercel.app/about)"} />,
+        <Markdown content={"[about](https://deuvix-aifactory-3yqx.vercel.app/about)"} />,
       );
       const anchor = container.querySelector("a");
       expect(anchor).not.toBeNull();
-      expect(anchor?.getAttribute("href")).toBe("https://deuvix-aicompany.vercel.app/about");
+      expect(anchor?.getAttribute("href")).toBe("https://deuvix-aifactory-3yqx.vercel.app/about");
       expect(anchor?.getAttribute("rel")).toContain("noopener");
       expect(anchor?.getAttribute("target")).toBe("_blank");
     });

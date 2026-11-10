@@ -1,0 +1,761 @@
+/* ============================================================
+   Hero — "AI workforce, unit by unit" (dark/light via scoped vars)
+   Light: --bg #F1F5F9 · --fg #0B0C0A · --mut #475467 · --line #D5DCE4 · --card #FFF
+   Dark : --bg #0B0E12 · --fg #F2F4F7 · --mut #98A2B3 · --line #2A313B · --card #12161C
+   --blue #0A84FF · --sec #4CAF7D · roadmap panel stays dark in both themes.
+   ============================================================ */
+
+.hero {
+  --bg: #F1F5F9;
+  --fg: #0B0C0A;
+  --mut: #475467;
+  --line: #D5DCE4;
+  --card: #FFFFFF;
+  --blue: #0A84FF;
+  --sec: #4CAF7D;
+
+  position: relative;
+  background: var(--bg);
+  color: var(--fg);
+  overflow: clip;
+  font-family: var(--font-inter), ui-sans-serif, system-ui, -apple-system, "Segoe UI", sans-serif;
+}
+
+:global(.dark) .hero {
+  --bg: var(--background);
+  --fg: var(--foreground);
+  --mut: var(--muted-foreground);
+  --line: var(--border);
+  --card: var(--card);
+}
+
+.hero :global(h1) {
+  font-family: var(--font-poppins), ui-sans-serif, system-ui, sans-serif;
+}
+
+.heroGlow {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  background:
+    radial-gradient(48rem 30rem at 82% 10%, rgba(10, 132, 255, 0.08), transparent 62%),
+    radial-gradient(34rem 26rem at -8% 96%, rgba(76, 175, 125, 0.07), transparent 60%);
+}
+
+.heroInner {
+  position: relative;
+  width: min(1200px, 100%);
+  margin-inline: auto;
+  padding: clamp(4.5rem, 10vh, 6.5rem) clamp(1.25rem, 5vw, 3.5rem) clamp(3rem, 7vh, 4.5rem);
+}
+
+/* ---------- mono label with hairline ---------- */
+.monoRow {
+  display: flex;
+  align-items: center;
+  gap: 0.9rem;
+  margin-bottom: clamp(1.5rem, 3vh, 2.25rem);
+}
+.monoLabel {
+  font-family: var(--font-inter), ui-sans-serif, system-ui, sans-serif;
+  font-size: 0.75rem;
+  font-weight: 500;
+  letter-spacing: 0.26em;
+  text-transform: uppercase;
+  color: var(--mut);
+  white-space: nowrap;
+}
+.monoRule {
+  flex: 1;
+  height: 1px;
+  min-width: 2rem;
+  background: var(--line);
+}
+
+/* ---------- pill badge ---------- */
+.pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.625rem;
+  border: 1px solid var(--line);
+  background: var(--card);
+  border-radius: 0;
+  padding: 0.5625rem 1rem;
+  margin-bottom: 1.5rem;
+  font-family: var(--font-poppins), ui-sans-serif, system-ui, sans-serif;
+  font-size: 0.75rem;
+  font-weight: 600;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--fg);
+  width: max-content;
+  max-width: 100%;
+}
+.pillDot {
+  width: 8px;
+  height: 8px;
+  flex-shrink: 0;
+  background: var(--sec);
+  border-radius: 0;
+}
+
+/* ---------- h1 ---------- */
+.h1 {
+  margin: 0 0 clamp(1.75rem, 4vh, 2.75rem);
+  font-family: var(--font-poppins), ui-sans-serif, system-ui, sans-serif;
+  font-weight: 400;
+  font-size: clamp(2.4rem, 6.2vw, 5.2rem);
+  line-height: 1.05;
+  letter-spacing: -0.035em;
+  color: var(--fg);
+  max-width: none;
+}
+.h1Line2 {
+  display: block;
+  color: var(--blue);
+}
+
+/* ---------- 2-column row ---------- */
+.row {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+  gap: clamp(2rem, 5vw, 4rem);
+  align-items: center;
+}
+@media (max-width: 960px) {
+  .row {
+    grid-template-columns: minmax(0, 1fr);
+    gap: 2.5rem;
+  }
+}
+
+/* ---------- left column ---------- */
+.leftCol {
+  display: flex;
+  flex-direction: column;
+  gap: clamp(1.5rem, 3vh, 2.25rem);
+  padding-bottom: 0.5rem;
+}
+.sub {
+  margin: 0;
+  font-family: var(--font-poppins), ui-sans-serif, system-ui, sans-serif;
+  font-weight: 400;
+  font-size: clamp(1.1rem, 1.8vw, 1.5rem);
+  line-height: 1.5;
+  color: var(--mut);
+  max-width: 30em;
+}
+
+/* ---------- CTA buttons ---------- */
+.ctaRow {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 1rem;
+}
+.btn {
+  position: relative;
+  display: inline-flex;
+  align-items: stretch;
+  min-height: 52px;
+  text-decoration: none;
+  border-radius: 0;
+  overflow: hidden;
+  font-family: var(--font-poppins), ui-sans-serif, system-ui, sans-serif;
+  font-weight: 600;
+  font-size: 0.9375rem;
+  letter-spacing: 0.01em;
+  transition: transform 0.18s ease, box-shadow 0.18s ease;
+}
+.btn:hover {
+  transform: translate(-2px, -2px);
+  box-shadow: 4px 4px 0 var(--sec);
+}
+.btn:focus-visible {
+  outline: 2px solid var(--blue);
+  outline-offset: 3px;
+}
+.btnBody {
+  display: inline-flex;
+  align-items: center;
+  padding: 0 1.4rem;
+}
+.btnArrow {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 52px;
+  flex-shrink: 0;
+  font-size: 1.125rem;
+}
+.btnPrimary {
+  background: var(--fg);
+  color: var(--bg);
+}
+.btnPrimary .btnArrow {
+  background: var(--blue);
+  color: #FFFFFF;
+}
+.btnGhost {
+  background: var(--card);
+  color: var(--fg);
+  border: 1px solid var(--line);
+}
+.btnGhost .btnBody {
+  font-weight: 500;
+}
+.btnGhost .btnArrow {
+  background: var(--line);
+  color: var(--mut);
+}
+
+/* ============================================================
+   RIGHT COLUMN — tab switcher + stage
+   ============================================================ */
+.rightCol {
+  width: 100%;
+  max-width: 373px;
+  justify-self: end;
+  margin-top: -2rem;
+}
+@media (max-width: 960px) {
+  .rightCol {
+    justify-self: stretch;
+    max-width: 100%;
+  }
+}
+
+.tabBar {
+  display: flex;
+  gap: 0.5rem;
+  margin-bottom: 0;
+}
+.tab {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.55rem;
+  height: 2.75rem;
+  padding: 0 1.1rem;
+  border: 1px solid var(--line);
+  border-bottom: none;
+  background: color-mix(in srgb, var(--card) 78%, transparent);
+  color: var(--mut);
+  border-radius: 0;
+  font-family: var(--font-poppins), ui-sans-serif, system-ui, sans-serif;
+  font-weight: 500;
+  font-size: 0.8125rem;
+  letter-spacing: 0.02em;
+  cursor: pointer;
+  transition: background-color 0.18s ease, color 0.18s ease;
+}
+.tab:hover {
+  color: var(--fg);
+}
+.tab:focus-visible {
+  outline: 2px solid var(--blue);
+  outline-offset: 2px;
+  z-index: 1;
+}
+.tabActive {
+  background: var(--fg);
+  color: var(--bg);
+  border-color: var(--fg);
+  box-shadow: inset 0 -3px 0 var(--sec);
+}
+.tabDot {
+  width: 7px;
+  height: 7px;
+  border-radius: 0;
+  background: var(--mut);
+}
+.tabActive .tabDot {
+  background: var(--sec);
+}
+
+/* ---------- stage ---------- */
+.stage {
+  width: 100%;
+  max-width: 373px;
+  aspect-ratio: 4 / 5;
+  background: var(--card);
+  border: 1px solid var(--line);
+  border-top: none;
+  border-radius: 0;
+  position: relative;
+}
+@media (max-width: 767px) {
+  .stage {
+    aspect-ratio: 4 / 5;
+  }
+}
+
+/* state only via hidden class so both panels exist for SR */
+.viewHidden {
+  display: none !important;
+}
+
+/* ============================================================
+   SARA — chat panel
+   ============================================================ */
+.chat {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  flex-direction: column;
+  background: var(--card);
+  font-family: var(--font-inter), ui-sans-serif, system-ui, sans-serif;
+  text-align: left;
+}
+.chatHead {
+  display: flex;
+  align-items: center;
+  gap: 0.65rem;
+  height: 56px;
+  flex-shrink: 0;
+  padding: 0 0.5rem 0 0.75rem;
+  background: #0B5A86;
+  color: #FFFFFF;
+}
+.avatar {
+  width: 30px;
+  height: 30px;
+  flex-shrink: 0;
+  border-radius: 0;
+  background: #0A84FF;
+  color: #FFFFFF;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-family: var(--font-poppins), ui-sans-serif, system-ui, sans-serif;
+  font-weight: 600;
+  font-size: 0.75rem;
+}
+.chatHeadText {
+  display: flex;
+  flex-direction: column;
+  line-height: 1.15;
+  min-width: 0;
+}
+.chatName {
+  font-family: var(--font-poppins), ui-sans-serif, system-ui, sans-serif;
+  font-weight: 600;
+  font-size: 0.8125rem;
+  letter-spacing: 0.01em;
+}
+.chatStatus {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.3rem;
+  font-size: 0.75rem;
+  font-weight: 400;
+  color: rgba(255, 255, 255, 0.78);
+}
+.onlineDot {
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: #4CAF7D;
+  flex-shrink: 0;
+}
+.tryFree {
+  margin-left: auto;
+  display: inline-flex;
+  align-items: center;
+  height: 44px;
+  padding: 0 0.9rem;
+  background: transparent;
+  border: 1px solid rgba(255, 255, 255, 0.45);
+  border-radius: 0;
+  color: #FFFFFF;
+  font-family: var(--font-poppins), ui-sans-serif, system-ui, sans-serif;
+  font-weight: 500;
+  font-size: 0.75rem;
+  letter-spacing: 0.02em;
+  text-decoration: none;
+  white-space: nowrap;
+  transition: background-color 0.15s ease, border-color 0.15s ease;
+}
+.tryFree:hover {
+  background: rgba(255, 255, 255, 0.12);
+  border-color: rgba(255, 255, 255, 0.75);
+}
+.tryFree:focus-visible {
+  outline: 2px solid #FFFFFF;
+  outline-offset: 2px;
+}
+
+.msgs {
+  flex: 1;
+  min-height: 0;
+  overflow-y: auto;
+  display: flex;
+  flex-direction: column;
+  gap: 0.4rem;
+  padding: 0.7rem 0.7rem 0.5rem;
+  scrollbar-width: thin;
+}
+.msg {
+  max-width: 78%;
+  padding: 0.5rem 0.7rem;
+  font-size: 0.8125rem;
+  line-height: 1.42;
+  border-radius: 0;
+  /* sharp clipped corner */
+  clip-path: polygon(0 0, calc(100% - 0.65rem) 0, 100% 0.65rem, 100% 100%, 0 100%);
+  overflow-wrap: break-word;
+}
+.msgBot {
+  align-self: flex-start;
+  background: color-mix(in srgb, var(--fg) 6%, transparent);
+  color: var(--fg);
+  border: 1px solid var(--line);
+  clip-path: polygon(0.65rem 0, 100% 0, 100% 100%, 0 100%, 0 0.65rem);
+}
+.msgUser {
+  align-self: flex-end;
+  background: var(--blue);
+  color: #FFFFFF;
+  clip-path: polygon(0 0, calc(100% - 0.65rem) 0, 100% 0.65rem, 100% 100%, 0 100%);
+}
+.timeStamp {
+  font-size: 0.75rem;
+  color: var(--mut);
+  margin-top: 0.15rem;
+  align-self: flex-start;
+}
+
+.chips {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.4rem;
+  padding: 0 0.7rem 0.45rem;
+}
+.chip {
+  height: 44px;
+  min-width: 44px;
+  padding: 0 0.8rem;
+  border-radius: 0;
+  border: 1px solid color-mix(in srgb, var(--mut) 35%, transparent);
+  background: transparent;
+  color: var(--mut);
+  font-family: var(--font-inter), ui-sans-serif, system-ui, sans-serif;
+  font-size: 0.8125rem;
+  font-weight: 500;
+  cursor: pointer;
+  transition: border-color 0.15s ease, color 0.15s ease;
+}
+.chip:hover {
+  border-color: var(--blue);
+  color: var(--blue);
+}
+.chip:focus-visible {
+  outline: 2px solid var(--blue);
+  outline-offset: 2px;
+}
+
+.inputBar {
+  display: flex;
+  gap: 0.5rem;
+  align-items: center;
+  height: 44px;
+  flex-shrink: 0;
+  padding: 0 0.5rem;
+  border-top: 1px solid var(--line);
+  background: var(--card);
+}
+.input {
+  flex: 1;
+  min-width: 0;
+  height: 40px;
+  border: 1px solid transparent;
+  background: transparent;
+  color: var(--fg);
+  font-family: var(--font-inter), ui-sans-serif, system-ui, sans-serif;
+  font-size: 1rem;
+  padding: 0 0.25rem;
+  outline: none;
+}
+.input::placeholder {
+  color: var(--mut);
+}
+.input:focus-visible {
+  border-color: var(--blue);
+}
+.sendBtn {
+  width: 44px;
+  height: 44px;
+  flex-shrink: 0;
+  border: none;
+  background: var(--blue);
+  color: #FFFFFF;
+  border-radius: 0;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.sendBtn:hover {
+  background: #0B6FE0;
+}
+.sendBtn:focus-visible {
+  outline: 2px solid var(--fg);
+  outline-offset: 2px;
+}
+
+/* ============================================================
+   FDE ROADMAP — always dark panel
+   ============================================================ */
+/* Stacked everywhere: wheel on top, filling width; phase text below */
+.roadmap {
+  position: absolute;
+  inset: 0;
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  grid-template-rows: auto minmax(0, 1fr);
+  background: #0C1016;
+  color: #F2F4F7;
+  border-radius: 0;
+  overflow: hidden;
+  font-family: var(--font-inter), ui-sans-serif, system-ui, sans-serif;
+}
+.wheelWrap {
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: auto;
+  aspect-ratio: 16 / 10;
+  padding: 0.5rem 0.75rem 0;
+}
+.wheel {
+  width: auto;
+  height: 100%;
+  max-width: 100%;
+}
+.phasePanel {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  gap: 0.55rem;
+  padding: 0.75rem 1rem 0.75rem 0.25rem;
+  min-width: 0;
+}
+.phaseCounter {
+  font-size: 0.75rem;
+  font-weight: 600;
+  letter-spacing: 0.22em;
+  color: #98A2B3;
+  font-variant-numeric: tabular-nums;
+}
+.phaseLabel {
+  font-size: 0.75rem;
+  font-weight: 600;
+  letter-spacing: 0.26em;
+  color: #2EC5FF;
+  text-transform: uppercase;
+}
+.phaseTitle {
+  margin: 0;
+  font-family: var(--font-poppins), ui-sans-serif, system-ui, sans-serif;
+  font-weight: 600;
+  font-size: clamp(1.125rem, 2vw, 1.5rem);
+  line-height: 1.15;
+  letter-spacing: -0.01em;
+  color: #FFFFFF;
+}
+.phaseProblem {
+  margin: 0;
+  font-size: 0.8125rem;
+  font-weight: 500;
+  color: #FFB3B3;
+}
+.phaseDesc {
+  margin: 0;
+  font-size: 0.8125rem;
+  line-height: 1.5;
+  color: #C9CED6;
+}
+.outputChip {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.45rem;
+  align-self: flex-start;
+  height: 28px;
+  padding: 0 0.6rem;
+  border: 1px solid rgba(74, 222, 128, 0.4);
+  background: rgba(74, 222, 128, 0.1);
+  color: #4CAF7D;
+  font-size: 0.75rem;
+  font-weight: 600;
+  letter-spacing: 0.02em;
+  border-radius: 0;
+  white-space: nowrap;
+}
+.outputChip::before {
+  content: "";
+  width: 6px;
+  height: 6px;
+  border-radius: 0;
+  background: #4CAF7D;
+}
+
+.segments {
+  display: flex;
+  gap: 0.4rem;
+  margin-top: 0.35rem;
+}
+.segment {
+  flex: 1;
+  height: 10px;
+  border: 0;
+  padding: 0;
+  background: rgba(242, 244, 247, 0.15);
+  border-radius: 0;
+  cursor: pointer;
+  transition: background-color 0.25s ease, box-shadow 0.25s ease;
+}
+.segmentDone {
+  background: #2EC5FF;
+}
+.segmentActive {
+  background: #2EC5FF;
+  box-shadow: 0 0 10px rgba(46, 197, 255, 0.55);
+}
+.segment:focus-visible {
+  outline: 2px solid #2EC5FF;
+  outline-offset: 2px;
+}
+.bookSmall {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+  align-self: flex-end;
+  height: 44px;
+  margin-top: 0.35rem;
+  padding: 0 0.9rem;
+  background: #0A84FF;
+  color: #FFFFFF;
+  border: 0;
+  border-radius: 0;
+  font-family: var(--font-poppins), ui-sans-serif, system-ui, sans-serif;
+  font-weight: 600;
+  font-size: 0.75rem;
+  letter-spacing: 0.02em;
+  text-decoration: none;
+  white-space: nowrap;
+  transition: background-color 0.18s ease, transform 0.18s ease;
+}
+.bookSmall:hover {
+  background: #0B6FE0;
+  transform: translateY(-1px);
+}
+.bookSmall:focus-visible {
+  outline: 2px solid #FFFFFF;
+  outline-offset: 2px;
+}
+
+.phaseSide {
+  display: contents;
+}
+
+/* SVG */
+.wheelRing {
+  animation: wheel-spin 22s linear infinite;
+  transform-origin: center;
+  transform-box: fill-box;
+}
+.wheelRing .dash {
+  stroke: #1E3A52;
+  stroke-width: 10;
+  fill: none;
+  stroke-linecap: round;
+  stroke-dasharray: 22 26;
+}
+.wheelArc {
+  fill: none;
+  stroke: url(#fdeArc);
+  stroke-width: 2;
+  stroke-linecap: round;
+}
+.wheelSpoke {
+  stroke: #203040;
+  stroke-width: 1.5;
+}
+.wheelCore {
+  fill: #12161C;
+  stroke: #1E3A52;
+  stroke-width: 1;
+}
+.wheelCoreText {
+  fill: #98A2B3;
+  font-family: var(--font-inter), ui-sans-serif, system-ui, sans-serif;
+  font-weight: 600;
+  font-size: 15px;
+  letter-spacing: 0.18em;
+}
+.wheelCoreSub {
+  fill: #4CAF7D;
+  font-family: var(--font-inter), ui-sans-serif, system-ui, sans-serif;
+  font-weight: 500;
+  font-size: 9px;
+  letter-spacing: 0.3em;
+}
+.nodeCircle {
+  cursor: pointer;
+  transition: r 0.2s ease;
+}
+.nodeCircleOuter {
+  fill: #12161C;
+  stroke: #203040;
+  stroke-width: 1.5;
+  cursor: pointer;
+  transition: stroke 0.25s ease;
+}
+.nodeCircleOuter:hover {
+  stroke: #2EC5FF;
+}
+.nodeActive:hover {
+  stroke: #2EC5FF;
+}
+.nodeText {
+  fill: #98A2B3;
+  font-family: var(--font-inter), ui-sans-serif, system-ui, sans-serif;
+  font-weight: 600;
+  font-size: 12px;
+  pointer-events: none;
+}
+.nodeActiveText {
+  fill: #2EC5FF;
+}
+.nodeDoneText {
+  fill: #D7E6F5;
+}
+.nodeDone {
+  stroke: #2EC5FF;
+}
+.nodeActive {
+  stroke: #2EC5FF;
+  filter: drop-shadow(0 0 6px rgba(46, 197, 255, 0.6));
+}
+
+@keyframes wheel-spin {
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .wheelRing {
+    animation: none;
+  }
+  .btn,
+  .chip,
+  .sendBtn,
+  .tryFree,
+  .bookSmall,
+  .segment {
+    transition: none;
+  }
+}

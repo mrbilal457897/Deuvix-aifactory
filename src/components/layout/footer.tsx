@@ -3,7 +3,7 @@
 import { useEffect, useRef } from "react";
 import Link from "next/link";
 import { ChevronRight } from "lucide-react";
-import { BrandLogo } from "@/components/brand-logo";
+import { LogoLockup } from "@/components/brand/LogoLockup";
 import { company, companyLocationLabel } from "@config/company";
 import { gsap } from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
@@ -25,25 +25,26 @@ const socialLinks = [
 const locationLine = companyLocationLabel();
 
 const footerLinks = {
-  Product: [
-    { label: "Features", href: "/products" },
-    { label: "Pricing", href: "/products#pricing" },
-    { label: "Integrations", href: "/products" },
-    { label: "Changelog", href: "/changelog" },
+  Services: [
+    { label: "Digital FTEs", href: "/products#digital-fte-deployment" },
+    { label: "AI Chatbots", href: "/products#ai-chatbots" },
+    { label: "Voice Agents", href: "/products#voice-agents" },
+    { label: "Custom Agents", href: "/products#custom-agents" },
+    { label: "Loop Engineering", href: "/products#loop-engineering" },
+    { label: "FDE Consulting", href: "/products#fde-consulting" },
   ],
   Company: [
     { label: "About", href: "/about" },
+    { label: "Work", href: "/projects" },
     { label: "Blog", href: "/blog" },
     { label: "Careers", href: "/careers" },
-    { label: "Book a Call", href: "/book-a-call" },
     { label: "Discuss", href: "/contact" },
+    { label: "Book a Call", href: "/book-a-call" },
   ],
   Resources: [
-    { label: "Documentation", href: "/docs" },
     { label: "Loop Engineering Guide", href: "/blog/loop-engineering" },
-    { label: "Case Studies", href: "/projects" },
-    { label: "Community", href: "/contact" },
-    { label: "Support", href: "/contact" },
+    { label: "Documentation", href: "/docs" },
+    { label: "Changelog", href: "/changelog" },
   ],
   Legal: [
     { label: "Privacy Policy", href: "/privacy" },
@@ -222,9 +223,9 @@ export function Footer() {
       <div className="mx-auto max-w-7xl px-6 sm:px-6 lg:px-8">
         <div className="grid grid-cols-2 md:grid-cols-6 gap-8 py-12 md:py-16">
           <div className="col-span-2">
-            <Link href="/" className="flex items-center gap-2.5 mb-4">
-              <BrandLogo size="sm" />
-            </Link>
+            <div className="mb-4 inline-flex">
+              <LogoLockup height={24} />
+            </div>
             <p className="text-sm text-muted-foreground max-w-xs mb-6 leading-relaxed">
               {company.tradingName}. We manufacture, deploy, and monetize
               Digital FTEs — the AI workers that run the next generation of enterprises.
@@ -239,7 +240,7 @@ export function Footer() {
                     aria-label={social.label}
                     target={social.href.startsWith("http") ? "_blank" : undefined}
                     rel={social.href.startsWith("http") ? "noopener noreferrer" : undefined}
-                    className="flex items-center justify-center size-11 md:size-9 rounded-lg bg-muted hover:bg-primary/10 text-muted-foreground transition-all duration-150"
+                    className="btn-sharp flex items-center justify-center size-11 rounded-none bg-muted hover:bg-primary/10 text-muted-foreground transition-all duration-150"
                     style={{ color: path.color }}
                   >
                     <svg
@@ -261,7 +262,7 @@ export function Footer() {
 
           {Object.entries(footerLinks).map(([category, links]) => (
             <div key={category}>
-              <h3 className="text-sm font-semibold text-foreground mb-4">
+              <h3 className="text-base leading-6 text-foreground mb-4">
                 {category}
               </h3>
               <ul className="space-y-2.5">

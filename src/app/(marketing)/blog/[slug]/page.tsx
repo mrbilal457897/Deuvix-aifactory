@@ -7,7 +7,7 @@ import type { Metadata } from "next";
 import { Badge } from "@/components/ui/badge";
 import { User, FolderOpen, ArrowRight, ArrowLeft } from "lucide-react";
 import { posts, getPostBySlug } from "../posts";
-import { SITE_NAME } from "@/lib/seo";
+import { SITE_NAME, fullTitle } from "@/lib/seo";
 import { company } from "@config/company";
 
 export async function generateStaticParams() {
@@ -23,24 +23,27 @@ export async function generateMetadata({
   const post = getPostBySlug(slug);
   if (!post) return {};
 
+  const canonical = `/blog/${post.slug}`;
+  const socialTitle = fullTitle(post.title);
+
   return {
     title: post.title,
     description: post.excerpt,
     alternates: {
-      canonical: `/blog/${post.slug}`,
+      canonical,
     },
     openGraph: {
       type: "article",
-      title: post.title,
+      title: socialTitle,
       description: post.excerpt,
-      url: `/blog/${post.slug}`,
+      url: canonical,
       siteName: SITE_NAME,
       images: [post.image],
       publishedTime: new Date(`${post.date}, 2026`).toISOString(),
     },
     twitter: {
       card: "summary_large_image",
-      title: post.title,
+      title: socialTitle,
       description: post.excerpt,
       images: [post.image],
     },
@@ -84,7 +87,7 @@ export default async function BlogPostPage({
             <Badge className="bg-primary/10 text-primary border-primary/20">{post.category}</Badge>
             <span className="text-sm text-muted-foreground">{post.date}</span>
           </div>
-          <h1 className="font-heading text-[68px] font-bold mb-6 leading-tight">
+          <h1 className="font-heading h1 mb-6">
             {post.title}
           </h1>
           <div className="flex items-center justify-center gap-2 text-sm text-muted-foreground">
@@ -124,13 +127,13 @@ export default async function BlogPostPage({
           <p className="text-base text-foreground/90 leading-relaxed">{post.excerpt}</p>
 
           <div className="mt-10 p-6 rounded-2xl bg-card border border-border">
-            <h2 className="font-heading text-[48px] font-bold mb-3">Ready to put this into practice?</h2>
+            <h2 className="font-heading h2-sm mb-3">Ready to put this into practice?</h2>
             <p className="text-sm text-muted-foreground mb-5">
               Book a free consultation to see how Deuvix AI Factory can apply these principles to your business.
             </p>
             <BookCallButton
               icon={null}
-              className="px-6 py-3 rounded-xl bg-primary text-primary-foreground text-sm font-semibold hover:bg-primary/90 transition-colors h-auto"
+              className="px-6 py-3 rounded-none bg-primary text-primary-foreground text-sm font-semibold hover:bg-primary/90 transition-colors h-auto"
             >
               Book a Consultation
               <ArrowRight className="size-4" />
@@ -151,7 +154,7 @@ export default async function BlogPostPage({
       {/* Related Posts */}
       <section className="pb-16 px-6">
         <div className="mx-auto max-w-6xl">
-          <h2 className="font-heading text-[48px] font-bold mb-8 text-center">More Articles</h2>
+          <h2 className="font-heading h2-lg mb-8 text-center">More Articles</h2>
           <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
             {related.map((p) => (
               <Link
@@ -172,7 +175,7 @@ export default async function BlogPostPage({
                   <p className="text-xs text-muted-foreground mb-1">
                     {p.category} · {p.date}
                   </p>
-                  <h3 className="font-heading font-bold text-sm leading-snug line-clamp-2 group-hover:text-primary transition-colors">
+                  <h3 className="font-heading h3-sm line-clamp-2 group-hover:text-primary transition-colors">
                     {p.title}
                   </h3>
                 </div>

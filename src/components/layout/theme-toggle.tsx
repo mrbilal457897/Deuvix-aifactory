@@ -23,7 +23,7 @@ export function ThemeToggle() {
       variant="ghost"
       size="icon"
       onClick={toggle}
-      className="relative size-10 md:size-9 rounded-lg"
+      className="relative size-10 md:size-9"
       aria-label="Toggle theme"
     >
       <Sun className="absolute size-[1.2rem] rotate-0 scale-100 transition-all duration-300 dark:-rotate-90 dark:scale-0" />

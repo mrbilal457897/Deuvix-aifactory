@@ -6,6 +6,7 @@ import { supabase } from "@/lib/supabase";
 const BUCKET = "deuvix";
 const FOLDER = "projects";
 const MAX_BYTES = 4 * 1024 * 1024; // 4 MB
+const MAX_WIDTH = 1920;
 const ALLOWED_TYPES: Record<string, string> = {
   "image/png": "png",
   "image/jpeg": "jpg",
@@ -54,10 +55,30 @@ export async function POST(request: Request) {
       );
     }
 
+    // Resize to at most MAX_WIDTH wide. `sharp` ships with Next.js but may be
+    // absent in some environments — degrade to the original file if it is.
+    let outBuffer: Buffer = buffer;
+    let outWidth = size.width;
+    let outHeight = size.height;
+    if (size.width > MAX_WIDTH) {
+      try {
+        const { default: sharp } = await import("sharp");
+        const resized = await sharp(buffer, { failOn: "none" })
+          .resize({ width: MAX_WIDTH, withoutEnlargement: true })
+          .toBuffer();
+        const resizedSize = readImageSize(resized);
+        outBuffer = resized;
+        outWidth = resizedSize?.width ?? Math.round((size.width / MAX_WIDTH) * MAX_WIDTH);
+        outHeight = resizedSize?.height ?? Math.round((size.height * MAX_WIDTH) / size.width);
+      } catch {
+        // sharp unavailable or failed — keep the original bytes.
+      }
+    }
+
     const alt = typeof formData.get("alt") === "string" ? String(formData.get("alt")).slice(0, 200) : "";
     const path = `${FOLDER}/${Date.now()}-${Math.random().toString(36).slice(2, 10)}.${extension}`;
 
-    const { error } = await supabase.storage.from(BUCKET).upload(path, buffer, {
+    const { error } = await supabase.storage.from(BUCKET).upload(path, outBuffer, {
       contentType: file.type,
       upsert: false,
     });
@@ -68,8 +89,8 @@ export async function POST(request: Request) {
     return NextResponse.json({
       url: data.publicUrl,
       path,
-      width: size.width,
-      height: size.height,
+      width: outWidth,
+      height: outHeight,
       alt,
     });
   } catch (error) {

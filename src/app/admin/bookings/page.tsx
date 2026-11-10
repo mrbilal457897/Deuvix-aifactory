@@ -42,7 +42,7 @@ export default async function AdminBookingsPage({
   if (!isDatabaseConfigured()) {
     return (
       <main className="mx-auto max-w-4xl px-6 py-16">
-        <h1 className="font-heading text-[48px] font-bold">Bookings</h1>
+        <h1 className="font-heading h1">Bookings</h1>
         <p className="mt-3 text-sm text-muted-foreground">
           <code>DATABASE_URL</code> is not set, so bookings cannot be loaded. See{" "}
           <code>docs/SETUP.md</code>.
@@ -75,7 +75,7 @@ export default async function AdminBookingsPage({
     <main className="mx-auto max-w-7xl px-4 py-10 sm:px-6">
       <div className="flex flex-wrap items-center justify-between gap-4">
         <div>
-          <h1 className="font-heading text-[48px] font-bold">Bookings</h1>
+          <h1 className="font-heading h1">Bookings</h1>
           <p className="mt-1 text-sm text-muted-foreground">
             {rows.length} {filter === "all" ? "total" : filter}
           </p>
@@ -93,7 +93,7 @@ export default async function AdminBookingsPage({
             href={`/admin/bookings?filter=${value}`}
             aria-current={filter === value ? "page" : undefined}
             className={cn(
-              "rounded-lg border px-4 py-2 text-sm font-medium capitalize transition-colors",
+              "btn-sharp rounded-none border px-4 py-2 text-sm font-medium capitalize transition-colors",
               filter === value
                 ? "border-primary bg-primary/10 text-primary"
                 : "border-border text-muted-foreground hover:bg-muted hover:text-foreground",

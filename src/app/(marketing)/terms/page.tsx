@@ -5,13 +5,14 @@ import {
   LegalList,
 } from "@/components/legal-page";
 import { CompanyIdentityBlock, CompanyEmailLink } from "@/components/legal-company";
-import type { Metadata } from "next";
+import { pageMetadata } from "@/lib/seo";
 
-export const metadata: Metadata = {
+export const metadata = pageMetadata({
   title: "Terms of Service",
-  description: "The terms that govern your use of the Deuvix AI Factory website and our services.",
-  alternates: { canonical: "/terms" },
-};
+  description:
+    "The terms that govern your use of the Deuvix AI Factory website and our services.",
+  path: "/terms",
+});
 
 export default function TermsOfServicePage() {
   return (

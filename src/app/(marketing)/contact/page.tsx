@@ -1,9 +1,8 @@
 "use client";
 
-import { useCallback, useEffect, useState } from "react";
+import { useCallback, useEffect, useState, Suspense } from "react";
+import { useSearchParams } from "next/navigation";
 import Link from "next/link";
-import Image from "next/image";
-import { BrandLogo } from "@/components/brand-logo";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
@@ -27,6 +26,8 @@ const UNIT_LIST: string[] = [
   "Loop Engineering",
   "FDE Consulting",
   "AI-Powered Web Apps",
+  "AI Agent E-books",
+  "Business AI Solutions",
   "Not sure yet",
 ];
 
@@ -110,7 +111,7 @@ function PillChip({ children, active, onClick, disabled }: { children: React.Rea
       onClick={disabled ? undefined : onClick}
       disabled={disabled}
       aria-pressed={active}
-      className={`inline-flex items-center gap-2 rounded-full border px-3 py-1.5 text-xs font-medium transition-colors ${
+      className={`btn-sharp inline-flex items-center gap-2 rounded-none border px-3 py-1.5 text-xs font-medium transition-colors ${
         active
           ? "bg-foreground text-background border-foreground"
           : "bg-card border-border text-foreground/70 hover:text-foreground hover:border-foreground"
@@ -124,7 +125,7 @@ function PillChip({ children, active, onClick, disabled }: { children: React.Rea
 function TextField({ label, value, onChange, error, type = "text", placeholder, required }: { label: string; value: string; onChange: (v: string) => void; error?: string; type?: string; placeholder?: string; required?: boolean }) {
   return (
     <div className="space-y-1.5">
-      <label className="text-[11px] font-semibold text-foreground/80 dark:text-white/80 mb-1 block uppercase tracking-[0.05em]">
+      <label className="text-xs font-semibold text-foreground/80 dark:text-white/80 mb-1 block uppercase tracking-[0.05em]">
         {label}{required ? " *" : ""}
       </label>
       <Input
@@ -136,12 +137,12 @@ function TextField({ label, value, onChange, error, type = "text", placeholder, 
         aria-invalid={Boolean(error)}
         required={required}
       />
-      {error && <p className="text-[11px] text-destructive mt-1">{error}</p>}
+      {error && <p className="text-xs text-destructive mt-1">{error}</p>}
     </div>
   );
 }
 
-function PillField({ label, options, value, onChange, multi, error }: { label: string; options: string[]; value: string[]; onChange: (selected: string[]) => void; multi?: boolean; error?: string }) {
+function PillField({ label, options, value, onChange, multi, error, required = false, hint }: { label: string; options: string[]; value: string[]; onChange: (selected: string[]) => void; multi?: boolean; error?: string; required?: boolean; hint?: string }) {
   const isSelected = (v: string) => value.includes(v);
   const toggle = (v: string) => {
     if (isSelected(v)) {
@@ -158,11 +159,11 @@ function PillField({ label, options, value, onChange, multi, error }: { label: s
   return (
     <div className="space-y-1.5">
       <div className="flex justify-between items-start">
-        <label className="text-[11px] font-semibold text-foreground/80 dark:text-white/80 mb-1 block uppercase tracking-[0.05em]">
-          {label}{" *"}
+        <label className="text-xs font-semibold text-foreground/80 dark:text-white/80 mb-1 block uppercase tracking-[0.05em]">
+          {label}{required ? " *" : ""}
         </label>
-        {multi && (
-          <span className="text-[10px] text-muted-foreground dark:text-white/60">Choose one or more</span>
+        {hint && (
+          <span className="text-xs text-muted-foreground dark:text-white/60">{hint}</span>
         )}
       </div>
       <div className="flex flex-wrap gap-2">
@@ -177,7 +178,7 @@ function PillField({ label, options, value, onChange, multi, error }: { label: s
           </PillChip>
         ))}
       </div>
-      {error && <p className="text-[11px] text-destructive mt-1">{error}</p>}
+      {error && <p className="text-xs text-destructive mt-1">{error}</p>}
     </div>
   );
 }
@@ -185,7 +186,7 @@ function PillField({ label, options, value, onChange, multi, error }: { label: s
 function ReviewCard({ data }: { data: InquiryData }) {
   return (
     <div className="rounded-xl border border-border dark:border-white/20 bg-card p-4">
-      <h3 className="font-heading text-lg font-bold text-foreground mb-3">Your request</h3>
+      <h3 className="font-heading h3-lg text-foreground mb-3">Your request</h3>
       <div className="space-y-3 text-sm text-muted-foreground dark:text-white/70">
         <div className="flex justify-between">
           <span>Units</span>
@@ -214,21 +215,43 @@ function ReviewCard({ data }: { data: InquiryData }) {
 /* Page                                                                       */
 /* -------------------------------------------------------------------------- */
 
-export default function ContactPage() {
+/** Plan names accepted from `?plan=` — anything else is ignored safely. */
+const PLAN_OPTIONS = ["starter", "professional", "enterprise"] as const;
+
+function ContactPageInner() {
+  const searchParams = useSearchParams();
+  const planParam = (searchParams.get("plan") || "").toLowerCase();
+  const planInterest = (PLAN_OPTIONS as readonly string[]).includes(planParam)
+    ? (planParam as (typeof PLAN_OPTIONS)[number])
+    : null;
+  const serviceParam = searchParams.get("service");
+  const topicParam = searchParams.get("topic");
+  const roleParam = searchParams.get("role");
+
   const [step, setStep] = useState<Step>(1);
-  const [formData, setFormData] = useState<InquiryData>({
-    units: [],
-    brief: "",
-    channels: [],
-    startWhen: null,
-    website: null,
-    name: "",
-    email: "",
-    company: null,
-    phone: null,
-    via: "Email",
-    slot: null,
-    nda: false,
+  const [formData, setFormData] = useState<InquiryData>(() => {
+    // `?service=<Unit>` preselects the matching pill — unknown values ignored.
+    const matched = serviceParam
+      ? UNIT_LIST.find((unit) => unit.toLowerCase() === serviceParam.toLowerCase())
+      : undefined;
+    const roleNote =
+      topicParam === "careers" && roleParam
+        ? `Applying for the ${roleParam} role.`
+        : "";
+    return {
+      units: matched ? [matched] : [],
+      brief: roleNote,
+      channels: [],
+      startWhen: null,
+      website: null,
+      name: "",
+      email: "",
+      company: null,
+      phone: null,
+      via: "Email",
+      slot: null,
+      nda: false,
+    };
   });
   const [errors, setErrors] = useState<FieldErrors>({});
   const [submitStatus, setSubmitStatus] = useState<"idle" | "submitting" | "success" | "error">("idle");
@@ -248,7 +271,14 @@ export default function ContactPage() {
     }
   }, [step, formData]);
 
+  // Restore the draft only when the URL did not preselect anything — a direct
+  // share like `/contact?service=AI Chatbots` must win over localStorage.
+  const urlPreselected = Boolean(
+    (serviceParam && UNIT_LIST.some((u) => u.toLowerCase() === serviceParam.toLowerCase())) ||
+      (topicParam === "careers" && roleParam),
+  );
   useEffect(() => {
+    if (urlPreselected) return;
     try {
       const raw = localStorage.getItem("deuvix_contact_draft");
       if (raw) {
@@ -261,7 +291,7 @@ export default function ContactPage() {
     } catch {
       // ignore
     }
-  }, []);
+  }, [urlPreselected]);
 
   // Live status pill
   const [liveStatus, setLiveStatus] = useState<{ online: boolean; text: string }>({ online: false, text: "Checking…" });
@@ -280,7 +310,6 @@ export default function ContactPage() {
       if (formData.units.length === 0) next.units = "Pick at least one unit to continue.";
       if (!formData.brief.trim()) next.brief = "Please add a short description (at least 15 characters).";
       else if (formData.brief.trim().length < 15) next.brief = "Please add a short description (at least 15 characters).";
-      if (!formData.startWhen) next.startWhen = "Please select when you want to start.";
     } else if (stepNo === 2) {
       if (!formData.name.trim()) next.name = "Please enter your name.";
       else if (formData.name.trim().length < 2) next.name = "Name must be at least 2 characters.";
@@ -293,7 +322,7 @@ export default function ContactPage() {
     return Object.keys(next).length === 0;
   }
 
-  const canAdvance = step === 1 ? formData.units.length > 0 && formData.brief.trim().length >= 15 && !!formData.startWhen : true;
+  const canAdvance = step === 1 ? formData.units.length > 0 && formData.brief.trim().length >= 15 : true;
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -306,14 +335,28 @@ export default function ContactPage() {
     setSubmitStatus("submitting");
     setSubmitError("");
 
+    // Append the plan interest / topic to the message so the team sees it,
+    // keeping the form itself clean. The API allows max 500 chars in brief.
+    const interestNote = [
+      planInterest ? `Plan interest: ${planInterest[0].toUpperCase()}${planInterest.slice(1)}` : "",
+      topicParam === "careers" && roleParam ? `Applying for: ${roleParam}` : "",
+    ]
+      .filter(Boolean)
+      .join("\n");
+    const briefOut = interestNote
+      ? `${formData.brief.slice(0, Math.max(0, 500 - interestNote.length - 2))}\n\n${interestNote}`
+      : formData.brief;
+    const payload = {
+      ...formData,
+      brief: briefOut,
+      pageLoadedAt,
+    };
+
     try {
       const res = await fetch("/api/contact", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          ...formData,
-          pageLoadedAt,
-        }),
+        body: JSON.stringify(payload),
       });
 
       const data = await res.json().catch(() => null);
@@ -361,9 +404,14 @@ export default function ContactPage() {
   // ---- Step 1 UI ----
   const step1Content = (
     <>
-      <h2 className="font-heading text-[28px] font-bold text-foreground dark:text-white mb-2">
+      <h2 className="font-heading h2-sm text-foreground dark:text-white mb-2">
         What should we build?
       </h2>
+      {planInterest && (
+        <p className="inline-flex items-center gap-2 mb-2 rounded-full border border-primary/30 bg-primary/10 text-primary text-xs font-semibold px-3 py-1">
+          Plan interest: {planInterest[0].toUpperCase()}{planInterest.slice(1)}
+        </p>
+      )}
       <p className="text-[14px] text-muted-foreground dark:text-white/70 mb-6">
         Pick your unit, then tell us about the job.
       </p>
@@ -384,14 +432,16 @@ export default function ContactPage() {
           }}
           multi
           error={errors.units}
+          required
+          hint="Choose one or more"
         />
 
         <div className="space-y-1.5">
           <div className="flex justify-between items-start">
-            <label className="text-[11px] font-semibold text-foreground/80 dark:text-white/80 mb-1 block uppercase tracking-[0.05em]">
+            <label className="text-xs font-semibold text-foreground/80 dark:text-white/80 mb-1 block uppercase tracking-[0.05em]">
               Describe the job *
             </label>
-            <span className="text-[10px] font-mono text-muted-foreground dark:text-white/60">
+            <span className="text-xs font-mono text-muted-foreground dark:text-white/60">
               {briefCharCount} / 500
             </span>
           </div>
@@ -400,13 +450,14 @@ export default function ContactPage() {
             onChange={(e) => handleFieldChange("brief", e.target.value)}
             placeholder="Tell us about the job you want to build…"
             rows={4}
+            maxLength={500}
             className="resize-none rounded-lg border bg-background dark:bg-white/10 border-border dark:border-white/20 text-foreground dark:text-white placeholder:text-muted-foreground dark:placeholder:text-white/40 focus:border-primary focus:outline-none"
           />
-          <p className="text-[11px] leading-5 text-muted-foreground dark:text-white/60 flex items-center gap-1.5 mt-1.5">
+          <p className="text-xs leading-5 text-muted-foreground dark:text-white/60 flex items-center gap-1.5 mt-1.5">
             <span className="size-1.5 rounded-full bg-[#4CAF7D]" />
             {briefHint}
           </p>
-          {errors.brief && <p className="text-[11px] text-destructive mt-1">{errors.brief}</p>}
+          {errors.brief && <p className="text-xs text-destructive mt-1">{errors.brief}</p>}
         </div>
 
         <div className="space-y-1.5">
@@ -416,6 +467,7 @@ export default function ContactPage() {
             value={formData.channels}
             onChange={(selected) => handleFieldChange("channels", selected)}
             multi
+            hint="Optional — choose one or more"
           />
         </div>
 
@@ -425,7 +477,7 @@ export default function ContactPage() {
             options={START_WHEN_LIST}
             value={formData.startWhen ? [formData.startWhen] : []}
             onChange={(v) => handleFieldChange("startWhen", v[0] ?? null)}
-            error={errors.startWhen}
+            hint="Optional"
           />
         </div>
 
@@ -437,16 +489,7 @@ export default function ContactPage() {
           placeholder="https://yourwebsite.com"
         />
 
-        <div className="border-t border-border mt-6 pt-6 flex justify-between items-start gap-4">
-          <button
-            type="button"
-            disabled={step === 1}
-            onClick={() => setStep(1)}
-            className="text-[11px] text-muted-foreground dark:text-white/60 hover:text-foreground underline underline-offset-4"
-            aria-hidden={step === 1}
-          >
-            ← Back
-          </button>
+        <div className="border-t border-border mt-6 pt-6 flex justify-end items-start gap-4">
           <Button
             type="button"
             onClick={() => {
@@ -454,7 +497,7 @@ export default function ContactPage() {
               setStep(2);
             }}
             disabled={!canAdvance}
-            className="bg-foreground text-background border-foreground px-6 py-3 rounded-xl font-medium hover:bg-foreground/90 disabled:opacity-50 disabled:pointer-events-none"
+            className="bg-foreground text-background border-foreground px-6 py-3 font-medium hover:bg-foreground/90 disabled:opacity-50 disabled:pointer-events-none"
           >
             Next: your details →
           </Button>
@@ -465,11 +508,11 @@ export default function ContactPage() {
 
   const step2Content = (
     <>
-      <h2 className="font-heading text-[28px] font-bold text-foreground dark:text-white mb-2">
+      <h2 className="font-heading h2-sm text-foreground dark:text-white mb-2">
         Where do we reach you?
       </h2>
       <p className="text-[14px] text-muted-foreground dark:text-white/70 mb-6">
-        We only use this to reply to your ticket.
+        We only use this to reply to your message.
       </p>
 
       <div className="space-y-5">
@@ -521,7 +564,7 @@ export default function ContactPage() {
         <button
           type="button"
           onClick={() => handleFieldChange("nda", !formData.nda)}
-          className={`w-full flex items-center gap-3 rounded-xl border p-4 text-left transition-colors ${
+          className={`btn-sharp w-full flex items-center gap-3 rounded-none border p-4 text-left transition-colors ${
             formData.nda
               ? "border-foreground bg-background/20"
               : "border-border text-foreground/60 hover:text-foreground hover:border-foreground"
@@ -538,7 +581,7 @@ export default function ContactPage() {
             I’d like to sign an NDA before sharing details
           </span>
         </button>
-        <p className="text-[11px] text-muted-foreground dark:text-white/60">
+        <p className="text-xs text-muted-foreground dark:text-white/60">
           Free and no obligation. By sending, you agree to our{" "}
           <Link href="/privacy" className="text-foreground dark:text-white underline underline-offset-2 hover:text-primary">
             privacy policy
@@ -551,14 +594,14 @@ export default function ContactPage() {
         <button
           type="button"
           onClick={() => setStep(1)}
-          className="text-[11px] text-muted-foreground dark:text-white/60 hover:text-foreground underline underline-offset-4"
+          className="btn-sharp text-xs text-muted-foreground dark:text-white/60 hover:text-foreground underline underline-offset-4"
         >
           ← Back
         </button>
         <Button
           type="submit"
           disabled={submitStatus === "submitting"}
-          className="bg-foreground text-background border-foreground px-6 py-3 rounded-xl font-medium hover:bg-foreground/90 disabled:opacity-50 disabled:pointer-events-none relative"
+          className="bg-foreground text-background border-foreground px-6 py-3 font-medium hover:bg-foreground/90 disabled:opacity-50 disabled:pointer-events-none relative"
         >
           {submitStatus === "submitting" ? (
             <span className="flex items-center gap-2">
@@ -586,26 +629,27 @@ export default function ContactPage() {
       {/* Hero */}
       <section className="relative pt-8 sm:pt-12 pb-8">
         <div className="relative mx-auto max-w-7xl px-6 sm:px-6 lg:px-8 text-left">
-          <Breadcrumb items={[{ label: "Home", href: "/" }, { label: "Contact" }]} className="mb-4 sm:mb-6" />
-          <h1 className="font-heading text-[clamp(36px,5.6vw,68px)] font-bold leading-[1] tracking-[-0.04em] text-foreground dark:text-white mb-4 max-w-[760px]">
+          <Breadcrumb items={[{ label: "Home", href: "/" }, { label: "Discuss" }]} className="mb-4 sm:mb-6" />
+          <h1 className="font-heading h2-lg text-foreground dark:text-white mb-4 max-w-[760px]">
             Tell us what you want to automate.
           </h1>
-          <p className="text-[17px] leading-relaxed text-muted-foreground dark:text-white/70 max-w-[560px] mb-8">
-            Two quick steps. No sales pressure: a real person reads your ticket and replies within one business day with questions and a time to talk.
+          <p className="text-lg leading-relaxed text-muted-foreground dark:text-white/70 max-w-[560px] mb-8">
+            Two quick steps. No sales pressure. A real person reads your message and replies
+            within one business day with ideas and next steps.
           </p>
-          <div className="flex items-center gap-3 text-[13px] text-muted-foreground dark:text-white/60">
-            <span className="flex items-center gap-1 text-primary dark:text-green-400">✓</span>
+          <div className="flex items-center gap-3 text-sm text-muted-foreground dark:text-white/60">
+            <span className="flex items-center gap-1 text-primary dark:text-secondary">✓</span>
             <span>Free first consultation</span>
             <span className="w-px h-3 bg-border dark:border-white/20 mx-3" />
-            <span className="flex items-center gap-1 text-primary dark:text-green-400">✓</span>
+            <span className="flex items-center gap-1 text-primary dark:text-secondary">✓</span>
             <span>Reply within 24 hours</span>
             <span className="w-px h-3 bg-border dark:border-white/20 mx-3" />
-            <span className="flex items-center gap-1 text-primary dark:text-green-400">✓</span>
+            <span className="flex items-center gap-1 text-primary dark:text-secondary">✓</span>
             <span>NDA on request</span>
           </div>
           <div className="mt-8 inline-flex items-center gap-2 rounded-xl border border-border dark:border-white/20 bg-card dark:bg-white/10 px-3 py-2">
             <span className="size-1.5 rounded-full bg-[#10b981] animate-pulse" />
-            <span className="text-[11px] font-mono text-foreground dark:text-white">
+            <span className="text-xs font-mono text-foreground dark:text-white">
               {liveStatus.online ? "Team online now · usually replies within hours" : "Offline now · we reply next business day"}
             </span>
           </div>
@@ -640,7 +684,7 @@ export default function ContactPage() {
                     <div className="text-[14px] font-semibold text-foreground dark:text-white">WhatsApp</div>
                     <div className="text-[12.5px] text-muted-foreground dark:text-white/60 leading-relaxed">Quick question? Chat now</div>
                   </div>
-                  <span className="text-[#25D366] text-[11px] ml-auto">→</span>
+                  <span className="text-secondary text-xs ml-auto">→</span>
                 </div>
                 <div className="rounded-16 border border-border dark:border-white/20 bg-card dark:bg-white/10 p-4 flex items-start gap-3 cursor-pointer">
                   <div className="size-10 rounded-xl bg-[#4CAF7D] text-background flex items-center justify-center shrink-0">
@@ -650,7 +694,7 @@ export default function ContactPage() {
                     <div className="text-[14px] font-semibold text-foreground dark:text-white">Book a call</div>
                     <div className="text-[12.5px] text-muted-foreground dark:text-white/60 leading-relaxed">Pick a slot yourself</div>
                   </div>
-                  <span className="text-[#4CAF7D] text-[11px] ml-auto">→</span>
+                  <span className="text-secondary text-xs ml-auto">→</span>
                 </div>
                 <div className="rounded-16 border border-border dark:border-white/20 bg-card dark:bg-white/10 p-4 flex items-start gap-3 cursor-pointer">
                   <div className="size-10 rounded-xl bg-[#4CAF7D] text-background flex items-center justify-center shrink-0">
@@ -660,14 +704,14 @@ export default function ContactPage() {
                     <div className="text-[14px] font-semibold text-foreground dark:text-white">team.deuvix@gmail.com</div>
                     <div className="text-[12.5px] text-muted-foreground dark:text-white/60 leading-relaxed">Click to copy</div>
                   </div>
-                  <span className="text-[#4CAF7D] text-[11px] ml-auto">→</span>
+                  <span className="text-secondary text-xs ml-auto">→</span>
                 </div>
               </div>
 
               {/* Office hours */}
               <div className="mt-6 rounded-2xl border border-border dark:border-white/20 bg-card dark:bg-white/10 p-4">
                 <div className="mb-3">
-                  <span className="text-[11px] font-mono text-muted-foreground dark:text-white/60 uppercase tracking-[0.05em]">
+                  <span className="text-xs font-mono text-muted-foreground dark:text-white/60 uppercase tracking-[0.05em]">
                     Office hours · PKT
                   </span>
                 </div>
@@ -683,7 +727,7 @@ export default function ContactPage() {
                   return (
                     <div
                       key={row.label}
-                      className={`flex justify-between text-[13px] ${
+                      className={`flex justify-between text-sm ${
                         isToday && isOpen
                           ? "text-foreground dark:text-white font-medium"
                           : "text-muted-foreground dark:text-white/60"
@@ -710,5 +754,19 @@ export default function ContactPage() {
         </div>
       </section>
     </div>
+  );
+}
+
+export default function ContactPage() {
+  return (
+    <Suspense
+      fallback={
+        <div className="flex min-h-[60vh] items-center justify-center">
+          <div className="size-8 animate-spin rounded-full border-2 border-primary border-t-transparent" />
+        </div>
+      }
+    >
+      <ContactPageInner />
+    </Suspense>
   );
 }

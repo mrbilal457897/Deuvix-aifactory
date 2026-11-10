@@ -53,7 +53,7 @@ export default function BlogPage() {
           items={[{ label: "Home", href: "/" }, { label: "Blog" }]}
           className="mb-4 sm:mb-6"
         />
-        <h1 className="font-heading text-[68px] font-bold mb-4">
+        <h1 className="font-heading h2-lg mb-4">
           <CharReveal>Insights & <span className="text-gradient">AI-Native</span></CharReveal>
         </h1>
         <p className="max-w-2xl text-muted-foreground text-base">
@@ -73,7 +73,7 @@ export default function BlogPage() {
                   setActiveCategory(cat);
                   setCurrentPage(1);
                 }}
-                className={`px-5 py-2 rounded-full text-sm font-medium transition-all duration-200 ${
+                className={`btn-sharp px-5 py-2 rounded-none text-sm font-medium transition-all duration-200 ${
                   activeCategory === cat
                     ? "bg-primary text-primary-foreground shadow-lg shadow-primary/20"
                     : "bg-muted text-muted-foreground hover:text-foreground hover:bg-muted/80"
@@ -89,6 +89,7 @@ export default function BlogPage() {
       {/* Blog Grid */}
       <section className="pb-16 px-6">
         <div className="mx-auto max-w-7xl" ref={gridRef}>
+          <h2 className="sr-only h2-sm">Articles</h2>
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
             {paginatedPosts.map((post) => (
               <Link
@@ -112,7 +113,7 @@ export default function BlogPage() {
 
                 {/* Content */}
                 <div className="p-5 flex flex-col flex-1">
-                  <h3 className="font-heading text-[24px] font-bold text-foreground group-hover:text-primary transition-colors duration-200 mb-2 line-clamp-2">
+                  <h3 className="font-heading h3-sm text-foreground group-hover:text-primary transition-colors duration-200 mb-2 line-clamp-2">
                     {post.title}
                   </h3>
 
@@ -157,7 +158,7 @@ export default function BlogPage() {
             <button
               onClick={() => setCurrentPage((p) => Math.max(1, p - 1))}
               disabled={currentPage === 1}
-              className="size-10 flex items-center justify-center rounded-lg border border-border text-muted-foreground hover:bg-muted disabled:opacity-40 disabled:cursor-not-allowed transition-colors"
+              className="btn-sharp size-10 flex items-center justify-center rounded-none border border-border text-muted-foreground hover:bg-muted disabled:opacity-40 disabled:cursor-not-allowed transition-colors"
             >
               <ChevronLeft className="size-4" />
             </button>
@@ -165,7 +166,7 @@ export default function BlogPage() {
               <button
                 key={page}
                 onClick={() => setCurrentPage(page)}
-                className={`size-10 flex items-center justify-center rounded-lg text-sm font-medium transition-colors ${
+                className={`btn-sharp size-10 flex items-center justify-center rounded-none text-sm font-medium transition-colors ${
                   currentPage === page
                     ? "bg-primary text-primary-foreground shadow-lg shadow-primary/20"
                     : "border border-border text-muted-foreground hover:bg-muted"
@@ -177,7 +178,7 @@ export default function BlogPage() {
             <button
               onClick={() => setCurrentPage((p) => Math.min(totalPages, p + 1))}
               disabled={currentPage === totalPages}
-              className="size-10 flex items-center justify-center rounded-lg border border-border text-muted-foreground hover:bg-muted disabled:opacity-40 disabled:cursor-not-allowed transition-colors"
+              className="btn-sharp size-10 flex items-center justify-center rounded-none border border-border text-muted-foreground hover:bg-muted disabled:opacity-40 disabled:cursor-not-allowed transition-colors"
             >
               <ChevronRight className="size-4" />
             </button>

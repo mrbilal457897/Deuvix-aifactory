@@ -166,7 +166,7 @@ export default function TicketDetailPage() {
     <div className="space-y-6">
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-6">
         <div>
-          <h1 className="text-2xl font-heading font-bold text-foreground">Ticket {ticket.ticketId}</h1>
+          <h1 className="font-heading h1 text-foreground">Ticket {ticket.ticketId}</h1>
           <p className="text-sm text-muted-foreground mt-1">
             Job ticket from {ticket.name} • {ticket.email}
           </p>
@@ -198,7 +198,7 @@ export default function TicketDetailPage() {
         {/* Ticket details */}
         <div className="lg:col-span-2 space-y-6">
           <div className="rounded-xl border border-border bg-card p-6">
-            <h3 className="font-heading text-lg font-bold text-foreground mb-4">Ticket details</h3>
+            <h3 className="font-heading h3-lg text-foreground mb-4">Ticket details</h3>
             <dl className="space-y-4">
               <div className="flex justify-between text-sm">
                 <span className="text-muted-foreground">Ticket ID</span>
@@ -258,7 +258,7 @@ export default function TicketDetailPage() {
           </div>
 
           <div className="rounded-xl border border-border bg-card p-6">
-            <h3 className="font-heading text-lg font-bold text-foreground mb-4">Brief</h3>
+            <h3 className="font-heading h3-lg text-foreground mb-4">Brief</h3>
             <div className="rounded-lg border border-border bg-background dark:bg-white/5 p-4 text-sm text-foreground dark:text-white leading-relaxed whitespace-pre-wrap">
               {ticket.brief}
             </div>
@@ -268,7 +268,7 @@ export default function TicketDetailPage() {
         {/* Sidebar */}
         <div className="lg:col-span-1 space-y-6">
           <div className="rounded-xl border border-border bg-card p-6">
-            <h3 className="font-heading text-lg font-bold text-foreground mb-4">Status</h3>
+            <h3 className="font-heading h3-lg text-foreground mb-4">Status</h3>
             <div className="space-y-3">
               <Badge variant={statusVariant(ticket.status)}>
                 {ticket.status.charAt(0).toUpperCase() + ticket.status.slice(1)}
@@ -294,7 +294,7 @@ export default function TicketDetailPage() {
           </div>
 
           <div className="rounded-xl border border-border bg-card p-6">
-            <h3 className="font-heading text-lg font-bold text-foreground mb-4">Internal notes</h3>
+            <h3 className="font-heading h3-lg text-foreground mb-4">Internal notes</h3>
             <Textarea
               value={notes}
               onChange={(e) => setNotes(e.target.value)}
@@ -314,7 +314,7 @@ export default function TicketDetailPage() {
           </div>
 
           <div className="rounded-xl border border-border bg-card p-6">
-            <h3 className="font-heading text-lg font-bold text-foreground mb-4">Quick actions</h3>
+            <h3 className="font-heading h3-lg text-foreground mb-4">Quick actions</h3>
             <div className="space-y-2">
               <a
                 href={`mailto:${ticket.email}`}

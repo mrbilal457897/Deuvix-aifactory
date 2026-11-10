@@ -1,11 +1,14 @@
 Deuvix Brand Logo
 
-Original uploaded logo image: `logo-deuvix.png`
-- D symbol in brand green (#22C55E)
-- "euv" in white
-- "i" with dot in white
-- "x" in brand green (#22C55E)
-- Transparent background
+Live SVG components (preferred everywhere in the app):
+- src/components/brand/DeuvixLogo.tsx — full wordmark, stroke/fill from tokens (--logo-accent, currentColor)
+- src/components/brand/DeuvixMark.tsx — D-mark only (tiny slots, collapsed rail)
 
-Usage: Import and use as an <img> or Next.js <Image> component.
-Do not recreate or modify the logo.
+PNG exports for non-inline-SVG contexts only (email, OG, JSON-LD):
+- /images/logo-light.png — wordmark, ink #0e120f, accent #51cb96 (for light backgrounds)
+- /images/logo-dark.png — wordmark, ink #f4f7f4, accent #51cb96 (for dark backgrounds)
+
+Icon: src/app/icon.svg (D mark) and src/app/apple-icon.png
+
+Usage: import the component; do not inline raw <img>/<Image> of the logo.
+Do not recreate or modify the logo geometry.

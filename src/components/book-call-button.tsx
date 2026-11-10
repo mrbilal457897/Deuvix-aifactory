@@ -9,7 +9,7 @@ import type { BookingPrefill } from "@/lib/cal/embed";
 
 type BookCallButtonProps = {
   className?: string;
-  size?: "default" | "xs" | "sm" | "lg" | "icon" | "icon-xs" | "icon-sm" | "icon-lg";
+  size?: "default" | "md" | "xs" | "sm" | "lg" | "icon" | "icon-xs" | "icon-sm" | "icon-lg";
   variant?: "default" | "outline" | "secondary" | "ghost" | "destructive" | "link";
   children?: React.ReactNode;
   /** Shown before the label. Pass `null` to keep an existing icon layout. */

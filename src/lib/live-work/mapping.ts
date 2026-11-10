@@ -16,6 +16,15 @@ import { slugify } from "./schema";
 
 export const EMPTY_THUMBNAIL: Thumbnail = { url: "", path: "", width: 0, height: 0, alt: "" };
 
+/** Local dev URLs must never reach the public HTML — strip them at read time. */
+export const LOCALHOST_PATTERN = /(localhost|127\.0\.0\.1|0\.0\.0\.0)/i;
+
+/** Returns the value, or `undefined` when it points at a local dev server. */
+function stripLocalhost(value: string | undefined): string | undefined {
+  if (!value) return undefined;
+  return LOCALHOST_PATTERN.test(value) ? undefined : value;
+}
+
 export function str(value: unknown): string {
   return typeof value === "string" ? value.trim() : "";
 }
@@ -29,7 +38,7 @@ export function toThumbnail(value: unknown): Thumbnail | null {
   if (!value || typeof value !== "object") return null;
   const source = value as Record<string, unknown>;
   const url = str(source.url);
-  if (!url) return null;
+  if (!url || LOCALHOST_PATTERN.test(url)) return null;
   return {
     url,
     path: str(source.path),
@@ -97,11 +106,11 @@ export function rowToProject(row: Record<string, unknown>): Project {
     tags: strList(row.tags),
     desktopThumbnail,
     mobileThumbnail,
-    liveUrl: str(row.live_url) || legacyUrl || undefined,
-    caseStudyUrl: str(row.case_study_url) || undefined,
-    browserUrlLabel: str(row.browser_url_label) || undefined,
-    chipTitle: str(row.chip_title) || undefined,
-    chipSubtitle: str(row.chip_subtitle) || undefined,
+    liveUrl: stripLocalhost(str(row.live_url) || legacyUrl || undefined),
+    caseStudyUrl: stripLocalhost(str(row.case_study_url)) || undefined,
+    browserUrlLabel: stripLocalhost(str(row.browser_url_label)) || undefined,
+    chipTitle: stripLocalhost(str(row.chip_title)) || undefined,
+    chipSubtitle: stripLocalhost(str(row.chip_subtitle)) || undefined,
     content: str(row.content),
     gallery: toThumbnailList(row.gallery),
     order: numberOr(row.sort_order, 0),
@@ -116,7 +125,7 @@ export function rowToProject(row: Record<string, unknown>): Project {
     // Legacy aliases kept so the AI agent tools keep compiling and working.
     title: name,
     image,
-    url: legacyUrl || undefined,
+    url: stripLocalhost(legacyUrl) || undefined,
   };
 }
 

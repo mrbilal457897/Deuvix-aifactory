@@ -79,7 +79,7 @@ export function MessageBubble({ message, onRetry, onFeedback }: Props) {
               <button
                 type="button"
                 onClick={onRetry}
-                className="inline-flex h-7 items-center gap-1 rounded-md px-1.5 text-[11px] text-destructive hover:bg-destructive/10"
+                className="btn-sharp inline-flex h-7 items-center gap-1 rounded-none px-1.5 text-xs text-destructive hover:bg-destructive/10"
               >
                 <RotateCcw className="size-3" />
                 {uiStrings.retry}
@@ -90,7 +90,7 @@ export function MessageBubble({ message, onRetry, onFeedback }: Props) {
               type="button"
               onClick={copy}
               aria-label={copied ? uiStrings.copied : uiStrings.copy}
-              className="inline-flex size-7 items-center justify-center rounded-md text-muted-foreground/70 transition-colors hover:bg-muted hover:text-foreground"
+              className="btn-sharp inline-flex size-7 items-center justify-center rounded-none text-muted-foreground/70 transition-colors hover:bg-muted hover:text-foreground"
             >
               {copied ? <Check className="size-3.5" /> : <Copy className="size-3.5" />}
             </button>
@@ -100,8 +100,7 @@ export function MessageBubble({ message, onRetry, onFeedback }: Props) {
               onClick={() => rate("up")}
               aria-label={uiStrings.thumbsUp}
               aria-pressed={vote === "up"}
-              className={cn(
-                "inline-flex size-7 items-center justify-center rounded-md transition-colors hover:bg-muted",
+              className={cn("btn-sharp inline-flex size-7 items-center justify-center rounded-none transition-colors hover:bg-muted",
                 vote === "up" ? "text-primary" : vote ? "text-muted-foreground/30" : "text-muted-foreground/70",
               )}
             >
@@ -113,8 +112,7 @@ export function MessageBubble({ message, onRetry, onFeedback }: Props) {
               onClick={() => rate("down")}
               aria-label={uiStrings.thumbsDown}
               aria-pressed={vote === "down"}
-              className={cn(
-                "inline-flex size-7 items-center justify-center rounded-md transition-colors hover:bg-muted",
+              className={cn("btn-sharp inline-flex size-7 items-center justify-center rounded-none transition-colors hover:bg-muted",
                 vote === "down" ? "text-destructive" : vote ? "text-muted-foreground/30" : "text-muted-foreground/70",
               )}
             >

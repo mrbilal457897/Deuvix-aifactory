@@ -19,6 +19,7 @@ import {
 import Link from "next/link";
 import { buttonVariants } from "@/components/ui/button";
 import { BookCallButton } from "@/components/book-call-button";
+import { ReadyCta } from "@/components/ReadyCta";
 import { Badge } from "@/components/ui/badge";
 import { CharReveal } from "@/components/split-text";
 import { TrustBar } from "@/components/sections/trust-bar";
@@ -36,6 +37,7 @@ const categories = ["All", "FTE", "FDE", "Agents", "E-books", "Web Apps", "Solut
 const products = [
   {
     id: 1,
+    anchor: "digital-fte-deployment",
     title: "Digital FTE Deployment",
     description: "Deploy AI workers that operate 24/7, 168 hours a week. Domain-specific agents that handle your business tasks at 85% cost savings.",
     category: "FTE",
@@ -44,14 +46,16 @@ const products = [
   },
   {
     id: 2,
+    anchor: "fde-consulting",
     title: "Forward Deployed Engineer",
     description: "Expert engineers deployed to your site to implement AI-native solutions. Spec-driven development with production-ready architecture.",
     category: "FDE",
-    color: "bg-accent/10 text-accent",
+    color: "bg-secondary/10 text-secondary",
     features: ["On-site Implementation", "Spec-Driven", "Full Stack AI"],
   },
   {
     id: 3,
+    anchor: "ai-chatbots",
     title: "AI Chatbots",
     description: "Conversational AI assistants deployed on your website or product. Trained on your business data to qualify leads, answer questions, and resolve support tickets 24/7.",
     category: "Agents",
@@ -60,6 +64,7 @@ const products = [
   },
   {
     id: 4,
+    anchor: "voice-agents",
     title: "Voice Agents",
     description: "AI phone agents that answer calls, qualify leads, and run support conversations in natural language. Your business never misses a call, day or night.",
     category: "Agents",
@@ -68,6 +73,7 @@ const products = [
   },
   {
     id: 5,
+    anchor: "custom-agents",
     title: "Custom Agents",
     description: "Bespoke AI agents engineered for your domain-specific workflows. From triage to reporting, we design agents that act on your tools — not just suggest.",
     category: "Agents",
@@ -76,6 +82,7 @@ const products = [
   },
   {
     id: 6,
+    anchor: "ai-agent-ebooks",
     title: "AI Agent E-books",
     description: "Comprehensive guides to building AI-Native companies. Learn to manufacture, deploy, and monetize Digital FTEs with co-learning philosophy.",
     category: "E-books",
@@ -84,6 +91,7 @@ const products = [
   },
   {
     id: 7,
+    anchor: "ai-powered-web-apps",
     title: "AI-Powered Web Apps",
     description: "Full-stack web applications built with AI-native architecture. From concept to deployment with intelligent automation baked in.",
     category: "Web Apps",
@@ -92,10 +100,11 @@ const products = [
   },
   {
     id: 8,
+    anchor: "business-ai-solutions",
     title: "Business AI Solutions",
     description: "End-to-end AI strategy, consulting, and implementation. Transform your business with intelligent systems built for your domain.",
     category: "Solutions",
-    color: "bg-emerald-500/10 text-emerald-600",
+    color: "bg-secondary/10 text-secondary",
     features: ["Strategy Consulting", "Custom Development", "Ongoing Support"],
   },
 ];
@@ -103,21 +112,24 @@ const products = [
 const plans = [
   {
     name: "Starter",
-    price: "Pay as you go",
+    price: "Custom quote",
+    forWho: "Solo founders and small teams running one repeatable workflow.",
     description: "For small teams getting started with AI",
     features: ["1 Digital FTE", "Basic Agent Setup", "Email support", "Community access"],
     popular: false,
   },
   {
     name: "Professional",
-    price: "Pay as you go",
+    price: "Custom quote",
+    forWho: "Growing companies scaling from one to many AI workers.",
     description: "Full power for growing AI-Native companies",
     features: ["5 Digital FTEs", "Custom Agent Training", "Priority support", "FDE consultation", "Analytics dashboard"],
     popular: true,
   },
   {
     name: "Enterprise",
-    price: "Pay as you go",
+    price: "Custom quote",
+    forWho: "Organisations needing dedicated delivery and compliance.",
     description: "Tailored solutions with dedicated support",
     features: ["Unlimited FTEs", "Dedicated FDE team", "SLA guarantee", "On-premise option", "Custom integrations"],
     popular: false,
@@ -299,7 +311,7 @@ export default function ProductsPage() {
             items={[{ label: "Home", href: "/" }, { label: "Services" }]}
             className="mb-4 sm:mb-6"
           />
-          <h1 className="font-heading text-[68px] font-bold mb-4">
+          <h1 className="font-heading h2-lg mb-4">
             <CharReveal>AI-Native <span className="text-gradient">Solutions</span></CharReveal>
           </h1>
           <p className="max-w-2xl text-muted-foreground text-base">
@@ -317,7 +329,7 @@ export default function ProductsPage() {
               <button
                 key={cat}
                 onClick={() => setActiveCategory(cat)}
-                className={`px-5 py-2 rounded-full text-sm font-medium transition-all duration-200 ${
+                className={`btn-sharp px-5 py-2 rounded-none text-sm font-medium transition-all duration-200 ${
                   activeCategory === cat
                     ? "bg-primary text-primary-foreground shadow-sm"
                     : "bg-muted text-muted-foreground hover:text-foreground hover:bg-muted/80"
@@ -332,13 +344,14 @@ export default function ProductsPage() {
             {filteredProducts.map((product) => (
               <div
                 key={product.id}
-                className="product-card p-6 rounded-xl card-solid hover:border-primary/30 transition-all duration-200"
+                id={product.anchor}
+                className="product-card scroll-mt-28 p-6 rounded-xl card-solid hover:border-primary/30 transition-all duration-200"
               >
                 <div className={`inline-flex items-center justify-center size-10 rounded-xl ${product.color} mb-4`}>
                   <Sparkles className="size-5" />
                 </div>
                 <Badge variant="secondary" className="mb-3 text-xs">{product.category}</Badge>
-                <h3 className="font-heading text-[24px] font-semibold mb-2">{product.title}</h3>
+                <h2 className="font-heading h3-sm mb-2">{product.title}</h2>
                 <p className="text-muted-foreground text-sm leading-relaxed mb-4">{product.description}</p>
                 <ul className="space-y-1.5 mb-5">
                   {product.features.map((f) => (
@@ -362,7 +375,7 @@ export default function ProductsPage() {
                       variant: "outline",
                       size: "sm",
                       className:
-                        "shrink-0 border-emerald-500/30 bg-emerald-500/10 text-emerald-600 hover:bg-emerald-500/20 hover:text-emerald-700 dark:text-emerald-400 dark:hover:bg-emerald-500/30 dark:hover:text-emerald-300",
+                        "shrink-0 border-secondary/30 bg-secondary/10 text-secondary hover:bg-secondary/20 hover:text-secondary dark:text-secondary dark:hover:bg-secondary/30 dark:hover:text-secondary",
                     })}
                   >
                     <MessageCircle className="size-3.5" />
@@ -384,7 +397,7 @@ export default function ProductsPage() {
         <div className="relative mx-auto max-w-7xl">
           <div className="text-center mb-16">
             <Badge className="mb-4 border-sky-400/30 bg-sky-400/10 text-sky-300" data-loop-reveal>Methodology</Badge>
-            <h2 className="font-heading text-[48px] font-bold mb-4 text-white" data-loop-reveal>
+            <h2 className="font-heading h2-lg mb-4 text-white" data-loop-reveal>
               Loop <span className="bg-gradient-to-r from-sky-400 via-indigo-400 to-violet-400 bg-clip-text text-transparent">Engineering</span>
             </h2>
             <p className="mx-auto max-w-2xl text-slate-400 text-base" data-loop-reveal>
@@ -417,13 +430,13 @@ export default function ProductsPage() {
                 data-loop-node
                 className="flex aspect-square flex-col items-center justify-center rounded-full border border-white/10 bg-[#0b1322]/85 p-8 text-center shadow-[0_0_80px_rgba(99,102,241,0.25)] backdrop-blur-xl"
               >
-                <span className="font-mono text-[10px] uppercase tracking-[0.35em] text-sky-300/70">{active.tagline}</span>
+                <span className="font-mono text-xs uppercase tracking-[0.35em] text-sky-300/70">{active.tagline}</span>
                 <div className="mt-3 flex size-12 items-center justify-center rounded-full bg-gradient-to-br from-sky-500 to-violet-600 shadow-lg shadow-indigo-500/40">
                   <ActiveIcon className="size-5 text-white" />
                 </div>
-                <h3 className="mt-3 font-heading text-[24px] font-semibold text-white">{active.title}</h3>
+                <h3 className="mt-3 font-heading h3-sm text-white">{active.title}</h3>
                 <p className="mt-2 text-xs leading-relaxed text-slate-400">{active.description}</p>
-                <span className="mt-3 rounded-full border border-sky-400/30 bg-sky-400/10 px-3 py-1 text-[10px] font-medium text-sky-300">{active.role}</span>
+                <span className="mt-3 rounded-full border border-sky-400/30 bg-sky-400/10 px-3 py-1 text-xs font-medium text-sky-300">{active.role}</span>
               </div>
             </div>
 
@@ -443,7 +456,7 @@ export default function ProductsPage() {
                     data-loop-node
                     onClick={() => setActiveNode(i)}
                     onMouseEnter={() => setActiveNode(i)}
-                    className={`group relative text-left transition-all duration-300 ${
+                    className={`btn-sharp group relative text-left transition-all duration-300 ${
                       isGate ? "w-[196px]" : "w-[172px]"
                     } ${selected ? "scale-[1.06]" : "hover:scale-[1.03]"}`}
                   >
@@ -468,12 +481,12 @@ export default function ProductsPage() {
                           <part.icon className="size-4" />
                         </div>
                         <div className="min-w-0 text-left">
-                          <span className={`block font-mono text-[9px] tracking-[0.3em] ${selected ? "text-sky-300" : "text-slate-500"}`}>{part.number}</span>
-                          <span className="block truncate text-[13px] font-semibold text-white">{part.title}</span>
+                          <span className={`block font-mono text-xs tracking-[0.3em] ${selected ? "text-sky-300" : "text-slate-500"}`}>{part.number}</span>
+                          <span className="block truncate text-sm font-semibold text-white">{part.title}</span>
                         </div>
                       </div>
                       {isGate && selected && (
-                        <span className="absolute -top-2.5 left-1/2 flex -translate-x-1/2 items-center gap-1 whitespace-nowrap rounded-full bg-gradient-to-r from-sky-500 to-violet-600 px-2.5 py-0.5 text-[9px] font-bold uppercase tracking-wider text-white shadow-lg shadow-indigo-500/40">
+                        <span className="absolute -top-2.5 left-1/2 flex -translate-x-1/2 items-center gap-1 whitespace-nowrap rounded-full bg-gradient-to-r from-sky-500 to-violet-600 px-2.5 py-0.5 text-xs font-bold uppercase tracking-wider text-white shadow-lg shadow-indigo-500/40">
                           Loop closes here
                         </span>
                       )}
@@ -514,14 +527,14 @@ export default function ProductsPage() {
                           <part.icon className="size-4" />
                         </div>
                         <div>
-                          <span className="block font-mono text-[9px] tracking-[0.3em] text-sky-300/70">
+                          <span className="block font-mono text-xs tracking-[0.3em] text-sky-300/70">
                             {part.number} — {part.tagline}
                           </span>
-                          <h3 className="font-heading text-base font-semibold text-white">{part.title}</h3>
+                          <h3 className="font-heading h3-sm text-white">{part.title}</h3>
                         </div>
                       </div>
                       <p className="text-sm leading-relaxed text-slate-400">{part.description}</p>
-                      <span className="mt-3 inline-block rounded-full border border-sky-400/30 bg-sky-400/10 px-2.5 py-0.5 text-[10px] font-medium text-sky-300">
+                      <span className="mt-3 inline-block rounded-full border border-sky-400/30 bg-sky-400/10 px-2.5 py-0.5 text-xs font-medium text-sky-300">
                         {part.role}
                       </span>
                     </div>
@@ -534,7 +547,8 @@ export default function ProductsPage() {
           <div className="mt-14 text-center" data-loop-reveal>
             <BookCallButton
               icon={null}
-              className="bg-gradient-to-r from-sky-500 to-violet-600 text-white hover:from-sky-400 hover:to-violet-500 font-medium px-8 py-6 text-base rounded-xl shadow-lg shadow-indigo-500/30"
+              size="lg"
+              className="bg-gradient-to-r from-sky-500 to-violet-600 px-6 font-semibold text-sm text-white shadow-lg shadow-indigo-500/30 hover:from-sky-400 hover:to-violet-500"
             >
               Book a Consultation <ArrowRight className="size-4 ml-2" />
             </BookCallButton>
@@ -551,12 +565,12 @@ export default function ProductsPage() {
       <section id="pricing" className="py-24 px-6 bg-section">
         <div className="mx-auto max-w-7xl">
           <div className="text-center mb-16">
-            <Badge className="mb-4 bg-amber-500/10 text-amber-600 border-amber-500/20">Pricing</Badge>
-            <h2 className="font-heading text-[48px] font-bold mb-4">
-              Simple, <span className="text-gradient">Transparent</span> Pricing
+            <Badge className="mb-4 bg-amber-500/10 text-amber-600 border-amber-500/20">Plans</Badge>
+            <h2 className="font-heading h2-lg mb-4">
+              Simple, <span className="text-gradient">Transparent</span> Plans
             </h2>
             <p className="mx-auto max-w-2xl text-muted-foreground text-base">
-              Start with one Digital FTE, scale to an entire AI workforce.
+              Start with one Digital FTE, scale to an entire AI workforce. Every plan is scoped to your workflow and quoted for your scope.
             </p>
           </div>
 
@@ -575,7 +589,10 @@ export default function ProductsPage() {
                     Most Popular
                   </div>
                 )}
-                <h3 className="font-heading text-xl font-bold mb-1">{plan.name}</h3>
+                <h3 className="font-heading h3-sm mb-1">{plan.name}</h3>
+                <p className={`text-sm mb-1 font-medium ${plan.popular ? "text-primary-foreground/85" : "text-foreground/80"}`}>
+                  Built for: {plan.forWho}
+                </p>
                 <p className={`text-sm mb-6 ${plan.popular ? "text-primary-foreground/70" : "text-muted-foreground"}`}>
                   {plan.description}
                 </p>
@@ -591,7 +608,7 @@ export default function ProductsPage() {
                   ))}
                 </ul>
                 <Link
-                  href={`/contact?service=${encodeURIComponent("Digital FTE Deployment")}`}
+                  href={`/contact?plan=${plan.name.toLowerCase()}`}
                   className={buttonVariants({
                     className: `w-full ${plan.popular ? "bg-card text-primary hover:bg-card/90" : "bg-primary text-primary-foreground hover:bg-primary/90"}`,
                   })}
@@ -603,6 +620,8 @@ export default function ProductsPage() {
           </div>
         </div>
       </section>
+
+      <ReadyCta />
     </div>
   );
 }

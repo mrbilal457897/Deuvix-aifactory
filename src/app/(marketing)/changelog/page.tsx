@@ -1,15 +1,16 @@
-import type { Metadata } from "next";
 import Link from "next/link";
 import { Badge } from "@/components/ui/badge";
 import { Rocket, Sparkles, Wrench, ShieldCheck, ArrowRight } from "lucide-react";
 import { company } from "@config/company";
 import { Breadcrumb } from "@/components/ui/breadcrumb";
+import { pageMetadata } from "@/lib/seo";
 
-export const metadata: Metadata = {
+export const metadata = pageMetadata({
   title: "Changelog",
-  description: "Product updates, improvements, and fixes from the Deuvix AI Factory team.",
-  alternates: { canonical: "/changelog" },
-};
+  description:
+    "Product updates, improvements, and fixes from the Deuvix AI Factory team.",
+  path: "/changelog",
+});
 
 const releases = [
   {
@@ -84,8 +85,8 @@ export default function ChangelogPage() {
             items={[{ label: "Home", href: "/" }, { label: "Changelog" }]}
             className="mb-4 sm:mb-6"
           />
-        <Badge className="mb-4 bg-accent/10 text-accent border-accent/20">Changelog</Badge>
-        <h1 className="font-heading text-[68px] font-bold mb-4">
+        <Badge className="mb-4 bg-secondary/10 text-secondary border-secondary/30">Changelog</Badge>
+        <h1 className="font-heading h1 mb-4">
           What&apos;s <span className="text-gradient">new</span>
         </h1>
         <p className="mx-auto max-w-2xl text-muted-foreground text-base">
@@ -109,7 +110,7 @@ export default function ChangelogPage() {
                   </span>
                   <div>
                     <div className="flex items-center gap-2">
-                      <h2 className="font-heading text-[48px] font-bold">{release.version}</h2>
+                      <h2 className="font-heading h2-sm">{release.version}</h2>
                       <span className="px-2 py-0.5 rounded-full text-xs font-medium bg-primary/10 text-primary">
                         {release.tag}
                       </span>
@@ -118,7 +119,7 @@ export default function ChangelogPage() {
                   </div>
                 </div>
               </div>
-              <h3 className="font-heading text-xl font-bold mb-2">{release.title}</h3>
+              <h3 className="font-heading h3-sm mb-2">{release.title}</h3>
               <p className="text-muted-foreground leading-relaxed mb-4">{release.description}</p>
               <ul className="space-y-2">
                 {release.changes.map((change) => (
@@ -136,7 +137,7 @@ export default function ChangelogPage() {
               Have a feature you would love to see next?
             </p>
             <Link href="/contact">
-              <span className="inline-flex items-center gap-2 px-6 py-3 rounded-xl bg-primary text-primary-foreground text-sm font-semibold hover:bg-primary/90 transition-colors">
+              <span className="btn-sharp inline-flex items-center gap-2 px-6 py-3 rounded-none bg-primary text-primary-foreground text-sm font-semibold hover:bg-primary/90 transition-colors">
                 Request a Feature
                 <ArrowRight className="size-4" />
               </span>

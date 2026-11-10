@@ -1,4 +1,3 @@
-import type { Metadata } from "next";
 import Link from "next/link";
 import { Badge } from "@/components/ui/badge";
 import {
@@ -12,12 +11,14 @@ import {
 } from "lucide-react";
 import { company } from "@config/company";
 import { Breadcrumb } from "@/components/ui/breadcrumb";
+import { pageMetadata } from "@/lib/seo";
 
-export const metadata: Metadata = {
+export const metadata = pageMetadata({
   title: "Documentation",
-  description: "Guides to building, deploying, and managing Digital FTEs and AI agents with Deuvix AI Factory.",
-  alternates: { canonical: "/docs" },
-};
+  description:
+    "Guides to building, deploying, and managing Digital FTEs and AI agents with Deuvix AI Factory.",
+  path: "/docs",
+});
 
 const sections = [
   {
@@ -98,8 +99,8 @@ export default function DocsPage() {
             items={[{ label: "Home", href: "/" }, { label: "Docs" }]}
             className="mb-4 sm:mb-6"
           />
-        <Badge className="mb-4 bg-accent/10 text-accent border-accent/20">Documentation</Badge>
-        <h1 className="font-heading text-[68px] font-bold mb-4">
+        <Badge className="mb-4 bg-secondary/10 text-secondary border-secondary/30">Documentation</Badge>
+        <h1 className="font-heading h1 mb-4">
           Deuvix AI Factory <span className="text-gradient">Docs</span>
         </h1>
         <p className="mx-auto max-w-2xl text-muted-foreground text-base">
@@ -120,7 +121,7 @@ export default function DocsPage() {
                 <span className="inline-flex items-center justify-center size-11 rounded-xl bg-primary/10 text-primary mb-4">
                   <section.icon className="size-5" />
                 </span>
-                <h2 className="font-heading text-[48px] font-bold mb-2">{section.title}</h2>
+                <h2 className="font-heading h2-lg mb-2">{section.title}</h2>
                 <p className="text-sm text-muted-foreground leading-relaxed mb-4">
                   {section.description}
                 </p>
@@ -142,13 +143,13 @@ export default function DocsPage() {
           </div>
 
           <div className="mt-12 p-8 rounded-2xl bg-card border border-border text-center">
-            <h2 className="font-heading text-[48px] font-bold mb-2">Still stuck?</h2>
+            <h2 className="font-heading h2-sm mb-2">Still stuck?</h2>
             <p className="text-sm text-muted-foreground mb-6 max-w-xl mx-auto">
               Our team ships production agent systems every week. Ask us anything about your
               use case.
             </p>
             <Link href="/contact">
-              <span className="inline-flex items-center gap-2 px-6 py-3 rounded-xl bg-primary text-primary-foreground text-sm font-semibold hover:bg-primary/90 transition-colors">
+              <span className="btn-sharp inline-flex items-center gap-2 px-6 py-3 rounded-none bg-primary text-primary-foreground text-sm font-semibold hover:bg-primary/90 transition-colors">
                 Get Support
                 <ArrowRight className="size-4" />
               </span>

@@ -5,14 +5,14 @@ import {
   LegalList,
 } from "@/components/legal-page";
 import { CompanyIdentityBlock, CompanyEmailLink } from "@/components/legal-company";
-import type { Metadata } from "next";
+import { pageMetadata } from "@/lib/seo";
 
-export const metadata: Metadata = {
+export const metadata = pageMetadata({
   title: "Privacy Policy",
   description:
     "How Deuvix AI Factory collects, uses, and protects your information when you use our website and services.",
-  alternates: { canonical: "/privacy" },
-};
+  path: "/privacy",
+});
 
 export default function PrivacyPolicyPage() {
   return (

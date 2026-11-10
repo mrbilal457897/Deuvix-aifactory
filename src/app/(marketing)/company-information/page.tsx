@@ -1,5 +1,4 @@
 import Link from "next/link";
-import type { Metadata } from "next";
 import { Badge } from "@/components/ui/badge";
 import {
   ArrowLeft,
@@ -19,13 +18,14 @@ import {
   companyWorkHoursRows,
 } from "@config/company";
 import { Breadcrumb } from "@/components/ui/breadcrumb";
+import { pageMetadata } from "@/lib/seo";
 
-export const metadata: Metadata = {
+export const metadata = pageMetadata({
   title: "Company Information",
   description:
     "The legal and public identity of Deuvix AI Factory — company name, registration, location, discussion details, and working hours.",
-  alternates: { canonical: "/company-information" },
-};
+  path: "/company-information",
+});
 
 type InfoCard = {
   icon: typeof Building2;
@@ -82,7 +82,7 @@ export default function CompanyInformationPage() {
             className="mb-4 sm:mb-6"
           />
         <Badge className="mb-4 bg-primary/10 text-primary border-primary/20">Company</Badge>
-        <h1 className="font-heading text-[68px] font-bold mb-4">
+        <h1 className="font-heading h1 mb-4">
           <CharReveal>
             Company <span className="text-gradient">Information</span>
           </CharReveal>
@@ -102,7 +102,7 @@ export default function CompanyInformationPage() {
                 <div className="inline-flex items-center justify-center size-10 rounded-lg bg-primary/5 border border-primary/10 mb-4">
                   <card.icon className="size-5 text-primary" />
                 </div>
-                <h3 className="font-heading text-[24px] font-semibold text-muted-foreground mb-1">{card.label}</h3>
+                <h2 className="font-heading h2-sm text-muted-foreground mb-1">{card.label}</h2>
                 {card.href ? (
                   <a href={card.href} className="text-sm font-medium text-primary hover:underline break-words">
                     {card.value}
@@ -118,7 +118,7 @@ export default function CompanyInformationPage() {
             <div className="mt-6 p-6 rounded-xl card-solid">
               <div className="flex items-center gap-2 mb-4">
                 <Clock className="size-5 text-primary" />
-                <h3 className="font-heading text-[24px] font-semibold text-foreground">Working hours</h3>
+                <h2 className="font-heading h2-sm text-foreground">Working hours</h2>
               </div>
               <ul className="space-y-2 text-sm max-w-sm">
                 {hourRows.map((row) => (
@@ -136,7 +136,7 @@ export default function CompanyInformationPage() {
                   </li>
                 ))}
               </ul>
-              <p className="text-[11px] text-muted-foreground/70 mt-3">
+              <p className="text-xs text-muted-foreground/70 mt-3">
                 Timezone: {company.workingHours.timezone} ({company.workingHours.timezoneAbbr})
               </p>
             </div>

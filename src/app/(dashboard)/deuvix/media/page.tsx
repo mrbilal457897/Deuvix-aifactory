@@ -74,14 +74,14 @@ export default function MediaPage() {
     <div>
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-6">
         <div>
-          <h1 className="font-heading text-2xl font-bold text-foreground">Media Library</h1>
+          <h1 className="font-heading h1 text-foreground">Media Library</h1>
           <p className="text-sm text-muted-foreground mt-1">Upload and manage images for your website.</p>
         </div>
         <div className="flex items-center gap-2">
-          <button onClick={() => setView("grid")} className={`p-2 rounded-lg transition-colors ${view === "grid" ? "bg-muted text-foreground" : "text-muted-foreground hover:text-foreground hover:bg-muted"}`}>
+          <button onClick={() => setView("grid")} className={`btn-sharp p-2 rounded-none transition-colors ${view === "grid" ? "bg-muted text-foreground" : "text-muted-foreground hover:text-foreground hover:bg-muted"}`}>
             <Grid3X3 className="size-4" />
           </button>
-          <button onClick={() => setView("list")} className={`p-2 rounded-lg transition-colors ${view === "list" ? "bg-muted text-foreground" : "text-muted-foreground hover:text-foreground hover:bg-muted"}`}>
+          <button onClick={() => setView("list")} className={`btn-sharp p-2 rounded-none transition-colors ${view === "list" ? "bg-muted text-foreground" : "text-muted-foreground hover:text-foreground hover:bg-muted"}`}>
             <List className="size-4" />
           </button>
         </div>
@@ -106,7 +106,7 @@ export default function MediaPage() {
         </div>
         <p className="text-sm text-muted-foreground mb-3">Drag & drop images here, or</p>
         <input ref={fileRef} type="file" accept="image/*" multiple className="hidden" onChange={(e) => handleUpload(e.target.files)} />
-        <button onClick={() => fileRef.current?.click()} disabled={uploading} className="inline-flex items-center gap-2 px-5 py-2.5 rounded-xl bg-gradient-to-r from-primary to-primary/80 text-primary-foreground text-sm font-medium hover:from-primary/90 hover:to-primary/70 transition-all shadow-lg shadow-primary/20 disabled:opacity-50">
+        <button onClick={() => fileRef.current?.click()} disabled={uploading} className="btn-sharp inline-flex items-center gap-2 px-5 py-2.5 rounded-none bg-gradient-to-r from-primary to-primary/80 text-primary-foreground text-sm font-medium hover:from-primary/90 hover:to-primary/70 transition-all shadow-lg shadow-primary/20 disabled:opacity-50">
           <Upload className="size-4" />
           {uploading ? "Uploading..." : "Browse Files"}
         </button>
@@ -126,10 +126,10 @@ export default function MediaPage() {
                 <div className="absolute bottom-0 left-0 right-0 p-3">
                   <p className="text-white text-xs font-medium truncate mb-2">{img.filename}</p>
                   <div className="flex gap-1.5">
-                    <button onClick={() => handleCopy(img.url)} className="flex items-center gap-1.5 px-2.5 py-1.5 rounded-lg bg-white/10 backdrop-blur-sm text-white text-[10px] font-medium hover:bg-white/20 transition-colors">
+                    <button onClick={() => handleCopy(img.url)} className="btn-sharp flex items-center gap-1.5 px-2.5 py-1.5 rounded-none bg-white/10 backdrop-blur-sm text-white text-[10px] font-medium hover:bg-white/20 transition-colors">
                       {copied === img.url ? <><Check className="size-3" /> Copied</> : <><Copy className="size-3" /> Copy URL</>}
                     </button>
-                    <button onClick={() => handleDelete(img.id)} className="flex items-center gap-1.5 px-2.5 py-1.5 rounded-lg bg-red-500/20 backdrop-blur-sm text-red-300 text-[10px] font-medium hover:bg-red-500/30 transition-colors">
+                    <button onClick={() => handleDelete(img.id)} className="btn-sharp flex items-center gap-1.5 px-2.5 py-1.5 rounded-none bg-red-500/20 backdrop-blur-sm text-red-300 text-[10px] font-medium hover:bg-red-500/30 transition-colors">
                       <Trash2 className="size-3" /> Delete
                     </button>
                   </div>
@@ -162,10 +162,10 @@ export default function MediaPage() {
                   <td className="px-5 py-3 hidden md:table-cell text-muted-foreground text-xs">{new Date(img.uploadedAt).toLocaleDateString()}</td>
                   <td className="px-5 py-3 text-right">
                     <div className="flex items-center justify-end gap-0.5 opacity-0 group-hover:opacity-100 transition-opacity">
-                      <button onClick={() => handleCopy(img.url)} className="p-2 rounded-lg text-muted-foreground hover:text-primary hover:bg-primary/5 transition-colors" title="Copy URL">
+                      <button onClick={() => handleCopy(img.url)} className="btn-sharp p-2 rounded-none text-muted-foreground hover:text-primary hover:bg-primary/5 transition-colors" title="Copy URL">
                         {copied === img.url ? <Check className="size-4 text-emerald-500" /> : <Copy className="size-4" />}
                       </button>
-                      <button onClick={() => handleDelete(img.id)} className="p-2 rounded-lg text-muted-foreground hover:text-destructive hover:bg-destructive/5 transition-colors" title="Delete">
+                      <button onClick={() => handleDelete(img.id)} className="btn-sharp p-2 rounded-none text-muted-foreground hover:text-destructive hover:bg-destructive/5 transition-colors" title="Delete">
                         <Trash2 className="size-4" />
                       </button>
                     </div>
