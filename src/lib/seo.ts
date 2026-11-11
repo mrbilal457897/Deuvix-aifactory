@@ -17,7 +17,7 @@ export const SITE_URL = (
 export const SITE_NAME = "Deuvix AI Factory";
 
 export const SITE_DESCRIPTION =
-  "Deuvix AI Factory manufactures, deploys, and monetizes Digital FTEs — AI workers that run your business 24/7. From AI chatbots, voice agents, and custom agents to Loop Engineering and FDE consulting.";
+  "Deuvix AI Factory builds and operates Digital FTEs — AI workers your team supervises, not tools that watch it. From AI chatbots and voice agents to Loop Engineering and FDE consulting.";
 
 export const SITE_KEYWORDS = [
   "Deuvix AI Factory",

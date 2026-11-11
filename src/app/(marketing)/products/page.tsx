@@ -39,7 +39,7 @@ const products = [
     id: 1,
     anchor: "digital-fte-deployment",
     title: "Digital FTE Deployment",
-    description: "Deploy AI workers that operate 24/7, 168 hours a week. Domain-specific agents that handle your business tasks at 85% cost savings.",
+    description: "Deploy Digital FTEs that work 168 hours a week, with up to 85% lower cost per completed task versus fully-loaded human delivery.",
     category: "FTE",
     color: "bg-primary/10 text-primary",
     features: ["24/7 Operation", "Domain Expertise", "Instant Scaling"],
@@ -51,7 +51,7 @@ const products = [
     description: "Expert engineers deployed to your site to implement AI-native solutions. Spec-driven development with production-ready architecture.",
     category: "FDE",
     color: "bg-secondary/10 text-secondary",
-    features: ["On-site Implementation", "Spec-Driven", "Full Stack AI"],
+    features: ["On-Site, Remote or Hybrid", "Spec-Driven", "Full Stack AI"],
   },
   {
     id: 3,
@@ -115,7 +115,7 @@ const plans = [
     price: "Custom quote",
     forWho: "Solo founders and small teams running one repeatable workflow.",
     description: "For small teams getting started with AI",
-    features: ["1 Digital FTE", "Basic Agent Setup", "Email support", "Community access"],
+    features: ["1 Digital FTE", "Basic Agent Setup", "Email support", "Written onboarding checklist"],
     popular: false,
   },
   {
@@ -186,7 +186,7 @@ const loopParts = [
     icon: Database,
   },
   {
-    number: "07",
+    number: "G",
     title: "Human Gate",
     tagline: "keeps trust",
     description: "A loop never removes judgment — it removes typing. You keep intent and accountability: every risky call comes to you for approval. No spine, no loop; no human gate, no trust.",
@@ -397,6 +397,9 @@ export default function ProductsPage() {
         <div className="relative mx-auto max-w-7xl">
           <div className="text-center mb-16">
             <Badge className="mb-4 border-sky-400/30 bg-sky-400/10 text-sky-300" data-loop-reveal>Methodology</Badge>
+            <p className="font-mono text-xs uppercase tracking-[0.35em] text-sky-300/80">
+              Six parts plus a human gate
+            </p>
             <h2 className="font-heading h2-lg mb-4 text-white" data-loop-reveal>
               Loop <span className="bg-gradient-to-r from-sky-400 via-indigo-400 to-violet-400 bg-clip-text text-transparent">Engineering</span>
             </h2>

@@ -3,10 +3,10 @@
 import { CountUp } from "@/components/animations/count-up";
 
 const stats = [
-  { value: 168, suffix: "hrs/wk", label: "Digital FTE uptime" },
-  { value: 85, suffix: "%", label: "Cost savings per task" },
-  { value: 99, suffix: "%+", label: "Task consistency" },
-  { value: 4, suffix: "x", label: "More output vs human" },
+  { value: 168, suffix: "hrs/wk", label: "Availability — 24/7" },
+  { value: 85, suffix: "%", label: "Up to 85% cost savings" },
+  { value: 99, suffix: "%+", label: "First-pass consistency, supervised" },
+  { value: 4, suffix: "x", label: "Hours available vs full-time" },
 ];
 
 export function StatsSection() {

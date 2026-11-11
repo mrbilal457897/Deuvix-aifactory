@@ -28,6 +28,15 @@ const nextConfig: NextConfig = {
       { protocol: "https", hostname: "sirxcjnszsumwnjhizrz.supabase.co" },
     ],
   },
+  async redirects() {
+    return [
+      {
+        source: "/projects/restoren",
+        destination: "/projects/restoran",
+        permanent: true,
+      },
+    ];
+  },
 };
 
 export default nextConfig;

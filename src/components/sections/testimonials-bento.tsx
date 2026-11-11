@@ -1,5 +1,6 @@
 "use client";
 
+import Image from "next/image";
 import { Star } from "lucide-react";
 import { useRef, useEffect } from "react";
 import { gsap } from "gsap";
@@ -10,22 +11,33 @@ if (typeof window !== "undefined") {
   gsap.registerPlugin(ScrollTrigger);
 }
 
-const testimonials = [
+// TODO (TASK 4): every quote below is a placeholder, not a verified client statement.
+// Replace with a real, client-approved quote and set verified: true before publishing numbers.
+type Testimonial = {
+  name: string;
+  role: string;
+  quote: string;
+  highlight: string;
+  initials: string;
+  image?: string;
+};
+const testimonials: Testimonial[] = [
   {
     name: "Sarah Chen",
     role: "CTO, TechFlow Inc",
     quote:
-      "Deuvix AI Factory's Digital FTEs replaced 3 manual workflows in our ops team. 85% cost savings and the agents run 24/7 without fatigue.",
-    highlight: "85% cost savings",
+      "Deuvix AI Factory's Digital FTEs took over our ops workflows and our people now handle approvals instead of triage.",
+    highlight: "Up to 85% lower cost per task",
     initials: "SC",
   },
   {
-    name: "Marcus Rodriguez",
+    name: "Abdullah",
     role: "VP Engineering, DataSphere",
     quote:
       "The FDE team deployed our AI agent stack in under a week. Spec-driven approach meant we had production-ready systems from day one.",
     highlight: "Live in under a week",
-    initials: "MR",
+    initials: "AK",
+    image: "/images/abdullah-testimonial.jpg",
   },
   {
     name: "Aisha Patel",
@@ -35,7 +47,7 @@ const testimonials = [
     highlight: "Enterprise-level at a fraction of the cost",
     initials: "AP",
   },
-] as const;
+];
 
 export function TestimonialsBento({ showStars = true }: { showStars?: boolean }) {
   const sectionRef = useRef<HTMLDivElement>(null);
@@ -100,12 +112,22 @@ export function TestimonialsBento({ showStars = true }: { showStars?: boolean })
               className="bento-card flex h-full flex-col space-y-3 rounded-xl border border-border bg-card p-6"
             >
               <figcaption className="flex items-center gap-3">
-                <span
-                  aria-hidden="true"
-                  className="flex size-12 shrink-0 items-center justify-center rounded-full border border-secondary/40 bg-secondary/10 text-base font-bold text-secondary"
-                >
-                  {t.initials}
-                </span>
+                {t.image ? (
+                  <Image
+                    src={t.image}
+                    alt={`Portrait of ${t.name}`}
+                    width={48}
+                    height={48}
+                    className="size-12 shrink-0 rounded-full object-cover border border-border"
+                  />
+                ) : (
+                  <span
+                    aria-hidden="true"
+                    className="flex size-12 shrink-0 items-center justify-center rounded-full border border-secondary/40 bg-secondary/10 text-base font-bold text-secondary"
+                  >
+                    {t.initials}
+                  </span>
+                )}
                 <span>
                   <span className="block text-base font-semibold leading-tight text-foreground">
                     {t.name}

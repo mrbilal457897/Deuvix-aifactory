@@ -4,6 +4,7 @@ import { useRef, useEffect } from "react";
 import { gsap } from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
 import Image from "next/image";
+import { useSiteConfig } from "@/hooks/use-site-config";
 
 if (typeof window !== "undefined") {
   gsap.registerPlugin(ScrollTrigger);
@@ -13,19 +14,20 @@ const founders = [
   {
     name: "Bilal Ali",
     role: "CO-FOUNDER / CEO",
-    image: "/images/bilal.jpg",
+    slot: "team-bilal",
     linkedin: "https://www.linkedin.com/company/145184855/",
   },
   {
     name: "Asadullah",
     role: "CO-FOUNDER / CTO",
-    image: "/images/asad.jpg",
+    slot: "team-asad",
     linkedin: "https://www.linkedin.com/company/145184855/",
   },
 ];
 
 export function FoundersSection() {
   const sectionRef = useRef<HTMLDivElement>(null);
+  const { img } = useSiteConfig();
 
   useEffect(() => {
     if (!sectionRef.current) return;
@@ -94,7 +96,7 @@ export function FoundersSection() {
                     className="founder-photo-link group block relative aspect-[4/5] overflow-hidden rounded-none bg-muted focus-visible:outline-2 focus-visible:outline-primary focus-visible:outline-offset-4"
                   >
                     <Image
-                      src={f.image}
+                      src={img(f.slot)}
                       alt={f.name + ", " + f.role}
                       fill
                       sizes="(min-width: 1024px) 32vw, 100vw"

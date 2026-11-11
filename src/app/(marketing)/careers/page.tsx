@@ -15,7 +15,7 @@ import { pageMetadata } from "@/lib/seo";
 
 export const metadata = pageMetadata({
   title: "Careers",
-  description: "Join Deuvix AI Factory and build the AI workforce that runs the next generation of enterprises.",
+  description: "Join Deuvix AI Factory and build AI workers that people trust with real work — under human oversight, on production systems.",
   path: "/careers",
 });
 
@@ -83,8 +83,8 @@ export default function CareersPage() {
           Build the <span className="text-gradient">AI workforce</span>
         </h1>
         <p className="max-w-2xl text-muted-foreground text-base">
-          Deuvix AI Factory manufactures, deploys, and monetizes Digital FTEs. Join us
-          to build the systems that run the next generation of enterprises.
+          Deuvix AI Factory designs, builds and operates Digital FTEs. Join us
+          to ship AI workers that teams trust with real work — under human oversight.
         </p>
         </div>
       </section>

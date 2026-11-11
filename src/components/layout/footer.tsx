@@ -37,6 +37,7 @@ const footerLinks = {
     { label: "About", href: "/about" },
     { label: "Work", href: "/projects" },
     { label: "Blog", href: "/blog" },
+    { label: "Testimonials", href: "/testimonials" },
     { label: "Careers", href: "/careers" },
     { label: "Discuss", href: "/contact" },
     { label: "Book a Call", href: "/book-a-call" },
@@ -88,8 +89,13 @@ export function Footer() {
     const reduced = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
 
     let fitFn: () => void = () => {};
+    let refreshAll: () => void = () => {};
     let onMoveFn: (e: PointerEvent) => void = () => {};
     let onLeaveFn: () => void = () => {};
+    let entrancePlayed = false;
+    let disposed = false;
+    let io: IntersectionObserver | null = null;
+    let ioFallback: number | null = null;
 
     const ctx = gsap.context(() => {
       // ---- Fit: scale font so word fills container width ----
@@ -102,21 +108,27 @@ export function Footer() {
         }
       };
 
-      // Call fit immediately, then again after fonts ready
-      fitFn();
-
-      window.addEventListener("resize", fitFn);
-
-      document.fonts.ready.then(() => {
+      // Call fit immediately, then re-fit + re-measure triggers on every
+      // opportunity: fonts ready, ALL images/resources loaded (layout can shift),
+      // and a couple of delayed settles for late/lazy content.
+      refreshAll = () => {
         fitFn();
         ScrollTrigger.refresh();
+      };
+
+      fitFn();
+
+      window.addEventListener("resize", refreshAll);
+      window.addEventListener("load", refreshAll);
+
+      document.fonts.ready.then(() => {
+        refreshAll();
       });
 
       // Also refresh after a short delay to ensure DOM is settled
-      setTimeout(() => {
-        fitFn();
-        ScrollTrigger.refresh();
-      }, 100);
+      setTimeout(refreshAll, 100);
+      setTimeout(refreshAll, 800);
+      setTimeout(refreshAll, 1800);
 
       if (reduced) {
         letters.forEach((el) => {
@@ -129,14 +141,10 @@ export function Footer() {
       // ---- Initial state ----
       gsap.set(letters, { yPercent: 115, rotate: 6, "--f": 0 });
 
-      // ---- Entrance ----
-      const tl = gsap.timeline({
-        scrollTrigger: {
-          trigger: stage,
-          start: "top 92%",
-          once: true,
-        },
-      });
+      // ---- Entrance: IntersectionObserver-driven (robust to layout shifts) ----
+      // ScrollTrigger's scroll-handler can miss when the trigger point is
+      // recomputed after images/fonts settle — IO guarantees it fires.
+      const tl = gsap.timeline({ paused: true });
 
       tl.to(letters, {
         yPercent: 0,
@@ -154,6 +162,33 @@ export function Footer() {
         },
         "-=0.7"
       );
+
+      // Play the entrance deterministically: IntersectionObserver fires it as
+      // soon as the footer is (nearly) in view; a timer backstops it.
+      const playEntrance = () => {
+        if (entrancePlayed || disposed) return;
+        entrancePlayed = true;
+        tl.play();
+      };
+      io = new IntersectionObserver(
+        (entries) => {
+          for (const entry of entries) {
+            if (entry.isIntersecting) {
+              playEntrance();
+              io?.disconnect();
+              break;
+            }
+          }
+        },
+        { rootMargin: "0px 0px -8% 0px", threshold: 0 }
+      );
+      io.observe(stage);
+      ioFallback = window.setTimeout(playEntrance, 3000);
+
+      // ---- Fallback: the wordmark must never stay hidden ----
+      setTimeout(() => {
+        if (!disposed && !entrancePlayed) tl.play(0);
+      }, 2500);
 
       // ---- Loop: color wave D to x ----
       const loop = gsap.timeline({ repeat: -1, repeatDelay: 2.2 });
@@ -211,8 +246,12 @@ export function Footer() {
     });
 
     return () => {
+      disposed = true;
+      io?.disconnect();
+      if (ioFallback !== null) window.clearTimeout(ioFallback);
       ctx.revert();
-      if (fitFn) window.removeEventListener("resize", fitFn);
+      window.removeEventListener("resize", refreshAll);
+      window.removeEventListener("load", refreshAll);
       if (onMoveFn) stage.removeEventListener("pointermove", onMoveFn);
       if (onLeaveFn) stage.removeEventListener("pointerleave", onLeaveFn);
     };
@@ -227,8 +266,8 @@ export function Footer() {
               <LogoLockup height={24} />
             </div>
             <p className="text-sm text-muted-foreground max-w-xs mb-6 leading-relaxed">
-              {company.tradingName}. We manufacture, deploy, and monetize
-              Digital FTEs — the AI workers that run the next generation of enterprises.
+              {company.tradingName}. We design and run AI workers for your team,
+              with a human gate on anything that matters.
             </p>
             <div className="flex items-center gap-2">
               {socialLinks.map((social) => {
@@ -292,7 +331,7 @@ export function Footer() {
           </p>
         </div>
 
-        <div className="deuvix-stage" ref={stageRef} aria-label="Deuvix">
+        <div className="deuvix-stage" ref={stageRef} aria-hidden="true">
           <div className="deuvix-mark" ref={markRef} aria-hidden="true">
             {["D", "e", "u", "v", "i", "x"].map((letter, i) => (
               <span key={i} className="deuvix-ch">

@@ -88,7 +88,7 @@ export function HowItWorksSection() {
             </CharReveal>
           </h2>
           <p className="max-w-2xl text-muted-foreground text-base">
-            The spec-driven, human-supervised process for building AI-Native companies.
+            How we take a workflow from a rough brief to a reliable agent — one gated step at a time.
           </p>
         </div>
 

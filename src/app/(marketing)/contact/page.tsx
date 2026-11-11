@@ -10,7 +10,6 @@ import { Card } from "@/components/ui/card";
 import { Separator } from "@/components/ui/separator";
 import { Mail, Phone, MessageCircle } from "lucide-react";
 import { useTheme } from "next-themes";
-import { useSiteConfig } from "@/hooks/use-site-config";
 import { Breadcrumb } from "@/components/ui/breadcrumb";
 import { CharReveal } from "@/components/split-text";
 

@@ -2,6 +2,7 @@ import { HeroSection } from "@/components/sections/HeroSection";
 import { FeaturesSection } from "@/components/sections/FeaturesSection";
 import { LiveWork } from "@/components/sections/live-work";
 import { HowItWorksSection } from "@/components/sections/how-it-works";
+import { MethodologySection } from "@/components/sections/methodology";
 import { StatsSection } from "@/components/sections/stats";
 import { TestimonialsBento } from "@/components/sections/testimonials-bento";
 import { FoundersSection } from "@/components/sections/founders";
@@ -26,6 +27,7 @@ export default async function HomePage() {
       <FeaturesSection />
       <LiveWork projects={projects} showViewAll={total > projects.length} />
       <HowItWorksSection />
+      <MethodologySection />
       <StatsSection />
       <TestimonialsBento />
       <FoundersSection />

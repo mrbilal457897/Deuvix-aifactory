@@ -9,6 +9,7 @@ import { ArrowRight, ArrowUpRight, Mail } from "lucide-react";
 import { Breadcrumb } from "@/components/ui/breadcrumb";
 import { company } from "@config/company";
 import styles from "./about.module.css";
+import { useSiteConfig } from "@/hooks/use-site-config";
 
 if (typeof window !== "undefined") {
   gsap.registerPlugin(ScrollTrigger);
@@ -40,10 +41,10 @@ const values = [
 ] as const;
 
 const stats = [
-  { target: 168, suffix: "hrs/week", label: "Uptime" },
-  { target: 85, suffix: "%", label: "Cost Savings" },
-  { target: 99, suffix: "%+", label: "Task Consistency" },
-  { target: 4, suffix: "x", label: "Output vs Human" },
+  { target: 168, suffix: "hrs/wk", label: "Availability — 24/7 by design" },
+  { target: 85, suffix: "%", label: "Up to 85% cost savings" },
+  { target: 99, suffix: "%+", label: "First-pass consistency, supervised" },
+  { target: 4, suffix: "x", label: "Hours available vs full-time" },
 ] as const;
 
 const leaders = [
@@ -53,7 +54,7 @@ const leaders = [
     index: "01",
     description:
       "Turns AI research into revenue — architect of Deuvix AI Factory's Manufacture-Deploy-Monetize model and the strategy behind every Digital FTE that ships to production.",
-    src: "/images/bilal.jpg",
+    slot: "team-bilal",
     alt: "Portrait of Bilal Ali, Co-founder and Chief Executive Officer of Deuvix AI Factory",
     linkedin: "https://www.linkedin.com/in/bilal-alee-6769462ba/",
   },
@@ -62,8 +63,8 @@ const leaders = [
     role: "Co-founder & CTO",
     index: "02",
     description:
-      "Architect of Loop Engineering — builds the spec-driven, human-gated systems that let AI agents run production workloads 24/7 without losing human oversight.",
-    src: "/images/asad.jpg",
+      "Asadullah ships Loop Engineering into production — spec-driven, human-gated systems that let AI agents run production workloads 24/7 without losing human oversight.",
+    slot: "team-asad",
     alt: "Portrait of Asadullah, Co-founder and Chief Technology Officer of Deuvix AI Factory",
     linkedin: "https://www.linkedin.com/company/145184855/",
   },
@@ -71,29 +72,28 @@ const leaders = [
 
 const journey = [
   {
-    year: "2022",
-    title: "First Agent",
-    description: "Deployed our first Digital FTE, serving early adopters.",
-  },
-  {
-    year: "2023",
-    title: "FDE Launch",
-    description: "Launched Forward Deployed Engineer services for enterprise clients.",
-  },
-  {
-    year: "2024",
-    title: "AI E-books",
-    description: "Published the AI Agent Factory guide, reaching 10,000+ readers.",
-  },
-  {
-    year: "2025",
-    title: "Platform Growth",
-    description: "Complete platform with FTE deployment, FDE consulting, and web apps.",
+    year: "2026",
+    title: "Founded",
+    description:
+      "Deuvix AI Factory incorporates in [TODO: month and city — e.g., March 2026, Karachi].",
   },
   {
     year: "2026",
-    title: "Next Chapter",
-    description: "Pioneering Digital FTE monetization at scale.",
+    title: "First deployment",
+    description:
+      "[TODO: add the first real milestone — the first Digital FTE engagement, the first client, or the first Forward Deployed Engineer deployment.]",
+  },
+  {
+    year: "2026",
+    title: "Building in public",
+    description:
+      "[TODO: add what the team is publicly committed to — e.g., first open source release, first published case study, or first cohort of partners.]",
+  },
+  {
+    year: "2027",
+    title: "Next chapter",
+    description:
+      "[TODO: where the company is heading — a public goal or milestone you are willing to stand behind.]",
   },
 ] as const;
 
@@ -104,6 +104,7 @@ const linkedinGlyph = (
 );
 
 export function AboutClient() {
+  const { img } = useSiteConfig();
   const rootRef = useRef<HTMLElement>(null);
   const treeRef = useRef<HTMLDivElement>(null);
   const trunkRef = useRef<HTMLDivElement>(null);
@@ -330,8 +331,8 @@ export function AboutClient() {
           </h1>
 
           <p className={`${styles.heroSub} js-hero-fade`}>
-            We help businesses manufacture, deploy, and monetize Digital FTEs — the AI
-            workers that run the next generation of enterprises.
+            We build Digital FTEs and put them to work inside real processes — under human
+            oversight, not on the sidelines of it.
           </p>
         </div>
 
@@ -376,7 +377,7 @@ export function AboutClient() {
               <div className={styles.figureFrame}>
                 <div className={styles.figureImg}>
                   <Image
-                    src="/images/about1.jpg"
+                    src={img("about-main")}
                     alt="Inside the Deuvix AI Factory — the engineering floor where Digital FTEs are spec-built, deployed and monitored"
                     fill
                     sizes="(min-width: 1024px) 38vw, 100vw"
@@ -450,7 +451,7 @@ export function AboutClient() {
                 >
                   <div className={`${styles.leaderImg} js-parallax`}>
                     <Image
-                      src={leader.src}
+                      src={img(leader.slot)}
                       alt={leader.alt}
                       fill
                       sizes="(min-width: 900px) 44vw, 100vw"
@@ -503,7 +504,7 @@ export function AboutClient() {
       <section className={styles.journey} aria-labelledby="our-journey-title">
         <div className={styles.treeWrap}>
           <div className={styles.sectionHead}>
-            <p className={styles.eyebrow}>04 · 2022 — 2026</p>
+            <p className={styles.eyebrow}>04 · 2026 →</p>
             <h2 id="our-journey-title" className={styles.aboutH2}>
               Our <span className="text-gradient">Journey</span>.
             </h2>

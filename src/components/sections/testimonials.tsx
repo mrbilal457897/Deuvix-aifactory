@@ -15,7 +15,7 @@ const testimonials = [
     name: "Sarah Chen",
     role: "CTO, TechFlow Inc",
     content:
-      "Deuvix AI Factory's Digital FTEs replaced 3 manual workflows in our ops team. 85% cost savings and the agents run 24/7 without fatigue.",
+      "Deuvix AI Factory's Digital FTEs took over our ops workflows, and our people now handle approvals instead of triage.",
     rating: 5,
   },
   {

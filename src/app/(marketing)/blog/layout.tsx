@@ -3,7 +3,7 @@ import { pageMetadata } from "@/lib/seo";
 export const metadata = pageMetadata({
   title: "Blog — AI Agents, Digital FTEs & Loop Engineering Guides",
   description:
-    "Guides and deep-dives from Deuvix AI Factory: Digital FTEs, Forward Deployed Engineering, AI agents, Loop Engineering, and building AI-Native companies.",
+    "Field notes from Deuvix AI Factory on building and running Digital FTEs — AI workers under human oversight: Loop Engineering, FDE practice, and the discipline of writing specs machines can follow.",
   path: "/blog",
 });
 

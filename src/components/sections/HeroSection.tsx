@@ -108,9 +108,8 @@ export function HeroSection() {
           {/* left: description + CTAs */}
           <div className={styles.leftCol}>
             <p className={`${styles.sub} js-sub`}>
-              We design, manufacture and deploy Digital FTEs — AI workers that run production
-              lines, not demos. Round-the-clock output at a fraction of the headcount cost,
-              engineered for your business from spec to shipment.
+              We build Digital FTEs — AI workers that carry real workloads with your team,
+              under the human oversight your process deserves.
             </p>
 
             <div className={`${styles.ctaRow} js-cta`}>
