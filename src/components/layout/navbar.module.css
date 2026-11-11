@@ -216,8 +216,8 @@
   padding: 0 10px 0 16px;
   border-radius: 999px;
   border: 1px solid #4299e1;
-  background: transparent;
-  color: #2F6B46;
+  background: var(--card);
+  color: var(--foreground);
   font-size: 13px;
   font-weight: 600;
   letter-spacing: -0.01em;
@@ -253,7 +253,7 @@
   height: 20px;
   border-radius: 999px;
   background: transparent;
-  color: #2F6B46;
+  color: var(--foreground);
   font-size: 12px;
   line-height: 1;
 }
@@ -401,7 +401,7 @@
   border-radius: 0;
   border: 1px solid #4299e1;
   background: transparent;
-  color: #2F6B46;
+  color: var(--foreground);
   font-size: 16px;
   font-weight: 700;
   text-decoration: none;

@@ -245,6 +245,37 @@ export async function fetchAvailableSlots(opts: {
   return normaliseSlots(body?.data, opts.timeZone);
 }
 
+/** Fetches the live event type's display title from Cal.com. */
+export async function fetchEventTitle(): Promise<string | null> {
+  const ref = parseCalLink();
+  if (!ref) return null;
+
+  try {
+    const query = ref.username
+      ? `username=${encodeURIComponent(ref.username)}`
+      : ref.teamSlug
+        ? `teamSlug=${encodeURIComponent(ref.teamSlug)}`
+        : "";
+    const body = await calFetch<{
+      status?: string;
+      data?: {
+        eventTypeGroups?: Array<{
+          eventTypes?: Array<{ slug?: string; title?: string }>;
+        }>;
+      };
+    }>(`/event-types?${query}`, { method: "GET", apiVersion: "2024-04-15" });
+    for (const group of body?.data?.eventTypeGroups ?? []) {
+      for (const t of group?.eventTypes ?? []) {
+        if (t.slug === ref.eventTypeSlug) return t.title?.trim() || null;
+      }
+    }
+    return null;
+  } catch (err) {
+    console.error("[cal/api] event-title lookup failed:", err instanceof Error ? err.message : err);
+    return null;
+  }
+}
+
 export interface CreateBookingInput {
   /** Absolute UTC ISO timestamp. */
   start: string;

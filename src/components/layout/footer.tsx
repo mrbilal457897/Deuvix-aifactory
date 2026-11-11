@@ -288,7 +288,7 @@ export function Footer() {
             {locationLine ? ` ${locationLine}.` : null} All rights reserved.
           </p>
           <p className="text-xs text-muted-foreground">
-            Built with AI
+            Build with Deuvix Founders
           </p>
         </div>
 

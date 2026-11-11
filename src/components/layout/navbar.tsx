@@ -16,7 +16,6 @@ import styles from "./navbar.module.css";
  */
 
 const LINKS = [
-  { href: "/", label: "Home" },
   { href: "/products", label: "Services" },
   { href: "/projects", label: "Work" },
   { href: "/about", label: "About" },
@@ -24,11 +23,10 @@ const LINKS = [
 ] as const;
 
 function activeIndexFor(pathname: string): number {
-  const normalised = pathname.replace(/\/+$/, "") || "/";
-  const index = LINKS.findIndex((item) =>
-    item.href === "/" ? normalised === "/" : normalised === item.href || normalised.startsWith(item.href + "/"),
+  const normalised = pathname.replace(/\/+$/, "");
+  return LINKS.findIndex(
+    (item) => normalised === item.href || normalised.startsWith(item.href + "/"),
   );
-  return index === -1 ? 0 : index;
 }
 
 const panelTabOrder =
@@ -226,7 +224,7 @@ export function Navbar() {
           <div className={styles.themeToggle} aria-hidden="false">
             <ThemeToggle />
           </div>
-          <DiscussButton variant="outline" size="sm" className="discussBar !rounded-full border-[#4299e1] dark:border-[#4299e1]" />
+          <DiscussButton variant="outline" size="sm" className="discussBar !rounded-full border-[#4299e1] dark:border-[#4299e1] bg-card hover:bg-muted" />
           <Link href="/book-a-call" className={styles.bookButton} aria-label="Book a Call">
             Book a Call
             <span className={styles.bookArrow} aria-hidden="true">→</span>

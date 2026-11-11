@@ -1,6 +1,6 @@
 import type { Metadata } from "next";
 import { BookingPage } from "@/components/booking/booking-page";
-import { getCalLink, getCalOrigin } from "@/lib/cal/api";
+import { getCalLink, getCalOrigin, fetchEventTitle } from "@/lib/cal/api";
 import { parseMonthParam } from "@/lib/booking/time";
 import { pageMetadata } from "@/lib/seo";
 
@@ -30,7 +30,9 @@ export default async function BookACallPage({
 
   const origin = getCalOrigin();
   const link = getCalLink();
-  const eventTitle = titleFromSlug(link) || "Book a Call";
+  // Slug is the Cal.com event type key; the display name comes from Cal itself
+  // so a rename in Cal.com shows up here without a redeploy.
+  const eventTitle = (await fetchEventTitle()) ?? titleFromSlug(link) ?? "Book a Call";
   const calBookingUrl = origin && link ? `${origin}/${link}` : "/contact";
 
   return (

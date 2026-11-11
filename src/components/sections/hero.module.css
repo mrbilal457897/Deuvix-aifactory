@@ -13,6 +13,8 @@
   --card: #FFFFFF;
   --blue: #0A84FF;
   --sec: #4CAF7D;
+  /* Sara tab hover accent — light theme has a dark tab bg → light blue */
+  --hover-accent: #5EB3FF;
 
   position: relative;
   background: var(--bg);
@@ -27,6 +29,8 @@
   --mut: var(--muted-foreground);
   --line: var(--border);
   --card: var(--card);
+  /* Dark theme has a light tab bg → dark blue text */
+  --hover-accent: #0B5ED7;
 }
 
 .hero :global(h1) {
@@ -95,7 +99,7 @@
   width: 8px;
   height: 8px;
   flex-shrink: 0;
-  background: var(--sec);
+  background: var(--blue);
   border-radius: 0;
 }
 
@@ -247,8 +251,11 @@
   cursor: pointer;
   transition: background-color 0.18s ease, color 0.18s ease;
 }
-.tab:hover {
+.tab:not(.tabActive):hover {
   color: var(--fg);
+}
+.tabActive:hover {
+  color: var(--hover-accent);
 }
 .tab:focus-visible {
   outline: 2px solid var(--blue);
@@ -259,16 +266,16 @@
   background: var(--fg);
   color: var(--bg);
   border-color: var(--fg);
-  box-shadow: inset 0 -3px 0 var(--sec);
+  box-shadow: inset 0 -3px 0 var(--blue);
 }
 .tabDot {
   width: 7px;
   height: 7px;
   border-radius: 0;
-  background: var(--mut);
+  background: var(--blue);
 }
 .tabActive .tabDot {
-  background: var(--sec);
+  background: var(--blue);
 }
 
 /* ---------- stage ---------- */
@@ -353,7 +360,7 @@
   width: 6px;
   height: 6px;
   border-radius: 50%;
-  background: #4CAF7D;
+  background: #2EC5FF;
   flex-shrink: 0;
 }
 .tryFree {
@@ -581,9 +588,9 @@
   align-self: flex-start;
   height: 28px;
   padding: 0 0.6rem;
-  border: 1px solid rgba(74, 222, 128, 0.4);
-  background: rgba(74, 222, 128, 0.1);
-  color: #4CAF7D;
+  border: 1px solid rgba(46, 197, 255, 0.4);
+  background: rgba(46, 197, 255, 0.1);
+  color: #2EC5FF;
   font-size: 0.75rem;
   font-weight: 600;
   letter-spacing: 0.02em;
@@ -595,7 +602,7 @@
   width: 6px;
   height: 6px;
   border-radius: 0;
-  background: #4CAF7D;
+  background: #2EC5FF;
 }
 
 .segments {
@@ -693,7 +700,7 @@
   letter-spacing: 0.18em;
 }
 .wheelCoreSub {
-  fill: #4CAF7D;
+  fill: #2EC5FF;
   font-family: var(--font-inter), ui-sans-serif, system-ui, sans-serif;
   font-weight: 500;
   font-size: 9px;

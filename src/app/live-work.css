@@ -30,6 +30,7 @@
 }
 
 .lw-heading {
+  font-family: var(--font-space-grotesk), ui-sans-serif, system-ui, sans-serif;
   font-weight: 500;
   font-size: 40px;
   line-height: 46px;
