@@ -2,27 +2,43 @@
 
 import { useCallback, useEffect, useRef, useState } from "react";
 import Link from "next/link";
+import dynamic from "next/dynamic";
 import { gsap } from "gsap";
 import { ArrowRight } from "lucide-react";
-import { Poppins, Inter } from "next/font/google";
-import { SaraChat } from "./SaraChat";
-import { FdeRoadmap } from "./FdeRoadmap";
+import localFont from "next/font/local";
 import styles from "./hero.module.css";
+
+const PanelPlaceholder = () => (
+  <div aria-hidden="true" className="flex h-full w-full items-center justify-center bg-card" />
+);
+const SaraChat = dynamic(() => import("./SaraChat").then((m) => ({ default: m.SaraChat })), {
+  ssr: false,
+  loading: PanelPlaceholder,
+});
+const FdeRoadmap = dynamic(() => import("./FdeRoadmap").then((m) => ({ default: m.FdeRoadmap })), {
+  ssr: false,
+  loading: PanelPlaceholder,
+});
 
 if (typeof window !== "undefined") {
   gsap.registerPlugin();
 }
 
-const poppins = Poppins({
-  subsets: ["latin"],
-  weight: ["400", "500", "600"],
+const poppins = localFont({
+  src: [
+    { path: "../../../public/fonts/poppins-400.woff2", weight: "400", style: "normal" },
+    { path: "../../../public/fonts/poppins-500.woff2", weight: "500", style: "normal" },
+    { path: "../../../public/fonts/poppins-600.woff2", weight: "600", style: "normal" },
+  ],
   variable: "--font-poppins",
   display: "swap",
 });
 
-const inter = Inter({
-  subsets: ["latin"],
-  weight: ["400", "500", "600"],
+const inter = localFont({
+  src: [
+    { path: "../../../public/fonts/inter-400.woff2", weight: "400", style: "normal" },
+    { path: "../../../public/fonts/inter-500.woff2", weight: "500", style: "normal" },
+  ],
   variable: "--font-inter",
   display: "swap",
 });

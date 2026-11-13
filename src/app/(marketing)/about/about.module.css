@@ -185,29 +185,29 @@
 }
 .scrollTrackDot {
   position: absolute;
-  top: -0.5rem;
+  top: 0;
   left: 50%;
   width: 5px;
   height: 5px;
   border-radius: 999px;
   background: var(--primary);
-  transform: translateX(-50%);
+  transform: translate(-50%, -150%);
   animation: scroll-drip 2.4s cubic-bezier(0.4, 0, 0.2, 1) infinite;
 }
 @keyframes scroll-drip {
   0% {
-    top: -0.6rem;
+    transform: translate(-50%, -150%);
     opacity: 0;
   }
   25% {
     opacity: 1;
   }
   80% {
-    top: 110%;
+    transform: translate(-50%, 3.6rem);
     opacity: 1;
   }
   100% {
-    top: 110%;
+    transform: translate(-50%, 3.6rem);
     opacity: 0;
   }
 }

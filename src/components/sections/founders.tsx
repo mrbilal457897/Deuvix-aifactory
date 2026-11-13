@@ -124,29 +124,23 @@ export function FoundersSection() {
 
       <style>
         {`
-          .founder-photo {
-            filter: grayscale(100%);
-            transition: filter 0.5s ease;
-          }
-
-          .founder-photo-link:hover .founder-photo,
-          .founder-photo-link:focus-within .founder-photo {
-            filter: grayscale(0);
-          }
-
-          @media (hover: none) {
+          /* Only apply grayscale where hover actually exists (desktop, fine pointer).
+             Touch devices — phones, tablets, foldables — see full colour always. */
+          @media (hover: hover) and (pointer: fine) {
             .founder-photo {
-              filter: none !important;
+              filter: grayscale(100%);
+              transition: filter 0.5s ease;
+            }
+
+            .founder-photo-link:hover .founder-photo,
+            .founder-photo-link:focus-within .founder-photo {
+              filter: grayscale(0);
             }
           }
 
           @media (prefers-reduced-motion: reduce) {
             .founder-photo {
               transition: none !important;
-            }
-            .founder-photo-link:hover .founder-photo,
-            .founder-photo-link:focus-within .founder-photo {
-              filter: grayscale(0);
             }
           }
         `}

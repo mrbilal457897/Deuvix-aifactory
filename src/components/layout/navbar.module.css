@@ -19,7 +19,7 @@
   box-shadow: var(--nav-shadow);
   backdrop-filter: blur(24px) saturate(200%);
   -webkit-backdrop-filter: blur(24px) saturate(200%);
-  transition: height 0.3s ease, background-color 0.3s ease, backdrop-filter 0.3s ease, box-shadow 0.3s ease;
+  transition: background-color 0.3s ease, backdrop-filter 0.3s ease, box-shadow 0.3s ease;
 }
 
 :global(.dark) .header {
@@ -38,7 +38,6 @@
 }
 
 .header.scrolled {
-  height: 54px;
   background: var(--nav-bg-scrolled);
   box-shadow: var(--nav-shadow-scrolled);
   backdrop-filter: blur(28px) saturate(200%);
@@ -316,18 +315,16 @@
 
 .panel {
   width: 100%;
-  padding: 10px;
-  border-radius: 24px;
-  background: color-mix(in srgb, var(--card) 46%, transparent);
+  padding: 8px;
+  border-radius: 16px;
+  background: var(--card);
   border: 1px solid var(--nav-border);
-  box-shadow: 0 12px 34px -12px rgba(0, 0, 0, 0.5);
-  backdrop-filter: blur(18px) saturate(160%);
-  -webkit-backdrop-filter: blur(18px) saturate(160%);
+  box-shadow: 0 16px 40px -14px rgba(0, 0, 0, 0.6);
   animation: panel-in 0.25s cubic-bezier(0.2, 0.8, 0.2, 1) both;
 }
 
 :global(.dark) .panel {
-  background: color-mix(in srgb, var(--card) 48%, transparent);
+  background: var(--card);
 }
 
 @keyframes panel-in {
@@ -345,7 +342,7 @@
   display: flex;
   align-items: center;
   width: 100%;
-  min-height: 48px;
+  min-height: 44px;
   padding: 0 16px;
   border-radius: 0;
   color: var(--foreground);
@@ -366,7 +363,7 @@
   align-items: center;
   justify-content: space-between;
   width: 100%;
-  min-height: 48px;
+  min-height: 44px;
   padding: 0 16px;
   border-radius: 0;
   border: 1px solid #4299e1;
@@ -387,7 +384,7 @@
 
 .divider {
   height: 1px;
-  margin: 8px 4px;
+  margin: 6px 4px;
   background: var(--nav-border);
 }
 
@@ -397,7 +394,7 @@
   justify-content: center;
   gap: 8px;
   width: 100%;
-  min-height: 48px;
+  min-height: 44px;
   border-radius: 0;
   border: 1px solid #4299e1;
   background: transparent;
@@ -438,10 +435,6 @@
     padding: 0 8px 0 14px;
   }
 
-  .header.scrolled {
-    height: 54px;
-  }
-
   .nav,
   .bookButton,
   .desktopOnly {
@@ -456,15 +449,15 @@
     display: inline-flex;
     align-items: center;
     justify-content: center;
-    height: 40px;
-    padding: 0 14px;
+    height: clamp(32px, 9vw, 40px);
+    padding: 0 clamp(10px, 2.8vw, 14px);
     border: 1px solid var(--foreground);
     background: var(--foreground);
     color: var(--background);
     border-radius: 0;
-    font-size: 12px;
+    font-size: clamp(10px, 2.7vw, 12px);
     font-weight: 600;
-    letter-spacing: 0.18em;
+    letter-spacing: clamp(0.08em, 0.6vw, 0.18em);
     text-transform: uppercase;
     text-decoration: none;
     white-space: nowrap;

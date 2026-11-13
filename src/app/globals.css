@@ -162,9 +162,15 @@
     -webkit-font-smoothing: antialiased;
   }
   html {
-    @apply scroll-smooth;
+    scroll-behavior: smooth;
     scroll-padding-top: 90px;
     overflow-x: clip;
+    scrollbar-gutter: stable;
+  }
+  @media (prefers-reduced-motion: reduce) {
+    html {
+      scroll-behavior: auto;
+    }
   }
   body {
     overflow-x: clip;
@@ -929,6 +935,32 @@ html.logo-intro [data-intro-logo] svg {
   .btn-sharp:active {
     transform: none;
   }
+}
+
+/* ===== Route transitions (template.tsx) — transform/opacity only ===== */
+.route-transition {
+  animation: route-enter 0.32s ease-out both;
+}
+@keyframes route-enter {
+  from {
+    opacity: 0;
+    transform: translateY(8px);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .route-transition {
+    animation: none;
+  }
+}
+
+/* ===== Pause decorative auto-play animations off-screen ===== */
+.offscreen-paused,
+.offscreen-paused * {
+  animation-play-state: paused !important;
 }
 
 /* Navbar: hide the raw-class Discuss button below 500px (module CSS targets the hashed class and never matched). */

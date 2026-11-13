@@ -1,5 +1,6 @@
 "use client";
 
+import Image from "next/image";
 import { useCallback, useEffect, useRef, useState } from "react";
 import Link from "next/link";
 import { BookCallButton } from "@/components/book-call-button";
@@ -92,11 +93,12 @@ export function CTASection() {
                 aria-label="Deuvix AI Factory — company introduction video"
               />
             ) : (
-              <img
+              <Image
                 src="/uploads/deuvix-poster.jpg"
                 alt="Deuvix AI Factory — company introduction video"
-                loading="lazy"
-                className="w-full h-full rounded-[20px] border border-border/60 dark:border-border shadow-[0_24px_50px_rgba(0,0,0,0.4)] object-cover"
+                fill
+                sizes="(max-width: 1024px) 100vw, 640px"
+                className="rounded-[20px] border border-border/60 dark:border-border shadow-[0_24px_50px_rgba(0,0,0,0.4)] object-cover"
               />
             )}
           </div>

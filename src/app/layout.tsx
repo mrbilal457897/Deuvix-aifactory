@@ -1,5 +1,5 @@
 import type { Metadata, Viewport } from "next";
-import { Roboto, Raleway, Space_Grotesk, Inter } from "next/font/google";
+import localFont from "next/font/local";
 import { ThemeProvider } from "@/components/theme-provider";
 import { Providers } from "@/components/providers";
 import { LayoutShell } from "@/components/layout-shell";
@@ -8,30 +8,44 @@ import { LoadingSplash } from "@/components/loading-splash";
 import { SITE_URL, SITE_NAME, SITE_DESCRIPTION, SITE_KEYWORDS, OG_IMAGE_ABSOLUTE, organizationJsonLd } from "@/lib/seo";
 import "./globals.css";
 
-const roboto = Roboto({
-  weight: ["400", "500"],
-  subsets: ["latin"],
+const roboto = localFont({
+  src: [
+    { path: "../../public/fonts/roboto-400.woff2", weight: "400", style: "normal" },
+    { path: "../../public/fonts/roboto-500.woff2", weight: "500", style: "normal" },
+  ],
   variable: "--font-roboto",
   display: "swap",
 });
 
-const raleway = Raleway({
-  weight: ["200", "300", "400", "500", "600", "700", "800"],
-  subsets: ["latin"],
+const raleway = localFont({
+  src: [
+    { path: "../../public/fonts/raleway-200.woff2", weight: "200", style: "normal" },
+    { path: "../../public/fonts/raleway-300.woff2", weight: "300", style: "normal" },
+    { path: "../../public/fonts/raleway-400.woff2", weight: "400", style: "normal" },
+    { path: "../../public/fonts/raleway-500.woff2", weight: "500", style: "normal" },
+    { path: "../../public/fonts/raleway-600.woff2", weight: "600", style: "normal" },
+    { path: "../../public/fonts/raleway-700.woff2", weight: "700", style: "normal" },
+    { path: "../../public/fonts/raleway-800.woff2", weight: "800", style: "normal" },
+  ],
   variable: "--font-raleway",
   display: "swap",
 });
 
-const spaceGrotesk = Space_Grotesk({
-  weight: ["500", "600", "700"],
-  subsets: ["latin"],
+const spaceGrotesk = localFont({
+  src: [
+    { path: "../../public/fonts/space-grotesk-500.woff2", weight: "500", style: "normal" },
+    { path: "../../public/fonts/space-grotesk-600.woff2", weight: "600", style: "normal" },
+    { path: "../../public/fonts/space-grotesk-700.woff2", weight: "700", style: "normal" },
+  ],
   variable: "--font-space-grotesk",
   display: "swap",
 });
 
-const inter = Inter({
-  weight: ["400", "500"],
-  subsets: ["latin"],
+const inter = localFont({
+  src: [
+    { path: "../../public/fonts/inter-400.woff2", weight: "400", style: "normal" },
+    { path: "../../public/fonts/inter-500.woff2", weight: "500", style: "normal" },
+  ],
   variable: "--font-inter",
   display: "swap",
 });

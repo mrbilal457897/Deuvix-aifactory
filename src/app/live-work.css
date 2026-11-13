@@ -646,9 +646,8 @@
   gap: 10px;
   padding: 10px 14px;
   border-radius: 14px;
-  background: color-mix(in srgb, var(--lw-card) 72%, transparent);
+  background: color-mix(in srgb, var(--lw-card) 88%, transparent);
   border: 1px solid color-mix(in srgb, var(--lw-line) 70%, transparent);
-  backdrop-filter: blur(14px);
   box-shadow: 0 14px 30px -16px color-mix(in srgb, var(--lw-ink) 45%, transparent);
   animation: lw-chip-float 6s ease-in-out infinite;
 }

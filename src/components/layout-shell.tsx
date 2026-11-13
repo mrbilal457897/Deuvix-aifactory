@@ -8,6 +8,7 @@ import { Navbar } from "@/components/layout/navbar";
 import { Footer } from "@/components/layout/footer";
 import { BackToTop } from "@/components/back-to-top";
 import { WhatsAppFab } from "@/components/whatsapp-fab";
+import { OffscreenPause } from "@/components/motion/OffscreenPause";
 import { usePathname } from "next/navigation";
 
 /**
@@ -66,6 +67,7 @@ export function LayoutShell({ children }: { children: React.ReactNode }) {
 
   return (
     <>
+      <OffscreenPause />
       {!hideHeader && <Navbar />}
       <main id="main-content" className={hideHeader ? "flex-1" : "flex-1 pt-16"}>
         {children}

@@ -1,15 +1,8 @@
-export default function Template({
-  children,
-}: {
-  children: React.ReactNode;
-}) {
-  return (
-    <div className="page-enter">
-      <div
-        aria-hidden="true"
-        className="top-progress fixed top-0 left-0 z-[9998] h-0.5 w-full bg-primary/70 pointer-events-none"
-      />
-      {children}
-    </div>
-  );
+/**
+ * Route transitions — subtle fade + 8px rise on every navigation.
+ * Navbar and footer stay mounted (they live in the layout, not here).
+ * transform/opacity only, so it never triggers layout work.
+ */
+export default function Template({ children }: { children: React.ReactNode }) {
+  return <div className="route-transition">{children}</div>;
 }
