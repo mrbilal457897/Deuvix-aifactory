@@ -254,6 +254,7 @@ function ContactPageInner() {
   });
   const [errors, setErrors] = useState<FieldErrors>({});
   const [submitStatus, setSubmitStatus] = useState<"idle" | "submitting" | "success" | "error">("idle");
+  const [successId, setSuccessId] = useState<string | null>(null);
   const [submitError, setSubmitError] = useState("");
   const [pageLoadedAt, setPageLoadedAt] = useState<number | null>(null);
 
@@ -323,6 +324,29 @@ function ContactPageInner() {
 
   const canAdvance = step === 1 ? formData.units.length > 0 && formData.brief.trim().length >= 15 : true;
 
+  const resetForm = () => {
+    setFormData({
+      units: [],
+      brief: "",
+      channels: [],
+      startWhen: null,
+      website: null,
+      name: "",
+      email: "",
+      company: null,
+      phone: null,
+      via: "Email",
+      slot: null,
+      nda: false,
+    });
+    setErrors({});
+    setSubmitError("");
+    setSuccessId(null);
+    setStep(1);
+    setPageLoadedAt(Date.now());
+    setSubmitStatus("idle");
+  };
+
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!validateStep(step)) return;
@@ -362,6 +386,7 @@ function ContactPageInner() {
 
       if (res.ok && data?.ok) {
         try { localStorage.removeItem("deuvix_contact_draft"); } catch {}
+        setSuccessId(typeof data?.inquiryId === "string" ? data.inquiryId : null);
         setSubmitStatus("success");
       } else {
         setSubmitStatus("error");
@@ -372,9 +397,8 @@ function ContactPageInner() {
     } catch {
       setSubmitStatus("error");
       setSubmitError("Network error. Your answers are saved — try again or email team.deuvix@gmail.com.");
-    } finally {
-      setSubmitStatus("idle");
     }
+    // NOTE: no finally reset — success/error are terminal states the user must see.
   };
 
   const handleFieldChange = (key: string, value: string | string[] | boolean | null) => {
@@ -662,11 +686,45 @@ function ContactPageInner() {
             {/* Left: Form card */}
             <div className="lg:col-span-7">
               <div className="rounded-2xl border border-border dark:border-white/20 bg-card dark:bg-white/10 p-[28px] sm:p-[30px] pb-[26px] min-h-[560px] flex flex-col">
-                {step === 1 ? step1Content : step2Content}
-                {submitError && (
-                  <div className="mt-4 rounded-xl border border-destructive/30 bg-destructive/5 px-4 py-3 text-sm text-destructive">
-                    {submitError}
+                {submitStatus === "success" ? (
+                  <div
+                    role="status"
+                    aria-live="polite"
+                    className="flex flex-1 flex-col items-center justify-center py-10 text-center"
+                  >
+                    <span className="flex size-14 items-center justify-center rounded-full bg-[#4CAF7D]/15 text-[#4CAF7D]">
+                      <svg className="size-7" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+                        <path d="M20 6L9 17l-5-5" />
+                      </svg>
+                    </span>
+                    <h2 className="font-heading h2-sm mt-5 text-foreground dark:text-white">
+                      Request received
+                    </h2>
+                    <p className="mt-2 max-w-[46ch] text-sm leading-relaxed text-muted-foreground dark:text-white/70">
+                      Thanks{formData.name ? `, ${formData.name.split(" ")[0]}` : ""} — we have your message. Someone from the team reads it personally and replies within one business day.
+                    </p>
+                    {successId ? (
+                      <p className="mt-4 rounded-lg border border-border dark:border-white/20 px-3 py-1.5 font-mono text-xs text-muted-foreground dark:text-white/60">
+                        Ref: {successId}
+                      </p>
+                    ) : null}
+                    <button
+                      type="button"
+                      onClick={resetForm}
+                      className="btn-sharp mt-6 inline-flex items-center gap-2 border border-border dark:border-white/20 px-5 py-2.5 text-sm font-medium text-foreground dark:text-white transition-colors hover:bg-muted dark:hover:bg-white/10"
+                    >
+                      Send another request
+                    </button>
                   </div>
+                ) : (
+                  <form onSubmit={handleSubmit} noValidate className="flex flex-1 flex-col">
+                    {step === 1 ? step1Content : step2Content}
+                    {submitStatus === "error" && submitError && (
+                      <div className="mt-4 rounded-xl border border-destructive/30 bg-destructive/5 px-4 py-3 text-sm text-destructive">
+                        {submitError}
+                      </div>
+                    )}
+                  </form>
                 )}
               </div>
             </div>

@@ -79,6 +79,7 @@ async function deliverViaResend(opts: {
         Authorization: `Bearer ${apiKey}`,
         "Content-Type": "application/json",
       },
+      signal: AbortSignal.timeout(10_000), // hard cap — never hang the route on a dead network
       body: JSON.stringify({
         from,
         to: opts.to,
@@ -137,6 +138,8 @@ function getGmailTransporter(): nodemailer.Transporter | null {
     host: "smtp.gmail.com",
     port: 465,
     secure: true,
+    connectionTimeout: 12_000,
+    greetingTimeout: 12_000,
     auth: { user, pass },
   });
   return gmailTransporter;

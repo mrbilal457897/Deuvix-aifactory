@@ -20,7 +20,7 @@ import { z } from "zod";
 import { createHash } from "crypto";
 import { getDb } from "@/lib/db";
 import { contactInquiries } from "@/lib/db/schema";
-import { sql, eq } from "drizzle-orm";
+import { sql } from "drizzle-orm";
 import {
   rateLimit,
   clientKey,
@@ -119,22 +119,15 @@ function checkOrigin(request: Request): boolean {
   return true;
 }
 
-async function generateUniqueInquiryId(db: ReturnType<typeof getDb>): Promise<string> {
+/** Deterministic, effectively-unique inquiry id — needs NO database round-trip.
+ *  The contact form must respond instantly even when Supabase is unreachable;
+ *  delivery to the team goes via the notification email. */
+function generateInquiryId(): string {
   const now = new Date();
   const year = now.getFullYear();
-  let attempt = 0;
-  while (attempt < 10) {
-    const seq = Math.floor(Math.random() * 9000) + 1000;
-    const candidate = `${INQUIRY_PREFIX}-${year}-${seq.toString().padStart(4, "0")}`;
-    const existing = await db
-      .select({ id: contactInquiries.id })
-      .from(contactInquiries)
-      .where(eq(contactInquiries.inquiryId, candidate))
-      .limit(1);
-    if (!existing.length) return candidate;
-    attempt += 1;
-  }
-  throw new Error("Unable to generate unique inquiry ID");
+  const seq = `${now.getFullYear()}${String(now.getMonth() + 1).padStart(2, "0")}${String(now.getDate()).padStart(2, "0")}${now.getTime().toString(36).toUpperCase()}`;
+  const rand = Math.floor(Math.random() * 1296).toString(36).toUpperCase().padStart(2, "0");
+  return `${INQUIRY_PREFIX}-${year}-${seq}${rand}`;
 }
 
 function computeExpectedReplyAt(): string {
@@ -219,25 +212,20 @@ export async function POST(request: Request): Promise<NextResponse> {
 
   const data = parsed.data;
 
-  const db = getDb();
-  const inquiryId = await generateUniqueInquiryId(db);
+  // Database is optional at runtime: if it is unreachable (e.g. DNS/network
+  // failure to the pooler), the inquiry is still delivered by email so a lead
+  // is never silently lost. The DB write happens after the email goes out and
+  // is best-effort with a single short-lived attempt.
+  const db = (() => {
+    try {
+      return getDb();
+    } catch (err) {
+      console.error("[contact] database not configured:", err instanceof Error ? err.message : err);
+      return null;
+    }
+  })();
+  const inquiryId = generateInquiryId();
   const expectedReplyAt = computeExpectedReplyAt();
-
-  await db.execute(sql`
-    INSERT INTO contact_inquiries (
-      inquiry_id, status, source_path, ip_hash, user_agent,
-      units, brief, channels, start_when, website,
-      name, email, company, phone, via, slot, nda,
-      expected_reply_at, created_at, updated_at
-    ) VALUES (
-      ${inquiryId}, 'new', '/contact', ${hashIp(ip)}, ${request.headers.get("user-agent") ?? null},
-      ${JSON.stringify(data.units)}, ${data.brief}, ${JSON.stringify(data.channels)},
-      ${data.startWhen ?? null}, ${data.website ?? null},
-      ${data.name}, ${data.email}, ${data.company ?? null}, ${data.phone ?? null},
-      ${data.via}, ${data.slot ?? null}, ${data.nda},
-      ${expectedReplyAt}, now(), now()
-    ) RETURNING id, inquiry_id
-  `);
 
   const inquiryData = {
     inquiryId,
@@ -257,6 +245,7 @@ export async function POST(request: Request): Promise<NextResponse> {
     sourcePath: "/contact",
   };
 
+  // 1) Notification email FIRST — the team inbox is the delivery guarantee.
   let notificationError: string | null | undefined = null;
   try {
     const notification = inquiryNotificationEmail(inquiryData);
@@ -274,6 +263,37 @@ export async function POST(request: Request): Promise<NextResponse> {
   } catch (err) {
     notificationError = err instanceof Error ? err.message : "Unknown email error";
     console.error("[contact] notification email crashed:", notificationError);
+  }
+
+  // 2) Persist to the database (best-effort, SINGLE ATTEMPT with a hard 4s
+  //    timeout). Failure never loses the lead — it already landed in the team
+  //    inbox via the notification email above — and it never hangs the user.
+  let dbSaved = false;
+  if (db) {
+    try {
+      dbSaved = await Promise.race([
+        db
+          .execute(sql`
+            INSERT INTO contact_inquiries (
+              inquiry_id, status, source_path, ip_hash, user_agent,
+              units, brief, channels, start_when, website,
+              name, email, company, phone, via, slot, nda,
+              expected_reply_at, created_at, updated_at
+            ) VALUES (
+              ${inquiryId}, 'new', '/contact', ${hashIp(ip)}, ${request.headers.get("user-agent") ?? null},
+              ${JSON.stringify(data.units)}, ${data.brief}, ${JSON.stringify(data.channels)},
+              ${data.startWhen ?? null}, ${data.website ?? null},
+              ${data.name}, ${data.email}, ${data.company ?? null}, ${data.phone ?? null},
+              ${data.via}, ${data.slot ?? null}, ${data.nda},
+              ${expectedReplyAt}, now(), now()
+            ) RETURNING id, inquiry_id
+          `)
+          .then(() => true),
+        new Promise<boolean>((resolve) => setTimeout(() => resolve(false), 4000)),
+      ]);
+    } catch (err) {
+      console.error("[contact] DB insert failed — lead delivered by email only:", err instanceof Error ? err.message : err);
+    }
   }
 
   let confirmationError: string | null | undefined = null;
@@ -296,22 +316,45 @@ export async function POST(request: Request): Promise<NextResponse> {
   }
 
   if (notificationError || confirmationError) {
-    await db.execute(sql`
-      UPDATE contact_inquiries
-      SET email_error = ${JSON.stringify({ notification: notificationError, confirmation: confirmationError })}
-      WHERE inquiry_id = ${inquiryId}
-    `);
+    // Record the email failure when the DB is available; best-effort, capped.
+    if (db && dbSaved) {
+      try {
+        await Promise.race([
+          db.execute(sql`
+            UPDATE contact_inquiries
+            SET email_error = ${JSON.stringify({ notification: notificationError, confirmation: confirmationError })}
+            WHERE inquiry_id = ${inquiryId}
+          `),
+          new Promise((resolve) => setTimeout(resolve, 3000)),
+        ]);
+      } catch (err) {
+        console.error("[contact] failed to record email_error:", err instanceof Error ? err.message : err);
+      }
+    }
   }
 
   if (notificationError) {
+    if (dbSaved) {
+      return NextResponse.json(
+        {
+          ok: false,
+          error: "notification_failed",
+          saved: true,
+          inquiryId,
+          message:
+            "Your inquiry was saved, but our email provider did not deliver the notification to our team. We still have your message and will pick it up manually — if it is urgent, email us directly at team.deuvix@gmail.com.",
+        },
+        { status: 502 },
+      );
+    }
+    // Nothing was delivered anywhere — report honestly instead of faking success.
     return NextResponse.json(
       {
         ok: false,
-        error: "notification_failed",
-        saved: true,
-        inquiryId,
+        error: "delivery_failed",
+        saved: false,
         message:
-          "Your inquiry was saved, but our email provider did not deliver the notification to our team. We still have your message and will pick it up manually — if it is urgent, email us directly at team.deuvix@gmail.com.",
+          "We could not deliver your inquiry right now (network issue). Nothing was saved — please try again in a few minutes, or email us directly at team.deuvix@gmail.com.",
       },
       { status: 502 },
     );
@@ -323,6 +366,7 @@ export async function POST(request: Request): Promise<NextResponse> {
       inquiryId,
       emailSent: notificationError == null,
       confirmationSent: confirmationError == null,
+      dbSaved,
     },
     { status: 201 },
   );
