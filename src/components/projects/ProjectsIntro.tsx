@@ -73,7 +73,7 @@ export function ProjectsIntro() {
         }}
       />
 
-      <div className="relative mx-auto grid w-full max-w-7xl grid-cols-1 items-center gap-10 px-4 py-16 sm:px-6 sm:py-20 lg:grid-cols-[minmax(0,7fr)_minmax(0,5fr)] lg:gap-16 lg:px-8 lg:py-24">
+      <div className="relative mx-auto grid w-full max-w-7xl grid-cols-1 items-center gap-10 px-6 py-16 sm:py-20 lg:grid-cols-[minmax(0,7fr)_minmax(0,5fr)] lg:gap-16 lg:px-8 lg:py-24">
         {/* left — copy */}
         <div className="max-w-2xl">
           <p className="font-mono text-xs uppercase tracking-[0.3em] text-secondary">
@@ -109,8 +109,8 @@ export function ProjectsIntro() {
           </div>
         </div>
 
-        {/* right — transparent robot cutout */}
-        <div className="relative mx-auto flex w-full max-w-[26rem] justify-center sm:max-w-[30rem] lg:max-w-none">
+        {/* right — transparent robot cutout (sits low, bleeding past the copy's bottom edge) */}
+        <div className="relative mx-auto flex w-full max-w-[26rem] translate-y-2 justify-center sm:max-w-[30rem] lg:max-w-none lg:translate-y-8">
           {/* soft contact shadow / grounding glow */}
           <div
             aria-hidden="true"
@@ -122,10 +122,10 @@ export function ProjectsIntro() {
             style={{ willChange: "transform" }}
           >
             <Image
-              src="/images/deuvix-robot.png"
+              src="/images/deuvix-robot.webp"
               alt="Deuvix AI Factory humanoid bust, facing upward — the mark of production-ready AI workers"
-              width={896}
-              height={1175}
+              width={784}
+              height={747}
               priority
               sizes="(max-width: 1024px) 80vw, 34vw"
               className="h-auto w-full select-none object-contain"
