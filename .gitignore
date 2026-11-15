@@ -51,3 +51,6 @@ playwright-report/
 blob-report/
 .lighthouseci/
 
+
+# database backups (live PII - never commit)
+/backups/

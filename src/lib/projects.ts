@@ -56,9 +56,17 @@ export interface CreateProjectInput extends Partial<ProjectInput> {
 async function fetchProjects(): Promise<Project[]> {
   try {
     const { data, error } = await supabase.from(TABLE).select("*");
-    if (error || !data) return [];
+    if (error) {
+      console.error("[projects] supabase read error:", error.message);
+      return [];
+    }
+    if (!data) return [];
     return (data as Record<string, unknown>[]).map(rowToProject).sort(byOrder);
-  } catch {
+  } catch (err) {
+    console.error(
+      "[projects] supabase request crashed:",
+      err instanceof Error ? err.message : err
+    );
     return [];
   }
 }
@@ -96,6 +104,35 @@ export async function listPublishedProjects(
   const filtered = options.featured ? published.filter((project) => project.featured) : published;
   const limited = options.limit ? filtered.slice(0, options.limit) : filtered;
   return limited.map(toPublicProject);
+}
+
+/**
+ * Like listPublishedProjects, but reports whether the read failed so public
+ * sections can render a friendly fallback instead of an empty blank when
+ * Supabase is paused/unreachable (free-plan projects pause after inactivity).
+ */
+export async function listPublishedProjectsWithHealth(
+  options: { featured?: boolean; limit?: number } = {}
+): Promise<{ projects: PublicProject[]; degraded: boolean }> {
+  try {
+    const { data, error } = await supabase.from(TABLE).select("*");
+    if (error) {
+      console.error("[projects] supabase read failed:", error.message);
+      return { projects: [], degraded: true };
+    }
+    const all = (((data as Record<string, unknown>[] | null) ?? []).map(rowToProject))
+      .sort(byOrder)
+      .filter((project) => project.status === "published");
+    let filtered = options.featured ? all.filter((project) => project.featured) : all;
+    if (options.limit) filtered = filtered.slice(0, options.limit);
+    return { projects: filtered.map(toPublicProject), degraded: false };
+  } catch (err) {
+    console.error(
+      "[projects] supabase request crashed:",
+      err instanceof Error ? err.message : err
+    );
+    return { projects: [], degraded: true };
+  }
 }
 
 export async function countPublishedProjects(): Promise<number> {

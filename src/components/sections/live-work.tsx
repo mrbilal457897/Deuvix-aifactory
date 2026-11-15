@@ -19,10 +19,40 @@ export interface LiveWorkProps {
   /** Shown only when more projects exist than are displayed. */
   showViewAll?: boolean;
   className?: string;
+  /**
+   * True when the read failed (e.g. Supabase paused on the free plan) rather
+   * than "no projects published" — renders a friendly notice instead of
+   * disappearing silently or showing broken blanks.
+   */
+  degraded?: boolean;
 }
 
-export function LiveWork({ projects, showViewAll = false, className = "" }: LiveWorkProps) {
-  // Zero projects → the section disappears entirely, with no empty shell.
+export function LiveWork({ projects, showViewAll = false, className = "", degraded = false }: LiveWorkProps) {
+  // Read failed (Supabase down/paused): friendly fallback, never a broken page.
+  if (projects.length === 0 && degraded) {
+    return (
+      <section
+        className={`lw-section ${className}`.trim()}
+        aria-labelledby="live-work-heading"
+      >
+        <div className="lw-inner">
+          <h2 id="live-work-heading" className="lw-heading font-heading">
+            Our live Work
+          </h2>
+          <p className="mt-6 max-w-md text-sm leading-relaxed text-muted-foreground">
+            Our live Work gallery is being refreshed — please check back in a few minutes,
+            or see the highlights on the{" "}
+            <Link className="font-medium text-foreground underline underline-offset-4" href="/projects">
+              work page
+            </Link>
+            .
+          </p>
+        </div>
+      </section>
+    );
+  }
+
+  // Zero projects — the section disappears entirely, with no empty shell.
   if (projects.length === 0) return null;
 
   return (

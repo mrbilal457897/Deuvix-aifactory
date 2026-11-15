@@ -7,7 +7,7 @@ import { MethodologySection } from "@/components/sections/methodology";
 import { StatsSection } from "@/components/sections/stats";
 import { FoundersSection } from "@/components/sections/founders";
 import { CTASection } from "@/components/sections/cta";
-import { countPublishedProjects, listPublishedProjects } from "@/lib/projects";
+import { countPublishedProjects, listPublishedProjectsWithHealth } from "@/lib/projects";
 import { HOME_LIMIT } from "@/lib/live-work/types";
 
 /**
@@ -25,16 +25,17 @@ const TestimonialsBento = dynamic(
  * invalidates this route through `revalidateProjectSite`.
  */
 export default async function HomePage() {
-  const [projects, total] = await Promise.all([
-    listPublishedProjects({ featured: true, limit: HOME_LIMIT }),
+  const [projectsHealth, total] = await Promise.all([
+    listPublishedProjectsWithHealth({ featured: true, limit: HOME_LIMIT }),
     countPublishedProjects(),
   ]);
+  const { projects, degraded } = projectsHealth;
 
   return (
     <>
       <HeroSection />
       <FeaturesSection />
-      <LiveWork projects={projects} showViewAll={total > projects.length} />
+      <LiveWork projects={projects} showViewAll={total > projects.length} degraded={degraded} />
       <HowItWorksSection />
       <MethodologySection />
       <StatsSection />
