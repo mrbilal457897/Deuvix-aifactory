@@ -56,6 +56,7 @@ const leaders = [
       "Turns AI research into revenue — architect of Deuvix AI Factory's Manufacture-Deploy-Monetize model and the strategy behind every Digital FTE that ships to production.",
     slot: "team-bilal",
     alt: "Portrait of Bilal Ali, Co-founder and Chief Executive Officer of Deuvix AI Factory",
+    // TODO(Bilal): verify/replace personal LinkedIn URL before next deploy.
     linkedin: "https://www.linkedin.com/in/bilal-alee-6769462ba/",
   },
   {
@@ -66,6 +67,7 @@ const leaders = [
       "Asadullah ships Loop Engineering into production — spec-driven, human-gated systems that let AI agents run production workloads 24/7 without losing human oversight.",
     slot: "team-asad",
     alt: "Portrait of Asadullah, Co-founder and Chief Technology Officer of Deuvix AI Factory",
+    // TODO(Bilal): verify/replace personal LinkedIn URL before next deploy.
     linkedin: "https://www.linkedin.com/in/asad-ullah-17758a358/",
   },
 ] as const;

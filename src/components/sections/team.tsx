@@ -18,6 +18,7 @@ const teamMembers = [
     role: "Co-founder & CEO",
     slot: "team-bilal",
     socials: {
+      // TODO(Bilal): replace placeholder LinkedIn URL with personal profile URL.
       linkedin: "#",
       github: "#",
       email: `mailto:${company.businessEmail}`,
@@ -28,6 +29,7 @@ const teamMembers = [
     role: "Co-founder & CTO",
     slot: "team-asad",
     socials: {
+      // TODO(Bilal): replace placeholder LinkedIn URL with personal profile URL.
       linkedin: "#",
       github: "#",
       email: `mailto:${company.businessEmail}`,
@@ -41,6 +43,7 @@ export function TeamSection() {
 
   useEffect(() => {
     if (!sectionRef.current) return;
+    if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) return;
 
     const cards = sectionRef.current.querySelectorAll(".team-member");
     gsap.fromTo(

@@ -220,6 +220,7 @@ export function ProjectBlock({
           mirrored={mirrored}
           priority={priority}
           chipDelay={-index * 2}
+          altFallback={`${project.name} screenshot`}
         />
       </div>
     </article>

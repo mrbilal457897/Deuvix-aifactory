@@ -83,6 +83,7 @@ export function CharReveal({
     const el = ref.current;
     const chars = el.querySelectorAll<HTMLElement>(".cr-char");
     if (!chars.length) return;
+    if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) return;
 
     gsap.set(chars, { opacity: 0.3, x: -7 });
 

@@ -5,7 +5,7 @@ import { Providers } from "@/components/providers";
 import { LayoutShell } from "@/components/layout-shell";
 import { BookCallProvider } from "@/components/book-call-provider";
 import { LoadingSplash } from "@/components/loading-splash";
-import { SITE_URL, SITE_NAME, SITE_DESCRIPTION, SITE_KEYWORDS, OG_IMAGE_ABSOLUTE, organizationJsonLd } from "@/lib/seo";
+import { SITE_URL, SITE_NAME, SITE_DESCRIPTION, OG_IMAGE_ABSOLUTE, organizationJsonLd } from "@/lib/seo";
 import "./globals.css";
 
 const roboto = localFont({
@@ -64,7 +64,6 @@ export const metadata: Metadata = {
     template: `%s | ${SITE_NAME}`,
   },
   description: SITE_DESCRIPTION,
-  keywords: SITE_KEYWORDS,
   alternates: {
     canonical: "/",
   },

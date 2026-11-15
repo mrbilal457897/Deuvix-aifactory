@@ -118,6 +118,7 @@ export function TestimonialsBento({ showStars = true }: { showStars?: boolean })
                     alt={`Portrait of ${t.name}`}
                     width={48}
                     height={48}
+                    sizes="48px"
                     className="size-12 shrink-0 rounded-full object-cover border border-border"
                   />
                 ) : (

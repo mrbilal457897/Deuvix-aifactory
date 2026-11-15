@@ -42,6 +42,7 @@ export function HowItWorksSection() {
 
   useEffect(() => {
     if (!sectionRef.current) return;
+    if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) return;
 
     gsap.fromTo(
       sectionRef.current.querySelectorAll(".step-card"),
@@ -70,7 +71,7 @@ export function HowItWorksSection() {
       {/* Background image + gradient overlay (keeps text at AA contrast in both themes) */}
       <Image
         src="/images/building.jpg"
-        alt=""
+        alt="City skyline at night"
         fill
         className="object-cover"
         sizes="100vw"

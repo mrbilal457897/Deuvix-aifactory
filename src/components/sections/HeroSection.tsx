@@ -115,7 +115,7 @@ export function HeroSection() {
 
         {/* h1 — full width */}
         <h1 className={`${styles.h1} js-h1`}>
-          Build your AI workforce,
+          Build your AI workforce,{" "}
           <span className={styles.h1Line2}>unit by unit.</span>
         </h1>
 

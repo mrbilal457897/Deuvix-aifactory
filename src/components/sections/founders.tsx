@@ -15,12 +15,14 @@ const founders = [
     name: "Bilal Ali",
     role: "CO-FOUNDER / CEO",
     slot: "team-bilal",
+    // TODO(Bilal): verify/replace personal LinkedIn URL before next deploy.
     linkedin: "https://www.linkedin.com/in/bilal-alee-6769462ba/",
   },
   {
     name: "Asadullah",
     role: "CO-FOUNDER / CTO",
     slot: "team-asad",
+    // TODO(Bilal): verify/replace personal LinkedIn URL before next deploy.
     linkedin: "https://www.linkedin.com/in/asad-ullah-17758a358/",
   },
 ];
@@ -31,6 +33,7 @@ export function FoundersSection() {
 
   useEffect(() => {
     if (!sectionRef.current) return;
+    if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) return;
 
     const ctx = gsap.context(() => {
       gsap.fromTo(

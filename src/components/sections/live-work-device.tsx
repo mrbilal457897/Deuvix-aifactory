@@ -43,11 +43,14 @@ function Shot({
   sizes,
   priority = false,
   className = "",
+  altFallback,
 }: {
   image: Thumbnail | null;
   sizes: string;
   priority?: boolean;
   className?: string;
+  /** Used only when the thumbnail row has no alt of its own. */
+  altFallback?: string;
 }) {
   if (!image?.url) {
     return <div className={`lw-skeleton ${className}`.trim()} aria-hidden="true" />;
@@ -55,7 +58,7 @@ function Shot({
   return (
     <Image
       src={image.url}
-      alt={image.alt}
+      alt={image.alt || altFallback || ""}
       fill
       sizes={sizes}
       priority={priority}
@@ -107,6 +110,8 @@ export interface DeviceStageProps {
   priority?: boolean;
   /** Negative seconds so neighbouring chips never bob in sync. */
   chipDelay?: number;
+  /** Used only when a thumbnail row has no alt of its own (admin preview passes none). */
+  altFallback?: string;
 }
 
 export function DeviceStage({
@@ -118,6 +123,7 @@ export function DeviceStage({
   mirrored = false,
   priority = false,
   chipDelay = 0,
+  altFallback,
 }: DeviceStageProps) {
   const showChip = Boolean(chipTitle || chipSubtitle);
 
@@ -134,7 +140,7 @@ export function DeviceStage({
               <span className="lw-winbar-url">{pillHost(browserUrlLabel)}</span>
             </div>
             <div className="lw-shot lw-shot-desktop">
-              <Shot image={desktop} sizes={DESKTOP_SIZES} priority={priority} />
+              <Shot image={desktop} sizes={DESKTOP_SIZES} priority={priority} altFallback={altFallback} />
             </div>
           </div>
         </div>
@@ -148,7 +154,7 @@ export function DeviceStage({
             {mobile?.url ? (
               <Image
                 src={mobile.url}
-                alt={mobile.alt}
+                alt={mobile.alt || altFallback || ""}
                 fill
                 sizes={PHONE_SIZES}
                 priority={priority}

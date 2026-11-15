@@ -19,25 +19,6 @@ export const SITE_NAME = "Deuvix AI Factory";
 export const SITE_DESCRIPTION =
   "Deuvix AI Factory builds and operates Digital FTEs — AI workers your team supervises, not tools that watch it. From AI chatbots and voice agents to Loop Engineering and FDE consulting.";
 
-export const SITE_KEYWORDS = [
-  "Deuvix AI Factory",
-  "AI Agent Factory",
-  "Digital FTE",
-  "AI workers",
-  "AI agents",
-  "AI chatbots",
-  "voice agents",
-  "custom AI agents",
-  "Loop Engineering",
-  "Forward Deployed Engineer",
-  "FDE consulting",
-  "AI automation",
-  "AI-Native company",
-  "AI workers 24/7",
-  "AI development services",
-  "AI consulting",
-];
-
 export const OG_IMAGE = "/images/hero-bg.jpg";
 export const OG_IMAGE_ABSOLUTE = `${SITE_URL}${OG_IMAGE}`;
 
