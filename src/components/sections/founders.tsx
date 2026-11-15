@@ -15,13 +15,13 @@ const founders = [
     name: "Bilal Ali",
     role: "CO-FOUNDER / CEO",
     slot: "team-bilal",
-    linkedin: "https://www.linkedin.com/company/145184855/",
+    linkedin: "https://www.linkedin.com/in/bilal-alee-6769462ba/",
   },
   {
     name: "Asadullah",
     role: "CO-FOUNDER / CTO",
     slot: "team-asad",
-    linkedin: "https://www.linkedin.com/company/145184855/",
+    linkedin: "https://www.linkedin.com/in/asad-ullah-17758a358/",
   },
 ];
 

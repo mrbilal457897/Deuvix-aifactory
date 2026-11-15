@@ -66,7 +66,7 @@ const leaders = [
       "Asadullah ships Loop Engineering into production — spec-driven, human-gated systems that let AI agents run production workloads 24/7 without losing human oversight.",
     slot: "team-asad",
     alt: "Portrait of Asadullah, Co-founder and Chief Technology Officer of Deuvix AI Factory",
-    linkedin: "https://www.linkedin.com/company/145184855/",
+    linkedin: "https://www.linkedin.com/in/asad-ullah-17758a358/",
   },
 ] as const;
 
@@ -514,7 +514,7 @@ export function AboutClient() {
             <div className={styles.trunk} ref={trunkRef} aria-hidden="true" />
             <ol className={styles.treeList}>
             {journey.map((chapter) => (
-              <li key={chapter.year} className={styles.treeRow}>
+              <li key={`${chapter.year}-${chapter.title}`} className={styles.treeRow}>
                 <span className={`${styles.branch} js-branch`} aria-hidden="true" />
                 <span className={`${styles.leaf} js-leaf`} aria-hidden="true">
                   <svg viewBox="0 0 24 24" className={styles.leafSvg} focusable="false">
