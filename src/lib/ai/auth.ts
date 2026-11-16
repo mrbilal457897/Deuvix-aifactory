@@ -22,7 +22,7 @@ export async function requireAdmin(): Promise<AdminAuthResult> {
     | undefined;
   const email = (user?.email || "").trim();
 
-  const isAdmin = Boolean(email) && (user?.role === "admin" || isAdminEmail(email));
+  const isAdmin = Boolean(email) && isAdminEmail(email);
   if (!isAdmin) {
     return { ok: false, status: 401, error: "Unauthorized" };
   }

@@ -61,7 +61,7 @@ export function ChatWindow({ api, windowRef, inputRef, onClose }: Props) {
       <div className="flex shrink-0 items-center gap-3 border-b border-border bg-surface px-4 py-3">
         <ChatLogo />
         <div className="min-w-0 flex-1">
-          <h3 className="truncate font-heading h3-sm">Deuvix AI Factory</h3>
+          <h3 className="truncate font-heading text-[15px] font-medium leading-tight tracking-normal">Deuvix AI Factory</h3>
           <p className="flex items-center gap-1 text-xs leading-tight text-muted-foreground">
             <span className="size-1.5 rounded-full bg-emerald-500" aria-hidden="true" />
             {api.ended ? uiStrings.sessionEnded : uiStrings.statusOnline}

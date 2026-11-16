@@ -1,6 +1,6 @@
 import bcrypt from "bcryptjs";
 import { supabase } from "./supabase";
-import { ADMIN_EMAILS, isAdminEmail } from "./admin-emails";
+import { isAdminEmail } from "./admin-emails";
 
 export interface User {
   id: string;
@@ -57,7 +57,7 @@ export async function createUser(data: {
     name: data.name,
     email: data.email,
     password: hashedPassword,
-    role: ADMIN_EMAILS.includes(data.email) ? "admin" : "user",
+    role: isAdminEmail(data.email) ? "admin" : "user",
     provider: data.provider,
     image: data.image,
     created_at: new Date().toISOString(),

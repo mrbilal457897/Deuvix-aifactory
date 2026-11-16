@@ -1,22 +1,24 @@
-import { company } from "@config/company";
-
 /**
- * Emails that get admin role in auth. Driven by the ADMIN_EMAILS env var
- * (comma-separated). When unset it falls back to the known owners — the public
- * business email plus the founder account — so the dashboard keeps working
- * without env config.
- * TODO(owner): set ADMIN_EMAILS in Vercel to control exactly who has admin
- * access; the code default is only a safety net.
+ * Emails that get admin access. Driven EXCLUSIVELY by the ADMIN_EMAILS env
+ * var (comma-separated). If it is empty or unset, NOBODY is admin — deny all
+ * rather than falling back to any built-in address. There is deliberately no
+ * default admin email in this file.
+ *
+ * TODO(owner): set ADMIN_EMAILS in Vercel to exactly the admin emails you
+ * intend to allow. Comparison is case-insensitive and trimmed.
  */
 const configured: string[] = (process.env.ADMIN_EMAILS || "")
   .split(",")
-  .map((v) => v.trim())
+  .map((v) => v.trim().toLowerCase())
   .filter(Boolean);
 
-const DEFAULT_ADMIN_EMAILS = [company.businessEmail, "sobber.id@gmail.com"];
+export const ADMIN_EMAILS = configured;
 
-export const ADMIN_EMAILS = configured.length ? configured : DEFAULT_ADMIN_EMAILS;
+function normalize(email: string | null | undefined): string {
+  return (email || "").trim().toLowerCase();
+}
 
 export function isAdminEmail(email: string | null | undefined): boolean {
-  return !!email && ADMIN_EMAILS.includes(email);
+  const norm = normalize(email);
+  return !!norm && ADMIN_EMAILS.includes(norm);
 }

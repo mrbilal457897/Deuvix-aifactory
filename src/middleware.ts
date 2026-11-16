@@ -140,7 +140,12 @@ export async function middleware(request: NextRequest) {
       return NextResponse.redirect(login);
     }
     if (!isAdmin) {
-      return NextResponse.redirect(new URL("/", request.url));
+      // Diagnostic: which account did Google/GitHub actually hand us?
+      console.log(`[middleware] /deuvix DENIED for email=${String(token.email ?? "<none>")}`);
+      const login = new URL("/login", request.url);
+      login.searchParams.set("error", "AdminOnly");
+      login.searchParams.set("callbackUrl", pathname);
+      return NextResponse.redirect(login);
     }
     // Jab legacy prefix aur current DASHBOARD_PREFIX dono "/deuvix" hon,
     // toh khud ko redirect na karein (infinite loop se bachne ke liye).
@@ -159,7 +164,12 @@ export async function middleware(request: NextRequest) {
       return NextResponse.redirect(login);
     }
     if (!isAdmin) {
-      return NextResponse.redirect(new URL("/", request.url));
+      // Diagnostic: which account did Google/GitHub actually hand us?
+      console.log(`[middleware] /deuvix DENIED for email=${String(token.email ?? "<none>")}`);
+      const login = new URL("/login", request.url);
+      login.searchParams.set("error", "AdminOnly");
+      login.searchParams.set("callbackUrl", pathname);
+      return NextResponse.redirect(login);
     }
   }
 
