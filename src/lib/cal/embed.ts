@@ -73,9 +73,12 @@ function themeInstruction(theme: "dark" | "light") {
   };
 }
 
-/** Keeps the popup in step with next-themes. Safe to call repeatedly. */
+/** Keep the popup in step with next-themes. Does NOT create the embed —
+ *  it only syncs if the embed has already been initialised (first open /
+ *  pointerdown warm handles initial theme at creation time). */
 export async function syncCalTheme(theme?: string | null): Promise<void> {
-  const api = await getCalInstance();
+  if (!apiPromise) return;
+  const api = await apiPromise;
   if (!api) return;
   api("ui", themeInstruction(theme === "light" ? "light" : "dark"));
 }

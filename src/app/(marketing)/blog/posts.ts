@@ -19,7 +19,7 @@ export const posts: BlogPost[] = [
     category: "AI Agents",
     author: "Bilal Ali",
     date: "October 14, 2026",
-    image: "https://images.pexels.com/photos/546819/pexels-photo-546819.jpeg?auto=compress&cs=tinysrgb&w=800",
+    image: "/images/blog/pexels-546819.jpeg",
   },
   {
     slug: "building-digital-fte",
@@ -28,7 +28,7 @@ export const posts: BlogPost[] = [
     category: "FTE",
     author: "Bilal Ali",
     date: "October 28, 2026",
-    image: "https://images.pexels.com/photos/8849295/pexels-photo-8849295.jpeg?auto=compress&cs=tinysrgb&w=800",
+    image: "/images/blog/pexels-8849295.jpeg",
   },
   {
     slug: "fde-practices",
@@ -37,7 +37,7 @@ export const posts: BlogPost[] = [
     category: "FDE",
     author: "Asadullah",
     date: "November 4, 2026",
-    image: "https://images.pexels.com/photos/8439069/pexels-photo-8439069.jpeg?auto=compress&cs=tinysrgb&w=800",
+    image: "/images/blog/pexels-8439069.jpeg",
   },
   {
     slug: "monetize-ai-agents",
@@ -46,7 +46,7 @@ export const posts: BlogPost[] = [
     category: "AI Agents",
     author: "Bilal Ali",
     date: "September 30, 2026",
-    image: "https://images.pexels.com/photos/16380906/pexels-photo-16380906.jpeg?auto=compress&cs=tinysrgb&w=800",
+    image: "/images/blog/pexels-16380906.jpeg",
   },
   {
     slug: "ai-native-development",
@@ -55,7 +55,7 @@ export const posts: BlogPost[] = [
     category: "AI Agents",
     author: "Asadullah",
     date: "September 15, 2026",
-    image: "https://images.pexels.com/photos/8849287/pexels-photo-8849287.jpeg?auto=compress&cs=tinysrgb&w=800",
+    image: "/images/blog/pexels-8849287.jpeg",
   },
   {
     slug: "human-vs-digital-fte",
@@ -64,7 +64,7 @@ export const posts: BlogPost[] = [
     category: "FTE",
     author: "Bilal Ali",
     date: "October 7, 2026",
-    image: "https://images.pexels.com/photos/8438944/pexels-photo-8438944.jpeg?auto=compress&cs=tinysrgb&w=800",
+    image: "/images/blog/pexels-8438944.jpeg",
   },
   {
     slug: "spec-driven-development",
@@ -73,7 +73,7 @@ export const posts: BlogPost[] = [
     category: "FDE",
     author: "Asadullah",
     date: "October 21, 2026",
-    image: "https://images.pexels.com/photos/8090151/pexels-photo-8090151.jpeg?auto=compress&cs=tinysrgb&w=800",
+    image: "/images/blog/pexels-8090151.jpeg",
   },
 ];
 

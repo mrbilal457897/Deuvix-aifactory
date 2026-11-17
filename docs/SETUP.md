@@ -73,8 +73,8 @@ cp .env.example .env.local
 | `SMTP_USER` | `hello@yourdomain.com` | |
 | `SMTP_PASS` | app password | Not the account password. |
 | `EMAIL_FROM` | `Deuvix AI Factory <hello@yourdomain.com>` | Sender shown to the client. Must be a real, replyable mailbox. |
-| `NOTIFY_EMAIL` | `sobber.id@gmail.com` | Where the full-detail notification goes. |
-| `CONTACT_TO_EMAIL` | `a@x.com, b@x.com` | Internal recipient(s) for new contact submissions. Comma-separated; blanks fall back to `DEFAULT_CONTACT_TO` in `src/lib/email/index.ts`. |
+| `NOTIFY_EMAIL` | `team.deuvix@gmail.com, sobber.id@gmail.com` | Where the full-detail notification goes. |
+| `CONTACT_TO_EMAIL` | `team.deuvix@gmail.com, b@x.com` | Internal recipient(s) for new contact submissions. Comma-separated; blanks fall back to `DEFAULT_CONTACT_TO` in `src/lib/email/index.ts`. |
 | `NEXT_PUBLIC_WHATSAPP_NUMBER` | `923001234567` | Digits only, country code, no `+`. |
 | `CRON_SECRET` | `openssl rand -hex 32` | |
 | `ADMIN_USER` | `admin` | |

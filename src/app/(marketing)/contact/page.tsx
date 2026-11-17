@@ -1,7 +1,7 @@
 "use client";
 
-import { useCallback, useEffect, useState, Suspense } from "react";
-import { useSearchParams } from "next/navigation";
+import { useCallback, useEffect, useRef, useState } from "react";
+
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -218,40 +218,27 @@ function ReviewCard({ data }: { data: InquiryData }) {
 const PLAN_OPTIONS = ["starter", "professional", "enterprise"] as const;
 
 function ContactPageInner() {
-  const searchParams = useSearchParams();
-  const planParam = (searchParams.get("plan") || "").toLowerCase();
-  const planInterest = (PLAN_OPTIONS as readonly string[]).includes(planParam)
-    ? (planParam as (typeof PLAN_OPTIONS)[number])
-    : null;
-  const serviceParam = searchParams.get("service");
-  const topicParam = searchParams.get("topic");
-  const roleParam = searchParams.get("role");
+  // Prefill is applied from the URL in an effect after hydration, so the
+  // server-rendered form stays fully inline (no Suspense bail-out).
+  const [planInterest, setPlanInterest] = useState<(typeof PLAN_OPTIONS)[number] | null>(null);
+  const [careersRole, setCareersRole] = useState<string | null>(null);
+  const prefillRef = useRef(false);
 
   const [step, setStep] = useState<Step>(1);
-  const [formData, setFormData] = useState<InquiryData>(() => {
-    // `?service=<Unit>` preselects the matching pill — unknown values ignored.
-    const matched = serviceParam
-      ? UNIT_LIST.find((unit) => unit.toLowerCase() === serviceParam.toLowerCase())
-      : undefined;
-    const roleNote =
-      topicParam === "careers" && roleParam
-        ? `Applying for the ${roleParam} role.`
-        : "";
-    return {
-      units: matched ? [matched] : [],
-      brief: roleNote,
-      channels: [],
-      startWhen: null,
-      website: null,
-      name: "",
-      email: "",
-      company: null,
-      phone: null,
-      via: "Email",
-      slot: null,
-      nda: false,
-    };
-  });
+  const [formData, setFormData] = useState<InquiryData>(() => ({
+    units: [],
+    brief: "",
+    channels: [],
+    startWhen: null,
+    website: null,
+    name: "",
+    email: "",
+    company: null,
+    phone: null,
+    via: "Email",
+    slot: null,
+    nda: false,
+  }));
   const [errors, setErrors] = useState<FieldErrors>({});
   const [submitStatus, setSubmitStatus] = useState<"idle" | "submitting" | "success" | "error">("idle");
   const [successId, setSuccessId] = useState<string | null>(null);
@@ -271,14 +258,40 @@ function ContactPageInner() {
     }
   }, [step, formData]);
 
+  // Apply ?service/?topic+?role/?plan prefill once, client-side, after hydration.
+  useEffect(() => {
+    try {
+      const params = new URLSearchParams(window.location.search);
+      const planParam = (params.get("plan") || "").toLowerCase();
+      if ((PLAN_OPTIONS as readonly string[]).includes(planParam)) {
+        setPlanInterest(planParam as (typeof PLAN_OPTIONS)[number]);
+      }
+      const serviceParam = params.get("service");
+      const topicParam = params.get("topic");
+      const roleParam = params.get("role");
+      const matched = serviceParam
+        ? UNIT_LIST.find((unit) => unit.toLowerCase() === serviceParam.toLowerCase())
+        : undefined;
+      const careersNote =
+        topicParam === "careers" && roleParam ? `Applying for the ${roleParam} role.` : "";
+      setCareersRole(topicParam === "careers" && roleParam ? roleParam : null);
+      prefillRef.current = Boolean(matched || careersNote);
+      if (matched || careersNote) {
+        setFormData((prev) => ({
+          ...prev,
+          units: matched ? [matched] : prev.units,
+          brief: careersNote || prev.brief,
+        }));
+      }
+    } catch {
+      prefillRef.current = false;
+    }
+  }, []);
+
   // Restore the draft only when the URL did not preselect anything — a direct
   // share like `/contact?service=AI Chatbots` must win over localStorage.
-  const urlPreselected = Boolean(
-    (serviceParam && UNIT_LIST.some((u) => u.toLowerCase() === serviceParam.toLowerCase())) ||
-      (topicParam === "careers" && roleParam),
-  );
   useEffect(() => {
-    if (urlPreselected) return;
+    if (prefillRef.current) return;
     try {
       const raw = localStorage.getItem("deuvix_contact_draft");
       if (raw) {
@@ -291,7 +304,7 @@ function ContactPageInner() {
     } catch {
       // ignore
     }
-  }, [urlPreselected]);
+  }, []);
 
   // Live status pill
   const [liveStatus, setLiveStatus] = useState<{ online: boolean; text: string }>({ online: false, text: "Checking…" });
@@ -362,7 +375,7 @@ function ContactPageInner() {
     // keeping the form itself clean. The API allows max 500 chars in brief.
     const interestNote = [
       planInterest ? `Plan interest: ${planInterest[0].toUpperCase()}${planInterest.slice(1)}` : "",
-      topicParam === "careers" && roleParam ? `Applying for: ${roleParam}` : "",
+      careersRole ? `Applying for: ${careersRole}` : "",
     ]
       .filter(Boolean)
       .join("\n");
@@ -815,15 +828,5 @@ function ContactPageInner() {
 }
 
 export default function ContactPage() {
-  return (
-    <Suspense
-      fallback={
-        <div className="flex min-h-[60vh] items-center justify-center">
-          <div className="size-8 animate-spin rounded-full border-2 border-primary border-t-transparent" />
-        </div>
-      }
-    >
-      <ContactPageInner />
-    </Suspense>
-  );
+  return <ContactPageInner />;
 }

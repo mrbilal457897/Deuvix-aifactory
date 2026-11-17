@@ -54,39 +54,13 @@ export function BookCallProvider({ children }: { children: React.ReactNode }) {
   const { resolvedTheme } = useTheme();
   const [success, setSuccess] = React.useState<BookingSuccess | null>(null);
 
-  const configured = React.useMemo(() => isCalConfigured(), []);
-
-  const openBooking = React.useCallback((prefill?: BookingPrefill) => {
-    if (!isCalConfigured()) {
-      console.warn("[cal] Book a Call is not configured yet");
-      return;
-    }
-    void openCalModal(prefill);
-  }, []);
-
-  // Keep the Cal.com popup in step with the site's theme.
-  React.useEffect(() => {
-    if (configured) void syncCalTheme(resolvedTheme);
-  }, [configured, resolvedTheme]);
-
-  // Warm the embed once the page is idle.
-  React.useEffect(() => {
-    if (!configured) return;
-    const id = window.setTimeout(preloadCal, 1200);
-    return () => window.clearTimeout(id);
-  }, [configured]);
-
-  // Listen for a completed booking so we can show a local confirmation.
-  React.useEffect(() => {
-    if (!configured) return;
-
-    let disposed = false;
-    let detach: (() => void) | undefined;
-
+  const bookingListenersAttached = React.useRef(false);
+  const attachBookingListeners = React.useCallback(() => {
+    if (bookingListenersAttached.current) return;
+    bookingListenersAttached.current = true;
     void (async () => {
       const api = await import("@/lib/cal/embed").then((m) => m.getCalInstance());
-      if (!api || disposed) return;
-
+      if (!api) return;
       api("on", {
         action: "bookingSuccessfulV2",
         callback: (event: CustomEvent<BookingSuccess>) => {
@@ -97,17 +71,34 @@ export function BookCallProvider({ children }: { children: React.ReactNode }) {
         action: "bookingCancelled",
         callback: () => setSuccess(null),
       });
-
-      detach = () => {
-        api("off", { action: "bookingSuccessfulV2", callback: () => {} });
-        api("off", { action: "bookingCancelled", callback: () => {} });
-      };
     })();
+  }, []);
 
-    return () => {
-      disposed = true;
-      detach?.();
-    };
+  const openBooking = React.useCallback((prefill?: BookingPrefill) => {
+    if (!isCalConfigured()) {
+      console.warn("[cal] Book a Call is not configured yet");
+      return;
+    }
+    attachBookingListeners();
+    void openCalModal(prefill);
+  }, [attachBookingListeners]);
+
+  const configured = React.useMemo(() => isCalConfigured(), []);
+
+  // Keep the Cal.com popup in step with the site's theme — only once the
+  // embed has been created (see syncCalTheme: it does not initialise).
+  React.useEffect(() => {
+    if (configured) void syncCalTheme(resolvedTheme);
+  }, [configured, resolvedTheme]);
+
+  // Warm the embed on the user's FIRST pointerdown anywhere on the page —
+  // never on mount. Keeps the ~3 MB Cal SDK off the initial payload while
+  // still making the first "Book a Call" click feel instant.
+  React.useEffect(() => {
+    if (!configured) return;
+    const warm = () => preloadCal();
+    window.addEventListener("pointerdown", warm, { once: true });
+    return () => window.removeEventListener("pointerdown", warm);
   }, [configured]);
 
   const slot = formatSlot(success?.startTime);

@@ -619,6 +619,7 @@ html.theme-transitioning *::after {
   padding-top: 48px;
   user-select: none;
   width: 100%;
+  overflow: hidden;
 }
 
 .deuvix-mark {
@@ -629,6 +630,8 @@ html.theme-transitioning *::after {
   line-height: 1;
   white-space: nowrap;
   font-family: var(--font-heading);
+  /* Start at the fitted size so hydration doesn't grow the footer (CLS). */
+  font-size: 26vw;
 }
 
 .deuvix-ch {

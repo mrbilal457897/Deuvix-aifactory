@@ -29,7 +29,7 @@ export default function LoginPage() {
 
   useEffect(() => {
     if (searchParams.get("error") === "AdminOnly") {
-      setError("Is account ko admin access nahi hai. Authorized admin email se sign in karein.");
+      setError("This account does not have admin access. Sign in with an authorized admin email.");
     }
   }, [searchParams]);
 
