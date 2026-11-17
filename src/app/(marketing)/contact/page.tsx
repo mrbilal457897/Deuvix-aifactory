@@ -404,12 +404,12 @@ function ContactPageInner() {
       } else {
         setSubmitStatus("error");
         setSubmitError(
-          data?.message || "Something went wrong. Your answers are saved — try again or email team.deuvix@gmail.com.",
+          data?.message || "Something went wrong. Your answers are saved — try again or email team.deuvixai@gmail.com.",
         );
       }
     } catch {
       setSubmitStatus("error");
-      setSubmitError("Network error. Your answers are saved — try again or email team.deuvix@gmail.com.");
+      setSubmitError("Network error. Your answers are saved — try again or email team.deuvixai@gmail.com.");
     }
     // NOTE: no finally reset — success/error are terminal states the user must see.
   };
@@ -771,7 +771,7 @@ function ContactPageInner() {
                     <Mail className="size-5" />
                   </div>
                   <div className="min-w-0 flex-1">
-                    <div className="text-[14px] font-semibold text-foreground dark:text-white">team.deuvix@gmail.com</div>
+                    <div className="text-[14px] font-semibold text-foreground dark:text-white">team.deuvixai@gmail.com</div>
                     <div className="text-[12.5px] text-muted-foreground dark:text-white/60 leading-relaxed">Click to copy</div>
                   </div>
                   <span className="text-secondary text-xs ml-auto">→</span>

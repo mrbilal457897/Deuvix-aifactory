@@ -1,6 +1,6 @@
 "use client";
 
-import { signIn, useSession } from "next-auth/react";
+import { signIn, signOut, useSession } from "next-auth/react";
 import { useRouter, useSearchParams } from "next/navigation";
 import { useEffect, useState } from "react";
 import { Zap, ArrowLeft } from "lucide-react";
@@ -11,7 +11,7 @@ import Link from "next/link";
  * admin access is decided solely by the ADMIN_EMAILS allowlist.
  */
 export default function LoginPage() {
-  const { status } = useSession();
+  const { data: session, status } = useSession();
   const router = useRouter();
   const searchParams = useSearchParams();
   const callbackUrl =
@@ -21,6 +21,9 @@ export default function LoginPage() {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
 
+  const adminOnly = searchParams.get("error") === "AdminOnly";
+  const signedInEmail = status === "authenticated" ? session?.user?.email ?? null : null;
+
   useEffect(() => {
     if (status === "authenticated") {
       router.push(callbackUrl);
@@ -28,10 +31,15 @@ export default function LoginPage() {
   }, [status, router, callbackUrl]);
 
   useEffect(() => {
-    if (searchParams.get("error") === "AdminOnly") {
+    if (!adminOnly) return;
+    if (signedInEmail) {
+      setError(
+        `Signed in as ${signedInEmail} — that account does not have admin access. Sign out and sign in with an authorized admin email.`
+      );
+    } else {
       setError("This account does not have admin access. Sign in with an authorized admin email.");
     }
-  }, [searchParams]);
+  }, [adminOnly, signedInEmail]);
 
   const handleGoogle = async () => {
     setLoading(true);
@@ -83,8 +91,17 @@ export default function LoginPage() {
 
         <div className="p-8 rounded-2xl bg-card border border-border shadow-xl space-y-5">
           {error && (
-            <div className="p-3 rounded-lg bg-destructive/10 border border-destructive/20 text-destructive text-sm text-center">
-              {error}
+            <div className="p-3 rounded-lg bg-destructive/10 border border-destructive/20 text-destructive text-sm text-center space-y-3">
+              <p>{error}</p>
+              {signedInEmail && (
+                <button
+                  type="button"
+                  onClick={() => signOut({ callbackUrl: `/login?callbackUrl=${encodeURIComponent(callbackUrl)}` })}
+                  className="inline-flex items-center justify-center rounded-md border border-destructive/30 bg-destructive/10 px-3 py-1.5 text-xs font-semibold uppercase tracking-wide text-destructive transition-colors hover:bg-destructive/20"
+                >
+                  Sign out and use another account
+                </button>
+              )}
             </div>
           )}
 

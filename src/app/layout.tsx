@@ -124,7 +124,7 @@ export default function RootLayout({
         {/* Apply theme before first paint to prevent FOUC */}
         <script
           dangerouslySetInnerHTML={{
-            __html: `(function(){try{var s=document.documentElement;var t=localStorage.getItem("theme");if(t==="light"){s.classList.remove("dark")}else if(t==="dark"){s.classList.add("dark")}else if(window.matchMedia&&window.matchMedia("(prefers-color-scheme: dark)").matches){s.classList.add("dark")}else{s.classList.remove("dark")}}catch(e){}})();`,
+            __html: `(function(){try{var s=document.documentElement;var t=localStorage.getItem("theme");if(t==="light"){s.classList.remove("dark")}else if(t==="dark"){s.classList.add("dark")}else{s.classList.remove("dark")}}catch(e){}})();`,
           }}
         />
         {/* Flash-of-unstyled-logo guard — mirrors the theme script. Adds .logo-intro only on first visit of the session. */}

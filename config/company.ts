@@ -32,7 +32,7 @@ export const company = {
    */
   businessEmail:
     (typeof process !== "undefined" ? process.env.NEXT_PUBLIC_CONTACT_EMAIL?.trim() : undefined) ||
-    "team.deuvix@gmail.com",
+    "team.deuvixai@gmail.com",
   /** TODO(owner): business phone number in international format. */
   phone: "",
   /** Optional tax identifier (VAT, NTN, ...). TODO(owner). */

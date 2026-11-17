@@ -5,27 +5,21 @@
 
 import { NextResponse } from "next/server";
 import { getPool } from "@/lib/db";
+import { requireAdmin } from "@/lib/ai/auth";
 
 export const dynamic = "force-dynamic";
-
-function requireAdmin(request: Request): { ok: true } | { ok: false; response: Response } {
-  const authHeader = request.headers.get("authorization");
-  const cookie = request.headers.get("cookie");
-  if (!authHeader && !cookie) {
-    return {
-      ok: false,
-      response: NextResponse.json({ ok: false, error: "unauthenticated" }, { status: 401 }),
-    };
-  }
-  return { ok: true };
-}
 
 export async function PATCH(
   request: Request,
   { params }: { params: Promise<{ ticketId: string }> }
 ): Promise<Response> {
-  const auth = requireAdmin(request);
-  if (!auth.ok) return auth.response;
+  const auth = await requireAdmin();
+  if (!auth.ok) {
+    return NextResponse.json(
+      { ok: false, error: auth.error ?? "Unauthorized" },
+      { status: auth.status ?? 401 },
+    );
+  }
 
   const pool = getPool();
   const { ticketId } = await params;

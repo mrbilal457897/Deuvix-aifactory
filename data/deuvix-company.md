@@ -21,7 +21,7 @@
 
 - Contact page: https://deuvix-aifactory-3yqx.vercel.app/contact
 - Book a call: https://deuvix-aifactory-3yqx.vercel.app/book-a-call
-- Public contact email shown on the site: `team.deuvix@gmail.com`
+- Public contact email shown on the site: `team.deuvixai@gmail.com`
 - TODO: no phone number is published anywhere on the site.
 - TODO: no office address, timezone, or business hours are published anywhere
   on the site. Do not state either.

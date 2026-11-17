@@ -9,7 +9,7 @@ export function ThemeProvider({
   children: React.ReactNode;
 }) {
   return (
-    <NextThemesProvider attribute="class" defaultTheme="dark" enableSystem>
+    <NextThemesProvider attribute="class" defaultTheme="light" enableSystem>
       <TooltipProvider>{children}</TooltipProvider>
     </NextThemesProvider>
   );
