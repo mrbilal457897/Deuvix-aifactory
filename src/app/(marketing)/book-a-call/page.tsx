@@ -1,10 +1,11 @@
 import type { Metadata } from "next";
 import { BookingPage } from "@/components/booking/booking-page";
-import { getCalLink, getCalOrigin, fetchEventTitle } from "@/lib/cal/api";
-import { parseMonthParam } from "@/lib/booking/time";
+import { getCalLink, getCalOrigin } from "@/lib/cal/api";
 import { pageMetadata } from "@/lib/seo";
 
-export const dynamic = "force-dynamic";
+// ISR: the page is static and refreshes at most once an hour. `?month=` is
+// applied on the client after hydration, so the route needs no server render.
+export const revalidate = 3600;
 
 export const metadata: Metadata = pageMetadata({
   title: "Book a Call",
@@ -21,23 +22,17 @@ function titleFromSlug(slug: string): string {
     .trim();
 }
 
-export default async function BookACallPage({
-  searchParams,
-}: {
-  searchParams: Promise<{ month?: string }>;
-}) {
-  const { month } = await searchParams;
-
+export default function BookACallPage() {
   const origin = getCalOrigin();
   const link = getCalLink();
-  // Slug is the Cal.com event type key; the display name comes from Cal itself
-  // so a rename in Cal.com shows up here without a redeploy.
-  const eventTitle = (await fetchEventTitle()) ?? titleFromSlug(link) ?? "Book a Call";
+  // Slug is the Cal.com event type key — humanise it as the display name.
+  // No external Cal.com round-trip blocks the render; availability slots are
+  // fetched client-side anyway.
+  const eventTitle = titleFromSlug(link) ?? "Book a Call";
   const calBookingUrl = origin && link ? `${origin}/${link}` : "/contact";
 
   return (
     <BookingPage
-      initialMonth={parseMonthParam(month)}
       eventTitle={eventTitle}
       durationMinutes={30}
       calBookingUrl={calBookingUrl}

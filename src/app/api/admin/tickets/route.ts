@@ -7,21 +7,10 @@
 
 import { NextResponse } from "next/server";
 import { getPool } from "@/lib/db";
+import { requireAdmin } from "@/lib/ai/auth";
 
 export const dynamic = "force-dynamic";
 const TICKET_PAGE_SIZE = 50;
-
-function requireAdmin(request: Request): { ok: true } | { ok: false; response: Response } {
-  const authHeader = request.headers.get("authorization");
-  const cookie = request.headers.get("cookie");
-  if (!authHeader && !cookie) {
-    return {
-      ok: false,
-      response: NextResponse.json({ ok: false, error: "unauthenticated" }, { status: 401 }),
-    };
-  }
-  return { ok: true };
-}
 
 function rowToTicket(r: any) {
   return {
@@ -49,8 +38,13 @@ function rowToTicket(r: any) {
 }
 
 export async function GET(request: Request): Promise<Response> {
-  const auth = requireAdmin(request);
-  if (!auth.ok) return auth.response;
+  const auth = await requireAdmin();
+  if (!auth.ok) {
+    return NextResponse.json(
+      { ok: false, error: auth.error ?? "Unauthorized" },
+      { status: auth.status ?? 401 },
+    );
+  }
 
   const pool = getPool();
   const { searchParams } = new URL(request.url);

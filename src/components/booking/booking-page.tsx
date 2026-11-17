@@ -31,6 +31,7 @@ import {
   isValidTimeZone,
   monthDateKeys,
   monthLabel,
+  parseMonthParam,
   zoneLabel,
   zoneShort,
   zonedTimeToUtcISO,
@@ -108,14 +109,30 @@ export function BookingPage({
   calBookingUrl,
   showEmbedFallback = false,
 }: {
-  initialMonth: string;
+  initialMonth?: string;
   eventTitle: string;
   durationMinutes: number;
   calBookingUrl: string;
   /** Shows the secondary Cal.com pop-up option. Only when a Cal origin/link exists. */
   showEmbedFallback?: boolean;
 }) {
-  const [month, setMonth] = useState(initialMonth);
+  const [month, setMonth] = useState(() => initialMonth ?? parseMonthParam(null));
+
+  // Honour `?month=YYYY-MM` on the client after hydration — the server render
+  // stays static and never blocks on a query-string read.
+  useEffect(() => {
+    try {
+      const params = new URLSearchParams(window.location.search);
+      const requested = params.get("month");
+      if (requested) {
+        const parsed = parseMonthParam(requested);
+        setMonth((current) => (parsed !== current ? parsed : current));
+      }
+    } catch {
+      // ignore malformed query strings
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
   const browserZone = useSyncExternalStore(noopSubscribe, readBrowserTimeZone, readServerTimeZone);
   const [timeZoneOverride, setTimeZoneOverride] = useState<string | null>(null);
   const timeZone = timeZoneOverride ?? (isValidTimeZone(browserZone) ? browserZone : DEFAULT_TIME_ZONE);
