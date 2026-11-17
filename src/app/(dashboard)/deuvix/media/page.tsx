@@ -154,7 +154,7 @@ export default function MediaPage() {
                   <td className="px-5 py-3">
                     <div className="flex items-center gap-3">
                       <div className="size-10 rounded-xl overflow-hidden bg-muted border border-border shrink-0">
-                        <Image src={img.url} alt={img.filename} width={40} height={40} className="size-10 object-cover" />
+                        <Image src={img.url} alt={img.filename} width={40} height={40} sizes="40px" className="size-10 object-cover" />
                       </div>
                       <span className="text-foreground text-sm truncate">{img.filename}</span>
                     </div>
