@@ -101,11 +101,15 @@ export function Footer() {
       // ---- Fit: scale font so word fills container width ----
       fitFn = () => {
         mark.style.fontSize = "26vw";
-        const mw = mark.scrollWidth;
-        const sw = stage.clientWidth;
-        if (mw > 0 && sw > 0) {
-          mark.style.fontSize = `${(26 * (sw / mw) * 0.995)}vw`;
-        }
+        // Defer the geometry read to the next frame so the browser isn't
+        // forced to reflow synchronously after the font-size write above.
+        requestAnimationFrame(() => {
+          const mw = mark.scrollWidth;
+          const sw = stage.clientWidth;
+          if (mw > 0 && sw > 0) {
+            mark.style.fontSize = `${(26 * (sw / mw) * 0.995)}vw`;
+          }
+        });
       };
 
       // Call fit immediately, then re-fit + re-measure triggers on every

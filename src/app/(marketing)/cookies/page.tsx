@@ -7,6 +7,8 @@ import {
 import { CompanyEmailLink } from "@/components/legal-company";
 import { pageMetadata } from "@/lib/seo";
 
+export const revalidate = 3600;
+
 export const metadata = pageMetadata({
   title: "Cookie Policy",
   description:

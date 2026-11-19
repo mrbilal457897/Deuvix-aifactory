@@ -2,6 +2,8 @@ import { LiveWork } from "@/components/sections/live-work";
 import { ProjectsIntro } from "@/components/projects/ProjectsIntro";
 import { listPublishedProjectsWithHealth } from "@/lib/projects";
 
+export const revalidate = 3600;
+
 /**
  * The listing page shows EVERY published project as the same stacked block
  * used on the home page — no grid, no client-side fetch.

@@ -76,6 +76,8 @@ export async function middleware(request: NextRequest) {
   const isCronReminders = pathname === "/api/cron/reminders";
   const isCronFollowUpReminders = pathname === "/api/cron/follow-up-reminders";
   const isKeepAlive = pathname === "/api/keep-alive";
+  // Public liveness probe — no auth, no PII, no-store.
+  const isHealth = pathname === "/api/health";
   // The booking page is public by definition: anyone may read availability or
   // book. Both routes keep CAL_API_KEY server-side and /book is rate-limited.
   const isCalSlots = pathname === "/api/cal/slots" && request.method === "GET";
@@ -102,6 +104,7 @@ export async function middleware(request: NextRequest) {
     isCronReminders ||
     isCronFollowUpReminders ||
     isKeepAlive ||
+    isHealth ||
     isCalSlots ||
     isCalBook
   ) {

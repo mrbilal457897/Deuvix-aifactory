@@ -4,6 +4,8 @@ import { Breadcrumb } from "@/components/ui/breadcrumb";
 import { pageMetadata } from "@/lib/seo";
 import { testimonials } from "@/content/testimonials";
 
+export const revalidate = 3600;
+
 export const metadata = pageMetadata({
   title: "Testimonials",
   description:

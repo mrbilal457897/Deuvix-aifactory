@@ -1,4 +1,5 @@
 import type { NextConfig } from "next";
+import { withSentryConfig } from "@sentry/nextjs/config";
 
 const nextConfig: NextConfig = {
   // Required for the Docker image: emits .next/standalone with a self-contained
@@ -21,16 +22,81 @@ const nextConfig: NextConfig = {
           },
         ],
       },
+      {
+        // Admin dashboard + auth callbacks: never cached anywhere.
+        source: "/deuvix/:path*",
+        headers: [
+          { key: "Cache-Control", value: "private, no-store, no-transform" },
+        ],
+      },
+      {
+        source: "/admin/:path*",
+        headers: [
+          { key: "Cache-Control", value: "private, no-store, no-transform" },
+        ],
+      },
+      {
+        source: "/api/admin/:path*",
+        headers: [
+          { key: "Cache-Control", value: "private, no-store, no-transform" },
+        ],
+      },
+      {
+        // Per-user API routes stay no-store (public auth'd data).
+        source: "/api/contacts",
+        headers: [{ key: "Cache-Control", value: "no-store" }],
+      },
+      {
+        source: "/api/tickets/:path*",
+        headers: [{ key: "Cache-Control", value: "no-store" }],
+      },
+      {
+        source: "/api/follow-ups",
+        headers: [{ key: "Cache-Control", value: "no-store" }],
+      },
+      {
+        source: "/api/keep-alive",
+        headers: [{ key: "Cache-Control", value: "no-store" }],
+      },
+      // Timestamped upload filenames (e.g. 1786824376990.jpg) are immutable — cache hard.
+      {
+        source: "/uploads/:path(\\d{10,}.*)",
+        headers: [
+          { key: "Cache-Control", value: "public, max-age=2592000, immutable" },
+        ],
+      },
+      // Stable, reused names (e.g. deuvix-poster.jpg) can change — 1 day + SWR.
+      {
+        source: "/uploads/:path*",
+        headers: [
+          {
+            key: "Cache-Control",
+            value: "public, max-age=86400, stale-while-revalidate=86400",
+          },
+        ],
+      },
     ];
+  },
+  experimental: {
+    // lucide-react is imported in dozens of components; this tree-shakes
+    // per-component (icon-level) so only used icons end up in the bundle.
+    optimizePackageImports: ["lucide-react", "gsap"],
   },
   images: {
     formats: ["image/webp"],
+    // Optimized remote responses are held for 30 days — filenames in our
+    // Supabase bucket are immutable content hashes/timestamps.
+    minimumCacheTTL: 30 * 24 * 60 * 60,
+    // Cap device sizes at 1920px — nothing on this site benefits from a
+    // 3840px variant; it only inflates the optimized-image cache and the
+    // largest download on the LCP path.
+    deviceSizes: [640, 750, 828, 1080, 1200, 1920],
+    imageSizes: [16, 32, 48, 64, 96, 128, 256, 384],
     remotePatterns: [
-      { protocol: "https", hostname: "images.pexels.com" },
-      { protocol: "https", hostname: "image.thum.io" },
-      { protocol: "https", hostname: "lh3.googleusercontent.com" },
-      { protocol: "https", hostname: "avatars.githubusercontent.com" },
+      // Public-facing site images (uploaded via the admin media library).
       { protocol: "https", hostname: "sirxcjnszsumwnjhizrz.supabase.co" },
+      // Google profile photos for admin-only avatars (next-auth session.user.image).
+      { protocol: "https", hostname: "lh3.googleusercontent.com" },
     ],
   },
   async redirects() {
@@ -44,4 +110,13 @@ const nextConfig: NextConfig = {
   },
 };
 
-export default nextConfig;
+// Wrap with Sentry config: source-map upload happens only when SENTRY_AUTH_TOKEN is set.
+// All other Sentry options are intentionally left at defaults to avoid extra
+// output files; Sentry init lives in sentry.*.config.ts.
+export default withSentryConfig(nextConfig, {
+  // Only upload source maps when an auth token is explicitly provided.
+  authToken: process.env.SENTRY_AUTH_TOKEN,
+  silent: true,
+  org: process.env.SENTRY_ORG,
+  project: process.env.SENTRY_PROJECT,
+});

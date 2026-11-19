@@ -206,7 +206,7 @@ export function ticketConfirmationEmail(data: TicketEmailData): {
 }
 
 /**
- * Notification email sent to team.deuvixai@gmail.com when a new ticket arrives.
+ * Notification email sent to the configured business contact email when a new ticket arrives.
  */
 export function ticketNotificationEmail(data: TicketEmailData): {
   subject: string;

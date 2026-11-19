@@ -1,4 +1,3 @@
-import bcrypt from "bcryptjs";
 import { supabase } from "./supabase";
 import { isAdminEmail } from "./admin-emails";
 
@@ -42,21 +41,17 @@ export async function createUser(data: {
   name: string;
   email: string;
   password?: string;
-  provider: "credentials" | "google" | "github";
+  provider: "google";
   image?: string;
 }): Promise<User> {
   const existing = await getUserByEmail(data.email);
   if (existing) return existing;
 
-  const hashedPassword = data.password
-    ? await bcrypt.hash(data.password, 12)
-    : undefined;
-
   const newUser = {
     id: Date.now().toString(),
     name: data.name,
     email: data.email,
-    password: hashedPassword,
+    password: undefined,
     role: isAdminEmail(data.email) ? "admin" : "user",
     provider: data.provider,
     image: data.image,
@@ -80,19 +75,6 @@ export async function getAllUsers(): Promise<User[]> {
 export async function deleteUser(id: string): Promise<boolean> {
   const { error } = await supabase.from("users").delete().eq("id", id);
   return !error;
-}
-
-export async function verifyPassword(
-  email: string,
-  password: string
-): Promise<User | null> {
-  const user = await getUserByEmail(email);
-  if (!user || !user.password) return null;
-
-  const valid = await bcrypt.compare(password, user.password);
-  if (!valid) return null;
-
-  return user;
 }
 
 export { isAdminEmail } from "./admin-emails";

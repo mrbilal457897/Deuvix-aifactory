@@ -28,6 +28,7 @@ import { company } from "@config/company";
 import { Breadcrumb } from "@/components/ui/breadcrumb";
 import "@/app/loop-anim.css";
 
+
 if (typeof window !== "undefined") {
   gsap.registerPlugin(ScrollTrigger);
 }

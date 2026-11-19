@@ -383,7 +383,7 @@ export function AboutClient() {
                     alt="Inside the Deuvix AI Factory — the engineering floor where Digital FTEs are spec-built, deployed and monitored"
                     fill
                     sizes="(min-width: 1024px) 38vw, 100vw"
-                    priority={false}
+                    priority
                     onLoad={handleImageLoad}
                   />
                 </div>

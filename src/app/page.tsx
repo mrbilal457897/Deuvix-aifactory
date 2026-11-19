@@ -9,6 +9,10 @@ import { FoundersSection } from "@/components/sections/founders";
 import { CTASection } from "@/components/sections/cta";
 import { countPublishedProjects, listPublishedProjectsWithHealth } from "@/lib/projects";
 import { HOME_LIMIT } from "@/lib/live-work/types";
+import { readSiteConfig } from "@/lib/site-config-server";
+import { SiteConfigProvider } from "@/components/site-config-context";
+
+export const revalidate = 3600;
 
 /**
  * Testimonials are below the fold: the JS chunk loads after the critical
@@ -25,14 +29,15 @@ const TestimonialsBento = dynamic(
  * invalidates this route through `revalidateProjectSite`.
  */
 export default async function HomePage() {
-  const [projectsHealth, total] = await Promise.all([
+  const [projectsHealth, total, config] = await Promise.all([
     listPublishedProjectsWithHealth({ featured: true, limit: HOME_LIMIT }),
     countPublishedProjects(),
+    readSiteConfig(),
   ]);
   const { projects, degraded } = projectsHealth;
 
   return (
-    <>
+    <SiteConfigProvider config={config}>
       <HeroSection />
       <FeaturesSection />
       <LiveWork projects={projects} showViewAll={total > projects.length} degraded={degraded} />
@@ -42,6 +47,6 @@ export default async function HomePage() {
       <TestimonialsBento />
       <FoundersSection />
       <CTASection />
-    </>
+    </SiteConfigProvider>
   );
 }

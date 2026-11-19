@@ -13,6 +13,8 @@ import { company } from "@config/company";
 import { Breadcrumb } from "@/components/ui/breadcrumb";
 import { pageMetadata } from "@/lib/seo";
 
+export const revalidate = 3600;
+
 export const metadata = pageMetadata({
   title: "Careers",
   description: "Join Deuvix AI Factory and build AI workers that people trust with real work — under human oversight, on production systems.",

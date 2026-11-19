@@ -7,6 +7,7 @@ import { BookCallProvider } from "@/components/book-call-provider";
 import { LoadingSplash } from "@/components/loading-splash";
 import { SITE_URL, SITE_NAME, SITE_DESCRIPTION, OG_IMAGE_ABSOLUTE, organizationJsonLd } from "@/lib/seo";
 import "./globals.css";
+import Script from "next/script";
 
 const roboto = localFont({
   src: [
@@ -121,23 +122,20 @@ export default function RootLayout({
           sizes="any"
           media="(prefers-color-scheme: dark)"
         />
+        {/* Preconnect to Supabase storage for hero/project images */}
+        <link rel="preconnect" href="https://sirxcjnszsumwnjhizrz.supabase.co" crossOrigin="anonymous" />
         {/* Apply theme before first paint to prevent FOUC */}
-        <script
-          dangerouslySetInnerHTML={{
-            __html: `(function(){try{var s=document.documentElement;var t=localStorage.getItem("theme");if(t==="light"){s.classList.remove("dark")}else if(t==="dark"){s.classList.add("dark")}else{s.classList.remove("dark")}}catch(e){}})();`,
-          }}
-        />
+        <Script strategy="beforeInteractive">
+          {`(function(){try{var s=document.documentElement;var t=localStorage.getItem("theme");if(t==="light"){s.classList.remove("dark")}else if(t==="dark"){s.classList.add("dark")}else{s.classList.remove("dark")}}catch(e){}})();`}
+        </Script>
         {/* Flash-of-unstyled-logo guard — mirrors the theme script. Adds .logo-intro only on first visit of the session. */}
-        <script
-          dangerouslySetInnerHTML={{
-            __html: `try{if(!sessionStorage.getItem("dx-logo-intro")&&!matchMedia("(prefers-reduced-motion: reduce)").matches)document.documentElement.classList.add("logo-intro")}catch(e){}`,
-          }}
-        />
+        <Script strategy="afterInteractive">
+          {`try{if(!sessionStorage.getItem("dx-logo-intro")&&!matchMedia("(prefers-reduced-motion: reduce)").matches)document.documentElement.classList.add("logo-intro")}catch(e){}`}
+        </Script>
         {/* Organization schema generated from config/company.ts */}
-        <script
-          type="application/ld+json"
-          dangerouslySetInnerHTML={{ __html: JSON.stringify(organizationJsonLd()) }}
-        />
+        <Script strategy="afterInteractive" type="application/ld+json">
+          {JSON.stringify(organizationJsonLd())}
+        </Script>
       </head>
       <body className={`${roboto.variable} ${raleway.variable} ${spaceGrotesk.variable} ${inter.variable} min-h-full flex flex-col bg-background font-sans antialiased`}>
         <LoadingSplash />

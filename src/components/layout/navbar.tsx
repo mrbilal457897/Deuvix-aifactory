@@ -61,12 +61,19 @@ export function Navbar() {
     const item = nav.querySelectorAll("li").item(targetIndex);
     if (!item) return;
 
-    indicator.style.width = `${item.clientWidth}px`;
-    indicator.style.transform = `translate3d(${item.offsetLeft}px, 0, 0)`;
+    // Batch geometry reads before any writes to avoid forced reflow.
+    const width = item.clientWidth;
+    const left = item.offsetLeft;
+
+    indicator.style.width = `${width}px`;
+    indicator.style.transform = `translate3d(${left}px, 0, 0)`;
   }, [targetIndex]);
 
-  useLayoutEffect(() => {
-    positionIndicator();
+  // Use requestAnimationFrame instead of useLayoutEffect to avoid forcing a
+  // synchronous reflow on every navigation / render.
+  useEffect(() => {
+    const frame = requestAnimationFrame(positionIndicator);
+    return () => cancelAnimationFrame(frame);
   }, [positionIndicator, pathname, scrolled]);
 
   useEffect(() => {

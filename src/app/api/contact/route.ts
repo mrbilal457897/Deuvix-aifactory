@@ -32,6 +32,7 @@ import {
   inquiryConfirmationEmail,
 } from "@/lib/email/inquiry-templates";
 import { sendEmail } from "@/lib/email";
+import { company } from "@config/company";
 
 export const dynamic = "force-dynamic";
 export const maxDuration = 30;
@@ -251,7 +252,7 @@ export async function POST(request: Request): Promise<NextResponse> {
     const notification = inquiryNotificationEmail(inquiryData);
     const notifResult = await sendEmail({
       to: process.env.CONTACT_TO_EMAIL?.split(",").map((e) => e.trim()).filter(Boolean) ||
-        [process.env.EMAIL_FROM || "team.deuvixai@gmail.com"],
+        [process.env.EMAIL_FROM || company.businessEmail],
       subject: notification.subject,
       html: notification.html,
       text: notification.text,
@@ -342,7 +343,7 @@ export async function POST(request: Request): Promise<NextResponse> {
           saved: true,
           inquiryId,
           message:
-            "Your inquiry was saved, but our email provider did not deliver the notification to our team. We still have your message and will pick it up manually — if it is urgent, email us directly at team.deuvixai@gmail.com.",
+            `Your inquiry was saved, but our email provider did not deliver the notification to our team. We still have your message and will pick it up manually — if it is urgent, email us directly at ${company.businessEmail}.`,
         },
         { status: 502 },
       );
@@ -354,7 +355,7 @@ export async function POST(request: Request): Promise<NextResponse> {
         error: "delivery_failed",
         saved: false,
         message:
-          "We could not deliver your inquiry right now (network issue). Nothing was saved — please try again in a few minutes, or email us directly at team.deuvixai@gmail.com.",
+          `We could not deliver your inquiry right now (network issue). Nothing was saved — please try again in a few minutes, or email us directly at ${company.businessEmail}.`,
       },
       { status: 502 },
     );

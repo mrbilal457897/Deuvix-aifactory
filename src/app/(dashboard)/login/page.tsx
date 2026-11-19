@@ -19,10 +19,18 @@ export default function LoginPage() {
       ? searchParams.get("callbackUrl")!
       : "/deuvix";
   const [loading, setLoading] = useState(false);
-  const [error, setError] = useState("");
+  const [loginError, setLoginError] = useState("");
 
   const adminOnly = searchParams.get("error") === "AdminOnly";
   const signedInEmail = status === "authenticated" ? session?.user?.email ?? null : null;
+
+  // Derived from URL-state — no setState inside an effect needed.
+  const derivedError = adminOnly
+    ? signedInEmail
+      ? `Signed in as ${signedInEmail} — that account does not have admin access. Sign out and sign in with an authorized admin email.`
+      : "This account does not have admin access. Sign in with an authorized admin email."
+    : "";
+  const error = loginError || derivedError;
 
   useEffect(() => {
     if (status === "authenticated") {
@@ -30,27 +38,16 @@ export default function LoginPage() {
     }
   }, [status, router, callbackUrl]);
 
-  useEffect(() => {
-    if (!adminOnly) return;
-    if (signedInEmail) {
-      setError(
-        `Signed in as ${signedInEmail} — that account does not have admin access. Sign out and sign in with an authorized admin email.`
-      );
-    } else {
-      setError("This account does not have admin access. Sign in with an authorized admin email.");
-    }
-  }, [adminOnly, signedInEmail]);
-
   const handleGoogle = async () => {
     setLoading(true);
-    setError("");
+    setLoginError("");
     try {
       const result = await signIn("google", { redirect: false });
       if (result?.error) {
-        setError("Sign in failed. Please try again.");
+        setLoginError("Sign in failed. Please try again.");
       }
     } catch {
-      setError("Something went wrong. Please try again.");
+      setLoginError("Something went wrong. Please try again.");
     }
     setLoading(false);
   };

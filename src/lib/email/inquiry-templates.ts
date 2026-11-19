@@ -133,7 +133,7 @@ export function inquiryConfirmationEmail(data: InquiryEmailData): {
 }
 
 /**
- * Notification email sent to team.deuvixai@gmail.com when a new inquiry arrives.
+ * Notification email sent to the configured business contact email when a new inquiry arrives.
  */
 export function inquiryNotificationEmail(data: InquiryEmailData): {
   subject: string;

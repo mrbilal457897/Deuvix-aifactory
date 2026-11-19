@@ -2,6 +2,8 @@ import Link from "next/link";
 import { Breadcrumb } from "@/components/ui/breadcrumb";
 import { pageMetadata } from "@/lib/seo";
 
+export const revalidate = 3600;
+
 export const metadata = pageMetadata({
   title: "FAQ",
   description:

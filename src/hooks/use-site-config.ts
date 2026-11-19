@@ -1,45 +1,23 @@
 "use client";
 
-import { useEffect, useState } from "react";
 import { getImageUrl, type SiteConfig } from "@/lib/site-config";
+import { useSiteConfigValue } from "@/components/site-config-context";
 
-let sharedConfig: SiteConfig | null = null;
-let inFlight: Promise<SiteConfig> | null = null;
-
-function loadConfig(): Promise<SiteConfig> {
-  if (sharedConfig) return Promise.resolve(sharedConfig);
-  if (inFlight) return inFlight;
-  inFlight = fetch("/api/site-config")
-    .then((r) => (r.ok ? r.json() : {}))
-    .then((data) => {
-      sharedConfig = data as SiteConfig;
-      return sharedConfig;
-    })
-    .catch(() => sharedConfig || {})
-    .finally(() => {
-      inFlight = null;
-    });
-  return inFlight;
-}
-
-export function invalidateSiteConfig() {
-  sharedConfig = null;
-  inFlight = null;
-}
-
+/**
+ * Reads the site config from the server-rendered context — no fetch is
+ * issued from the browser, so images render on the first paint.
+ */
 export function useSiteConfig() {
-  const [config, setConfig] = useState<SiteConfig>(sharedConfig || {});
-
-  useEffect(() => {
-    let cancelled = false;
-    loadConfig().then((data) => {
-      if (!cancelled) setConfig(data);
-    });
-    return () => {
-      cancelled = true;
-    };
-  }, []);
-
+  const config = useSiteConfigValue();
   const img = (slot: string) => getImageUrl(slot, config);
   return { config, img };
+}
+
+/**
+ * Admin-image-settings flow calls this after a save. Kept as the historic
+ * export so the admin page compiles unchanged; the real invalidation is now
+ * server-side via revalidateTag("site-config") inside writeSiteConfig().
+ */
+export function invalidateSiteConfig() {
+  /* no-op — server revalidates the cache tag on save */
 }

@@ -24,11 +24,15 @@ export function Composer({ sending, ended, onSend, onStop, inputRef }: Props) {
   const ready = value.trim().length > 0 && !overLimit && !sending && !ended;
 
   // Auto-grow up to ~120px, then scroll inside the field.
+  // Split the reset + measure + write across frames to avoid forced reflow.
   useEffect(() => {
     const el = inputRef.current;
     if (!el) return;
     el.style.height = "auto";
-    el.style.height = `${Math.min(el.scrollHeight, 120)}px`;
+    requestAnimationFrame(() => {
+      const h = Math.min(el.scrollHeight, 120);
+      el.style.height = `${h}px`;
+    });
   }, [value, inputRef]);
 
   const submit = () => {

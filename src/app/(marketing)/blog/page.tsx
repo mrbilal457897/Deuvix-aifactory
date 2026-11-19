@@ -11,6 +11,7 @@ import { CharReveal } from "@/components/split-text";
 import { Breadcrumb } from "@/components/ui/breadcrumb";
 import { blogCategories, posts } from "./posts";
 
+
 if (typeof window !== "undefined") {
   gsap.registerPlugin(ScrollTrigger);
 }

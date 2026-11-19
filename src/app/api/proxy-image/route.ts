@@ -56,7 +56,7 @@ export async function GET(request: Request) {
       headers: {
         "Content-Type": contentType,
         "Content-Length": String(buffer.length),
-        "Cache-Control": "public, max-age=86400",
+        "Cache-Control": "public, max-age=86400, s-maxage=86400, stale-while-revalidate=86400",
       },
     });
   } catch {

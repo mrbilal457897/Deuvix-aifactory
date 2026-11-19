@@ -12,6 +12,8 @@ import { Mail, Phone, MessageCircle } from "lucide-react";
 import { useTheme } from "next-themes";
 import { Breadcrumb } from "@/components/ui/breadcrumb";
 import { CharReveal } from "@/components/split-text";
+import { company } from "@config/company";
+
 
 /* -------------------------------------------------------------------------- */
 /* Constants                                                                  */
@@ -404,12 +406,12 @@ function ContactPageInner() {
       } else {
         setSubmitStatus("error");
         setSubmitError(
-          data?.message || "Something went wrong. Your answers are saved — try again or email team.deuvixai@gmail.com.",
+          data?.message || `Something went wrong. Your answers are saved — try again or email ${company.businessEmail}.`,
         );
       }
     } catch {
       setSubmitStatus("error");
-      setSubmitError("Network error. Your answers are saved — try again or email team.deuvixai@gmail.com.");
+      setSubmitError(`Network error. Your answers are saved — try again or email ${company.businessEmail}.`);
     }
     // NOTE: no finally reset — success/error are terminal states the user must see.
   };
@@ -771,7 +773,7 @@ function ContactPageInner() {
                     <Mail className="size-5" />
                   </div>
                   <div className="min-w-0 flex-1">
-                    <div className="text-[14px] font-semibold text-foreground dark:text-white">team.deuvixai@gmail.com</div>
+                    <div className="text-[14px] font-semibold text-foreground dark:text-white">{company.businessEmail}</div>
                     <div className="text-[12.5px] text-muted-foreground dark:text-white/60 leading-relaxed">Click to copy</div>
                   </div>
                   <span className="text-secondary text-xs ml-auto">→</span>

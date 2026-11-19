@@ -17,6 +17,8 @@ import { SITE_NAME, SITE_URL, fullTitle } from "@/lib/seo";
 import { company } from "@config/company";
 import "@/app/live-work.css";
 
+export const revalidate = 3600;
+
 /** Every published project gets its own page; drafts never appear here. */
 export async function generateStaticParams() {
   const projects = await listPublishedProjects();

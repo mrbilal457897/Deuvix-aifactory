@@ -11,6 +11,8 @@ import { renderMarkdown, tocFor, readingTimeMinutes } from "@/lib/blog/markdown"
 import { SITE_NAME, SITE_URL, fullTitle } from "@/lib/seo";
 import { company } from "@config/company";
 
+export const revalidate = 3600;
+
 export async function generateStaticParams() {
   return posts.map((post) => ({ slug: post.slug }));
 }
