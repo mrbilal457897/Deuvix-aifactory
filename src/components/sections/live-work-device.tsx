@@ -62,6 +62,7 @@ function Shot({
       fill
       sizes={sizes}
       priority={priority}
+      loading={priority ? undefined : "lazy"}
       className={`lw-shot-img ${className}`.trim()}
     />
   );

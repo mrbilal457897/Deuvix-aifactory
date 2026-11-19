@@ -34,15 +34,6 @@ const poppins = localFont({
   display: "swap",
 });
 
-const inter = localFont({
-  src: [
-    { path: "../../../public/fonts/inter-400.woff2", weight: "400", style: "normal" },
-    { path: "../../../public/fonts/inter-500.woff2", weight: "500", style: "normal" },
-  ],
-  variable: "--font-inter",
-  display: "swap",
-});
-
 const TABS = [
   { id: "sara", label: "Sara AI Assistant" },
   { id: "roadmap", label: "FDE Roadmap" },
@@ -95,7 +86,7 @@ export function HeroSection() {
   return (
     <section
       ref={rootRef}
-      className={`${styles.hero} ${poppins.variable} ${inter.variable}`}
+      className={`${styles.hero} ${poppins.variable}`}
       aria-label="Introduction"
     >
       <div className={styles.heroGlow} aria-hidden="true" />

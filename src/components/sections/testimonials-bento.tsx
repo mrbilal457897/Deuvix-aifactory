@@ -119,6 +119,7 @@ export function TestimonialsBento({ showStars = true }: { showStars?: boolean })
                     width={48}
                     height={48}
                     sizes="48px"
+                    loading="lazy"
                     className="size-12 shrink-0 rounded-full object-cover border border-border"
                   />
                 ) : (

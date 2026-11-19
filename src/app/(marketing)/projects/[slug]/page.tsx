@@ -160,6 +160,7 @@ export default async function ProjectDetailPage({
                     src={image.url}
                     alt={image.alt || `${project.name} — image ${index + 1}`}
                     fill
+                    loading="lazy"
                     sizes="(max-width: 640px) 100vw, 50vw"
                     className="object-cover object-top"
                   />

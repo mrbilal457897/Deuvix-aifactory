@@ -98,6 +98,7 @@ export function TeamSection() {
                     width={260}
                     height={260}
                     sizes="260px"
+                    loading="lazy"
                     className="h-full w-full object-cover"
                   />
                   <div

@@ -124,6 +124,8 @@ export default function RootLayout({
         />
         {/* Preconnect to Supabase storage for hero/project images */}
         <link rel="preconnect" href="https://sirxcjnszsumwnjhizrz.supabase.co" crossOrigin="anonymous" />
+        {/* Preload critical body font (Roboto 400) */}
+        <link rel="preload" href="/fonts/roboto-400.woff2" as="font" type="font/woff2" crossOrigin="anonymous" />
         {/* Apply theme before first paint to prevent FOUC */}
         <Script strategy="beforeInteractive">
           {`(function(){try{var s=document.documentElement;var t=localStorage.getItem("theme");if(t==="light"){s.classList.remove("dark")}else if(t==="dark"){s.classList.add("dark")}else{s.classList.remove("dark")}}catch(e){}})();`}

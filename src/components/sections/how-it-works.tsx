@@ -73,6 +73,7 @@ export function HowItWorksSection() {
         src="/images/building.jpg"
         alt="City skyline at night"
         fill
+        loading="lazy"
         className="object-cover"
         sizes="100vw"
       />

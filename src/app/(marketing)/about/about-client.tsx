@@ -383,7 +383,6 @@ export function AboutClient() {
                     alt="Inside the Deuvix AI Factory — the engineering floor where Digital FTEs are spec-built, deployed and monitored"
                     fill
                     sizes="(min-width: 1024px) 38vw, 100vw"
-                    priority
                     onLoad={handleImageLoad}
                   />
                 </div>
@@ -457,6 +456,7 @@ export function AboutClient() {
                       alt={leader.alt}
                       fill
                       sizes="(min-width: 900px) 44vw, 100vw"
+                      loading="lazy"
                       onLoad={handleImageLoad}
                     />
                   </div>

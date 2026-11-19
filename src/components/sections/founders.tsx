@@ -103,6 +103,7 @@ export function FoundersSection() {
                       alt={f.name + ", " + f.role}
                       fill
                       sizes="(min-width: 1024px) 32vw, 100vw"
+                      loading="lazy"
                       className="object-cover object-[center_20%] founder-photo"
                     />
                     <span
