@@ -1,6 +1,13 @@
 "use client";
 
-import { getCalApi } from "@calcom/embed-react";
+let getCalApi: any;
+async function getCalApiInstance() {
+  if (!getCalApi) {
+    const mod = await import("@calcom/embed-react");
+    getCalApi = mod.getCalApi;
+  }
+  return getCalApi;
+}
 
 /**
  * Thin singleton around Cal.com's embed SDK.

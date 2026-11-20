@@ -59,9 +59,24 @@ export function LayoutShell({ children }: { children: React.ReactNode }) {
       });
     }
 
+    // Lazy-load Sentry SDK (~430 KB) well after first paint so it doesn't block
+    // FCP/LCP. Only initialized on the client, never bundled into critical path.
+    let sentryTimer = 0;
+    if (typeof window !== "undefined") {
+      sentryTimer = window.setTimeout(async () => {
+        try {
+          const { initSentry } = await import("@/instrumentation-client");
+          await initSentry();
+        } catch {
+          // Sentry is optional — never block the page on it.
+        }
+      }, 2000);
+    }
+
     return () => {
       window.removeEventListener("load", onLoad);
       window.clearTimeout(fontsTimer);
+      window.clearTimeout(sentryTimer);
     };
   }, []);
 

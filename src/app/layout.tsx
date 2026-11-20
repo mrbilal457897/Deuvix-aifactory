@@ -20,11 +20,7 @@ const roboto = localFont({
 
 const raleway = localFont({
   src: [
-    { path: "../../public/fonts/raleway-200.woff2", weight: "200", style: "normal" },
-    { path: "../../public/fonts/raleway-300.woff2", weight: "300", style: "normal" },
-    { path: "../../public/fonts/raleway-400.woff2", weight: "400", style: "normal" },
     { path: "../../public/fonts/raleway-500.woff2", weight: "500", style: "normal" },
-    { path: "../../public/fonts/raleway-600.woff2", weight: "600", style: "normal" },
     { path: "../../public/fonts/raleway-700.woff2", weight: "700", style: "normal" },
     { path: "../../public/fonts/raleway-800.woff2", weight: "800", style: "normal" },
   ],
@@ -44,7 +40,6 @@ const spaceGrotesk = localFont({
 
 const inter = localFont({
   src: [
-    { path: "../../public/fonts/inter-400.woff2", weight: "400", style: "normal" },
     { path: "../../public/fonts/inter-500.woff2", weight: "500", style: "normal" },
   ],
   variable: "--font-inter",

@@ -57,15 +57,17 @@ export function HeroSection() {
     if (prefersReduced) return;
 
     const ctx = gsap.context(() => {
+      // Slide-up entrance: text is visible in CSS from first paint (opacity:1);
+      // only translateY animates so LCP isn't blocked by JS hydration.
       gsap.fromTo(
         [".js-pill", ".js-label", ".js-sub", ".js-cta", ".js-panel"],
-        { y: 28, opacity: 0 },
-        { y: 0, opacity: 1, duration: 0.85, ease: "power3.out", stagger: 0.11 }
+        { y: 28 },
+        { y: 0, duration: 0.85, ease: "power3.out", stagger: 0.11 }
       );
       gsap.fromTo(
         ".js-h1",
-        { y: 46, opacity: 0 },
-        { y: 0, opacity: 1, duration: 1.1, ease: "power4.out", delay: 0.06 }
+        { y: 46 },
+        { y: 0, duration: 1.1, ease: "power4.out", delay: 0.06 }
       );
     }, root);
 

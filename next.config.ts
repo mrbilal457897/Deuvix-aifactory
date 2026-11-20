@@ -1,5 +1,9 @@
 import type { NextConfig } from "next";
-import { withSentryConfig } from "@sentry/nextjs/config";
+import bundleAnalyzer from "@next/bundle-analyzer";
+
+// `ANALYZE=true next build` emits client/server bundle reports to .next/analyze.
+// Inert unless the env var is set, so production builds pay nothing.
+const withBundleAnalyzer = bundleAnalyzer({ enabled: process.env.ANALYZE === "true" });
 
 const nextConfig: NextConfig = {
   // Required for the Docker image: emits .next/standalone with a self-contained
@@ -110,13 +114,4 @@ const nextConfig: NextConfig = {
   },
 };
 
-// Wrap with Sentry config: source-map upload happens only when SENTRY_AUTH_TOKEN is set.
-// All other Sentry options are intentionally left at defaults to avoid extra
-// output files; Sentry init lives in sentry.*.config.ts.
-export default withSentryConfig(nextConfig, {
-  // Only upload source maps when an auth token is explicitly provided.
-  authToken: process.env.SENTRY_AUTH_TOKEN,
-  silent: true,
-  org: process.env.SENTRY_ORG,
-  project: process.env.SENTRY_PROJECT,
-});
+export default withBundleAnalyzer(nextConfig);
