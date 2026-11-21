@@ -1,12 +1,6 @@
 import dynamic from "next/dynamic";
 import { HeroSection } from "@/components/sections/HeroSection";
 import { FeaturesSection } from "@/components/sections/FeaturesSection";
-import { LiveWork } from "@/components/sections/live-work";
-import { HowItWorksSection } from "@/components/sections/how-it-works";
-import { MethodologySection } from "@/components/sections/methodology";
-import { StatsSection } from "@/components/sections/stats";
-import { FoundersSection } from "@/components/sections/founders";
-import { CTASection } from "@/components/sections/cta";
 import { countPublishedProjects, listPublishedProjectsWithHealth } from "@/lib/projects";
 import { HOME_LIMIT } from "@/lib/live-work/types";
 import { readSiteConfig } from "@/lib/site-config-server";
@@ -15,19 +9,38 @@ import { SiteConfigProvider } from "@/components/site-config-context";
 export const revalidate = 3600;
 
 /**
- * Testimonials are below the fold: the JS chunk loads after the critical
- * sections while the HTML is still server-rendered (no shift, no SEO loss).
+ * Below-the-fold sections are code-split so their JS doesn't block first paint.
+ * HTML is still server-rendered (ssr: true) - no CLS, no SEO loss.
  */
+const LiveWork = dynamic(
+  () => import("@/components/sections/live-work").then((m) => ({ default: m.LiveWork })),
+  { ssr: true }
+);
+const HowItWorksSection = dynamic(
+  () => import("@/components/sections/how-it-works").then((m) => ({ default: m.HowItWorksSection })),
+  { ssr: true }
+);
+const MethodologySection = dynamic(
+  () => import("@/components/sections/methodology").then((m) => ({ default: m.MethodologySection })),
+  { ssr: true }
+);
+const StatsSection = dynamic(
+  () => import("@/components/sections/stats").then((m) => ({ default: m.StatsSection })),
+  { ssr: true }
+);
 const TestimonialsBento = dynamic(
   () => import("@/components/sections/testimonials-bento").then((m) => m.TestimonialsBento),
-  { ssr: true },
+  { ssr: true }
+);
+const FoundersSection = dynamic(
+  () => import("@/components/sections/founders").then((m) => ({ default: m.FoundersSection })),
+  { ssr: true }
+);
+const CTASection = dynamic(
+  () => import("@/components/sections/cta").then((m) => ({ default: m.CTASection })),
+  { ssr: true }
 );
 
-/**
- * The home page shows featured + published projects, capped at HOME_LIMIT.
- * Data is read on the server so there is no client-side fetch flash; the admin
- * invalidates this route through `revalidateProjectSite`.
- */
 export default async function HomePage() {
   const [projectsHealth, total, config] = await Promise.all([
     listPublishedProjectsWithHealth({ featured: true, limit: HOME_LIMIT }),

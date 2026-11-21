@@ -1,0 +1,26 @@
+
+> nexusai-website@0.1.0 build
+> next build --webpack && node scripts/check-localhost.mjs
+
+▲ Next.js 16.2.10 (webpack)
+- Environments: .env.local
+- Experiments (use with caution):
+  · optimizePackageImports
+
+⚠ The "middleware" file convention is deprecated. Please use "proxy" instead. Learn more: https://nextjs.org/docs/messages/middleware-to-proxy
+  Creating an optimized production build ...
+✓ Compiled successfully in 118s
+  Running TypeScript ...
+Failed to type check.
+
+./src/components/sections/features.tsx:127:6
+Type error: JSX element 'section' has no corresponding closing tag.
+
+  [90m125 |[0m
+  [90m126 |[0m   [36mreturn[0m (
+[31m[1m>[0m [90m127 |[0m     <section className=[32m"bg-section"[0m>
+  [90m    |[0m      [31m[1m^[0m
+  [90m128 |[0m       <div className=[32m"relative mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 w-full"[0m>
+  [90m129 |[0m         <div className=[32m"text-left pt-16 md:pt-24 pb-8"[0m>
+  [90m130 |[0m           <p className=[32m"text-sm font-semibold text-primary uppercase tracking-wider mb-3"[0m>
+Next.js build worker exited with code: 1 and signal: null

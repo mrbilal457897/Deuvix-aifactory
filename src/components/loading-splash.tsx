@@ -3,7 +3,6 @@
 import { useEffect, useRef, useState } from "react";
 import { cn } from "@/lib/utils";
 import { DeuvixLogo } from "@/components/brand/DeuvixLogo";
-import { logoLoader } from "@/lib/logo-animations";
 
 export function LoadingSplash() {
   const [phase, setPhase] = useState<"visible" | "fading" | "gone">("visible");
@@ -23,9 +22,13 @@ export function LoadingSplash() {
   useEffect(() => {
     const svg = svgRef.current;
     if (!svg) return;
-    const tween = logoLoader(svg);
+    let tween: any;
+    (async () => {
+      const { logoLoader } = await import("@/lib/logo-animations");
+      tween = logoLoader(svg);
+    })();
     return () => {
-      tween.kill();
+      tween?.kill();
     };
   }, []);
 

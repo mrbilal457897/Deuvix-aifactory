@@ -1,0 +1,112 @@
+
+> nexusai-website@0.1.0 build
+> next build --webpack && node scripts/check-localhost.mjs
+
+▲ Next.js 16.2.10 (webpack)
+- Environments: .env.local
+- Experiments (use with caution):
+  · optimizePackageImports
+
+⚠ The "middleware" file convention is deprecated. Please use "proxy" instead. Learn more: https://nextjs.org/docs/messages/middleware-to-proxy
+  Creating an optimized production build ...
+✓ Compiled successfully in 119s
+  Running TypeScript ...
+  Finished TypeScript in 41s ...
+  Collecting page data using 3 workers ...
+  Generating static pages using 3 workers (0/67) ...
+  Generating static pages using 3 workers (16/67) 
+  Generating static pages using 3 workers (33/67) 
+  Generating static pages using 3 workers (50/67) 
+✓ Generating static pages using 3 workers (67/67) in 5.4s
+  Finalizing page optimization ...
+  Collecting build traces ...
+
+Route (app)                            Revalidate  Expire
+┌ ○ /                                          1h      1y
+├ ○ /_not-found
+├ ○ /about                                     1h      1y
+├ ƒ /admin/bookings
+├ ƒ /api/admin/agent
+├ ƒ /api/admin/agent/action
+├ ƒ /api/admin/agent/health
+├ ƒ /api/admin/agent/speak
+├ ƒ /api/admin/agent/transcribe
+├ ƒ /api/admin/bookings/export
+├ ƒ /api/admin/tickets
+├ ƒ /api/admin/tickets/[ticketId]
+├ ƒ /api/agents
+├ ƒ /api/agents/run
+├ ƒ /api/auth/[...nextauth]
+├ ƒ /api/cal/book
+├ ƒ /api/cal/slots
+├ ƒ /api/cal/webhook
+├ ƒ /api/chat
+├ ƒ /api/chat/feedback
+├ ƒ /api/chat/lead
+├ ƒ /api/contact
+├ ƒ /api/contacts
+├ ƒ /api/cron/follow-up-reminders
+├ ƒ /api/cron/reminders
+├ ƒ /api/fetch-og
+├ ƒ /api/follow-ups
+├ ƒ /api/health
+├ ƒ /api/keep-alive
+├ ƒ /api/leads
+├ ƒ /api/media
+├ ƒ /api/projects
+├ ƒ /api/projects/capture
+├ ƒ /api/projects/duplicate
+├ ƒ /api/projects/generate-case-study
+├ ƒ /api/projects/upload
+├ ƒ /api/proxy-image
+├ ƒ /api/site-config
+├ ƒ /api/upload
+├ ƒ /api/users
+├ ○ /apple-icon.png
+├ ○ /blog
+├ ● /blog/[slug]                               1h      1y
+│ ├ /blog/loop-engineering                     1h      1y
+│ ├ /blog/building-digital-fte                 1h      1y
+│ ├ /blog/fde-practices                        1h      1y
+│ └ [+4 more paths]
+├ ○ /book-a-call                               1h      1y
+├ ○ /careers                                   1h      1y
+├ ○ /changelog                                 1h      1y
+├ ○ /company-information                       1h      1y
+├ ○ /contact
+├ ○ /cookies                                   1h      1y
+├ ○ /deuvix
+├ ○ /deuvix/images
+├ ○ /deuvix/leads
+├ ○ /deuvix/media
+├ ○ /deuvix/tickets
+├ ƒ /deuvix/tickets/[ticketId]
+├ ○ /deuvix/users
+├ ○ /docs                                      1h      1y
+├ ○ /faq                                       1h      1y
+├ ○ /glossary                                  1h      1y
+├ ○ /how-we-work                               1h      1y
+├ ○ /icon.svg
+├ ○ /login
+├ ○ /privacy                                   1h      1y
+├ ○ /products
+├ ○ /projects                                  1h      1y
+├ ● /projects/[slug]                           1h      1y
+│ ├ /projects/restoran                         1h      1y
+│ ├ /projects/b-treasure                       1h      1y
+│ ├ /projects/ai-textbook                      1h      1y
+│ └ [+2 more paths]
+├ ○ /robots.txt
+├ ○ /rss.xml
+├ ○ /sitemap.xml
+├ ○ /terms                                     1h      1y
+└ ○ /testimonials                              1h      1y
+
+
+ƒ Proxy (Middleware)
+
+○  (Static)   prerendered as static content
+●  (SSG)      prerendered as static HTML (uses generateStaticParams)
+ƒ  (Dynamic)  server-rendered on demand
+
+[check-localhost] OK — no localhost references in public HTML.

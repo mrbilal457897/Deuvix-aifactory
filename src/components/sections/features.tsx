@@ -1,8 +1,7 @@
 "use client";
 
 import { useRef, useEffect, useState } from "react";
-import { gsap } from "gsap";
-import { ScrollTrigger } from "gsap/ScrollTrigger";
+// GSAP is lazy-loaded inside useEffect.
 import {
   Brain,
   Zap,
@@ -13,9 +12,7 @@ import {
 } from "lucide-react";
 import { CharReveal } from "@/components/split-text";
 
-if (typeof window !== "undefined") {
-  gsap.registerPlugin(ScrollTrigger);
-}
+
 
 const features = [
   {
@@ -77,47 +74,56 @@ export function FeaturesSection() {
   useEffect(() => {
     if (!containerRef.current || !panelsRef.current) return;
 
-    const ctx = gsap.context(() => {
-      const panels = panelsRef.current?.querySelectorAll(".feature-panel") || [];
-      const total = panels.length;
+    let ctx: any;
+    (async () => {
+      const [{ default: gsap }, { ScrollTrigger }] = await Promise.all([
+        import("gsap"),
+        import("gsap/ScrollTrigger"),
+      ]);
+      gsap.registerPlugin(ScrollTrigger);
 
-      gsap.set(panels, { opacity: 0, y: 60 });
-      if (panels[0]) gsap.set(panels[0], { opacity: 1, y: 0 });
+      ctx = gsap.context(() => {
+        const panels = panelsRef.current?.querySelectorAll(".feature-panel") || [];
+        const total = panels.length;
 
-      // Unified scroll-driven sequence (mobile + desktop): the sticky wrapper
-      // holds the panels in view while scrolling advances each feature panel.
-      // Explicit fromTo states keep every step deterministic.
-      const tl = gsap.timeline({
-        scrollTrigger: {
-          trigger: scrollRef.current,
-          start: "top top",
-          end: "bottom bottom",
-          scrub: 0.8,
-          onUpdate: (self) => {
-            const progress = self.progress;
-            const index = Math.min(Math.floor(progress * total), total - 1);
-            setActive(index);
+        gsap.set(panels, { opacity: 0, y: 60 });
+        if (panels[0]) gsap.set(panels[0], { opacity: 1, y: 0 });
+
+        // Unified scroll-driven sequence (mobile + desktop): the sticky wrapper
+        // holds the panels in view while scrolling advances each feature panel.
+        // Explicit fromTo states keep every step deterministic.
+        const tl = gsap.timeline({
+          scrollTrigger: {
+            trigger: scrollRef.current,
+            start: "top top",
+            end: "bottom bottom",
+            scrub: 0.8,
+            onUpdate: (self: any) => {
+              const progress = self.progress;
+              const index = Math.min(Math.floor(progress * total), total - 1);
+              setActive(index);
+            },
           },
-        },
-      });
+        });
 
-      for (let i = 0; i < total - 1; i++) {
-        tl.fromTo(
-          panels[i],
-          { opacity: 1, y: 0 },
-          { opacity: 0, y: -60, duration: 1, ease: "power2.inOut", immediateRender: false },
-          i
-        );
-        tl.fromTo(
-          panels[i + 1],
-          { opacity: 0, y: 60 },
-          { opacity: 1, y: 0, duration: 1, ease: "power2.inOut", immediateRender: false },
-          i
-        );
-      }
-    }, containerRef);
+        for (let i = 0; i < total - 1; i++) {
+          tl.fromTo(
+            panels[i],
+            { opacity: 1, y: 0 },
+            { opacity: 0, y: -60, duration: 1, ease: "power2.inOut", immediateRender: false },
+            i
+          );
+          tl.fromTo(
+            panels[i + 1],
+            { opacity: 0, y: 60 },
+            { opacity: 1, y: 0, duration: 1, ease: "power2.inOut", immediateRender: false },
+            i
+          );
+        }
+      }, containerRef);
+    })();
 
-    return () => ctx.revert();
+    return () => ctx?.revert();
   }, []);
 
   return (

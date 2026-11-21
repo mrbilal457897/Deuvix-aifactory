@@ -3,7 +3,7 @@
 import { useCallback, useEffect, useRef, useState } from "react";
 import Link from "next/link";
 import dynamic from "next/dynamic";
-import { gsap } from "gsap";
+// GSAP is lazy-loaded inside useEffect to keep it out of the initial bundle.
 import { ArrowRight } from "lucide-react";
 import localFont from "next/font/local";
 import styles from "./hero.module.css";
@@ -20,9 +20,6 @@ const FdeRoadmap = dynamic(() => import("./FdeRoadmap").then((m) => ({ default: 
   loading: PanelPlaceholder,
 });
 
-if (typeof window !== "undefined") {
-  gsap.registerPlugin();
-}
 
 const poppins = localFont({
   src: [
@@ -56,22 +53,26 @@ export function HeroSection() {
     const prefersReduced = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
     if (prefersReduced) return;
 
-    const ctx = gsap.context(() => {
-      // Slide-up entrance: text is visible in CSS from first paint (opacity:1);
-      // only translateY animates so LCP isn't blocked by JS hydration.
-      gsap.fromTo(
-        [".js-pill", ".js-label", ".js-sub", ".js-cta", ".js-panel"],
-        { y: 28 },
-        { y: 0, duration: 0.85, ease: "power3.out", stagger: 0.11 }
-      );
-      gsap.fromTo(
-        ".js-h1",
-        { y: 46 },
-        { y: 0, duration: 1.1, ease: "power4.out", delay: 0.06 }
-      );
-    }, root);
+    let ctx: any;
+    (async () => {
+      const { default: gsap } = await import("gsap");
+      ctx = gsap.context(() => {
+        // Slide-up entrance: text is visible in CSS from first paint (opacity:1);
+        // only translateY animates so LCP isn't blocked by JS hydration.
+        gsap.fromTo(
+          [".js-pill", ".js-label", ".js-sub", ".js-cta", ".js-panel"],
+          { y: 28 },
+          { y: 0, duration: 0.85, ease: "power3.out", stagger: 0.11 }
+        );
+        gsap.fromTo(
+          ".js-h1",
+          { y: 46 },
+          { y: 0, duration: 1.1, ease: "power4.out", delay: 0.06 }
+        );
+      }, root);
+    })();
 
-    return () => ctx.revert();
+    return () => ctx?.revert();
   }, []);
 
   // Arrow-key navigation across the tablist.
