@@ -12,6 +12,11 @@
 - Blog: https://deuvix-ai.com/blog
 - Sitemap: https://deuvix-ai.com/sitemap.xml
 
+## Pricing
+
+- AI Chatbots: From $500 (USD)
+- All other services: Custom quote
+
 ## Markdown
 
 Every content page is also available as plain Markdown — send `Accept: text/markdown`, or use these URLs:

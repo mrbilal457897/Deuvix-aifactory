@@ -30,8 +30,30 @@ export function getCalApiKey(): string {
 }
 
 export function getCalOrgSlug(): string | undefined {
-  const v = (process.env.CAL_ORGANIZATION_SLUG ?? "").trim();
+  const raw = (process.env.CAL_ORGANIZATION_SLUG ?? "").trim();
+  if (!raw) return undefined;
+
+  // Operators often paste the full booking URL instead of the bare slug.
+  // Cal.com expects only the slug, e.g. "deuvix", not "cal.com/deuvix".
+  let v = raw
+    .replace(/^https?:\/\//i, "") // remove protocol
+    .replace(/^\/+/, "") // leading slashes
+    .replace(/\/+$/, ""); // trailing slashes
+  v = v.replace(/^(?:www\.|app\.)?cal\.com\//i, ""); // "cal.com/" prefix
+  v = v.split("/")[0].replace(/^\/+|\/+$/g, ""); // first path segment only
   return v || undefined;
+}
+
+/**
+ * A slug that is actually the event owner's username must be sent as
+ * `username`, never as `organizationSlug` — Cal.com rejects the latter with
+ * "Organization with slug ... not found".
+ */
+function orgRefFor(owner?: string): { organizationSlug?: string } {
+  const org = getCalOrgSlug();
+  if (!org) return {};
+  if (owner && org.toLowerCase() === owner.toLowerCase()) return {};
+  return { organizationSlug: org };
 }
 
 /**
@@ -83,7 +105,6 @@ export function parseCalLink(link?: string): CalEventRef | null {
   if (!clean) return null;
 
   const parts = clean.split("/").filter(Boolean);
-  const org = getCalOrgSlug();
 
   // `team/<teamSlug>/<eventSlug>` — unambiguous, no config needed.
   if (parts.length >= 3 || parts[0] === "team") {
@@ -92,18 +113,18 @@ export function parseCalLink(link?: string): CalEventRef | null {
     return {
       teamSlug: tail[tail.length - 2],
       eventTypeSlug: tail[tail.length - 1],
-      organizationSlug: org,
+      ...orgRefFor(tail[tail.length - 2]),
     };
   }
 
   if (parts.length === 2) {
     // Two segments is the ambiguous case; CAL_EVENT_KIND decides.
     return getCalEventKind() === "team"
-      ? { teamSlug: parts[0], eventTypeSlug: parts[1], organizationSlug: org }
-      : { username: parts[0], eventTypeSlug: parts[1], organizationSlug: org };
+      ? { teamSlug: parts[0], eventTypeSlug: parts[1], ...orgRefFor(parts[0]) }
+      : { username: parts[0], eventTypeSlug: parts[1], ...orgRefFor(parts[0]) };
   }
 
-  return { eventTypeSlug: parts[0], organizationSlug: org };
+  return { eventTypeSlug: parts[0], ...orgRefFor() };
 }
 
 export class CalApiError extends Error {
@@ -218,6 +239,30 @@ function normaliseSlots(
   return out;
 }
 
+function slotsParams(ref: CalEventRef, opts: { start: string; end: string; timeZone: string; durationMinutes?: number }): URLSearchParams {
+  const params = new URLSearchParams({
+    ...refQuery(ref),
+    start: opts.start,
+    end: opts.end,
+    timeZone: opts.timeZone,
+  });
+  if (opts.durationMinutes) params.set("duration", String(opts.durationMinutes));
+  return params;
+}
+
+/**
+ * Some deployments store the personal Cal.com profile slug in
+ * CAL_ORGANIZATION_SLUG (e.g. "cal.com/deuvix") while NEXT_PUBLIC_CAL_LINK has
+ * an older username. Cal.com then reports the username as not found. Retry
+ * once with the configured slug as the username — one extra call only on a
+ * 404, so normal traffic is unaffected.
+ */
+function usernameFallback(ref: CalEventRef): CalEventRef | null {
+  if (!ref.organizationSlug || !ref.username) return null;
+  if (ref.organizationSlug.toLowerCase() === ref.username.toLowerCase()) return null;
+  return { username: ref.organizationSlug, eventTypeSlug: ref.eventTypeSlug };
+}
+
 export async function fetchAvailableSlots(opts: {
   /** YYYY-MM-DD, inclusive */
   start: string;
@@ -229,18 +274,20 @@ export async function fetchAvailableSlots(opts: {
   const ref = parseCalLink();
   if (!ref) throw new CalApiError("NEXT_PUBLIC_CAL_LINK is not set", 500);
 
-  const params = new URLSearchParams({
-    ...refQuery(ref),
-    start: opts.start,
-    end: opts.end,
-    timeZone: opts.timeZone,
-  });
-  if (opts.durationMinutes) params.set("duration", String(opts.durationMinutes));
-
-  const body = await calFetch<{ status?: string; data?: unknown }>(`/slots?${params}`, {
-    method: "GET",
-    apiVersion: SLOTS_API_VERSION,
-  });
+  let body: { status?: string; data?: unknown };
+  try {
+    body = await calFetch<{ status?: string; data?: unknown }>(`/slots?${slotsParams(ref, opts)}`, {
+      method: "GET",
+      apiVersion: SLOTS_API_VERSION,
+    });
+  } catch (err) {
+    const fallback = usernameFallback(ref);
+    if (!(err instanceof CalApiError) || err.status !== 404 || !fallback) throw err;
+    body = await calFetch<{ status?: string; data?: unknown }>(`/slots?${slotsParams(fallback, opts)}`, {
+      method: "GET",
+      apiVersion: SLOTS_API_VERSION,
+    });
+  }
 
   return normaliseSlots(body?.data, opts.timeZone);
 }
@@ -325,19 +372,32 @@ export async function createBooking(
   const sendLength =
     opts.supportsMultipleLengths === true && Boolean(input.lengthInMinutes);
 
-  const body = await calFetch<{ status?: string; data?: CalBookingResult }>("/bookings", {
-    method: "POST",
-    apiVersion: BOOKING_API_VERSION,
-    body: JSON.stringify({
-      start: input.start,
-      attendee: input.attendee,
-      ...refQuery(ref),
-      ...(input.guests?.length ? { guests: input.guests } : {}),
-      ...(sendLength ? { lengthInMinutes: input.lengthInMinutes } : {}),
-      ...(input.metadata ? { metadata: input.metadata } : {}),
-      ...(input.bookingFieldsResponses ? { bookingFieldsResponses: input.bookingFieldsResponses } : {}),
-    }),
+  const bookingBody = (activeRef: CalEventRef) => JSON.stringify({
+    start: input.start,
+    attendee: input.attendee,
+    ...refQuery(activeRef),
+    ...(input.guests?.length ? { guests: input.guests } : {}),
+    ...(sendLength ? { lengthInMinutes: input.lengthInMinutes } : {}),
+    ...(input.metadata ? { metadata: input.metadata } : {}),
+    ...(input.bookingFieldsResponses ? { bookingFieldsResponses: input.bookingFieldsResponses } : {}),
   });
+
+  let body: { status?: string; data?: CalBookingResult };
+  try {
+    body = await calFetch<{ status?: string; data?: CalBookingResult }>("/bookings", {
+      method: "POST",
+      apiVersion: BOOKING_API_VERSION,
+      body: bookingBody(ref),
+    });
+  } catch (err) {
+    const fallback = usernameFallback(ref);
+    if (!(err instanceof CalApiError) || err.status !== 404 || !fallback) throw err;
+    body = await calFetch<{ status?: string; data?: CalBookingResult }>("/bookings", {
+      method: "POST",
+      apiVersion: BOOKING_API_VERSION,
+      body: bookingBody(fallback),
+    });
+  }
 
   if (body?.status === "error" || !body?.data) {
     throw new CalApiError("Cal.com rejected the booking", 502);

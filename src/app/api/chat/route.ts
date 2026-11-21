@@ -118,6 +118,17 @@ function logEvent(event: string, detail: Record<string, string | number | boolea
   console.log(`[chat] ${event}`, JSON.stringify(detail));
 }
 
+/** Never let an upstream error string leak a key or a long opaque token. */
+function redactForLog(value: string | undefined): string | undefined {
+  if (!value) return undefined;
+  return value
+    .replace(/AIza[0-9A-Za-z_-]{10,}/g, "[redacted]")
+    .replace(/\b(?:sk-|pk_live_|rk_live_)[0-9A-Za-z_-]{8,}/g, "[redacted]")
+    .replace(/\b[A-Fa-f0-9]{32,}\b/g, "[redacted]")
+    .replace(/[\r\n]+/g, " ")
+    .slice(0, 300);
+}
+
 /** Prebuilt single-event replies (guard hits, abuse, failures). */
 function cannedReply(
   text: string,
@@ -286,8 +297,29 @@ export async function POST(request: Request) {
       }
     }
 
+    if (result.fallback) {
+      logEvent("retrieval_fallback", {
+        route,
+        kind: result.errorKind ?? "unknown",
+        ...(result.errorStatus !== undefined ? { status: result.errorStatus } : {}),
+        ...(result.errorName ? { name: result.errorName } : {}),
+        ...(redactForLog(result.errorMessage)
+          ? { message: redactForLog(result.errorMessage) as string }
+          : {}),
+        chunks: result.chunks.length,
+      });
+    }
+
     if (result.error === "model") {
-      logEvent("retrieval_error", { route, kind: result.errorKind ?? "unknown" });
+      logEvent("retrieval_error", {
+        route,
+        kind: result.errorKind ?? "unknown",
+        ...(result.errorStatus !== undefined ? { status: result.errorStatus } : {}),
+        ...(result.errorName ? { name: result.errorName } : {}),
+        ...(redactForLog(result.errorMessage)
+          ? { message: redactForLog(result.errorMessage) as string }
+          : {}),
+      });
       return sse([
         { type: "error", kind: "model", message: uiStrings.modelError },
         { type: "done" },

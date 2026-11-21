@@ -8,6 +8,8 @@ import { LoadingSplash } from "@/components/loading-splash";
 import { SITE_URL, SITE_NAME, SITE_DESCRIPTION, OG_IMAGE_ABSOLUTE } from "@/lib/seo";
 import { homeJsonLd } from "@/lib/json-ld";
 import { JsonLd } from "@/lib/jsonld";
+import { listPublishedProjects } from "@/lib/projects";
+import { WebMcpTools } from "@/components/WebMcpTools";
 import "./globals.css";
 import Script from "next/script";
 
@@ -100,11 +102,18 @@ export const metadata: Metadata = {
   },
 };
 
-export default function RootLayout({
+export default async function RootLayout({
   children,
 }: Readonly<{
   children: React.ReactNode;
 }>) {
+  // Same public data source the /projects page uses, passed to the WebMCP tools.
+  const projects = (await listPublishedProjects()).map(({ name, slug, description }) => ({
+    name,
+    slug,
+    description,
+  }));
+
   return (
     <html
       lang="en"
@@ -135,6 +144,7 @@ export default function RootLayout({
         <JsonLd data={homeJsonLd} />
       </head>
       <body className={`${roboto.variable} ${raleway.variable} ${spaceGrotesk.variable} ${inter.variable} min-h-full flex flex-col bg-background font-sans antialiased`}>
+        <WebMcpTools projects={projects} />
         <LoadingSplash />
         <Providers>
           <ThemeProvider>

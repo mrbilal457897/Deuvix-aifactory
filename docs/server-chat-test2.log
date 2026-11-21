@@ -1,0 +1,13 @@
+
+> nexusai-website@0.1.0 start
+> next start -p 3001
+
+▲ Next.js 16.2.10
+- Local:         http://localhost:3001
+- Network:       http://192.168.100.202:3001
+✓ Ready in 917ms
+⚠ "next start" does not work with "output: standalone" configuration. Use "node .next/standalone/server.js" instead.
+[chat] embedding failed - using lexical retrieval fallback {"kind":"model","status":404}
+[chat] retrieval_fallback {"kind":"model","status":404,"chunks":6}
+[chat] retrieval {"route":"deuvix","chunks":6,"deuvix":6,"af":0}
+[chat] output_filter {"reason":"unlisted_url","attempt":1}

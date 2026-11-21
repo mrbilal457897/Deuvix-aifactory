@@ -25,6 +25,7 @@ import { CharReveal } from "@/components/split-text";
 import { TrustBar } from "@/components/sections/trust-bar";
 import { buildBusinessChatLink } from "@/lib/notify/whatsapp";
 import { company } from "@config/company";
+import { priceLabel, pricingItems } from "@/lib/pricing";
 import { JsonLd } from "@/lib/jsonld";
 import { breadcrumbJsonLd, graph, serviceJsonLd } from "@/lib/json-ld";
 import { Breadcrumb } from "@/components/ui/breadcrumb";
@@ -620,6 +621,14 @@ export default function ProductsPage() {
                 </p>
                 <div className="mb-6">
                   <span className="text-2xl font-heading font-bold">{plan.price}</span>
+                  <p
+                    className={`mt-1 text-xs ${
+                      plan.popular ? "text-primary-foreground/80" : "text-muted-foreground"
+                    }`}
+                  >
+                    AI Chatbots:{" "}
+                    {priceLabel(pricingItems.find((s) => s.id === "ai-chatbots")!)}
+                  </p>
                 </div>
                 <ul className="space-y-2.5 mb-8">
                   {plan.features.map((f) => (

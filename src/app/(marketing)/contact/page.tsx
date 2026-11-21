@@ -6,7 +6,6 @@ import Link from "next/link";
 import { JsonLd } from "@/lib/jsonld";
 import { breadcrumbJsonLd, contactPageJsonLd, graph } from "@/lib/json-ld";
 import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { Card } from "@/components/ui/card";
 import { Separator } from "@/components/ui/separator";
@@ -125,13 +124,17 @@ function PillChip({ children, active, onClick, disabled }: { children: React.Rea
   );
 }
 
-function TextField({ label, value, onChange, error, type = "text", placeholder, required }: { label: string; value: string; onChange: (v: string) => void; error?: string; type?: string; placeholder?: string; required?: boolean }) {
+function TextField({ label, value, onChange, error, type = "text", placeholder, required, name, toolParamDescription }: { label: string; value: string; onChange: (v: string) => void; error?: string; type?: string; placeholder?: string; required?: boolean; name?: string; toolParamDescription?: string }) {
   return (
     <div className="space-y-1.5">
       <label className="text-xs font-semibold text-foreground/80 dark:text-white/80 mb-1 block uppercase tracking-[0.05em]">
         {label}{required ? " *" : ""}
       </label>
-      <Input
+      {/* Native input so WebMCP sees name / toolparamdescription in the DOM.
+          Base UI's Field.Control consumes `name` and does not forward it. */}
+      <input
+        name={name}
+        toolparamdescription={toolParamDescription}
         type={type}
         value={value}
         onChange={(e) => onChange(e.target.value)}
@@ -486,6 +489,8 @@ function ContactPageInner() {
             </span>
           </div>
           <Textarea
+            name="message"
+            toolparamdescription="Short description of the job or AI worker you want built."
             value={formData.brief}
             onChange={(e) => handleFieldChange("brief", e.target.value)}
             placeholder="Tell us about the job you want to build…"
@@ -523,6 +528,8 @@ function ContactPageInner() {
 
         <TextField
           label="Website or portfolio (optional)"
+          name="website"
+          toolParamDescription="A website or portfolio URL, if you have one."
           value={formData.website || ""}
           onChange={(v) => handleFieldChange("website", v || null)}
           type="url"
@@ -559,12 +566,16 @@ function ContactPageInner() {
         <div className="grid grid-cols-2 gap-4">
           <TextField
             label="Full name"
+            name="name"
+            toolParamDescription="Your full name."
             value={formData.name}
             onChange={(v) => handleFieldChange("name", v)}
             required
           />
           <TextField
             label="Email"
+            name="email"
+            toolParamDescription="Your email address so the team can reply."
             value={formData.email}
             onChange={(v) => handleFieldChange("email", v)}
             type="email"
@@ -574,11 +585,15 @@ function ContactPageInner() {
         <div className="grid grid-cols-2 gap-4">
           <TextField
             label="Company (optional)"
+            name="company"
+            toolParamDescription="Your company name, if any."
             value={formData.company || ""}
             onChange={(v) => handleFieldChange("company", v || null)}
           />
           <TextField
             label="WhatsApp / phone (optional)"
+            name="phone"
+            toolParamDescription="Your phone or WhatsApp number, including country code."
             value={formData.phone || ""}
             onChange={(v) => handleFieldChange("phone", v || null)}
             type="tel"
@@ -734,7 +749,13 @@ function ContactPageInner() {
                     </button>
                   </div>
                 ) : (
-                  <form onSubmit={handleSubmit} noValidate className="flex flex-1 flex-col">
+                  <form
+                    onSubmit={handleSubmit}
+                    noValidate
+                    toolname="send_contact_message"
+                    tooldescription="Send a message to the Deuvix AI team. Requires name, email, and message."
+                    className="flex flex-1 flex-col"
+                  >
                     {step === 1 ? step1Content : step2Content}
                     {submitStatus === "error" && submitError && (
                       <div className="mt-4 rounded-xl border border-destructive/30 bg-destructive/5 px-4 py-3 text-sm text-destructive">

@@ -4,7 +4,7 @@
  * only what actually cleared it.
  */
 
-import { and, inArray, isNotNull, sql } from "drizzle-orm";
+import { and, inArray, isNotNull, or, sql } from "drizzle-orm";
 import { getDb, isDatabaseConfigured } from "@/lib/db";
 import { chatConfig } from "./config";
 import { embedText, ChatModelError, type ChatFailureKind } from "./gemini";
@@ -27,8 +27,14 @@ export interface RetrievalResult {
   /** Every URL present in the retrieved text — the only citable links. */
   urls: string[];
   error?: "no_index" | "model";
+  /** True when embeddings failed and the KB was searched lexically instead. */
+  fallback?: boolean;
   /** Which Gemini failure class caused `error: "model"` (auth, quota, …). */
   errorKind?: ChatFailureKind;
+  /** Diagnostics for the server log only — never sent to the browser. */
+  errorStatus?: number;
+  errorName?: string;
+  errorMessage?: string;
 }
 
 interface Row {
@@ -51,14 +57,60 @@ export async function retrieve(
   if (!isDatabaseConfigured()) return empty;
   if (namespaces.length === 0) return empty;
 
-  let vector: number[];
+  let vector: number[] | null = null;
+  let embedFailure: Partial<RetrievalResult> | null = null;
   try {
     vector = await embedText(query);
   } catch (err) {
-    // Quota/auth failures must not silently become "no answer found" — the
-    // route turns this into a friendly model-error message instead.
     const errorKind: ChatFailureKind = err instanceof ChatModelError ? err.kind : "model";
-    return { ...empty, error: "model", errorKind };
+    const errorStatus =
+      err instanceof ChatModelError
+        ? err.status
+        : (err as { status?: number; code?: number } | null)?.status ??
+          (err as { code?: number } | null)?.code;
+    embedFailure = {
+      errorKind,
+      errorStatus: typeof errorStatus === "number" ? errorStatus : undefined,
+      errorName: err instanceof Error ? err.name : undefined,
+      errorMessage: err instanceof Error ? err.message : String(err),
+    };
+    console.warn(
+      "[chat] embedding failed - using lexical retrieval fallback",
+      JSON.stringify({ kind: errorKind, status: embedFailure.errorStatus }),
+    );
+  }
+
+  // Embeddings can fail (quota/auth/model) while text generation still works.
+  // Search the same KB lexically so a broken embedding never kills the turn.
+  if (vector === null) {
+    const terms = query
+      .toLowerCase()
+      .split(/[^a-z0-9]+/)
+      .filter((term) => term.length >= 4)
+      .slice(0, 6);
+    if (terms.length === 0) return { ...empty, ...embedFailure };
+    const conditions = terms.map((term) => {
+      const pattern = `%${term}%`;
+      return sql`(lower(${kbChunks.text}) like ${pattern} or lower(coalesce(${kbChunks.title}, '')) like ${pattern})`;
+    });
+    const rows = await getDb()
+      .select({
+        id: kbChunks.id,
+        source: kbChunks.source,
+        url: kbChunks.url,
+        title: kbChunks.title,
+        heading: kbChunks.heading,
+        text: kbChunks.text,
+      })
+      .from(kbChunks)
+      .where(and(inArray(kbChunks.source, namespaces), isNotNull(kbChunks.embedding), or(...conditions)))
+      .limit(topK * 2);
+    const kept = ((Array.isArray(rows) ? rows : []) as Omit<Row, "score">[])
+      .slice(0, topK)
+      .map((row) => ({ ...row, score: 1 })) as Row[];
+    const topScores: Record<string, number> = {};
+    for (const ns of namespaces) topScores[ns] = kept.some((chunk) => chunk.source === ns) ? 1 : 0;
+    return { chunks: kept, topScores, urls: collectUrls(kept), fallback: true, ...embedFailure };
   }
 
   const literal = `[${vector.map((v) => (Number.isFinite(v) ? v : 0)).join(",")}]`;

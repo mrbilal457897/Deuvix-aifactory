@@ -8,6 +8,17 @@ import { markdownSourcePath } from "@/lib/markdown/paths";
 const DASHBOARD_PREFIX = process.env.DASHBOARD_PREFIX || "/deuvix";
 
 /**
+ * Files served from /public do not go through a route handler — the platform
+ * answers unsupported methods with 501. Answer with a proper 405 instead.
+ */
+const STATIC_FILE_PATH = /\.(txt|ico|svg|png|jpe?g|webp|gif|woff2?|css|js|pdf)$/i;
+
+function isPublicStaticPath(pathname: string): boolean {
+  if (!STATIC_FILE_PATH.test(pathname)) return false;
+  return !pathname.startsWith("/api/") && !pathname.startsWith("/_next/") && !pathname.startsWith("/.well-known/");
+}
+
+/**
  * Constant-time string compare.
  * Middleware runs on the edge runtime where `node:crypto` is unavailable, so we
  * cannot use timingSafeEqual here. This walks both strings fully and folds the
@@ -58,6 +69,16 @@ function withBasicAuth(request: NextRequest): NextResponse {
 
 export async function middleware(request: NextRequest) {
   const { pathname } = request.nextUrl;
+
+  if (isPublicStaticPath(pathname)) {
+    const allow = { Allow: "GET, HEAD, OPTIONS" };
+    if (request.method === "OPTIONS") {
+      return new NextResponse(null, { status: 204, headers: allow });
+    }
+    if (request.method !== "GET" && request.method !== "HEAD") {
+      return new NextResponse(null, { status: 405, headers: allow });
+    }
+  }
 
   // Content negotiation. An explicit text/markdown preference (q >= text/html)
   // rewrites to the Markdown handler without changing the visible URL.
@@ -207,6 +228,19 @@ export async function middleware(request: NextRequest) {
 export const config = {
   matcher: [
     "/api/:path*",
+    // Static files from /public: reject unsupported methods with 405, not 501.
+    "/robots.txt",
+    "/llms.txt",
+    "/favicon-dark.ico",
+    "/file.svg",
+    "/globe.svg",
+    "/next.svg",
+    "/vercel.svg",
+    "/window.svg",
+    "/images/:path*",
+    "/fonts/:path*",
+    "/logos/:path*",
+    "/uploads/:path*",
     // Public content pages, so Accept: text/markdown can be negotiated.
     "/",
     "/index.md",

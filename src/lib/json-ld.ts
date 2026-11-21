@@ -10,7 +10,7 @@
  */
 
 import { companyProfileUrls } from "@config/company";
-import { pricingItems, type PriceValue } from "@/lib/pricing";
+import { pricingItems, type PricingItem } from "@/lib/pricing";
 
 /** Canonical origin used for every absolute URL in the graph. */
 export const ORIGIN = "https://deuvix-ai.com";
@@ -188,36 +188,39 @@ function servicesItemList(): SchemaNode {
     name: "AI-Native services",
     itemListElement: SERVICES.map((service) => {
       const priced = pricingItems.find((item) => item.anchor === service.anchor);
+      const offer = priced ? offerJsonLd(priced) : null;
       return {
         "@type": "Service",
         "@id": `${ORIGIN}/products#${service.anchor}-service`,
         name: service.name,
         url: absolute(`/products#${service.anchor}`),
         provider: ref(ORG_ID),
-        ...(priced ? { offers: offerJsonLd(priced.price) } : {}),
+        ...(offer ? { offers: offer } : {}),
       };
     }),
   };
 }
 
 /**
- * An Offer for a service. Custom quotes deliberately carry NO price fields —
- * emitting a made-up price would be worse than no price at all.
+ * An Offer for a service. Quote-only services emit NO Offer at all — a made-up
+ * price would be worse than no price. The url points at the real services
+ * section on the homepage.
  */
-export function offerJsonLd(price: PriceValue): SchemaNode {
+export function offerJsonLd(item: PricingItem): SchemaNode | null {
+  if (item.priceType === "custom" || item.price === null) return null;
   const offer: SchemaNode = {
     "@type": "Offer",
-    url: absolute("/products"),
+    priceCurrency: item.currency,
     availability: "https://schema.org/InStock",
+    url: absolute(`/products#${item.anchor}`),
   };
-  if (price.kind === "exact") {
-    offer.priceCurrency = price.currency;
-    offer.price = String(price.amount);
-  } else if (price.kind === "from") {
+  if (item.priceType === "fixed") {
+    offer.price = String(item.price);
+  } else {
     offer.priceSpecification = {
       "@type": "PriceSpecification",
-      minPrice: price.amount,
-      priceCurrency: price.currency,
+      minPrice: item.price,
+      priceCurrency: item.currency,
     };
   }
   return offer;

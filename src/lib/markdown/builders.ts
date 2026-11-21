@@ -7,7 +7,7 @@
 import { company, companyProfileUrls } from "@config/company";
 import { SITE_DESCRIPTION } from "@/lib/seo";
 import { ORIGIN, personNodes } from "@/lib/json-ld";
-import { pricingItems } from "@/lib/pricing";
+import { priceLabel, pricingItems } from "@/lib/pricing";
 import { HOME_LIMIT } from "@/lib/live-work/types";
 import { getPublishedProjectBySlug, listPublishedProjectsWithHealth } from "@/lib/projects";
 import { getPostBySlug, posts } from "@/app/(marketing)/blog/posts";
@@ -47,7 +47,8 @@ function contactLines(): string[] {
 
 function serviceLines(): string[] {
   return pricingItems.map(
-    (service) => `- [${service.name}](${abs(`/products#${service.anchor}`)}) — ${service.description}`,
+    (service) =>
+      `- [${service.name}](${abs(`/products#${service.anchor}`)}) — ${service.description} Price: ${priceLabel(service)}.`,
   );
 }
 

@@ -14,13 +14,25 @@ import { chatConfig } from "./config";
 export type ChatFailureKind = "rate_limit" | "timeout" | "auth" | "model" | "network";
 
 export class ChatModelError extends Error {
+  /** Upstream HTTP status when one is available (never logged with secrets). */
+  readonly status?: number;
+
   constructor(
     readonly kind: ChatFailureKind,
     message?: string,
+    status?: number,
   ) {
     super(message || kind);
     this.name = "ChatModelError";
+    this.status = status;
   }
+}
+
+/** Pull the HTTP status off an SDK/fetch error without reading its payload. */
+export function upstreamStatus(err: unknown): number | undefined {
+  const e = err as { status?: unknown; code?: unknown } | null;
+  const value = e?.status ?? e?.code;
+  return typeof value === "number" && Number.isFinite(value) ? value : undefined;
 }
 
 let client: GoogleGenAI | null = null;
@@ -117,7 +129,7 @@ export async function* streamChat(
         attempt += 1;
         continue;
       }
-      throw new ChatModelError(kind, err instanceof Error ? err.message : undefined);
+      throw new ChatModelError(kind, err instanceof Error ? err.message : undefined, upstreamStatus(err));
     } finally {
       clearTimeout(timer);
       opts.signal?.removeEventListener("abort", onOuterAbort);
@@ -148,7 +160,11 @@ export async function completeChat(
     });
     return (res.text || "").trim();
   } catch (err) {
-    throw new ChatModelError(classifyError(err), err instanceof Error ? err.message : undefined);
+    throw new ChatModelError(
+      classifyError(err),
+      err instanceof Error ? err.message : undefined,
+      upstreamStatus(err),
+    );
   } finally {
     clearTimeout(timer);
   }
@@ -196,7 +212,7 @@ export async function embedText(text: string): Promise<number[]> {
         attempt += 1;
         continue;
       }
-      throw new ChatModelError(kind, err instanceof Error ? err.message : undefined);
+      throw new ChatModelError(kind, err instanceof Error ? err.message : undefined, upstreamStatus(err));
     }
   }
 }
