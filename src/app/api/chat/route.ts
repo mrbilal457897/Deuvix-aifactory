@@ -341,6 +341,13 @@ export async function POST(request: Request) {
 
     /* ---- no relevant context (§2D) -------------------------------------- */
     if (result.chunks.length === 0) {
+      logEvent("no_answer", {
+        route,
+        reason: result.reason ?? "unknown",
+        namespaces: namespaces.join(","),
+        ...(result.errorKind ? { kind: result.errorKind } : {}),
+        ...(result.errorStatus !== undefined ? { status: result.errorStatus } : {}),
+      });
       // The pricing branch never reaches here (blocked earlier), so this is a
       // genuine "not in the knowledge base" answer.
       const reply = `${uiStrings.noAnswer}\n\n${foundersLine()}`;

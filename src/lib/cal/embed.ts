@@ -43,7 +43,10 @@ export function getCalOrigin(): string {
 }
 
 export function getCalLink(): string {
-  return (process.env.NEXT_PUBLIC_CAL_LINK ?? "").replace(/^\/+|\/+$/g, "");
+  return (process.env.NEXT_PUBLIC_CAL_LINK ?? "")
+    .trim()
+    .replace(/^\/+|\/+$/g, "")
+    .replace(/^(?:https?:\/\/)?(?:www\.|app\.)?cal\.com\//i, "");
 }
 
 export function isCalConfigured(): boolean {

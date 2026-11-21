@@ -21,8 +21,16 @@ export function getCalOrigin(): string {
   return (process.env.NEXT_PUBLIC_CAL_ORIGIN ?? "").replace(/\/+$/, "");
 }
 
+/** Strip a pasted origin/host so `cal.com/user/event` parses like `user/event`. */
+function normalizeCalLink(link: string): string {
+  return link
+    .trim()
+    .replace(/^\/+|\/+$/g, "")
+    .replace(/^(?:https?:\/\/)?(?:www\.|app\.)?cal\.com\//i, "");
+}
+
 export function getCalLink(): string {
-  return (process.env.NEXT_PUBLIC_CAL_LINK ?? "").replace(/^\/+|\/+$/g, "");
+  return normalizeCalLink(process.env.NEXT_PUBLIC_CAL_LINK ?? "");
 }
 
 export function getCalApiKey(): string {
@@ -101,7 +109,7 @@ export interface CalEventRef {
  * for the ambiguous two-segment form.
  */
 export function parseCalLink(link?: string): CalEventRef | null {
-  const clean = (link ?? getCalLink()).replace(/^\/+|\/+$/g, "");
+  const clean = normalizeCalLink(link ?? getCalLink());
   if (!clean) return null;
 
   const parts = clean.split("/").filter(Boolean);

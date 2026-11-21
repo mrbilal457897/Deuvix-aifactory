@@ -1,0 +1,11 @@
+
+> nexusai-website@0.1.0 start
+> next start -p 3004
+
+▲ Next.js 16.2.10
+- Local:         http://localhost:3004
+- Network:       http://192.168.100.202:3004
+✓ Ready in 3.4s
+⚠ "next start" does not work with "output: standalone" configuration. Use "node .next/standalone/server.js" instead.
+[chat] retrieval {"route":"deuvix","chunks":6,"deuvix":6,"af":0}
+[chat] output_filter {"reason":"unlisted_url","attempt":1}

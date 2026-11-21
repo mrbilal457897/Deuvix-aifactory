@@ -31,6 +31,8 @@ export interface RetrievalResult {
   fallback?: boolean;
   /** Which Gemini failure class caused `error: "model"` (auth, quota, …). */
   errorKind?: ChatFailureKind;
+  /** Why no chunks were returned — server log only. */
+  reason?: "database_not_configured" | "no_namespaces" | "lexical_no_match" | "below_threshold";
   /** Diagnostics for the server log only — never sent to the browser. */
   errorStatus?: number;
   errorName?: string;
@@ -54,8 +56,8 @@ export async function retrieve(
 ): Promise<RetrievalResult> {
   const empty: RetrievalResult = { chunks: [], topScores: {}, urls: [] };
 
-  if (!isDatabaseConfigured()) return empty;
-  if (namespaces.length === 0) return empty;
+  if (!isDatabaseConfigured()) return { ...empty, reason: "database_not_configured" };
+  if (namespaces.length === 0) return { ...empty, reason: "no_namespaces" };
 
   let vector: number[] | null = null;
   let embedFailure: Partial<RetrievalResult> | null = null;
@@ -88,7 +90,7 @@ export async function retrieve(
       .split(/[^a-z0-9]+/)
       .filter((term) => term.length >= 4)
       .slice(0, 6);
-    if (terms.length === 0) return { ...empty, ...embedFailure };
+    if (terms.length === 0) return { ...empty, reason: "lexical_no_match", ...embedFailure };
     const conditions = terms.map((term) => {
       const pattern = `%${term}%`;
       return sql`(lower(${kbChunks.text}) like ${pattern} or lower(coalesce(${kbChunks.title}, '')) like ${pattern})`;
@@ -110,7 +112,14 @@ export async function retrieve(
       .map((row) => ({ ...row, score: 1 })) as Row[];
     const topScores: Record<string, number> = {};
     for (const ns of namespaces) topScores[ns] = kept.some((chunk) => chunk.source === ns) ? 1 : 0;
-    return { chunks: kept, topScores, urls: collectUrls(kept), fallback: true, ...embedFailure };
+    return {
+      chunks: kept,
+      topScores,
+      urls: collectUrls(kept),
+      fallback: true,
+      ...(kept.length === 0 ? { reason: "lexical_no_match" as const } : {}),
+      ...embedFailure,
+    };
   }
 
   const literal = `[${vector.map((v) => (Number.isFinite(v) ? v : 0)).join(",")}]`;
@@ -148,6 +157,7 @@ export async function retrieve(
     chunks: kept,
     topScores,
     urls: collectUrls(kept),
+    ...(kept.length === 0 ? { reason: "below_threshold" as const } : {}),
   };
 }
 
