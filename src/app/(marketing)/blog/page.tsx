@@ -10,6 +10,8 @@ import Image from "next/image";
 import { CharReveal } from "@/components/split-text";
 import { Breadcrumb } from "@/components/ui/breadcrumb";
 import { blogCategories, posts } from "./posts";
+import { JsonLd } from "@/lib/jsonld";
+import { blogJsonLd, breadcrumbJsonLd, graph } from "@/lib/json-ld";
 
 
 if (typeof window !== "undefined") {
@@ -44,8 +46,18 @@ export default function BlogPage() {
     }
   }, [activeCategory, currentPage]);
 
+  const jsonLd = graph([
+    breadcrumbJsonLd([
+      { label: "Home", href: "/" },
+      { label: "Blog" },
+    ]),
+    blogJsonLd(),
+  ]);
+
   return (
     <div>
+      <JsonLd data={jsonLd} />
+
       {/* Hero */}
       <section className="pt-8 sm:pt-12 pb-16 bg-hero-pattern relative">
         <div className="absolute inset-0 bg-dots opacity-30" />

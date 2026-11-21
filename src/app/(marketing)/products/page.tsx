@@ -25,6 +25,8 @@ import { CharReveal } from "@/components/split-text";
 import { TrustBar } from "@/components/sections/trust-bar";
 import { buildBusinessChatLink } from "@/lib/notify/whatsapp";
 import { company } from "@config/company";
+import { JsonLd } from "@/lib/jsonld";
+import { breadcrumbJsonLd, graph, serviceJsonLd } from "@/lib/json-ld";
 import { Breadcrumb } from "@/components/ui/breadcrumb";
 import "@/app/loop-anim.css";
 
@@ -300,8 +302,24 @@ export default function ProductsPage() {
   const active = loopParts[activeNode];
   const ActiveIcon = active.icon;
 
+  const jsonLd = graph([
+    breadcrumbJsonLd([
+      { label: "Home", href: "/" },
+      { label: "Services" },
+    ]),
+    ...products.map((product) =>
+      serviceJsonLd({
+        anchor: product.anchor,
+        title: product.title,
+        description: product.description,
+      })
+    ),
+  ]);
+
   return (
     <div>
+      <JsonLd data={jsonLd} />
+
       <section className="pt-8 sm:pt-12 pb-16 relative overflow-hidden">
         <div className="absolute inset-0">
           <div className="absolute inset-0 bg-background/85" />

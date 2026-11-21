@@ -1,0 +1,24 @@
+# Deuvix AI Factory
+
+> Deuvix AI Factory builds and operates Digital FTEs — AI workers your team supervises, not tools that watch it. From AI chatbots and voice agents to Loop Engineering and FDE consulting.
+
+## Key pages
+
+- Homepage: https://deuvix-ai.com/
+- Services: https://deuvix-ai.com/products
+- Work: https://deuvix-ai.com/projects
+- About: https://deuvix-ai.com/about
+- Contact: https://deuvix-ai.com/contact
+- Blog: https://deuvix-ai.com/blog
+- Sitemap: https://deuvix-ai.com/sitemap.xml
+
+## Markdown
+
+Every content page is also available as plain Markdown — send `Accept: text/markdown`, or use these URLs:
+
+- Homepage: https://deuvix-ai.com/index.md
+- Services: https://deuvix-ai.com/products.md
+- Work: https://deuvix-ai.com/projects.md
+- About: https://deuvix-ai.com/about.md
+- Contact: https://deuvix-ai.com/contact.md
+- Blog: https://deuvix-ai.com/blog.md

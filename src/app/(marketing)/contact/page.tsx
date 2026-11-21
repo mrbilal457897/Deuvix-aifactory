@@ -3,6 +3,8 @@
 import { useCallback, useEffect, useRef, useState } from "react";
 
 import Link from "next/link";
+import { JsonLd } from "@/lib/jsonld";
+import { breadcrumbJsonLd, contactPageJsonLd, graph } from "@/lib/json-ld";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
@@ -830,5 +832,18 @@ function ContactPageInner() {
 }
 
 export default function ContactPage() {
-  return <ContactPageInner />;
+  const jsonLd = graph([
+    breadcrumbJsonLd([
+      { label: "Home", href: "/" },
+      { label: "Discuss" },
+    ]),
+    contactPageJsonLd(),
+  ]);
+
+  return (
+    <>
+      <JsonLd data={jsonLd} />
+      <ContactPageInner />
+    </>
+  );
 }

@@ -1,6 +1,8 @@
 import Link from "next/link";
 import { Breadcrumb } from "@/components/ui/breadcrumb";
 import { pageMetadata } from "@/lib/seo";
+import { JsonLd } from "@/lib/jsonld";
+import { breadcrumbJsonLd, faqPageJsonLd, graph } from "@/lib/json-ld";
 
 export const revalidate = 3600;
 
@@ -65,15 +67,13 @@ const faqs: Array<{ q: string; a: string }> = [
   },
 ];
 
-const faqJsonLd = {
-  "@context": "https://schema.org",
-  "@type": "FAQPage",
-  mainEntity: faqs.map((f) => ({
-    "@type": "Question",
-    name: f.q,
-    acceptedAnswer: { "@type": "Answer", text: f.a.replace(/\[TODO[^\]]*\]/g, "") },
-  })),
-};
+const faqJsonLd = graph([
+  breadcrumbJsonLd([
+    { label: "Home", href: "/" },
+    { label: "FAQ" },
+  ]),
+  faqPageJsonLd(faqs),
+]);
 
 export default function FaqPage() {
   return (
@@ -134,10 +134,7 @@ export default function FaqPage() {
         </div>
       </section>
 
-      <script
-        type="application/ld+json"
-        dangerouslySetInnerHTML={{ __html: JSON.stringify(faqJsonLd) }}
-      />
+      <JsonLd data={faqJsonLd} />
     </div>
   );
 }

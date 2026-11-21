@@ -1,12 +1,21 @@
 "use client";
 
-let getCalApi: any;
-async function getCalApiInstance() {
-  if (!getCalApi) {
+type CalApiGetter = (options?: { namespace?: string }) => Promise<unknown>;
+
+let calApiGetter: CalApiGetter | null = null;
+
+/** Lazily load Cal's `getCalApi` export (with a default-export fallback). */
+async function getCalApiInstance(options?: { namespace?: string }): Promise<unknown> {
+  if (!calApiGetter) {
     const mod = await import("@calcom/embed-react");
-    getCalApi = mod.getCalApi;
+    const getter = (mod as { getCalApi?: CalApiGetter }).getCalApi ??
+      (mod as { default?: { getCalApi?: CalApiGetter } }).default?.getCalApi;
+    if (typeof getter !== "function") {
+      throw new Error("Cal.com embed export 'getCalApi' is unavailable");
+    }
+    calApiGetter = getter;
   }
-  return getCalApi;
+  return calApiGetter(options);
 }
 
 /**
@@ -57,12 +66,14 @@ export function getCalInstance(): Promise<CalApi | null> {
       return null;
     }
     try {
-      const api = (await getCalApi({ namespace: NAMESPACE })) as unknown as CalApi;
+      const api = (await getCalApiInstance({ namespace: NAMESPACE })) as unknown as CalApi;
       api("init", { calOrigin: getCalOrigin() });
       api("ui", themeInstruction(readDomTheme()));
       return api;
     } catch (err) {
       console.error("[cal] failed to initialise embed:", err instanceof Error ? err.message : err);
+      // Don't cache a failed init forever — a later pointerdown/click can retry.
+      apiPromise = null;
       return null;
     }
   })();

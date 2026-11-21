@@ -2,6 +2,8 @@ import { NextResponse } from "next/server";
 import type { NextRequest } from "next/server";
 import { getToken } from "next-auth/jwt";
 import { isAdminEmail } from "@/lib/admin-emails";
+import { wantsMarkdown } from "@/lib/markdown/accept";
+import { markdownSourcePath } from "@/lib/markdown/paths";
 
 const DASHBOARD_PREFIX = process.env.DASHBOARD_PREFIX || "/deuvix";
 
@@ -55,15 +57,34 @@ function withBasicAuth(request: NextRequest): NextResponse {
 }
 
 export async function middleware(request: NextRequest) {
+  const { pathname } = request.nextUrl;
+
+  // Content negotiation. An explicit text/markdown preference (q >= text/html)
+  // rewrites to the Markdown handler without changing the visible URL.
+  // Browsers, `*/*` and everything else keep the normal HTML response.
+  if (request.method === "GET" || request.method === "HEAD") {
+    const sourcePath = markdownSourcePath(pathname);
+    // A .md URL is an explicit request for Markdown, whatever the Accept header.
+    const explicitMd = pathname.endsWith(".md");
+    if (sourcePath && (explicitMd || wantsMarkdown(request.headers.get("accept")))) {
+      const mdUrl = new URL("/api/md", request.url);
+      mdUrl.searchParams.set("path", sourcePath);
+      const headers = new Headers(request.headers);
+      headers.set("x-md-path", sourcePath);
+      return NextResponse.rewrite(mdUrl, { request: { headers } });
+    }
+  }
+
   let token: Awaited<ReturnType<typeof getToken>> | null = null;
   try {
     token = await getToken({ req: request, secret: process.env.NEXTAUTH_SECRET });
   } catch {
     token = null;
   }
-  const { pathname } = request.nextUrl;
 
   const isApiAuth = pathname.startsWith("/api/auth");
+  // Markdown content negotiation is public — same content as the public page.
+  const isMarkdownApi = pathname === "/api/md";
   // NOTE: /api/projects is deliberately NOT public: anonymous enumeration of
   // every project (including drafts) is a data leak. The dashboard uses this
   // route with a next-auth admin session, so it now falls through to the
@@ -97,6 +118,7 @@ export async function middleware(request: NextRequest) {
 
   if (
     isApiAuth ||
+    isMarkdownApi ||
     isChat ||
     isContact ||
     isSiteConfigGet ||
@@ -176,12 +198,28 @@ export async function middleware(request: NextRequest) {
     }
   }
 
-  return NextResponse.next();
+  // Keep HTML and Markdown responses cacheable separately on CDNs.
+  const response = NextResponse.next();
+  response.headers.append("Vary", "Accept");
+  return response;
 }
 
 export const config = {
   matcher: [
     "/api/:path*",
+    // Public content pages, so Accept: text/markdown can be negotiated.
+    "/",
+    "/index.md",
+    "/products",
+    "/products.md",
+    "/projects/:path*",
+    "/projects.md",
+    "/about",
+    "/about.md",
+    "/contact",
+    "/contact.md",
+    "/blog/:path*",
+    "/blog.md",
     "/admin/:path*",
     "/admin",
     "/dashboard/:path*",

@@ -14,6 +14,8 @@ import {
   resolvePreviousSlug,
 } from "@/lib/projects";
 import { SITE_NAME, SITE_URL, fullTitle } from "@/lib/seo";
+import { JsonLd } from "@/lib/jsonld";
+import { breadcrumbJsonLd, creativeWorkJsonLd, graph } from "@/lib/json-ld";
 import { company } from "@config/company";
 import "@/app/live-work.css";
 
@@ -80,24 +82,25 @@ export default async function ProjectDetailPage({
   const { previous, next } = await getAdjacentProjects(project.slug);
   const gallery = project.gallery.slice(0, 12);
 
-  const jsonLd = {
-    "@context": "https://schema.org",
-    "@type": "CreativeWork",
-    name: project.name,
-    description: project.description,
-    url: `${SITE_URL}/projects/${project.slug}`,
-    image: project.desktopThumbnail?.url,
-    keywords: project.tags.join(", "),
-    datePublished: new Date(project.updatedAt).toISOString(),
-    publisher: { "@type": "Organization", name: SITE_NAME, url: SITE_URL },
-  };
+  const jsonLd = graph([
+    breadcrumbJsonLd([
+      { label: "Home", href: "/" },
+      { label: "Work", href: "/projects" },
+      { label: project.name },
+    ]),
+    creativeWorkJsonLd({
+      slug: project.slug,
+      name: project.name,
+      description: project.description,
+      image: project.desktopThumbnail?.url,
+      tags: project.tags,
+      updatedAt: project.updatedAt,
+    }),
+  ]);
 
   return (
     <div>
-      <script
-        type="application/ld+json"
-        dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd).replace(/</g, "\\u003c") }}
-      />
+      <JsonLd data={jsonLd} />
 
       <section className="pt-8 sm:pt-12 pb-10">
         <div className="mx-auto max-w-7xl px-6 sm:px-6 lg:px-8">

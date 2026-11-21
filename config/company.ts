@@ -64,6 +64,21 @@ export const company = {
   logo: "",
 };
 
+/**
+ * Absolute https URLs of the company's real external profiles.
+ *
+ * Single source of truth shared by the footer social links and the Organization
+ * JSON-LD `sameAs`. Empty entries are ignored, and only https profile URLs get
+ * through — never mailto:, wa.me or internal links.
+ */
+export const companyProfileUrls: readonly string[] = Array.from(
+  new Set(
+    Object.values(company.socials)
+      .map((url) => url?.trim())
+      .filter((url): url is string => Boolean(url) && /^https:\/\//i.test(url))
+  ),
+);
+
 /** "City, Pakistan" when both known, otherwise whichever half is filled. */
 export function companyLocationLabel(): string | null {
   const parts = [company.city, company.country].map((v) => v.trim()).filter(Boolean);

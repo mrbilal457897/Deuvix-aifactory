@@ -4,7 +4,7 @@ import { useEffect, useRef } from "react";
 import Link from "next/link";
 import { ChevronRight } from "lucide-react";
 import { LogoLockup } from "@/components/brand/LogoLockup";
-import { company, companyLocationLabel } from "@config/company";
+import { company, companyLocationLabel, companyProfileUrls } from "@config/company";
 import { gsap } from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
 
@@ -12,13 +12,23 @@ if (typeof window !== "undefined") {
   gsap.registerPlugin(ScrollTrigger);
 }
 
+/** Presentation metadata for the profile URLs shared with JSON-LD. */
+const socialIconByHost: Record<string, { icon: "linkedin" | "instagram"; label: string }> = {
+  "linkedin.com": { icon: "linkedin", label: "LinkedIn" },
+  "instagram.com": { icon: "instagram", label: "Instagram" },
+};
+
 const socialLinks = [
-  ...(company.socials.linkedin
-    ? [{ icon: "linkedin" as const, href: company.socials.linkedin, label: "LinkedIn" }]
-    : []),
-  ...(company.socials.instagram
-    ? [{ icon: "instagram" as const, href: company.socials.instagram, label: "Instagram" }]
-    : []),
+  ...companyProfileUrls.flatMap((href) => {
+    let host: string;
+    try {
+      host = new URL(href).hostname.replace(/^www\./, "");
+    } catch {
+      return [];
+    }
+    const meta = socialIconByHost[host];
+    return meta ? [{ ...meta, href }] : [];
+  }),
   { icon: "email" as const, href: `mailto:${company.businessEmail}`, label: "Email" },
 ];
 

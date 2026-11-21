@@ -9,6 +9,8 @@ import { posts, getPostBySlug } from "../posts";
 import { bodies } from "../bodies";
 import { renderMarkdown, tocFor, readingTimeMinutes } from "@/lib/blog/markdown";
 import { SITE_NAME, SITE_URL, fullTitle } from "@/lib/seo";
+import { JsonLd } from "@/lib/jsonld";
+import { blogPostJsonLd, breadcrumbJsonLd, graph } from "@/lib/json-ld";
 import { company } from "@config/company";
 
 export const revalidate = 3600;
@@ -76,23 +78,14 @@ export default async function BlogPostPage({
 
   const related = posts.filter((p) => p.slug !== post.slug).slice(0, 2);
 
-  const articleJsonLd = {
-    "@context": "https://schema.org",
-    "@type": "Article",
-    headline: post.title,
-    description: post.excerpt,
-    image: [post.image.startsWith("http") ? post.image : `${SITE_URL}${post.image}`],
-    datePublished: new Date(post.date).toISOString(),
-    author: {
-      "@type": "Person",
-      name: post.author,
-    },
-    publisher: {
-      "@type": "Organization",
-      name: SITE_NAME,
-    },
-    mainEntityOfPage: `${SITE_URL}/blog/${post.slug}`,
-  };
+  const articleJsonLd = graph([
+    breadcrumbJsonLd([
+      { label: "Home", href: "/" },
+      { label: "Blog", href: "/blog" },
+      { label: post.title },
+    ]),
+    blogPostJsonLd(post),
+  ]);
 
   return (
     <div>
@@ -243,11 +236,8 @@ export default async function BlogPostPage({
         </div>
       </section>
 
-      {/* Article JSON-LD */}
-      <script
-        type="application/ld+json"
-        dangerouslySetInnerHTML={{ __html: JSON.stringify(articleJsonLd) }}
-      />
+      {/* BlogPosting + breadcrumb JSON-LD */}
+      <JsonLd data={articleJsonLd} />
     </div>
   );
 }

@@ -16,6 +16,8 @@ const nextConfig: NextConfig = {
       {
         source: "/:path*",
         headers: [
+          // Cache HTML and Markdown separately at the CDN edge.
+          { key: "Vary", value: "Accept" },
           { key: "X-Frame-Options", value: "SAMEORIGIN" },
           { key: "X-Content-Type-Options", value: "nosniff" },
           { key: "Referrer-Policy", value: "strict-origin-when-cross-origin" },
@@ -23,6 +25,19 @@ const nextConfig: NextConfig = {
           {
             key: "Permissions-Policy",
             value: "camera=(), microphone=(self), geolocation=(), payment=(), usb=()",
+          },
+        ],
+      },
+      {
+        // RFC 8288 discovery links for crawlers and LLM tooling. Added as a
+        // separate rule so the global rules above (Vary: Accept, security
+        // headers) still apply to the homepage unchanged.
+        source: "/",
+        headers: [
+          {
+            key: "Link",
+            value:
+              '<https://deuvix-ai.com/llms.txt>; rel="describedby"; type="text/plain", <https://deuvix-ai.com/sitemap.xml>; rel="sitemap"; type="application/xml"',
           },
         ],
       },

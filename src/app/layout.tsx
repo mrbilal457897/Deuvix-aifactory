@@ -5,7 +5,9 @@ import { Providers } from "@/components/providers";
 import { LayoutShell } from "@/components/layout-shell";
 import { BookCallProvider } from "@/components/book-call-provider";
 import { LoadingSplash } from "@/components/loading-splash";
-import { SITE_URL, SITE_NAME, SITE_DESCRIPTION, OG_IMAGE_ABSOLUTE, organizationJsonLd } from "@/lib/seo";
+import { SITE_URL, SITE_NAME, SITE_DESCRIPTION, OG_IMAGE_ABSOLUTE } from "@/lib/seo";
+import { homeJsonLd } from "@/lib/json-ld";
+import { JsonLd } from "@/lib/jsonld";
 import "./globals.css";
 import Script from "next/script";
 
@@ -129,10 +131,8 @@ export default function RootLayout({
         <Script strategy="afterInteractive">
           {`try{if(!sessionStorage.getItem("dx-logo-intro")&&!matchMedia("(prefers-reduced-motion: reduce)").matches)document.documentElement.classList.add("logo-intro")}catch(e){}`}
         </Script>
-        {/* Organization schema generated from config/company.ts */}
-        <Script strategy="afterInteractive" type="application/ld+json">
-          {JSON.stringify(organizationJsonLd())}
-        </Script>
+        {/* Site-wide structured data — server-rendered so crawlers see it in the raw HTML. */}
+        <JsonLd data={homeJsonLd} />
       </head>
       <body className={`${roboto.variable} ${raleway.variable} ${spaceGrotesk.variable} ${inter.variable} min-h-full flex flex-col bg-background font-sans antialiased`}>
         <LoadingSplash />
