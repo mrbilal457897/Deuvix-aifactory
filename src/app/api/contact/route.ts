@@ -251,7 +251,9 @@ export async function POST(request: Request): Promise<NextResponse> {
   try {
     const notification = inquiryNotificationEmail(inquiryData);
     const notifResult = await sendEmail({
-      to: process.env.CONTACT_TO_EMAIL?.split(",").map((e) => e.trim()).filter(Boolean) ||
+      to:
+        process.env.MAIL_TO_ADMIN?.split(",").map((e) => e.trim()).filter(Boolean) ||
+        process.env.CONTACT_TO_EMAIL?.split(",").map((e) => e.trim()).filter(Boolean) ||
         [process.env.EMAIL_FROM || company.businessEmail],
       subject: notification.subject,
       html: notification.html,
@@ -368,30 +370,23 @@ export async function POST(request: Request): Promise<NextResponse> {
   }
 
   if (notificationError) {
-    if (dbSaved) {
+    // Log with the provider reason for the operator, but never surface an
+    // alarming error to the visitor: the inquiry is safely stored and visible
+    // in the admin Leads/Tickets list, so it is not lost.
+    console.error("[contact] team notification failed:", notificationError);
+    if (!dbSaved && confirmationError) {
+      // Nothing was stored and no email went out — the only honest failure.
       return NextResponse.json(
         {
           ok: false,
-          error: "notification_failed",
-          saved: true,
-          inquiryId,
+          error: "delivery_failed",
+          saved: false,
           message:
-            `Your inquiry was saved, but our email provider did not deliver the notification to our team. We still have your message and will pick it up manually — if it is urgent, email us directly at ${company.businessEmail}.`,
+            `We could not deliver your inquiry right now (network issue). Nothing was saved — please try again in a few minutes, or email us directly at ${company.businessEmail}.`,
         },
         { status: 502 },
       );
     }
-    // Nothing was delivered anywhere — report honestly instead of faking success.
-    return NextResponse.json(
-      {
-        ok: false,
-        error: "delivery_failed",
-        saved: false,
-        message:
-          `We could not deliver your inquiry right now (network issue). Nothing was saved — please try again in a few minutes, or email us directly at ${company.businessEmail}.`,
-      },
-      { status: 502 },
-    );
   }
 
   // Flip the CRM "Greeting" badge as soon as the outcome is known. The row was

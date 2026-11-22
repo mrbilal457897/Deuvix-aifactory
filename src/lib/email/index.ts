@@ -11,7 +11,13 @@ export interface EmailResult {
 export const DEFAULT_CONTACT_TO = [company.businessEmail];
 
 export function getDefaultFrom(): string {
-  return process.env.EMAIL_FROM || `${company.tradingName} <${company.businessEmail}>`;
+  // MAIL_FROM is the canonical sender for the Hostinger SMTP setup documented
+  // in .env.example. EMAIL_FROM is kept as a legacy fallback.
+  return (
+    process.env.MAIL_FROM?.trim() ||
+    process.env.EMAIL_FROM?.trim() ||
+    `${company.tradingName} <${company.businessEmail}>`
+  );
 }
 
 /**
@@ -22,7 +28,11 @@ export function getDefaultFrom(): string {
  * `contacts.unsubscribed_at` exists.
  */
 export function getListUnsubscribe(): string | null {
-  const to = process.env.NOTIFY_EMAIL?.trim() || DEFAULT_CONTACT_TO[0];
+  const to =
+    process.env.MAIL_TO_ADMIN?.trim() ||
+    process.env.CONTACT_TO_EMAIL?.split(",")[0]?.trim() ||
+    process.env.NOTIFY_EMAIL?.trim() ||
+    DEFAULT_CONTACT_TO[0];
   if (!to) return null;
   return `mailto:${to}?subject=unsubscribe`;
 }
@@ -70,7 +80,9 @@ async function deliverViaResend(opts: {
 
   // The From domain must be one Resend has verified; `from` overrides the
   // display name while keeping the address in sync with the dashboard.
-  const from = process.env.RESEND_FROM?.trim() || getDefaultFrom();
+  // MAIL_FROM is canonical. A stale RESEND_FROM pointing at an unverified
+  // domain makes every Resend call fail before the SMTP fallback is tried.
+  const from = process.env.MAIL_FROM?.trim() || process.env.RESEND_FROM?.trim() || getDefaultFrom();
 
   try {
     const res = await fetch("https://api.resend.com/emails", {
@@ -187,14 +199,27 @@ export async function sendEmail(opts: {
     console.error("[email] resend failed, falling back to SMTP:", resend.error);
   }
 
-  const smtp = await deliver(getSmtpTransporter(), "smtp", { ...opts, to });
+  const smtpTransporter = getSmtpTransporter();
+  const smtp = await deliver(smtpTransporter, "smtp", { ...opts, to });
   if (smtp.ok) return smtp;
 
-  const gmail = await deliver(getGmailTransporter(), "gmail", { ...opts, to });
-  if (gmail.ok) return gmail;
+  // Legacy Gmail fallback is ONLY for deployments with no SMTP configuration.
+  // If SMTP is configured (the Hostinger business mailbox), falling back to
+  // Gmail would let Gmail rewrite the From header to a personal address.
+  let lastResult: EmailResult = smtp;
+  if (smtpTransporter) {
+    console.error("[email] SMTP configured but failed; Gmail fallback skipped to preserve the verified From address:", smtp.error);
+  } else {
+    const gmail = await deliver(getGmailTransporter(), "gmail", { ...opts, to });
+    if (gmail.ok) return gmail;
+    lastResult = gmail;
+    if (gmail.error && gmail.provider !== "none") {
+      console.error("[email] gmail fallback failed:", gmail.error);
+    }
+  }
 
-  console.error(`[email] all transports failed. smtp=${smtp.error} gmail=${gmail.error}`);
-  return smtp.error !== "SMTP_NOT_CONFIGURED" ? smtp : gmail;
+  console.error(`[email] all transports failed. smtp=${smtp.error} last=${lastResult.error}`);
+  return lastResult;
 }
 
 export function escapeHtml(value: string): string {
