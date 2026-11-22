@@ -1,4 +1,4 @@
-{
+﻿{
   "lighthouseVersion": "12.6.1",
   "requestedUrl": "http://localhost:3100/book-a-call",
   "mainDocumentUrl": "http://localhost:3100/book-a-call",
@@ -60,7 +60,7 @@
       "scoreDisplayMode": "numeric",
       "numericValue": 396.51975,
       "numericUnit": "millisecond",
-      "displayValue": "0.4 s",
+      "displayValue": "0.4Â s",
       "scoringOptions": {
         "p10": 934,
         "median": 1600
@@ -74,7 +74,7 @@
       "scoreDisplayMode": "numeric",
       "numericValue": 1095.6930000000002,
       "numericUnit": "millisecond",
-      "displayValue": "1.1 s",
+      "displayValue": "1.1Â s",
       "scoringOptions": {
         "p10": 1200,
         "median": 2400
@@ -95,7 +95,7 @@
       "scoreDisplayMode": "numeric",
       "numericValue": 651.4895520334062,
       "numericUnit": "millisecond",
-      "displayValue": "0.7 s",
+      "displayValue": "0.7Â s",
       "scoringOptions": {
         "p10": 1311,
         "median": 2300
@@ -175,7 +175,7 @@
       "scoreDisplayMode": "numeric",
       "numericValue": 67.5,
       "numericUnit": "millisecond",
-      "displayValue": "70 ms",
+      "displayValue": "70Â ms",
       "scoringOptions": {
         "p10": 150,
         "median": 350
@@ -189,7 +189,7 @@
       "scoreDisplayMode": "numeric",
       "numericValue": 103,
       "numericUnit": "millisecond",
-      "displayValue": "100 ms"
+      "displayValue": "100Â ms"
     },
     "cumulative-layout-shift": {
       "id": "cumulative-layout-shift",
@@ -261,7 +261,7 @@
       "scoreDisplayMode": "metricSavings",
       "numericValue": 6.999,
       "numericUnit": "millisecond",
-      "displayValue": "Root document took 10 ms",
+      "displayValue": "Root document took 10Â ms",
       "metricSavings": {
         "FCP": 0,
         "LCP": 0
@@ -298,7 +298,7 @@
       "scoreDisplayMode": "numeric",
       "numericValue": 1112.6477125000001,
       "numericUnit": "millisecond",
-      "displayValue": "1.1 s"
+      "displayValue": "1.1Â s"
     },
     "user-timings": {
       "id": "user-timings",
@@ -467,7 +467,7 @@
       "scoreDisplayMode": "metricSavings",
       "numericValue": 2066.9589999999966,
       "numericUnit": "millisecond",
-      "displayValue": "2.1 s",
+      "displayValue": "2.1Â s",
       "metricSavings": {
         "TBT": 50
       },
@@ -537,7 +537,7 @@
       "scoreDisplayMode": "metricSavings",
       "numericValue": 768.4589999999982,
       "numericUnit": "millisecond",
-      "displayValue": "0.8 s",
+      "displayValue": "0.8Â s",
       "metricSavings": {
         "TBT": 50
       },
@@ -2123,7 +2123,7 @@
       "scoreDisplayMode": "informative",
       "numericValue": 0.8527499999999999,
       "numericUnit": "millisecond",
-      "displayValue": "0 ms",
+      "displayValue": "0Â ms",
       "details": {
         "type": "table",
         "headings": [
@@ -2158,7 +2158,7 @@
       "scoreDisplayMode": "informative",
       "numericValue": 12.17325,
       "numericUnit": "millisecond",
-      "displayValue": "10 ms",
+      "displayValue": "10Â ms",
       "details": {
         "type": "table",
         "headings": [
@@ -2750,7 +2750,7 @@
       "description": "This is the largest contentful element painted within the viewport. [Learn more about the Largest Contentful Paint element](https://developer.chrome.com/docs/lighthouse/performance/lighthouse-largest-contentful-paint/)",
       "score": 1,
       "scoreDisplayMode": "informative",
-      "displayValue": "1,100 ms",
+      "displayValue": "1,100Â ms",
       "metricSavings": {
         "LCP": 0
       },
@@ -2782,7 +2782,7 @@
                     "height": 40
                   },
                   "snippet": "<p class=\"text-muted-foreground mt-1 text-xs sm:text-sm\">",
-                  "nodeLabel": "Tell us your window and we'll make it work: email team.deuvixai@gmail.com or me…"
+                  "nodeLabel": "Tell us your window and we'll make it work: email contact@deuvix-ai.com or meâ€¦"
                 }
               }
             ]
@@ -3168,52 +3168,52 @@
             "unusedBytes": 10,
             "children": [
               {
-                "name": "(inline) (self.__next_s=…",
+                "name": "(inline) (self.__next_s=â€¦",
                 "resourceBytes": 289,
                 "unusedBytes": 0
               },
               {
-                "name": "(inline) ((a,b,c,d,e,f,g…",
+                "name": "(inline) ((a,b,c,d,e,f,gâ€¦",
                 "resourceBytes": 526,
                 "unusedBytes": 10
               },
               {
-                "name": "(inline) (self.__next_f=…",
+                "name": "(inline) (self.__next_f=â€¦",
                 "resourceBytes": 43,
                 "unusedBytes": 0
               },
               {
-                "name": "(inline) self.__next_f.p…",
+                "name": "(inline) self.__next_f.pâ€¦",
                 "resourceBytes": 4467,
                 "unusedBytes": 0
               },
               {
-                "name": "(inline) self.__next_f.p…",
+                "name": "(inline) self.__next_f.pâ€¦",
                 "resourceBytes": 259,
                 "unusedBytes": 0
               },
               {
-                "name": "(inline) self.__next_f.p…",
+                "name": "(inline) self.__next_f.pâ€¦",
                 "resourceBytes": 5286,
                 "unusedBytes": 0
               },
               {
-                "name": "(inline) self.__next_f.p…",
+                "name": "(inline) self.__next_f.pâ€¦",
                 "resourceBytes": 3080,
                 "unusedBytes": 0
               },
               {
-                "name": "(inline) self.__next_f.p…",
+                "name": "(inline) self.__next_f.pâ€¦",
                 "resourceBytes": 215,
                 "unusedBytes": 0
               },
               {
-                "name": "(inline) self.__next_f.p…",
+                "name": "(inline) self.__next_f.pâ€¦",
                 "resourceBytes": 64,
                 "unusedBytes": 0
               },
               {
-                "name": "(inline) self.__next_f.p…",
+                "name": "(inline) self.__next_f.pâ€¦",
                 "resourceBytes": 2582,
                 "unusedBytes": 0
               }
@@ -3893,7 +3893,7 @@
                 "width": 256,
                 "height": 32
               },
-              "snippet": "<button type=\"button\" aria-label=\"Time zone\" aria-haspopup=\"listbox\" aria-expanded=\"false\" class=\"btn-sharp border-border bg-background text-foreground flex h-11 w-full min…\">",
+              "snippet": "<button type=\"button\" aria-label=\"Time zone\" aria-haspopup=\"listbox\" aria-expanded=\"false\" class=\"btn-sharp border-border bg-background text-foreground flex h-11 w-full minâ€¦\">",
               "nodeLabel": "Pakistan (PKT)",
               "explanation": "Fix any of the following:\n  Text inside the element is not included in the accessible name"
             }
@@ -4188,7 +4188,7 @@
       "scoreDisplayMode": "metricSavings",
       "numericValue": 627040,
       "numericUnit": "byte",
-      "displayValue": "Total size was 612 KiB",
+      "displayValue": "Total size was 612Â KiB",
       "details": {
         "type": "table",
         "headings": [
@@ -4292,7 +4292,7 @@
       "scoreDisplayMode": "metricSavings",
       "numericValue": 0,
       "numericUnit": "millisecond",
-      "displayValue": "Est savings of 0 ms",
+      "displayValue": "Est savings of 0Â ms",
       "metricSavings": {
         "FCP": 0,
         "LCP": 0
@@ -4442,7 +4442,7 @@
       "scoreDisplayMode": "metricSavings",
       "numericValue": 210,
       "numericUnit": "millisecond",
-      "displayValue": "Est savings of 129 KiB",
+      "displayValue": "Est savings of 129Â KiB",
       "metricSavings": {
         "FCP": 0,
         "LCP": 200
@@ -4713,7 +4713,7 @@
       "scoreDisplayMode": "metricSavings",
       "numericValue": 0,
       "numericUnit": "millisecond",
-      "displayValue": "Est savings of 13 KiB",
+      "displayValue": "Est savings of 13Â KiB",
       "warnings": [],
       "metricSavings": {
         "FCP": 0,
@@ -4940,7 +4940,7 @@
                 "width": 24,
                 "height": 24
               },
-              "snippet": "<path style=\"fill:var(--logo-accent,#4299e1)\" d=\"M30.93 89.38C28.30 89.09 25.80 87.09 25.19 84.81C24.86 83.60 24.55 68.28 2…\">",
+              "snippet": "<path style=\"fill:var(--logo-accent,#4299e1)\" d=\"M30.93 89.38C28.30 89.09 25.80 87.09 25.19 84.81C24.86 83.60 24.55 68.28 2â€¦\">",
               "nodeLabel": "a.site-logo > svg > g > path"
             },
             "statistic": "Maximum DOM Depth",
@@ -5096,7 +5096,7 @@
     "font-size": {
       "id": "font-size",
       "title": "Document uses legible font sizes",
-      "description": "Font sizes less than 12px are too small to be legible and require mobile visitors to “pinch to zoom” in order to read. Strive to have >60% of page text ≥12px. [Learn more about legible font sizes](https://developer.chrome.com/docs/lighthouse/seo/font-size/).",
+      "description": "Font sizes less than 12px are too small to be legible and require mobile visitors to â€œpinch to zoomâ€ in order to read. Strive to have >60% of page text â‰¥12px. [Learn more about legible font sizes](https://developer.chrome.com/docs/lighthouse/seo/font-size/).",
       "score": null,
       "scoreDisplayMode": "notApplicable"
     },
@@ -5126,7 +5126,7 @@
     },
     "is-crawlable": {
       "id": "is-crawlable",
-      "title": "Page isn’t blocked from indexing",
+      "title": "Page isnâ€™t blocked from indexing",
       "description": "Search engines are unable to include your pages in search results if they don't have permission to crawl them. [Learn more about crawler directives](https://developer.chrome.com/docs/lighthouse/seo/is-crawlable/).",
       "score": 1,
       "scoreDisplayMode": "binary",
@@ -5331,7 +5331,7 @@
                 "width": 24,
                 "height": 24
               },
-              "snippet": "<path style=\"fill:var(--logo-accent,#4299e1)\" d=\"M30.93 89.38C28.30 89.09 25.80 87.09 25.19 84.81C24.86 83.60 24.55 68.28 2…\">",
+              "snippet": "<path style=\"fill:var(--logo-accent,#4299e1)\" d=\"M30.93 89.38C28.30 89.09 25.80 87.09 25.19 84.81C24.86 83.60 24.55 68.28 2â€¦\">",
               "nodeLabel": "a.site-logo > svg > g > path"
             },
             "value": {
@@ -5641,7 +5641,7 @@
               "height": 40
             },
             "snippet": "<p class=\"text-muted-foreground mt-1 text-xs sm:text-sm\">",
-            "nodeLabel": "Tell us your window and we'll make it work: email team.deuvixai@gmail.com or me…"
+            "nodeLabel": "Tell us your window and we'll make it work: email contact@deuvix-ai.com or meâ€¦"
           }
         ]
       },
@@ -5656,7 +5656,7 @@
       "description": "Polyfills and transforms enable older browsers to use new JavaScript features. However, many aren't necessary for modern browsers. Consider modifying your JavaScript build process to not transpile [Baseline](https://web.dev/articles/baseline-and-polyfills) features, unless you know you must support older browsers. [Learn why most sites can deploy ES6+ code without transpiling](https://philipwalton.com/articles/the-state-of-es5-on-the-web/)",
       "score": 0.5,
       "scoreDisplayMode": "metricSavings",
-      "displayValue": "Est savings of 12 KiB",
+      "displayValue": "Est savings of 12Â KiB",
       "metricSavings": {
         "FCP": 0,
         "LCP": 0
@@ -5912,7 +5912,7 @@
     "viewport-insight": {
       "id": "viewport-insight",
       "title": "Optimize viewport for mobile",
-      "description": "Tap interactions may be [delayed by up to 300 ms](https://developer.chrome.com/blog/300ms-tap-delay-gone-away/) if the viewport is not optimized for mobile.",
+      "description": "Tap interactions may be [delayed by up to 300Â ms](https://developer.chrome.com/blog/300ms-tap-delay-gone-away/) if the viewport is not optimized for mobile.",
       "score": 1,
       "scoreDisplayMode": "numeric",
       "metricSavings": {
@@ -6991,11 +6991,11 @@
     },
     "seo-mobile": {
       "title": "Mobile Friendly",
-      "description": "Make sure your pages are mobile friendly so users don’t have to pinch or zoom in order to read the content pages. [Learn how to make pages mobile-friendly](https://developers.google.com/search/mobile-sites/)."
+      "description": "Make sure your pages are mobile friendly so users donâ€™t have to pinch or zoom in order to read the content pages. [Learn how to make pages mobile-friendly](https://developers.google.com/search/mobile-sites/)."
     },
     "seo-content": {
       "title": "Content Best Practices",
-      "description": "Format your HTML in a way that enables crawlers to better understand your app’s content."
+      "description": "Format your HTML in a way that enables crawlers to better understand your appâ€™s content."
     },
     "seo-crawl": {
       "title": "Crawling and Indexing",

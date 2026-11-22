@@ -94,6 +94,31 @@ export async function POST(request: NextRequest) {
       { supportsMultipleLengths: process.env.CAL_SUPPORTS_MULTIPLE_LENGTHS === "true" },
     );
 
+    // Mirror into the CRM Leads list immediately. The webhook does the same
+    // upsert (stable id) when Cal.com calls back, so this also covers setups
+    // where the webhook is not configured. Never fail a confirmed booking.
+    if (input.name && input.email) {
+      try {
+        const { upsertBookingAsContact } = await import("@/lib/contacts");
+        await Promise.race([
+          upsertBookingAsContact({
+            calUid: booking.uid,
+            name: input.name,
+            email: input.email,
+            phone: input.whatsapp,
+            company: input.company,
+            notes: input.notes,
+            start: new Date(booking.start),
+            timeZone: input.timeZone,
+            confirmationSent: true,
+          }),
+          new Promise<boolean>((resolve) => setTimeout(() => resolve(false), 4000)),
+        ]);
+      } catch (err) {
+        console.error("[api/cal/book] CRM lead mirror failed:", err instanceof Error ? err.message : err);
+      }
+    }
+
     return NextResponse.json(
       {
         ok: true,

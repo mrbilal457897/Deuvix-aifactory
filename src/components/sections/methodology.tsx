@@ -29,7 +29,7 @@ export function MethodologySection() {
   return (
     <section className="py-16 md:py-24 px-4 sm:px-6 lg:px-8 bg-background" aria-labelledby="methodology-title">
       <div className="mx-auto max-w-7xl">
-        <p className="font-mono text-xs uppercase tracking-[0.28em] text-secondary mb-4">
+        <p className="font-mono text-sm uppercase tracking-[0.28em] text-secondary mb-4">
           Our methodology
         </p>
         <h2 id="methodology-title" className="font-heading h2-lg text-foreground max-w-4xl">

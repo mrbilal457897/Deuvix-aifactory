@@ -127,8 +127,14 @@ export default function LeadsPage() {
       await load();
       if (cancelled) return;
     })();
+    // Keep the CRM view live: a confirmation email sent after the page was
+    // opened flips the Greeting badge on the next poll without a manual reload.
+    const timer = window.setInterval(() => {
+      if (!cancelled) void load();
+    }, 30_000);
     return () => {
       cancelled = true;
+      window.clearInterval(timer);
     };
   }, [status, session, load]);
 

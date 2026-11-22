@@ -130,7 +130,7 @@ export function FeaturesSection() {
     <section className="bg-section">
       <div className="relative mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 w-full">
         <div className="text-left pt-16 md:pt-24 pb-8">
-          <p className="text-sm font-semibold text-primary uppercase tracking-wider mb-3">
+          <p className="font-mono text-sm uppercase tracking-[0.28em] text-secondary mb-4">
             Features
           </p>
           <h2 className="font-heading page-h2 mb-4">

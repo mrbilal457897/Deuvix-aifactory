@@ -263,6 +263,8 @@ export function BookingPage({
           method: "POST",
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify(payload),
+          // Never leave the visitor stuck on "Confirming…" if the server hangs.
+          signal: AbortSignal.timeout(30_000),
         });
         const body = (await res.json()) as BookingResponse;
 
@@ -281,8 +283,12 @@ export function BookingPage({
 
         setConfirmed(body.booking);
         setStep("done");
-      } catch {
-        setFormError("Network error. Please try again.");
+      } catch (err) {
+        setFormError(
+          err instanceof DOMException && err.name === "TimeoutError"
+            ? "Booking is taking longer than expected. Please try again."
+            : "Network error. Please try again.",
+        );
       } finally {
         setSubmitting(false);
       }

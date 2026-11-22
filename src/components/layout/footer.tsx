@@ -5,6 +5,7 @@ import Link from "next/link";
 import { ChevronRight } from "lucide-react";
 import { LogoLockup } from "@/components/brand/LogoLockup";
 import { company, companyLocationLabel, companyProfileUrls } from "@config/company";
+import { NewsletterForm } from "@/components/newsletter-form";
 import { gsap } from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
 
@@ -274,7 +275,7 @@ export function Footer() {
   return (
     <footer className="border-t border-border bg-surface">
       <div className="mx-auto max-w-7xl px-6 sm:px-6 lg:px-8">
-        <div className="grid grid-cols-2 md:grid-cols-6 gap-8 py-12 md:py-16">
+        <div className="grid grid-cols-2 md:grid-cols-8 gap-8 py-12 md:py-16">
           <div className="col-span-2">
             <div className="mb-4 inline-flex">
               <LogoLockup height={24} />
@@ -311,6 +312,14 @@ export function Footer() {
                 );
               })}
             </div>
+          </div>
+
+          <div className="col-span-2">
+            <h3 className="text-base leading-6 text-foreground mb-4">Newsletter</h3>
+            <p className="text-sm text-muted-foreground max-w-xs">
+              Practical notes on building AI-native companies.
+            </p>
+            <NewsletterForm />
           </div>
 
           {Object.entries(footerLinks).map(([category, links]) => (

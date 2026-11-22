@@ -1,13 +1,13 @@
-/**
+﻿/**
  * Single source of truth for the company's legal and public identity.
  *
- * Every public surface — the footer, About, Contact, the legal pages, and the
- * Organization JSON-LD — reads from this one file. An empty string means "we
+ * Every public surface â€” the footer, About, Contact, the legal pages, and the
+ * Organization JSON-LD â€” reads from this one file. An empty string means "we
  * have not been provided a value yet": the field is then neither rendered on
  * the site nor emitted into the JSON-LD.
  *
  * TODO(owner): replace each TODO below with the real, verified value. An empty
- * string is deliberately safer than an invented one — never fabricate legal
+ * string is deliberately safer than an invented one â€” never fabricate legal
  * details. This is also the one place to change the business email address
  * (falls back to the current public inbox until you supply the final one).
  */
@@ -32,7 +32,7 @@ export const company = {
    */
   businessEmail:
     (typeof process !== "undefined" ? process.env.NEXT_PUBLIC_CONTACT_EMAIL?.trim() : undefined) ||
-    "team.deuvixai@gmail.com",
+    "contact@deuvix-ai.com",
   /** TODO(owner): business phone number in international format. */
   phone: "",
   /** Optional tax identifier (VAT, NTN, ...). TODO(owner). */
@@ -69,7 +69,7 @@ export const company = {
  *
  * Single source of truth shared by the footer social links and the Organization
  * JSON-LD `sameAs`. Empty entries are ignored, and only https profile URLs get
- * through — never mailto:, wa.me or internal links.
+ * through â€” never mailto:, wa.me or internal links.
  */
 export const companyProfileUrls: readonly string[] = Array.from(
   new Set(

@@ -77,11 +77,11 @@ export function HowItWorksSection() {
         className="object-cover"
         sizes="100vw"
       />
-      <div className="absolute inset-0 bg-gradient-to-b from-surface/95 via-surface/85 to-surface/70" />
+      <div className="absolute inset-0 bg-gradient-to-b from-surface via-surface/95 to-surface/90 dark:from-surface/95 dark:via-surface/85 dark:to-surface/70" />
 
       <div className="relative mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
         <div className="text-left mb-16">
-          <p className="text-sm font-semibold text-secondary uppercase tracking-wider mb-3">
+          <p className="font-mono text-sm uppercase tracking-[0.28em] text-secondary mb-4">
             How It Works
           </p>
           <h2 className="font-heading h2-lg mb-4">

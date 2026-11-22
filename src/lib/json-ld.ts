@@ -1,7 +1,7 @@
-/**
+﻿/**
  * Server-rendered structured data for the site.
  *
- * Plain, typed data only — no env access, no I/O, no client JavaScript. Every
+ * Plain, typed data only â€” no env access, no I/O, no client JavaScript. Every
  * node is built from data that is actually visible on the page, and every
  * cross-reference uses a stable @id so the same entity is never declared twice.
  *
@@ -133,14 +133,14 @@ function organizationNode(): SchemaNode {
     image: absolute("/images/hero-bg.jpg"),
     description:
       "Deuvix AI Factory builds and operates Digital FTEs: AI workers your team supervises, not tools that watch it. From AI chatbots and voice agents to Loop Engineering and FDE consulting.",
-    email: "team.deuvixai@gmail.com",
+    email: "contact@deuvix-ai.com",
     address: { "@type": "PostalAddress", addressCountry: "PK" },
     sameAs: [...companyProfileUrls],
     founder: [ref(BILAL_ID), ref(ASAD_ID)],
     contactPoint: {
       "@type": "ContactPoint",
       contactType: "sales",
-      email: "team.deuvixai@gmail.com",
+      email: "contact@deuvix-ai.com",
       availableLanguage: ["English"],
     },
     makesOffer: {
@@ -202,7 +202,7 @@ function servicesItemList(): SchemaNode {
 }
 
 /**
- * An Offer for a service. Quote-only services emit NO Offer at all — a made-up
+ * An Offer for a service. Quote-only services emit NO Offer at all â€” a made-up
  * price would be worse than no price. The url points at the real services
  * section on the homepage.
  */
@@ -298,7 +298,7 @@ export function blogJsonLd(): SchemaNode {
     "@id": BLOG_ID,
     name: "Insights & AI-Native",
     description:
-      "Deep dives into building AI-Native companies — from AI chatbots and voice agents to Loop Engineering and Digital FTEs.",
+      "Deep dives into building AI-Native companies â€” from AI chatbots and voice agents to Loop Engineering and Digital FTEs.",
     url: absolute("/blog"),
     inLanguage: "en",
     publisher: ref(ORG_ID),
@@ -312,7 +312,7 @@ export function aboutPageJsonLd(): SchemaNode {
     url: absolute("/about"),
     name: "Building the workforce of tomorrow.",
     description:
-      "We build Digital FTEs and put them to work inside real processes — meet the founders and the story behind Deuvix AI Factory.",
+      "We build Digital FTEs and put them to work inside real processes â€” meet the founders and the story behind Deuvix AI Factory.",
     isPartOf: ref(WEBSITE_ID),
     about: [ref(BILAL_ID), ref(ASAD_ID)],
     inLanguage: "en",
@@ -353,3 +353,4 @@ export function faqPageJsonLd(faqs: FaqInput[]): SchemaNode {
     })),
   };
 }
+

@@ -3,12 +3,13 @@
 /**
  * Client side of the chat protocol.
  *
- * - Guests keep history in sessionStorage and send it back with each request.
- * - Logged-in users let the server own history; only the conversation id is kept.
+ * - Guests send the current turn's history with each request; nothing is
+ *   persisted, so a refresh always opens a fresh chat.
+ * - Logged-in users let the server own history during the session.
  * - The stream is JSON-lines, so a partial line is buffered until its newline.
  */
 
-import { useCallback, useEffect, useMemo, useRef, useState } from "react";
+import { useCallback, useMemo, useRef, useState } from "react";
 import { uiStrings } from "@/lib/chat/ui-strings";
 
 export type Role = "user" | "assistant";
@@ -39,7 +40,6 @@ export interface ChatState {
   error: string | null;
 }
 
-const GUEST_HISTORY_MAX = 12;
 const HISTORY_KEY = "deuvix-chat-guest";
 const SESSION_KEY = "deuvix-chat-session";
 const CONVERSATION_KEY = "deuvix-chat-conversation";
@@ -49,27 +49,6 @@ function safeStorage(): Storage | null {
     return typeof window === "undefined" ? null : window.sessionStorage;
   } catch {
     return null;
-  }
-}
-
-function readJSON<T>(key: string, fallback: T): T {
-  const store = safeStorage();
-  if (!store) return fallback;
-  try {
-    const raw = store.getItem(key);
-    return raw ? (JSON.parse(raw) as T) : fallback;
-  } catch {
-    return fallback;
-  }
-}
-
-function writeJSON(key: string, value: unknown) {
-  const store = safeStorage();
-  if (!store) return;
-  try {
-    store.setItem(key, JSON.stringify(value));
-  } catch {
-    /* quota / private mode — the chat still works, it just won't be saved */
   }
 }
 
@@ -95,16 +74,16 @@ function loadGuestState() {
     store.setItem(SESSION_KEY, sessionId);
   }
 
-  const stored = readJSON<ChatMessage[]>(HISTORY_KEY, []);
-  const history = Array.isArray(stored)
-    ? stored.filter((m) => m && m.content && !m.pending)
-    : [];
+  // A refresh always starts a fresh conversation. Drop any history written by
+  // older builds so it cannot reappear in the window.
+  try {
+    store.removeItem(HISTORY_KEY);
+    store.removeItem(CONVERSATION_KEY);
+  } catch {
+    /* ignore */
+  }
 
-  return {
-    sessionId,
-    history,
-    conversationId: store.getItem(CONVERSATION_KEY),
-  };
+  return { sessionId, history: [] as ChatMessage[], conversationId: null };
 }
 
 export function useChat() {
@@ -122,12 +101,7 @@ export function useChat() {
   const abortRef = useRef<AbortController | null>(null);
   const sessionIdRef = useRef<string>(boot.sessionId);
 
-  /* ---- persistence of guest history ------------------------------------- */
-  useEffect(() => {
-    const trimmed = messages.filter((m) => m.id !== "greeting" && !m.pending).slice(-GUEST_HISTORY_MAX);
-    if (trimmed.length === 0) return;
-    writeJSON(HISTORY_KEY, trimmed);
-  }, [messages]);
+  /* Guest history is deliberately not persisted: refreshing starts a new chat. */
 
   const stop = useCallback(() => {
     abortRef.current?.abort();

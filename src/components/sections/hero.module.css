@@ -517,12 +517,15 @@
   inset: 0;
   display: grid;
   grid-template-columns: minmax(0, 1fr);
-  grid-template-rows: auto minmax(0, 1fr);
+  grid-template-rows: auto 226px minmax(0, 1fr) auto;
+  gap: 0.35rem;
+  padding: 0.6rem 0.9rem 0.7rem;
   background: #0C1016;
   color: #F2F4F7;
   border-radius: 0;
   overflow: hidden;
-  font-family: var(--font-inter), ui-sans-serif, system-ui, sans-serif;
+  /* Adopt the site's body font instead of a one-off panel font. */
+  font-family: var(--font-sans), ui-sans-serif, system-ui, sans-serif;
 }
 .wheelWrap {
   position: relative;
@@ -765,4 +768,134 @@
   .segment {
     transition: none;
   }
+  .loopDot,
+  .loopCopy {
+    animation: none;
+  }
+}
+
+/* ============================================================
+   FDE LOOP — 3D orbit scene (dark in both themes)
+   ============================================================ */
+.loopHud {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.5rem;
+  font-size: 0.6875rem;
+  font-weight: 400;
+  line-height: 1;
+  letter-spacing: 0.08em;
+  color: #98A2B3;
+  text-transform: uppercase;
+}
+.loopHudLeft {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.45rem;
+  color: var(--secondary);
+}
+.loopDot {
+  width: 6px;
+  height: 6px;
+  flex: none;
+  background: var(--secondary);
+  box-shadow: 0 0 10px var(--secondary);
+  animation: loop-pulse 1.8s ease-in-out infinite;
+}
+.loopHudRight,
+.loopCount {
+  font-variant-numeric: tabular-nums;
+}
+.loopCount {
+  color: var(--secondary);
+}
+.loopCanvas {
+  display: block;
+  width: 100%;
+  height: 100%;
+  min-width: 0;
+  touch-action: manipulation;
+}
+.loopCopy {
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
+  min-width: 0;
+  animation: loop-copy-in 0.5s ease both;
+}
+.loopEyebrow {
+  font-size: 0.6875rem;
+  font-weight: 400;
+  letter-spacing: 0.22em;
+  text-transform: uppercase;
+  color: var(--secondary);
+}
+.loopTitle {
+  margin: 0;
+  font-family: var(--font-heading), ui-sans-serif, system-ui, sans-serif;
+  font-weight: 500;
+  font-size: 1.125rem;
+  line-height: 1.2;
+  color: #FFFFFF;
+}
+.loopTagline {
+  margin: 0;
+  font-size: 0.75rem;
+  font-weight: 400;
+  line-height: 1.4;
+  color: #FFB3B3;
+}
+.loopDesc {
+  margin: 0;
+  font-size: 0.75rem;
+  font-weight: 400;
+  line-height: 1.4;
+  color: #C9CED6;
+}
+.loopCtaRow {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.5rem;
+  margin-top: 0.15rem;
+}
+.loopGhost {
+  color: var(--secondary) !important;
+}
+.loopPrimary {
+  white-space: nowrap;
+}
+.loopBars {
+  display: flex;
+  gap: 0.35rem;
+}
+.loopBar {
+  position: relative;
+  flex: 1;
+  height: 5px;
+  padding: 0;
+  border: 0;
+  background: rgba(242, 244, 247, 0.16);
+  cursor: pointer;
+}
+.loopBarFill {
+  position: absolute;
+  inset: 0;
+  background: var(--secondary);
+  transform: scaleX(0);
+  transform-origin: left center;
+}
+.loopBar:focus-visible {
+  outline: 2px solid var(--secondary);
+  outline-offset: 3px;
+}
+
+@keyframes loop-pulse {
+  0%, 100% { opacity: 1; transform: scale(1); }
+  50% { opacity: 0.45; transform: scale(0.8); }
+}
+@keyframes loop-copy-in {
+  from { opacity: 0; transform: translateY(8px); }
+  to { opacity: 1; transform: translateY(0); }
 }

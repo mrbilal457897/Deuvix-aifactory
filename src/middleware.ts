@@ -112,6 +112,9 @@ export async function middleware(request: NextRequest) {
   // admin gate below like every other sensitive endpoint.
   const isChat = pathname.startsWith("/api/chat");
   const isContact = pathname.startsWith("/api/contact");
+  // Newsletter double opt-in is public: subscribe/confirm/unsubscribe links
+  // are opened by visitors who have no admin session.
+  const isNewsletter = pathname.startsWith("/api/newsletter");
   const isSiteConfigGet = pathname.startsWith("/api/site-config") && request.method === "GET";
   // Cal.com signs these with its own HMAC / CRON_SECRET - never with a session.
   const isCalWebhook = pathname === "/api/cal/webhook";
@@ -132,7 +135,15 @@ export async function middleware(request: NextRequest) {
   // admin sessions inside its own routes (requireAdmin) — NOT by the bookings
   // Basic auth. Exempt it so the dashboard does not raise a browser login prompt.
   const isAgentApi = pathname.startsWith("/api/admin/agent");
-  const isBookingsAdminApi = pathname.startsWith("/api/admin") && !isAgentApi;
+  // Tickets are guarded by requireAdmin() (next-auth session) inside the route
+  // itself. Basic-auth here would block the dashboard's cookie-only fetch.
+  const isTicketsApi = pathname.startsWith("/api/admin/tickets");
+  const isNewsletterAdminApi = pathname.startsWith("/api/admin/newsletter");
+  const isBookingsAdminApi =
+    pathname.startsWith("/api/admin") &&
+    !isAgentApi &&
+    !isTicketsApi &&
+    !isNewsletterAdminApi;
   if (isBookingsAdmin || isBookingsAdminApi) {
     return withBasicAuth(request);
   }
@@ -142,6 +153,7 @@ export async function middleware(request: NextRequest) {
     isMarkdownApi ||
     isChat ||
     isContact ||
+    isNewsletter ||
     isSiteConfigGet ||
     isCalWebhook ||
     isCronReminders ||

@@ -20,6 +20,10 @@ export function MessageBubble({ message, onRetry, onFeedback }: Props) {
   const [copied, setCopied] = useState(false);
   const [vote, setVote] = useState<"up" | "down" | null>(null);
 
+  // An empty pending turn is represented by the TypingIndicator instead of a
+  // blank bubble, so the user always sees clear "thinking" feedback.
+  if (message.pending && !message.content) return null;
+
   const copy = async () => {
     try {
       await navigator.clipboard.writeText(message.content);

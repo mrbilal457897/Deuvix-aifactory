@@ -130,7 +130,7 @@ export function HeroSection() {
                 </span>
               </Link>
               <Link href="/projects" className={`${styles.btn} ${styles.btnGhost}`}>
-                <span className={styles.btnBody}>See Projects</span>
+                <span className={styles.btnBody}>See Works</span>
                 <span className={styles.btnArrow} aria-hidden="true">
                   <ArrowRight size={20} strokeWidth={2.25} />
                 </span>

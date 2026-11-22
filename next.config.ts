@@ -9,6 +9,10 @@ const nextConfig: NextConfig = {
   // Required for the Docker image: emits .next/standalone with a self-contained
   // server and only the node_modules actually imported.
   output: "standalone",
+  // Keep the dev server's webpack cache separate from production builds.
+  // Running `next build` while `next dev` is live used to delete .next/dev
+  // under the dev server, producing ENOENT on *.pack.gz files.
+  distDir: process.env.NODE_ENV === "development" ? ".next-dev" : ".next",
   // Cal.com's embed script is loaded from your own instance at runtime; the
   // iframe it injects needs to be able to talk back to the opener.
   async headers() {
@@ -40,6 +44,11 @@ const nextConfig: NextConfig = {
               '<https://deuvix-ai.com/llms.txt>; rel="describedby"; type="text/plain", <https://deuvix-ai.com/sitemap.xml>; rel="sitemap"; type="application/xml"',
           },
         ],
+      },
+      {
+        // Preserve the AI-training signal that used to live in public/robots.txt.
+        source: "/robots.txt",
+        headers: [{ key: "Content-Signal", value: "search=yes, ai-train=no" }],
       },
       {
         // Admin dashboard + auth callbacks: never cached anywhere.

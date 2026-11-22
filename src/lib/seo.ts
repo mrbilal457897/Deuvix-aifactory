@@ -11,13 +11,13 @@ import type { Metadata } from "next";
 export const SITE_URL = (
   process.env.NEXT_PUBLIC_SITE_URL?.trim() ||
   process.env.SITE_URL?.trim() ||
-  "https://deuvix-aifactory-3yqx.vercel.app"
+  "https://deuvix-ai.com"
 ).replace(/\/+$/, "");
 
-export const SITE_NAME = "Deuvix AI Factory";
+export const SITE_NAME = "Deuvix-AI";
 
 export const SITE_DESCRIPTION =
-  "Deuvix AI Factory builds and operates Digital FTEs — AI workers your team supervises, not tools that watch it. From AI chatbots and voice agents to Loop Engineering and FDE consulting.";
+  "Deuvix-AI: Forward Deployed AI Engineer, FTE & AI Automation";
 
 export const OG_IMAGE = "/images/hero-bg.jpg";
 export const OG_IMAGE_ABSOLUTE = `${SITE_URL}${OG_IMAGE}`;

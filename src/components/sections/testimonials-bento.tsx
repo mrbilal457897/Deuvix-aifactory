@@ -23,12 +23,12 @@ type Testimonial = {
 };
 const testimonials: Testimonial[] = [
   {
-    name: "Sarah Chen",
+    name: "Noman",
     role: "CTO, TechFlow Inc",
     quote:
       "Deuvix AI Factory's Digital FTEs took over our ops workflows and our people now handle approvals instead of triage.",
     highlight: "Up to 85% lower cost per task",
-    initials: "SC",
+    initials: "N",
   },
   {
     name: "Abdullah",
@@ -89,7 +89,7 @@ export function TestimonialsBento({ showStars = true }: { showStars?: boolean })
       <div className="relative mx-auto max-w-7xl w-full">
         {/* Header */}
         <div className="mb-10 md:mb-16">
-          <span className="block text-xs font-semibold tracking-[0.24em] uppercase text-secondary mb-4">
+          <span className="block font-mono text-sm uppercase tracking-[0.28em] text-secondary mb-4">
             Testimonials
           </span>
           <h2

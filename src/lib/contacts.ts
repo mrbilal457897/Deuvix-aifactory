@@ -62,6 +62,112 @@ export function getContactRecipients(): string[] {
   return primary ? [primary] : DEFAULT_CONTACT_TO;
 }
 
+/**
+ * Mirror a /contact inquiry into the Supabase `contacts` table so it appears in
+ * the admin Leads list, which reads `/api/contacts` (not the Postgres
+ * `contact_inquiries` table the inquiry API writes to). Insert-only: the
+ * inquiry API has already sent its own emails, so this never calls sendEmail.
+ */
+export async function insertInquiryAsContact(input: {
+  id: string;
+  name: string;
+  email: string;
+  phone?: string | null;
+  service: string;
+  portfolio?: string | null;
+  message: string;
+}): Promise<boolean> {
+  const { error } = await supabase.from("contacts").insert({
+    id: input.id,
+    name: input.name,
+    email: input.email,
+    phone: input.phone || "",
+    service: input.service,
+    portfolio: input.portfolio || "",
+    message: input.message,
+    lead_status: "new",
+    created_at: new Date().toISOString(),
+  });
+  if (error) {
+    console.error("[contacts] lead mirror insert failed:", error.message);
+    return false;
+  }
+  return true;
+}
+
+/**
+ * Mirror a confirmed booking into Supabase `contacts` so it appears in the
+ * admin Leads/CRM list (which reads /api/contacts). Uses a stable id derived
+ * from the Cal.com uid and upserts, so retries/reschedules update the same row
+ * instead of creating a duplicate.
+ */
+export async function upsertBookingAsContact(input: {
+  calUid: string;
+  name: string;
+  email: string;
+  phone?: string | null;
+  company?: string | null;
+  notes?: string | null;
+  start?: Date | null;
+  timeZone?: string | null;
+  /** Cal.com sends the client confirmation on a successful booking. */
+  confirmationSent?: boolean;
+}): Promise<boolean> {
+  const lines = [
+    "Booked via Book a Call",
+    input.start ? `When: ${input.start.toISOString()}` : "",
+    input.timeZone ? `Timezone: ${input.timeZone}` : "",
+    input.company ? `Company: ${input.company}` : "",
+    input.notes ? `Notes: ${input.notes}` : "",
+  ].filter(Boolean);
+  const { error } = await supabase.from("contacts").upsert(
+    {
+      id: `cal_${input.calUid}`,
+      name: input.name,
+      email: input.email,
+      phone: input.phone || "",
+      service: "Book a Call",
+      portfolio: "",
+      message: lines.join("\n"),
+      lead_status: "new",
+      // A confirmed booking means Cal.com already emailed the client, so the
+      // CRM Greeting badge must read "sent".
+      confirmation_sent: input.confirmationSent === true,
+      email_sent: input.confirmationSent === true,
+      created_at: new Date().toISOString(),
+    },
+    { onConflict: "id" },
+  );
+  if (error) {
+    console.error("[contacts] booking lead mirror failed:", error.message);
+    return false;
+  }
+  return true;
+}
+
+/**
+ * Update the mirrored lead's email flags after delivery, so the admin CRM's
+ * "Greeting" badge flips to "sent" as soon as the confirmation email succeeds.
+ */
+export async function updateContactEmailStatus(
+  id: string,
+  status: { emailSent: boolean; confirmationSent: boolean; emailProvider?: string },
+): Promise<boolean> {
+  const { error } = await supabase
+    .from("contacts")
+    .update({
+      email_sent: status.emailSent,
+      confirmation_sent: status.confirmationSent,
+      ...(status.emailProvider ? { email_provider: status.emailProvider } : {}),
+    })
+    .eq("id", id);
+  if (error) {
+    console.error("[contacts] email status update failed:", error.message);
+    return false;
+  }
+  return true;
+}
+
 export async function saveContact(input: {
   name: string;
   email: string;

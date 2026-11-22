@@ -29,8 +29,21 @@ export function Chat() {
       seen = true;
     }
     if (seen) return;
-    const t = window.setTimeout(() => setGreeting(true), 4500);
-    return () => window.clearTimeout(t);
+    // Appear once after a short delay, then retire itself on a timer so it
+    // never sits on screen indefinitely.
+    const show = window.setTimeout(() => setGreeting(true), 4500);
+    const hide = window.setTimeout(() => {
+      setGreeting(false);
+      try {
+        sessionStorage.setItem(GREETING_SEEN, "1");
+      } catch {
+        /* ignore */
+      }
+    }, 4500 + 8000);
+    return () => {
+      window.clearTimeout(show);
+      window.clearTimeout(hide);
+    };
   }, []);
 
   const dismissGreeting = useCallback(() => {

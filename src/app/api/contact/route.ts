@@ -297,7 +297,39 @@ export async function POST(request: Request): Promise<NextResponse> {
     }
   }
 
+  // Mirror into Supabase `contacts` so the admin Leads list (which reads
+  // /api/contacts) shows the inquiry. Best-effort and capped like the DB write:
+  // email delivery is already the guarantee, so a Supabase outage cannot fail
+  // the public request.
+  try {
+    const { insertInquiryAsContact } = await import("@/lib/contacts");
+    await Promise.race([
+      insertInquiryAsContact({
+        id: inquiryId,
+        name: data.name,
+        email: data.email,
+        phone: data.phone,
+        service: data.units.join(", "),
+        portfolio: data.website,
+        message: [
+          `Units: ${data.units.join(", ")}`,
+          `Brief: ${data.brief}`,
+          data.channels.length ? `Channels: ${data.channels.join(", ")}` : "",
+          data.company ? `Company: ${data.company}` : "",
+          data.startWhen ? `Start: ${data.startWhen}` : "",
+          data.via ? `Via: ${data.via}` : "",
+          data.slot ? `Slot: ${data.slot}` : "",
+          data.nda ? "NDA requested" : "",
+        ].filter(Boolean).join("\n"),
+      }),
+      new Promise<boolean>((resolve) => setTimeout(() => resolve(false), 4000)),
+    ]);
+  } catch (err) {
+    console.error("[contact] Leads mirror failed:", err instanceof Error ? err.message : err);
+  }
+
   let confirmationError: string | null | undefined = null;
+  let confirmationProvider: string | undefined;
   try {
     const confirmation = inquiryConfirmationEmail(inquiryData);
     const confResult = await sendEmail({
@@ -308,6 +340,7 @@ export async function POST(request: Request): Promise<NextResponse> {
       replyTo: process.env.CONTACT_TO_EMAIL?.split(",").map((e) => e.trim()).filter(Boolean)[0] ||
         process.env.EMAIL_FROM,
     });
+    confirmationProvider = confResult.provider;
     if (!confResult.ok) {
       confirmationError = confResult.error;
     }
@@ -359,6 +392,23 @@ export async function POST(request: Request): Promise<NextResponse> {
       },
       { status: 502 },
     );
+  }
+
+  // Flip the CRM "Greeting" badge as soon as the outcome is known. The row was
+  // mirrored above, so this update makes the admin Leads view reflect the real
+  // delivery result instead of staying "not sent" forever.
+  try {
+    const { updateContactEmailStatus } = await import("@/lib/contacts");
+    await Promise.race([
+      updateContactEmailStatus(inquiryId, {
+        emailSent: notificationError == null,
+        confirmationSent: confirmationError == null,
+        ...(confirmationProvider ? { emailProvider: confirmationProvider } : {}),
+      }),
+      new Promise<boolean>((resolve) => setTimeout(() => resolve(false), 4000)),
+    ]);
+  } catch (err) {
+    console.error("[contact] greeting status update failed:", err instanceof Error ? err.message : err);
   }
 
   return NextResponse.json(

@@ -68,7 +68,7 @@ export function FoundersSection() {
           {/* Left column: label + heading + description */}
           <div className="flex-1 xl:flex-none shrink-0 max-w-md">
             <span
-              className="inline-block text-xs font-semibold tracking-[0.24em] uppercase text-secondary mb-4 leading-none"
+              className="inline-block font-mono text-sm uppercase tracking-[0.28em] text-secondary mb-4 leading-none"
             >
               LEADERSHIP
             </span>

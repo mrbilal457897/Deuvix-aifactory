@@ -114,3 +114,14 @@ The chatbot must never invent these. Each one is an explicit `TODO` in
 - **No stated affiliation with Agent Factory / Panaversity** — questions about it
   are refused rather than answered
 - Pricing is never quoted
+
+## Email system setup
+
+**Vercel env vars** (Project -> Settings -> Environment Variables): add SMTP_HOST=smtp.hostinger.com, SMTP_PORT=465, SMTP_USER=contact@deuvix-ai.com, SMTP_PASS, MAIL_FROM=Deuvix AI Factory <contact@deuvix-ai.com>, MAIL_TO_ADMIN=contact@deuvix-ai.com, NEXT_PUBLIC_SITE_URL=https://deuvix-ai.com, SUPABASE_URL, SUPABASE_SERVICE_ROLE_KEY. Never commit secrets.
+
+**Supabase:** run supabase/migrations/20261122000000_newsletter.sql in the SQL editor. RLS is enabled with no public policies; all access is via server routes with the service role key.
+
+**Test:** submit the footer form, click the confirmation link (48h expiry), confirm the welcome mail, then use the unsubscribe link. Contact and book-a-call submissions save first and email second, so a mail failure never loses a lead.
+
+Bulk mail is deliberately NOT sent through Hostinger SMTP; lib/mailer.ts has a marked TODO for a future bulk provider.
+

@@ -6,6 +6,14 @@ export default function robots(): MetadataRoute.Robots {
     rules: {
       userAgent: "*",
       allow: "/",
+      disallow: [
+        "/admin",
+        "/api/",
+        "/dashboard",
+        "/deuvix",
+        "/login",
+        "/newsletter/",
+      ],
     },
     sitemap: `${SITE_URL}/sitemap.xml`,
   };

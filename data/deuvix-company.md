@@ -1,4 +1,4 @@
-# Deuvix AI Factory — company brief
+﻿# Deuvix AI Factory â€” company brief
 
 > Hand-maintained facts for the chatbot. Everything here is injected into the
 > system prompt, so **only write things you are willing the bot to state as
@@ -21,7 +21,7 @@
 
 - Contact page: https://deuvix-aifactory-3yqx.vercel.app/contact
 - Book a call: https://deuvix-aifactory-3yqx.vercel.app/book-a-call
-- Public contact email shown on the site: `team.deuvixai@gmail.com`
+- Public contact email shown on the site: `contact@deuvix-ai.com`
 - TODO: no phone number is published anywhere on the site.
 - TODO: no office address, timezone, or business hours are published anywhere
   on the site. Do not state either.
@@ -30,7 +30,7 @@
 
 The Products page groups its offer into three categories:
 
-- **Solutions** — Strategy Consulting, Custom Development, Ongoing Support.
+- **Solutions** â€” Strategy Consulting, Custom Development, Ongoing Support.
 - TODO: the remaining category labels on the Products page should be
   confirmed against the live page before being quoted to a visitor.
 - The site describes end-to-end AI strategy, consulting and implementation,
@@ -53,7 +53,7 @@ for the exact wording rather than paraphrasing it here.
 ## Things the site does NOT currently publish
 
 Each of these is an open gap. When asked, the bot should say it does not have
-that information and point at the contact route — it must not guess.
+that information and point at the contact route â€” it must not guess.
 
 - **Pricing.** No prices are quoted anywhere, by design. The chatbot never
   states, estimates or negotiates prices.
@@ -63,7 +63,7 @@ that information and point at the contact route — it must not guess.
 - **Languages supported.** Not published.
 - **Timezone / office hours.** Not published.
 - **Phone number.** Not published.
-- **Case studies.** The Projects page currently renders an empty table —
+- **Case studies.** The Projects page currently renders an empty table â€”
   there are no case studies to cite.
 - **Named customers, testimonials, partnerships.** Not published. Testimonial
   names visible in the codebase are placeholder identities and must never be
@@ -78,3 +78,4 @@ that information and point at the contact route — it must not guess.
   learning reference, described as "the Agent Factory guide".
 - Never say, imply, or accept a claim that Deuvix owns, runs, partners with, or
   is endorsed by Agent Factory or Panaversity.
+

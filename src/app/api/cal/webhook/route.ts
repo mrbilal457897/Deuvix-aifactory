@@ -88,6 +88,26 @@ export async function POST(request: NextRequest) {
     } catch (err) {
       console.error("[cal-webhook] post-response email dispatch failed:", err instanceof Error ? err.message : err);
     }
+    // Mirror the confirmed booking into the CRM Leads list. Best-effort: a
+    // Supabase failure must never fail the Cal.com webhook.
+    if (tone !== "cancelled" && normalized.name && normalized.email) {
+      try {
+        const { upsertBookingAsContact } = await import("@/lib/contacts");
+        await upsertBookingAsContact({
+          calUid: normalized.calUid,
+          name: normalized.name,
+          email: normalized.email,
+          phone: normalized.whatsapp,
+          company: normalized.company,
+          notes: normalized.notes,
+          start: normalized.startTime,
+          timeZone: normalized.timezone,
+          confirmationSent: true,
+        });
+      } catch (err) {
+        console.error("[cal-webhook] CRM lead mirror failed:", err instanceof Error ? err.message : err);
+      }
+    }
   });
 
   return Response.json({ ok: true, uid: booking.calUid, status: booking.status });

@@ -1,4 +1,4 @@
-# Book a Call — Setup Guide
+﻿# Book a Call â€” Setup Guide
 
 Self-hosted Cal.com booking flow for Deuvix AI Factory. No proprietary SaaS:
 PostgreSQL + Drizzle for storage, Nodemailer over SMTP for email, `wa.me`
@@ -9,25 +9,25 @@ click-to-chat links for WhatsApp.
 ## 1. Architecture
 
 ```
-Website  ──►  BookCallButton  ──►  Cal.com (self-hosted, modal)
-   │                                            │
-   │  and  /book-a-call                          ├─► emails the client + .ics
-   ▼  (our own Calendly-style UI)               └─► adds meeting to calendar
-GET  /api/cal/slots ──────────► Cal.com /v2/slots            │
-POST /api/cal/book  ──────────► Cal.com /v2/bookings         │
-   │      (CAL_API_KEY stays server-side)                    │
-   │                                                        ▼
-   └──────────► booked ─────────► Cal.com  ──POST + X-Cal-Signature-256──►  /api/cal/webhook
-                                                                             │
-                                                verify HMAC → zod → upsert by cal_uid
-                                                                             │
-                                            ┌────────────────────────────────┴──────────────────────────────┐
-                                            ▼                                                               ▼
+Website  â”€â”€â–º  BookCallButton  â”€â”€â–º  Cal.com (self-hosted, modal)
+   â”‚                                            â”‚
+   â”‚  and  /book-a-call                          â”œâ”€â–º emails the client + .ics
+   â–¼  (our own Calendly-style UI)               â””â”€â–º adds meeting to calendar
+GET  /api/cal/slots â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â–º Cal.com /v2/slots            â”‚
+POST /api/cal/book  â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â–º Cal.com /v2/bookings         â”‚
+   â”‚      (CAL_API_KEY stays server-side)                    â”‚
+   â”‚                                                        â–¼
+   â””â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â–º booked â”€â”€â”€â”€â”€â”€â”€â”€â”€â–º Cal.com  â”€â”€POST + X-Cal-Signature-256â”€â”€â–º  /api/cal/webhook
+                                                                             â”‚
+                                                verify HMAC â†’ zod â†’ upsert by cal_uid
+                                                                             â”‚
+                                            â”Œâ”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”´â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”
+                                            â–¼                                                               â–¼
                              owner notification email                                          client confirmation email
                              (full details + wa.me link)                                       (brief + Join + WhatsApp)
 
-/api/cron/reminders ──► confirmed bookings in ~24h ──► client + owner reminder
-                                                     └── reminder_sent = true
+/api/cron/reminders â”€â”€â–º confirmed bookings in ~24h â”€â”€â–º client + owner reminder
+                                                     â””â”€â”€ reminder_sent = true
 ```
 
 **Routes**
@@ -73,15 +73,15 @@ cp .env.example .env.local
 | `SMTP_USER` | `hello@yourdomain.com` | |
 | `SMTP_PASS` | app password | Not the account password. |
 | `EMAIL_FROM` | `Deuvix AI Factory <hello@yourdomain.com>` | Sender shown to the client. Must be a real, replyable mailbox. |
-| `NOTIFY_EMAIL` | `team.deuvixai@gmail.com, sobber.id@gmail.com` | Where the full-detail notification goes. |
-| `CONTACT_TO_EMAIL` | `team.deuvixai@gmail.com, b@x.com` | Internal recipient(s) for new contact submissions. Comma-separated; blanks fall back to `DEFAULT_CONTACT_TO` in `src/lib/email/index.ts`. |
+| `NOTIFY_EMAIL` | `contact@deuvix-ai.com, sobber.id@gmail.com` | Where the full-detail notification goes. |
+| `CONTACT_TO_EMAIL` | `contact@deuvix-ai.com, b@x.com` | Internal recipient(s) for new contact submissions. Comma-separated; blanks fall back to `DEFAULT_CONTACT_TO` in `src/lib/email/index.ts`. |
 | `NEXT_PUBLIC_WHATSAPP_NUMBER` | `923001234567` | Digits only, country code, no `+`. |
 | `CRON_SECRET` | `openssl rand -hex 32` | |
 | `ADMIN_USER` | `admin` | |
 | `ADMIN_PASSWORD` | long random string | |
 
 Because `NEXT_PUBLIC_*` values are baked into the client bundle at **build
-time**, changing them requires a rebuild — not just a restart. In
+time**, changing them requires a rebuild â€” not just a restart. In
 `docker-compose.yml` they are passed as build args for exactly this reason.
 
 ---
@@ -92,7 +92,7 @@ time**, changing them requires a rebuild — not just a restart. In
 > already backs media and site-config. Nothing new was provisioned. `DATABASE_URL`
 > is still empty until you paste the connection string (below).
 >
-> Only a plain TCP connection string is needed — the Supabase **service-role
+> Only a plain TCP connection string is needed â€” the Supabase **service-role
 > JWT** already in `.env.local` is an API key and is **not** a Postgres password.
 
 ### 3.1 Set the connection string
@@ -105,17 +105,17 @@ npm run db:set-url -- "postgresql://postgres.<ref>:<password>@aws-0-<region>.poo
 ```
 
 The helper writes `DATABASE_URL` into `.env.local`, then connects as a smoke test
-and prints the host only — never the password.
+and prints the host only â€” never the password.
 
 Pick the **Session** pooler, not the Transaction pooler: port `6543` breaks `pg`,
 which uses prepared statements. The helper rejects `6543` if you paste it.
 
-Percent-encode any reserved character in the password — `@` must be written
+Percent-encode any reserved character in the password â€” `@` must be written
 `%40`, otherwise the URI parser treats the rest of it as the host.
 
 Leave the URL free of TLS parameters. The helper strips `sslmode` and
 `sslrootcert` if they are present, because `pg` lets the URL override the `ssl`
-option configured in code — see 3.1a.
+option configured in code â€” see 3.1a.
 
 #### 3.1a Trust the pooler certificate
 
@@ -134,11 +134,11 @@ passes that certificate to `pg` as `ssl: { ca, rejectUnauthorized: true }`. The
 certificate is embedded in code rather than read from disk because Next.js only
 traces files it can see referenced statically, so a path passed to `pg` through
 `sslrootcert` is silently dropped from the deployment bundle. Vercel needs no
-extra variable — commit both files and the connection works everywhere.
+extra variable â€” commit both files and the connection works everywhere.
 
 TLS parameters must stay out of `DATABASE_URL`: `pg` gives the connection string
 priority over an `ssl` option, and `sslmode=require` is not a request to skip
-verification — it maps to `rejectUnauthorized: true` against the system trust
+verification â€” it maps to `rejectUnauthorized: true` against the system trust
 store, reintroducing the error the CA exists to fix. `certs/README.md` has the
 full reasoning.
 
@@ -155,14 +155,14 @@ records applied files in a `_migrations` table, so it is safe to re-run.
 
 `bookings` holds customer PII (name, email, whatsapp, meeting_url) and lives in the
 `public` schema, which Supabase exposes through PostgREST. With RLS off, anyone
-holding the **public anon key** — which ships in the client bundle — could
+holding the **public anon key** â€” which ships in the client bundle â€” could
 `SELECT * FROM bookings`. So the migration enables RLS and revokes access from
 `anon`/`authenticated`.
 
 RLS with no policies hides rows from *this app's own* connection too, and
 Supabase does not grant `BYPASSRLS` to `postgres` on every project. The migration
 therefore grants `BYPASSRLS` to the role when it is permitted to, and otherwise
-falls back to an explicit policy for that same role — either way `anon` and
+falls back to an explicit policy for that same role â€” either way `anon` and
 `authenticated` stay blocked. Verify after migrating:
 
 ```sql
@@ -189,7 +189,7 @@ To autogenerate a migration from schema changes later:
 npm run db:generate
 ```
 
-### 3.5 Contact form — `confirmation_sent` column
+### 3.5 Contact form â€” `confirmation_sent` column
 
 `/contact` stores every submission in the Supabase `contacts` table (via
 PostgREST, not Drizzle) and fans out two emails: an internal notification to
@@ -203,7 +203,7 @@ its result is recorded separately from the notification:
 | `confirmation_sent` | greeting reached the customer |
 
 The `confirmation_sent` column does not exist on older installs. Add it once in
-**Supabase → SQL Editor** (idempotent, safe to re-run):
+**Supabase â†’ SQL Editor** (idempotent, safe to re-run):
 
 ```sql
 alter table public.contacts
@@ -228,7 +228,7 @@ dropping submissions. It logs
 > NEXT_PUBLIC_CAL_LINK=bilal-sheikh-3qvs54/deuvix
 > ```
 >
-> Note `CAL_LINK` is the slug **only** — never a full URL. The embed SDK builds
+> Note `CAL_LINK` is the slug **only** â€” never a full URL. The embed SDK builds
 > `{CAL_ORIGIN}/{CAL_LINK}/embed`, so a full URL in `CAL_LINK` produces a broken
 > path like `cal.com/https://cal.com/.../embed`.
 >
@@ -246,9 +246,9 @@ that talks to the Cal.com v2 API. That needs a key:
    `CAL_ORGANIZATION_SLUG=`
 4. Optional: `CAL_EVENT_KIND=user|team` disambiguates a two-segment
    `CAL_LINK` like `acme/intro` (user or team?), which the URL cannot tell us.
-   A literal `team/…` prefix in `CAL_LINK` wins regardless.
+   A literal `team/â€¦` prefix in `CAL_LINK` wins regardless.
 
-`CAL_API_KEY` is **server-side only** — never prefix it `NEXT_PUBLIC_`. The page
+`CAL_API_KEY` is **server-side only** â€” never prefix it `NEXT_PUBLIC_`. The page
 never sees it; `/api/cal/slots` and `/api/cal/book` proxy on its behalf.
 
 **Without a key** the page still loads, shows a friendly error, and links out to
@@ -258,14 +258,14 @@ the plain Cal.com booking page. The modal keeps working either way.
 
 | Our code | Cal.com v2 |
 | --- | --- |
-| `GET /api/cal/slots?month=2026-10&tz=…` | `GET /v2/slots` (`cal-api-version: 2024-09-04`) |
+| `GET /api/cal/slots?month=2026-10&tz=â€¦` | `GET /v2/slots` (`cal-api-version: 2024-09-04`) |
 | `POST /api/cal/book` | `POST /v2/bookings` (`cal-api-version: 2024-08-13`) |
 | base URL | `https://api.cal.com` when hosted, `{CAL_ORIGIN}/api` when self-hosted |
 
 `/v2/slots` returns wall-clock `HH:mm` strings keyed by date, in the requested
 timezone. `zonedTimeToUtcISO()` (`src/lib/booking/time.ts`) converts those to
 absolute UTC instants before booking, handling half-hour zones and both DST
-edges — covered by `npm run verify:booking-page`.
+edges â€” covered by `npm run verify:booking-page`.
 
 The two public routes are allow-listed in `src/middleware.ts` (anonymous by
 design) and rate-limited in `src/lib/booking/rate-limit.ts`: 5 bookings and 60
@@ -286,8 +286,8 @@ set `NEXT_PUBLIC_WEBAPP_URL` to your real HTTPS origin, configure
 
 ### 4.2 Create the event type
 
-1. **Event Types → Create** → name it (e.g. "Discovery Call"), set the duration.
-2. Note the slug. The booking link becomes `<slug>` or `username/<slug>` —
+1. **Event Types â†’ Create** â†’ name it (e.g. "Discovery Call"), set the duration.
+2. Note the slug. The booking link becomes `<slug>` or `username/<slug>` â€”
    that whole string is `NEXT_PUBLIC_CAL_LINK`.
 3. Put it on your timezone (`Asia/Karachi`) and set availability.
 
@@ -296,23 +296,23 @@ set `NEXT_PUBLIC_WEBAPP_URL` to your real HTTPS origin, configure
 Self-hosted Cal.com ships without any conferencing provider configured, so
 bookings have no join link by default.
 
-1. **Integrations → Apps → Video** → install **Jitsi Meet**.
+1. **Integrations â†’ Apps â†’ Video** â†’ install **Jitsi Meet**.
 2. It needs no API key; meetings are created at `https://meet.jit.si/<room>`.
 3. Optionally deploy your own Jitsi (Docker, `docker-compose.yml` in the Jitsi
    repo) and set `JITSI_URL` / `NEXT_PUBLIC_WEBAPP_URL` accordingly.
 
 If you skip this, `meeting_url` is `null` and the emails simply omit the
-"Join meeting" button — nothing breaks.
+"Join meeting" button â€” nothing breaks.
 
 ### 4.4 Add a WhatsApp / phone field
 
 This is what populates the `whatsapp` column and the `wa.me` link.
 
-1. **Event Types → your event → Booking Fields → Add**.
+1. **Event Types â†’ your event â†’ Booking Fields â†’ Add**.
 2. **Title:** `WhatsApp` (the webhook parser also matches `phone`, `phone_number`,
    `mobile`, `whatsapp`, `contact`).
 3. **Type:** Phone number.
-4. **Required:** recommended, but optional works — emails then say
+4. **Required:** recommended, but optional works â€” emails then say
    "Not provided".
 
 Company and notes are picked up the same way. The parser matches keys named
@@ -321,7 +321,7 @@ Company and notes are picked up the same way. The parser matches keys named
 
 ### 4.5 Register the webhook
 
-**Settings → Webhooks → Add**, or `Organization Settings → Webhooks`.
+**Settings â†’ Webhooks â†’ Add**, or `Organization Settings â†’ Webhooks`.
 
 | Field | Value |
 |---|---|
@@ -379,7 +379,7 @@ one cron execution per day, so the 15-minute sweep is driven from Actions instea
    `SITE_URL` = your deployed origin (defaults to `http://localhost:3000`)
 4. **Actions -> Booking reminders -> Run workflow** to trigger it once by hand
 
-**Coolify:** add a **Scheduled Task** attached to the app — every 15 minutes,
+**Coolify:** add a **Scheduled Task** attached to the app â€” every 15 minutes,
 command:
 
 ```
@@ -401,7 +401,7 @@ Register-ScheduledTask -TaskName deuvix-reminders -Action $action -Trigger $trig
 Applies to whichever host runs `SMTP_HOST`. Without these the notification emails
 land in spam.
 
-**SPF** — one record, and only one `v=spf1` per domain:
+**SPF** â€” one record, and only one `v=spf1` per domain:
 
 ```
 Type: TXT   Name: @   TTL: 3600
@@ -411,7 +411,7 @@ v=spf1 include:<your-smtp-provider> -all
 If you relay through a mailbox on the same domain, use
 `v=spf1 mx -all`.
 
-**DKIM** — every host publishes a selector:
+**DKIM** â€” every host publishes a selector:
 
 ```
 Type: TXT   Name: <selector>._domainkey   TTL: 3600
@@ -419,19 +419,19 @@ v=DKIM1; k=rsa; p=<public-key>
 ```
 
 `selector` is whatever your mail host calls it (`default`, `google`, `mail`,
-`protonmail`, …). Send one test mail and read the `DKIM-Signature` header if
+`protonmail`, â€¦). Send one test mail and read the `DKIM-Signature` header if
 you are unsure.
 
-**DMARC** — start permissive, then tighten:
+**DMARC** â€” start permissive, then tighten:
 
 ```
 Type: TXT   Name: _dmarc   TTL: 3600
 v=DMARC1; p=none; rua=mailto:dmarc@yourdomain.com
 ```
 
-After a week with clean reports, switch `p=none` → `p=quarantine` → `p=reject`.
+After a week with clean reports, switch `p=none` â†’ `p=quarantine` â†’ `p=reject`.
 
-**MX** — only needed if you send as your own domain. `dig MX yourdomain.com`
+**MX** â€” only needed if you send as your own domain. `dig MX yourdomain.com`
 must point at the host in `SMTP_HOST`.
 
 ---
@@ -454,7 +454,7 @@ git add -A && git commit -m "Book a Call via self-hosted Cal.com"
 git push
 ```
 
-1. **Coolify → New Resource → Application → Dockerfile** (buildpack will not
+1. **Coolify â†’ New Resource â†’ Application â†’ Dockerfile** (buildpack will not
    detect `output: standalone` reliably).
 2. Connect the repo, branch `main`.
 3. Add the environment variables from `.env.example`. Set
@@ -462,7 +462,7 @@ git push
    `NEXT_PUBLIC_WHATSAPP_NUMBER` in the **Build Variables** tab too, otherwise
    they are empty in the bundle.
 4. Generate a **PostgreSQL** resource in the same project and set
-   `DATABASE_URL` to its internal URL. It runs on the internal Coolify network —
+   `DATABASE_URL` to its internal URL. It runs on the internal Coolify network â€”
    no public port needed.
 5. Generate a domain, set `NEXTAUTH_URL=https://yourdomain.com`.
 6. Deploy. Then run migrations once:
@@ -491,7 +491,7 @@ docker compose up -d --build
 docker compose exec web npx tsx scripts/migrate.ts
 ```
 
-Postgres is intentionally **not** published to the host — only `web` is.
+Postgres is intentionally **not** published to the host â€” only `web` is.
 
 ---
 
@@ -511,7 +511,7 @@ npm run dev
    the bottom-right WhatsApp button is visible (if
    `NEXT_PUBLIC_WHATSAPP_NUMBER` is set).
 2. Click **Book a Call**. The Cal.com modal should open in **dark** mode.
-3. Toggle the site theme to light, close, reopen — the modal follows.
+3. Toggle the site theme to light, close, reopen â€” the modal follows.
 4. Pick a slot, fill Name / Email / WhatsApp / Company, confirm.
 
 **Expect within seconds**
@@ -525,7 +525,7 @@ psql "$DATABASE_URL" -c "select cal_uid,status,name,email,whatsapp,company,start
 - `NOTIFY_EMAIL` got the status-badge email with a clickable `wa.me` link.
 - The client got the brief confirmation with **Join meeting** and
   **Chat on WhatsApp**.
-- Cal.com itself also sent its own invite — that duplication is expected.
+- Cal.com itself also sent its own invite â€” that duplication is expected.
 
 **Then test reschedule + cancel**
 
@@ -533,7 +533,7 @@ psql "$DATABASE_URL" -c "select cal_uid,status,name,email,whatsapp,company,start
    `BOOKING_RESCHEDULED`; the row **count stays 1**, `status` flips to
    `rescheduled`, `start_time` changes and `reminder_sent` resets to `false`.
 6. Cancel it. `status` becomes `cancelled`.
-7. Open `http://localhost:3000/admin/bookings` — the booking appears under
+7. Open `http://localhost:3000/admin/bookings` â€” the booking appears under
    `cancelled`, and **Export CSV** downloads.
 
 **Reminder without waiting 24h**
@@ -547,7 +547,7 @@ curl -i -H "Authorization: Bearer $CRON_SECRET" \
 # {"ok":true,"windowHours":25,"due":1,"sent":1,...}
 ```
 
-Run it again — `sent` must be `0` the second time.
+Run it again â€” `sent` must be `0` the second time.
 
 **Negative tests**
 
@@ -574,10 +574,10 @@ curl -i http://localhost:3000/admin/bookings
 | Webhook `500` | `DATABASE_URL` wrong, or migrations not run |
 | Reminder endpoint `401` | `CRON_SECRET` header missing or wrong |
 | `/admin/bookings` `503` | `ADMIN_USER` / `ADMIN_PASSWORD` not set |
-| Owner email missing | `NOTIFY_EMAIL` unset, or SMTP auth failed — check logs for `[email] all transports failed` |
+| Owner email missing | `NOTIFY_EMAIL` unset, or SMTP auth failed â€” check logs for `[email] all transports failed` |
 | WhatsApp button missing | `NEXT_PUBLIC_WHATSAPP_NUMBER` empty or not digits |
 | Reminders never fire | Cron not installed; check `reminder_sent` and `status = 'confirmed'` |
-| Contact form "sends" but no email arrives | `email_provider = 'none'` in `contacts` means the deployed env has no `SMTP_HOST`/`SMTP_USER`/`SMTP_PASS`. Local `.env.local` is not the deployed env — check the host (Vercel/Coolify/Docker). |
+| Contact form "sends" but no email arrives | `email_provider = 'none'` in `contacts` means the deployed env has no `SMTP_HOST`/`SMTP_USER`/`SMTP_PASS`. Local `.env.local` is not the deployed env â€” check the host (Vercel/Coolify/Docker). |
 | Contact form returns `502` | Expected, not a bug: the row is stored but the team notification failed. The user is told the message was saved. Check `[email] all transports failed` in the server logs. |
 | Contact form returns `429` | Rate limit: 5 submissions per IP per hour (`CONTACT_LIMIT` / `CONTACT_WINDOW_MS` in `src/lib/booking/rate-limit.ts`). |
 | Customer greeting missing, `confirmation_sent = false` | Secondary email only. `[contacts] confirmation email failed` in the logs; the submission itself is unaffected. |

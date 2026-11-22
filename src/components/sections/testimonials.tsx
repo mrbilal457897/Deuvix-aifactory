@@ -12,7 +12,7 @@ if (typeof window !== "undefined") {
 
 const testimonials = [
   {
-    name: "Sarah Chen",
+    name: "Noman",
     role: "CTO, TechFlow Inc",
     content:
       "Deuvix AI Factory's Digital FTEs took over our ops workflows, and our people now handle approvals instead of triage.",
@@ -66,7 +66,7 @@ export function TestimonialsSection() {
     <section ref={sectionRef} className="py-24 sm:py-32">
       <div className="mx-auto max-w-7xl px-6 sm:px-6 lg:px-8">
         <div className="text-center mb-16">
-          <p className="text-sm font-semibold text-primary uppercase tracking-wider mb-3">
+          <p className="font-mono text-sm uppercase tracking-[0.28em] text-secondary mb-4">
             Testimonials
           </p>
           <h2 className="font-heading h2-lg mb-4">

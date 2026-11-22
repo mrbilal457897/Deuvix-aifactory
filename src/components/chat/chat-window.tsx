@@ -106,7 +106,7 @@ export function ChatWindow({ api, windowRef, inputRef, onClose }: Props) {
         {api.messages.map((message) => (
           <MessageBubble key={message.id} message={message} />
         ))}
-        {api.sending && !api.messages.some((m) => m.pending) && <TypingIndicator />}
+        {api.sending && api.messages.some((m) => m.pending && !m.content) && <TypingIndicator />}
 
         {showLead && <LeadCard className="mt-2" />}
 
@@ -176,7 +176,7 @@ export function LauncherGreeting({ onDismiss, className }: { onDismiss: () => vo
   return (
     <div
       className={cn(
-        "fixed bottom-24 right-6 z-40 max-w-[240px] rounded-xl border border-border bg-card px-3 py-2.5 shadow-lg",
+        "fixed bottom-24 right-6 z-40 w-[180px] max-w-[calc(100vw-3rem)] rounded-xl border border-border bg-card px-3 py-2.5 shadow-lg",
         className,
       )}
     >
