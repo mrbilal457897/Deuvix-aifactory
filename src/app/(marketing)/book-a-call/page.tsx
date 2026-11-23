@@ -8,9 +8,9 @@ import { pageMetadata } from "@/lib/seo";
 export const revalidate = 3600;
 
 export const metadata: Metadata = pageMetadata({
-  title: "Book a Call",
+  title: { absolute: "Book a Free AI Call" },
   description:
-    "Pick a time that suits you, in your own time zone, and we will confirm by email and WhatsApp. No calls software hidden behind a sign-up wall.",
+    "Book a free call to see how a Digital FTE or AI agent can fit your business.",
   path: "/book-a-call",
 });
 

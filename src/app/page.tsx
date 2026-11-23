@@ -5,6 +5,7 @@ import { countPublishedProjects, listPublishedProjectsWithHealth } from "@/lib/p
 import { HOME_LIMIT } from "@/lib/live-work/types";
 import { readSiteConfig } from "@/lib/site-config-server";
 import { SiteConfigProvider } from "@/components/site-config-context";
+import { FaqSection } from "@/components/sections/faq-section";
 
 export const revalidate = 3600;
 
@@ -60,6 +61,7 @@ export default async function HomePage() {
       <TestimonialsBento />
       <FoundersSection />
       <CTASection />
+      <FaqSection />
     </SiteConfigProvider>
   );
 }

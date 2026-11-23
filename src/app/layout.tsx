@@ -60,7 +60,7 @@ export const viewport: Viewport = {
 export const metadata: Metadata = {
   metadataBase: new URL(SITE_URL),
   title: {
-    default: `${SITE_NAME} | Digital FTEs & AI Agents`,
+    default: `${SITE_NAME} | FDE, Digital FTEs & AI Agents`,
     template: `%s | ${SITE_NAME}`,
   },
   description: SITE_DESCRIPTION,
@@ -69,15 +69,18 @@ export const metadata: Metadata = {
   },
   icons: {
     icon: [
-      { url: "/icon.svg", type: "image/svg+xml" },
-      { url: "/apple-icon.png", sizes: "180x180", type: "image/png" },
+      { url: "/images/favicon-16.png?v=2", sizes: "16x16", type: "image/png" },
+      { url: "/images/favicon-32.png?v=2", sizes: "32x32", type: "image/png" },
+      { url: "/images/favicon-48.png?v=2", sizes: "48x48", type: "image/png" },
+      { url: "/images/favicon-96.png?v=2", sizes: "96x96", type: "image/png" },
+      { url: "/images/tab.png?v=2", sizes: "any", type: "image/png" },
     ],
-    apple: [{ url: "/apple-icon.png", sizes: "180x180", type: "image/png" }],
+    apple: [{ url: "/images/icon.png", type: "image/png" }],
   },
   openGraph: {
     type: "website",
     siteName: SITE_NAME,
-    title: `${SITE_NAME} | Digital FTEs & AI Agents`,
+    title: `${SITE_NAME} | FDE, Digital FTEs & AI Agents`,
     description: SITE_DESCRIPTION,
     url: "/",
     images: [
@@ -92,7 +95,7 @@ export const metadata: Metadata = {
   },
   twitter: {
     card: "summary_large_image",
-    title: `${SITE_NAME} | Digital FTEs & AI Agents`,
+    title: `${SITE_NAME} | FDE, Digital FTEs & AI Agents`,
     description: SITE_DESCRIPTION,
     images: [OG_IMAGE_ABSOLUTE],
   },
@@ -121,13 +124,8 @@ export default async function RootLayout({
       suppressHydrationWarning
     >
       <head>
-        {/* Black logo needs an inverted variant where the browser UI is dark */}
-        <link
-          rel="icon"
-          href="/favicon-dark.ico"
-          sizes="any"
-          media="(prefers-color-scheme: dark)"
-        />
+        {/* Site icon used by browsers and Google search results */}
+        <link rel="icon" href="/images/tab.png?v=2" sizes="any" type="image/png" />
         {/* Preconnect to Supabase storage for hero/project images */}
         <link rel="preconnect" href="https://sirxcjnszsumwnjhizrz.supabase.co" crossOrigin="anonymous" />
         {/* Preload critical body font (Roboto 400) */}

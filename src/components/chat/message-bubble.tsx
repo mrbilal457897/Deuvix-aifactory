@@ -55,7 +55,7 @@ export function MessageBubble({ message, onRetry, onFeedback }: Props) {
       data-role={message.role}
     >
       {!isUser && (
-        <ChatLogo className="size-7 shrink-0 self-start rounded-md" />
+        <ChatLogo className="size-9 shrink-0 self-start rounded-lg" />
       )}
 
       <div className={cn("min-w-0 max-w-[85%]", isUser && "max-w-[75%]")}>
@@ -137,7 +137,7 @@ export function MessageBubble({ message, onRetry, onFeedback }: Props) {
 export function TypingIndicator() {
   return (
     <div className="flex gap-2.5" aria-label={uiStrings.typing} role="status">
-      <ChatLogo className="size-7 shrink-0 self-start rounded-md" />
+      <ChatLogo className="size-9 shrink-0 self-start rounded-lg" />
       <div className="rounded-2xl rounded-bl-md bg-muted px-4 py-3.5">
         <span className="flex items-center gap-1">
           {[0, 150, 300].map((delay) => (

@@ -129,7 +129,7 @@ function organizationNode(): SchemaNode {
     name: "Deuvix AI Factory",
     alternateName: "Deuvix",
     url: ORIGIN,
-    logo: absolute("/images/logo-light.png"),
+    logo: absolute("/images/icon.png"),
     image: absolute("/images/hero-bg.jpg"),
     description:
       "Deuvix AI Factory builds and operates Digital FTEs: AI workers your team supervises, not tools that watch it. From AI chatbots and voice agents to Loop Engineering and FDE consulting.",
@@ -163,7 +163,8 @@ function websiteNode(): SchemaNode {
     "@type": "WebSite",
     "@id": WEBSITE_ID,
     url: ORIGIN,
-    name: "Deuvix AI Factory",
+    name: "Deuvix",
+    alternateName: "Deuvix AI Factory",
     inLanguage: "en",
     publisher: ref(ORG_ID),
   };

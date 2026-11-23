@@ -14,10 +14,10 @@ export const SITE_URL = (
   "https://deuvix-ai.com"
 ).replace(/\/+$/, "");
 
-export const SITE_NAME = "Deuvix-AI";
+export const SITE_NAME = "Deuvix";
 
 export const SITE_DESCRIPTION =
-  "Deuvix-AI: Forward Deployed AI Engineer, FTE & AI Automation";
+  "Deuvix is an AI software company working with worldwide. We builds AI solutions, FDE, FTE, business automation and modern software to help businesses work smarter and grow faster.";
 
 export const OG_IMAGE = "/images/hero-bg.jpg";
 export const OG_IMAGE_ABSOLUTE = `${SITE_URL}${OG_IMAGE}`;
@@ -33,7 +33,7 @@ export function fullTitle(title: string): string {
 }
 
 export interface PageMetaInput {
-  title: string;
+  title: string | { absolute: string };
   description: string;
   /** Path including leading slash, e.g. `/about`. Used for canonical + og:url. */
   path: string;
@@ -49,7 +49,7 @@ export interface PageMetaInput {
 export function pageMetadata({ title, description, path, keywords, image }: PageMetaInput): Metadata {
   const url = `${SITE_URL}${path}`;
   const img = image || OG_IMAGE_ABSOLUTE;
-  const socialTitle = fullTitle(title);
+  const socialTitle = typeof title === "string" ? fullTitle(title) : title.absolute;
   return {
     title,
     description,

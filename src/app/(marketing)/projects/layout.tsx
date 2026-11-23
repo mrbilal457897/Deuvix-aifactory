@@ -1,9 +1,8 @@
 import { pageMetadata } from "@/lib/seo";
 
 export const metadata = pageMetadata({
-  title: "Work & Case Studies",
-  description:
-    "See how Deuvix AI Factory manufactures and deploys Digital FTEs and AI solutions for real businesses — from intelligent automation to production-ready AI systems.",
+  title: { absolute: "AI Projects & Case Studies" },
+  description: "Explore Deuvix's live AI projects, from CRM and e-commerce to AI textbooks and eBooks.",
   path: "/projects",
 });
 
