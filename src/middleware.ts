@@ -3,7 +3,7 @@ import type { NextRequest } from "next/server";
 import { getToken } from "next-auth/jwt";
 import { isAdminEmail } from "@/lib/admin-emails";
 import { wantsMarkdown } from "@/lib/markdown/accept";
-import { markdownSourcePath } from "@/lib/markdown/paths";
+import { markdownAlternate, markdownSourcePath } from "@/lib/markdown/paths";
 
 const DASHBOARD_PREFIX = process.env.DASHBOARD_PREFIX || "/deuvix";
 
@@ -231,9 +231,14 @@ export async function middleware(request: NextRequest) {
     }
   }
 
-  // Keep HTML and Markdown responses cacheable separately on CDNs.
+  // Keep HTML and Markdown responses cacheable separately on CDNs, and tell
+  // agents where the cheap Markdown representation lives.
   const response = NextResponse.next();
   response.headers.append("Vary", "Accept");
+  const alternate = markdownAlternate(pathname);
+  if (alternate) {
+    response.headers.set("Link", `<${alternate}>; rel="alternate"; type="text/markdown"`);
+  }
   return response;
 }
 

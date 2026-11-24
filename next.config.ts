@@ -51,9 +51,11 @@ const nextConfig: NextConfig = {
         headers: [{ key: "Cache-Control", value: "public, max-age=31536000, immutable" }],
       },
       {
-        // Preserve the AI-training signal that used to live in public/robots.txt.
+        // Match the directive declared inside public/robots.txt.
         source: "/robots.txt",
-        headers: [{ key: "Content-Signal", value: "search=yes, ai-train=no" }],
+        headers: [
+          { key: "Content-Signal", value: "search=yes, ai-input=yes, ai-train=no" },
+        ],
       },
       {
         // Admin dashboard + auth callbacks: never cached anywhere.
@@ -111,9 +113,9 @@ const nextConfig: NextConfig = {
     ];
   },
   experimental: {
-    // Inline critical CSS so the first paint is not blocked by 5 separate
-    // stylesheet requests (Lighthouse: ~680 ms render-blocking).
-    inlineCss: true,
+    // CSS is emitted as an external stylesheet instead of being duplicated in
+    // every HTML response (both a <style> block and the RSC payload). This keeps
+    // agent-readable HTML small; the browser caches the stylesheet across pages.
     // lucide-react is imported in dozens of components; this tree-shakes
     // per-component (icon-level) so only used icons end up in the bundle.
     optimizePackageImports: ["lucide-react", "gsap"],

@@ -1,0 +1,11 @@
+User-agent: *
+Content-Signal: search=yes, ai-input=yes, ai-train=no
+Allow: /
+Disallow: /admin
+Disallow: /api/
+Disallow: /dashboard
+Disallow: /deuvix
+Disallow: /login
+Disallow: /newsletter/
+
+Sitemap: https://deuvix-ai.com/sitemap.xml

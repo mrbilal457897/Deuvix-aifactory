@@ -33,3 +33,10 @@ export function markdownSourcePath(pathname: string): string | null {
   );
   return known ? path : null;
 }
+
+/** The .md URL advertised as an alternate representation of a page. */
+export function markdownAlternate(pathname: string): string | null {
+  const source = markdownSourcePath(pathname);
+  if (!source) return null;
+  return source === "/" ? "/index.md" : `${source}.md`;
+}
