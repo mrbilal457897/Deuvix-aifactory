@@ -1,29 +1,42 @@
 # Deuvix AI Factory
 
-> Deuvix AI Factory builds and operates Digital FTEs — AI workers your team supervises, not tools that watch it. From AI chatbots and voice agents to Loop Engineering and FDE consulting.
+> Deuvix AI Factory is a Pakistan-based team that designs, builds and deploys AI workers (Digital FTEs), chatbots, voice agents and custom AI agents for businesses, with human oversight on important decisions.
 
-## Key pages
+We use spec-driven development and agentic AI systems (Python, TypeScript, OpenAI and Anthropic Agent SDKs) to automate real business workflows. Our approach is the 10-80-10 pattern: humans set direction, AI executes the middle of the work, humans review the outcome.
 
-- Homepage: https://deuvix-ai.com/
-- Services: https://deuvix-ai.com/products
-- Work: https://deuvix-ai.com/projects
-- About: https://deuvix-ai.com/about
-- Contact: https://deuvix-ai.com/contact
-- Blog: https://deuvix-ai.com/blog
-- Sitemap: https://deuvix-ai.com/sitemap.xml
+## Services
+
+- [Services overview](https://deuvix-ai.com/products): All services offered, including Digital FTEs, AI Chatbots, Voice Agents, Custom Agents, Loop Engineering and FDE Consulting
 
 ## Pricing
 
 - AI Chatbots: From $500 (USD)
 - All other services: Custom quote
 
-## Markdown
+## Work
 
-Every content page is also available as plain Markdown — send `Accept: text/markdown`, or use these URLs:
+- [Projects](https://deuvix-ai.com/projects): Portfolio and demo projects with live sites and case studies
+- [Restoran](https://deuvix-ai.com/projects/restoran): Restaurant website with digital menu and table reservations
+- [B-Treasure](https://deuvix-ai.com/projects/b-treasure): E-commerce platform
+- [AI Textbook](https://deuvix-ai.com/projects/ai-textbook): Interactive robotics curriculum with an AI agent
+- [Tomewick AI EBook](https://deuvix-ai.com/projects/tomewick-ai-ebook): AI-powered eBook publishing platform
+- [Northwind CRM](https://deuvix-ai.com/projects/northwind-crm): Customer relationship management system
 
-- Homepage: https://deuvix-ai.com/index.md
-- Services: https://deuvix-ai.com/products.md
-- Work: https://deuvix-ai.com/projects.md
-- About: https://deuvix-ai.com/about.md
-- Contact: https://deuvix-ai.com/contact.md
-- Blog: https://deuvix-ai.com/blog.md
+## Company
+
+- [About](https://deuvix-ai.com/about): Founders and company background
+- [Blog](https://deuvix-ai.com/blog): Articles on building AI-native companies
+- [Loop Engineering Guide](https://deuvix-ai.com/blog/loop-engineering): Guide to loop engineering
+- [Documentation](https://deuvix-ai.com/docs): Product and process documentation
+
+## Contact
+
+- [Book a Call](https://deuvix-ai.com/book-a-call): Schedule a consultation
+- [Contact](https://deuvix-ai.com/contact): General inquiries
+- Email: contact@deuvix-ai.com
+
+## Optional
+
+- [Changelog](https://deuvix-ai.com/changelog): Product updates
+- [Privacy Policy](https://deuvix-ai.com/privacy)
+- [Terms of Service](https://deuvix-ai.com/terms)
