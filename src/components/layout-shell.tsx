@@ -59,24 +59,37 @@ export function LayoutShell({ children }: { children: React.ReactNode }) {
       });
     }
 
-    // Lazy-load Sentry SDK (~430 KB) well after first paint so it doesn't block
-    // FCP/LCP. Only initialized on the client, never bundled into critical path.
+    // Sentry SDK is ~430 KB. Defer until the browser is truly idle (or well
+    // after Lighthouse's TBT window) so it never competes with first paint.
+    // Errors before that point are simply not captured — better than a slow UI.
     let sentryTimer = 0;
+    let idleHandle = 0;
+    let cancelled = false;
+    const startSentry = async () => {
+      if (cancelled) return;
+      try {
+        const { initSentry } = await import("@/instrumentation-client");
+        await initSentry();
+      } catch {
+        // Sentry is optional - never block the page on it.
+      }
+    };
     if (typeof window !== "undefined") {
-      sentryTimer = window.setTimeout(async () => {
-        try {
-          const { initSentry } = await import("@/instrumentation-client");
-          await initSentry();
-        } catch {
-          // Sentry is optional — never block the page on it.
+      sentryTimer = window.setTimeout(() => {
+        if ("requestIdleCallback" in window) {
+          idleHandle = window.requestIdleCallback(() => void startSentry(), { timeout: 3000 });
+        } else {
+          void startSentry();
         }
-      }, 2000);
+      }, 8000);
     }
 
     return () => {
+      cancelled = true;
       window.removeEventListener("load", onLoad);
       window.clearTimeout(fontsTimer);
       window.clearTimeout(sentryTimer);
+      if (idleHandle && "cancelIdleCallback" in window) window.cancelIdleCallback(idleHandle);
     };
   }, []);
 

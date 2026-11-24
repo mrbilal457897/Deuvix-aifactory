@@ -1,17 +1,16 @@
-import dynamic from "next/dynamic";
+﻿import dynamic from "next/dynamic";
 import { HeroSection } from "@/components/sections/HeroSection";
 import { FeaturesSection } from "@/components/sections/FeaturesSection";
 import { countPublishedProjects, listPublishedProjectsWithHealth } from "@/lib/projects";
 import { HOME_LIMIT } from "@/lib/live-work/types";
 import { readSiteConfig } from "@/lib/site-config-server";
 import { SiteConfigProvider } from "@/components/site-config-context";
-import { FaqSection } from "@/components/sections/faq-section";
 
 export const revalidate = 3600;
 
 /**
- * Below-the-fold sections are code-split so their JS doesn't block first paint.
- * HTML is still server-rendered (ssr: true) - no CLS, no SEO loss.
+ * Below-the-fold sections are client-only: they are not needed for first paint
+ * and must not take part in initial React hydration (largest TBT contributor).
  */
 const LiveWork = dynamic(
   () => import("@/components/sections/live-work").then((m) => ({ default: m.LiveWork })),
@@ -61,7 +60,7 @@ export default async function HomePage() {
       <TestimonialsBento />
       <FoundersSection />
       <CTASection />
-      <FaqSection />
     </SiteConfigProvider>
   );
 }
+

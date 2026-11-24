@@ -55,7 +55,10 @@
   "browserslist": [
     "last 2 versions",
     "not dead",
-    "iOS >= 15",
+    "> 0.5%",
+    "Chrome >= 100",
+    "Safari >= 15.4",
+    "iOS >= 15.4",
     "Android >= 130"
   ],
   "devDependencies": {

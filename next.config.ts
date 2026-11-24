@@ -46,6 +46,11 @@ const nextConfig: NextConfig = {
         ],
       },
       {
+        // Self-hosted font files are content-stable; cache forever.
+        source: "/fonts/:path*",
+        headers: [{ key: "Cache-Control", value: "public, max-age=31536000, immutable" }],
+      },
+      {
         // Preserve the AI-training signal that used to live in public/robots.txt.
         source: "/robots.txt",
         headers: [{ key: "Content-Signal", value: "search=yes, ai-train=no" }],
@@ -106,12 +111,18 @@ const nextConfig: NextConfig = {
     ];
   },
   experimental: {
+    // Inline critical CSS so the first paint is not blocked by 5 separate
+    // stylesheet requests (Lighthouse: ~680 ms render-blocking).
+    inlineCss: true,
     // lucide-react is imported in dozens of components; this tree-shakes
     // per-component (icon-level) so only used icons end up in the bundle.
     optimizePackageImports: ["lucide-react", "gsap"],
   },
   images: {
-    formats: ["image/webp"],
+    formats: ["image/avif", "image/webp"],
+    // Single allowed quality = 70. Next.js uses the first entry as the default,
+    // so every <Image> without an explicit quality is compressed consistently.
+    qualities: [70],
     // Optimized remote responses are held for 30 days — filenames in our
     // Supabase bucket are immutable content hashes/timestamps.
     minimumCacheTTL: 30 * 24 * 60 * 60,

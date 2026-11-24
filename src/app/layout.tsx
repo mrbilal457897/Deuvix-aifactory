@@ -126,10 +126,8 @@ export default async function RootLayout({
       <head>
         {/* Site icon used by browsers and Google search results */}
         <link rel="icon" href="/images/tab.png?v=2" sizes="any" type="image/png" />
-        {/* Preconnect to Supabase storage for hero/project images */}
-        <link rel="preconnect" href="https://sirxcjnszsumwnjhizrz.supabase.co" crossOrigin="anonymous" />
-        {/* Preload critical body font (Roboto 400) */}
-        <link rel="preload" href="/fonts/roboto-400.woff2" as="font" type="font/woff2" crossOrigin="anonymous" />
+        {/* Fonts are self-hosted through next/font; no duplicate preload needed.
+            Supabase images go through /_next/image, so no direct preconnect. */}
         {/* Apply theme before first paint to prevent FOUC */}
         <Script strategy="beforeInteractive">
           {`(function(){try{var s=document.documentElement;var t=localStorage.getItem("theme");if(t==="light"){s.classList.remove("dark")}else if(t==="dark"){s.classList.add("dark")}else{s.classList.remove("dark")}}catch(e){}})();`}
