@@ -331,8 +331,15 @@ export default function ProductsPage() {
             items={[{ label: "Home", href: "/" }, { label: "Services" }]}
             className="mb-4 sm:mb-6"
           />
-          <h1 className="font-heading h2-lg mb-4">
-            <CharReveal>AI-Native <span className="text-gradient">Solutions</span></CharReveal>
+          <h1
+            className="mb-4 font-heading font-medium tracking-[-0.022em] text-foreground"
+            style={{ fontSize: "clamp(2.6rem, 6vw, 5rem)", lineHeight: 0.98, maxWidth: "none" }}
+          >
+            <CharReveal>
+              Intelligence That Works.
+              <br />
+              <span className="text-gradient">Solutions That Scale</span>
+            </CharReveal>
           </h1>
           <p className="max-w-2xl text-muted-foreground text-base">
             From Digital FTEs to full business transformation — we build the AI workforce your company needs.

@@ -128,7 +128,7 @@
 .heroHeadline {
   font-family: var(--font-raleway), ui-sans-serif, system-ui, sans-serif;
   font-weight: 500;
-  font-size: clamp(2.75rem, 8.4vw, 6.4rem);
+  font-size: clamp(2.6rem, 6vw, 5rem);
   line-height: 0.98;
   letter-spacing: -0.022em;
   color: var(--foreground);

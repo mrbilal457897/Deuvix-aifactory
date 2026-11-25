@@ -224,7 +224,12 @@ export function FeaturesSection() {
       onTouchStart={() => setPaused(true)}
     >
       <div className="features-inner">
-        <h2 className="features-heading">Everything you need to build AI-native</h2>
+        <h2
+          className="font-heading font-medium tracking-[-0.022em] text-foreground"
+          style={{ fontSize: "clamp(2.6rem, 6vw, 5rem)", lineHeight: 0.98, maxWidth: "none" }}
+        >
+          Everything you need to build AI-native
+        </h2>
         <p className="features-sentence">{sentenceNodes}</p>
 
         <div className="features-panel" aria-live="polite">

@@ -66,8 +66,11 @@ export default function BlogPage() {
           items={[{ label: "Home", href: "/" }, { label: "Blog" }]}
           className="mb-4 sm:mb-6"
         />
-        <h1 className="font-heading h2-lg mb-4">
-          <CharReveal>Insights & <span className="text-gradient">AI-Native</span></CharReveal>
+        <h1
+          className="mb-4 font-heading font-medium tracking-[-0.022em] text-foreground"
+          style={{ fontSize: "clamp(2.6rem, 6vw, 5rem)", lineHeight: 0.98, maxWidth: "none" }}
+        >
+          <CharReveal>The Intelligence Brief.</CharReveal>
         </h1>
         <p className="max-w-2xl text-muted-foreground text-base">
           Deep dives into building AI-Native companies, Digital FTEs, and the future of intelligent work.

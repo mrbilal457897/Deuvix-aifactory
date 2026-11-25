@@ -81,12 +81,10 @@ export function ProjectsIntro() {
           </p>
           <h1
             id="projects-intro-title"
-            className="mt-5 font-heading font-bold tracking-[-0.03em] text-foreground"
-            style={{ fontSize: "clamp(2.6rem, 6vw, 4.75rem)", lineHeight: 1.02 }}
+            className="mt-5 font-heading font-medium tracking-[-0.022em] text-foreground"
+            style={{ fontSize: "clamp(2.6rem, 6vw, 5rem)", lineHeight: 0.98 }}
           >
-            Built to run.
-            <br />
-            Proven in production.
+            Built to run. Proven in production.
           </h1>
           <p className="mt-6 max-w-[46ch] text-base leading-relaxed text-muted-foreground sm:text-lg">
             Every project below is a live system: AI workers, platforms and agents our clients use
