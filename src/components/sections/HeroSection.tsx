@@ -118,8 +118,7 @@ export function HeroSection() {
           {/* left: description + CTAs */}
           <div className={styles.leftCol}>
             <p className={`${styles.sub} js-sub`}>
-              We build Digital FTEs — AI workers that carry real workloads with your team,
-              under the human oversight your process deserves.
+              Forward Deployed Engineers embed with your team and ship Digital FTEs — AI workers with human oversight built in.
             </p>
 
             <div className={`${styles.ctaRow} js-cta`}>
@@ -176,7 +175,7 @@ export function HeroSection() {
                 id="hero-panel-roadmap"
                 aria-labelledby="hero-tab-roadmap"
                 aria-hidden={activeTab !== "roadmap"}
-                className={activeTab === "roadmap" ? "" : styles.viewHidden}
+                className={activeTab === "roadmap" ? styles.roadmapPanel : styles.viewHidden}
               >
                 <FdeRoadmap active={activeTab === "roadmap"} />
               </div>

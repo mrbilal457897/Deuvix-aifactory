@@ -1,587 +1,461 @@
 "use client";
 
-/**
- * FDE loop — an interactive 3D-looking orbit shown in the hero's right panel.
- * Canvas is 2D only; every animated value lives in refs so React re-renders
- * only when the visible phase / badge / counter actually changes.
- */
+import { useEffect, useRef } from "react";
+import styles from "./fde-roadmap.module.css";
 
-import { useCallback, useEffect, useRef, useState } from "react";
-import Link from "next/link";
-import { ArrowUpRight } from "lucide-react";
-import { buttonVariants } from "@/components/ui/button";
-import { cn } from "@/lib/utils";
-import styles from "./hero.module.css";
-
-/** Editable copy — kept as one array so the text is easy to change. */
-export type FdePhase = {
-  node: string;
-  title: string;
-  tagline: string;
-  description: string;
-  cta: string;
-};
-
-export const FDE_PHASES: FdePhase[] = [
+/** Editable stage captions — the bench artwork mirrors these six stages. */
+const STAGES = [
   {
-    node: "Specify",
-    title: "Set Direction",
-    tagline: "Specs live in someone's head.",
-    description:
-      "We extract the domain knowledge from your workflows, interviews and tickets, then turn it into an executable spec for AI workers.",
-    cta: "Signed-off blueprint",
+    title: "Spec-driven development",
+    subtitle: "Write what done looks like in words both humans and AI can read.",
   },
   {
-    node: "Build",
-    title: "Build Workers",
-    tagline: "Agents improvise and drift.",
-    description:
-      "Digital FTEs built strictly from the signed spec — spec-driven, human-gated, tuned to your stack and tools.",
-    cta: "Working FDE",
+    title: "Co-learning",
+    subtitle: "Your team and our engineer shape the same spec together.",
   },
   {
-    node: "Verify",
-    title: "Verify & Govern",
-    tagline: "Nobody trusts the agent.",
-    description:
-      "Loop engineering: policy gates, audit logs, rollback and continuous eval — humans in the loop for every exception.",
-    cta: "Verification report",
+    title: "Production-ready architecture",
+    subtitle: "The sentence becomes a system with a check before every action.",
   },
   {
-    node: "Deploy",
-    title: "Deploy & Scale",
-    tagline: "Demo works, production doesn't.",
-    description:
-      "24/7 production runs with observability, SLAs and a monetization model — subscriptions, success fees or licenses.",
-    cta: "Production FDE",
+    title: "Python and TypeScript",
+    subtitle: "Plain code your own engineers can read and change.",
   },
-];
+  {
+    title: "Agentic AI systems",
+    subtitle: "One agent builds, another checks, a person decides the risky calls.",
+  },
+  {
+    title: "Digital FTE deployment",
+    subtitle: "The worker goes live and carries the workload around the clock.",
+  },
+] as const;
 
-const PHASE_MS = 6500;
-const PACKET_SPEED = (34 * Math.PI) / 180; // radians per second
-const BASE_ANGLES = [-Math.PI / 2, 0, Math.PI / 2, Math.PI];
-const FRONT_ANGLE = Math.PI / 2; // active node sits at the front-bottom of the ring
+const SLIDE_MS = 800;
+const INTERVAL_MS = 4000;
 
-const TAU = Math.PI * 2;
-const mod = (a: number) => ((a % TAU) + TAU) % TAU;
-const shortest = (a: number) => Math.atan2(Math.sin(a), Math.cos(a));
-const lerp = (a: number, b: number, t: number) => a + (b - a) * t;
-
-/** Did a packet angle pass `target` between two frames (handles wrap-around)? */
-function crossed(prev: number, next: number, target: number): boolean {
-  const from = mod(prev);
-  const to = mod(next);
-  const t = mod(target);
-  if (to >= from) return t > from && t <= to;
-  return t > from || t <= to;
+function ease(x: number): number {
+  return x < 0.5 ? 4 * x * x * x : 1 - Math.pow(-2 * x + 2, 3) / 2;
 }
 
-type TokenColors = {
-  fontFamily: string;
-  labelWeight: string;
-  accent: string;
-  navy: string;
-  text: string;
-  muted: string;
-  warm: string;
+type Api = {
+  drawValue: (p: number) => void;
+  animateTo: (target: number, ms: number) => void;
+  pause: () => void;
+  resume: () => void;
+  getPos: () => number;
+  setHover: (value: boolean) => void;
+  setFocus: (value: boolean) => void;
+  setActive: (value: boolean) => void;
 };
-
-function readTokens(root: HTMLElement, label: HTMLElement | null): TokenColors {
-  const cs = getComputedStyle(root);
-  const labelCs = label ? getComputedStyle(label) : null;
-  return {
-    fontFamily: cs.fontFamily,
-    labelWeight: labelCs?.fontWeight ?? "400",
-    // The card is intentionally dark in both themes: these are the existing
-    // panel values, read from the site tokens where a token exists.
-    accent: getComputedStyle(document.documentElement).getPropertyValue("--secondary").trim() || "#4299e1",
-    navy: "#0C1016",
-    text: "#F2F4F7",
-    muted: "#C9CED6",
-    warm: "#FFB3B3",
-  };
-}
 
 export function FdeRoadmap({ active = true }: { active?: boolean }) {
-  const [phase, setPhaseState] = useState(0);
-  const [loops, setLoops] = useState(0);
-
-  const panelRef = useRef<HTMLDivElement | null>(null);
-  const canvasRef = useRef<HTMLCanvasElement | null>(null);
-  const labelRef = useRef<HTMLSpanElement | null>(null);
-  const barRefs = useRef<Array<HTMLSpanElement | null>>([]);
-
-  const phaseRef = useRef(0);
-  const activeRef = useRef(active);
-  const pausedRef = useRef(false);
-  const visibleRef = useRef(true);
-  const nodesRef = useRef<Array<{ x: number; y: number }>>([]);
-  const hoverNodeRef = useRef<number | null>(null);
-  const parallaxRef = useRef({ x: 0, y: 0 });
-
-  const setPhase = useCallback((next: number) => {
-    phaseRef.current = ((next % FDE_PHASES.length) + FDE_PHASES.length) % FDE_PHASES.length;
-    setPhaseState(phaseRef.current);
-  }, []);
+  const rootRef = useRef<HTMLElement | null>(null);
+  const layerRefs = useRef<Array<HTMLDivElement | null>>([]);
+  const numRef = useRef<HTMLElement | null>(null);
+  const titleRef = useRef<HTMLSpanElement | null>(null);
+  const subRef = useRef<HTMLParagraphElement | null>(null);
+  const rangeRef = useRef<HTMLInputElement | null>(null);
+  const tickRefs = useRef<Array<HTMLButtonElement | null>>([]);
+  const apiRef = useRef<Api | null>(null);
 
   useEffect(() => {
-    activeRef.current = active;
-  }, [active]);
+    const mq = window.matchMedia("(prefers-reduced-motion: reduce)");
+    const reduce = { value: mq.matches };
+    const state = {
+      hover: false,
+      focus: false,
+      hidden: document.hidden,
+      offscreen: false,
+      active: true,
+    };
+    let pos = 0;
+    let lastK = -1;
+    let raf: number | null = null;
+    let timer: number | null = null;
 
-  /* ---- canvas scene ----------------------------------------------------- */
-  useEffect(() => {
-    const canvas = canvasRef.current;
-    const panel = panelRef.current;
-    if (!canvas || !panel) return;
-    const ctx = canvas.getContext("2d");
-    if (!ctx) return;
-
-    const reduce = window.matchMedia("(prefers-reduced-motion: reduce)");
-    const tokens = readTokens(panel, labelRef.current);
-
-    let w = 0;
-    let h = 0;
-    let raf = 0;
-    let last = performance.now();
-    let rotation = FRONT_ANGLE - BASE_ANGLES[0];
-    let phaseElapsed = 0;
-    let flashAt = -Infinity;
-    let badgeUntil = 0;
-    let gateBadge: { text: string; kind: "good" | "human" } | null = null;
-    const pointer = { x: 0, y: 0, tx: 0, ty: 0 };
-    const packets = [
-      { angle: 0.4, pauseUntil: 0 },
-      { angle: Math.PI + 0.4, pauseUntil: 0 },
-    ];
-
-    const resize = () => {
-      const rect = canvas.getBoundingClientRect();
-      const dpr = Math.min(window.devicePixelRatio || 1, 2);
-      w = rect.width;
-      h = rect.height;
-      canvas.width = Math.max(1, Math.round(w * dpr));
-      canvas.height = Math.max(1, Math.round(h * dpr));
-      ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+    const clearTimer = () => {
+      if (timer !== null) {
+        window.clearTimeout(timer);
+        timer = null;
+      }
     };
 
-    const ro = new ResizeObserver(resize);
-    ro.observe(canvas);
-    resize();
+    const draw = (p: number) => {
+      pos = p;
+      layerRefs.current.forEach((el, i) => {
+        if (!el) return;
+        const d = Math.abs(p - i);
+        const opacity = Math.max(0, 1 - d * 1.7);
+        el.style.opacity = String(opacity);
+        el.style.visibility = opacity > 0 ? "visible" : "hidden";
+        el.style.transform = `translateX(${(i - p) * 44}px) scale(${1 - Math.min(d, 1) * 0.05})`;
+        el.style.filter = d > 0.04 ? `blur(${Math.min(d * 5, 7)}px)` : "none";
+      });
 
-    const io = new IntersectionObserver((entries) => {
-      visibleRef.current = entries[0]?.isIntersecting ?? true;
-    });
-    io.observe(panel);
+      const k = Math.min(STAGES.length - 1, Math.round(p));
+      if (k !== lastK) {
+        lastK = k;
+        if (numRef.current) numRef.current.textContent = String(k + 1);
+        if (titleRef.current) titleRef.current.textContent = STAGES[k].title;
+        if (subRef.current) subRef.current.textContent = STAGES[k].subtitle;
+        tickRefs.current.forEach((button, i) => button?.classList.toggle(styles.on, i === k));
+      }
+      if (rangeRef.current) {
+        rangeRef.current.value = String(p);
+        rangeRef.current.style.setProperty("--f", `${(p / (STAGES.length - 1)) * 100}%`);
+      }
+    };
 
+    const animateTo = (target: number, ms: number, done?: () => void) => {
+      if (raf !== null) {
+        cancelAnimationFrame(raf);
+        raf = null;
+      }
+      if (reduce.value || ms === 0) {
+        draw(target);
+        done?.();
+        return;
+      }
+      const from = pos;
+      const t0 = performance.now();
+      const step = (t: number) => {
+        const x = Math.min(1, (t - t0) / ms);
+        draw(from + (target - from) * ease(x));
+        if (x < 1) raf = requestAnimationFrame(step);
+        else {
+          raf = null;
+          done?.();
+        }
+      };
+      raf = requestAnimationFrame(step);
+    };
+
+    const pauseInternal = () => {
+      clearTimer();
+      if (raf !== null) {
+        cancelAnimationFrame(raf);
+        raf = null;
+      }
+    };
+
+    const canAuto = () =>
+      state.active && !state.hover && !state.focus && !state.hidden && !state.offscreen && !reduce.value;
+
+    const scheduleNext = (delay: number) => {
+      clearTimer();
+      if (!canAuto()) return;
+      timer = window.setTimeout(() => {
+        timer = null;
+        const current = Math.round(pos);
+        if (current >= STAGES.length - 1) {
+          // Wrap forward: slide past the last node, then land on stage 1
+          // instead of animating backwards through the earlier stages.
+          animateTo(STAGES.length, SLIDE_MS, () => {
+            draw(0);
+            scheduleNext(INTERVAL_MS - SLIDE_MS);
+          });
+        } else {
+          animateTo(current + 1, SLIDE_MS, () => scheduleNext(INTERVAL_MS - SLIDE_MS));
+        }
+      }, delay);
+    };
+
+    const resume = () => scheduleNext(INTERVAL_MS);
+
+    apiRef.current = {
+      drawValue: draw,
+      animateTo,
+      pause: pauseInternal,
+      resume,
+      getPos: () => pos,
+      setHover: (value) => {
+        state.hover = value;
+        if (value) pauseInternal();
+        else resume();
+      },
+      setFocus: (value) => {
+        state.focus = value;
+        if (value) pauseInternal();
+        else resume();
+      },
+      setActive: (value) => {
+        state.active = value;
+        if (value) resume();
+        else pauseInternal();
+      },
+    };
+
+    draw(0);
+    scheduleNext(INTERVAL_MS);
+
+    const onReduceChange = () => {
+      reduce.value = mq.matches;
+      if (reduce.value) pauseInternal();
+      else resume();
+    };
     const onVisibility = () => {
-      visibleRef.current = !document.hidden;
+      state.hidden = document.hidden;
+      if (state.hidden) pauseInternal();
+      else resume();
     };
+
+    const root = rootRef.current;
+    let observer: IntersectionObserver | null = null;
+    if (root && typeof IntersectionObserver !== "undefined") {
+      observer = new IntersectionObserver(
+        (entries) => {
+          state.offscreen = !entries[0]?.isIntersecting;
+          if (state.offscreen) pauseInternal();
+          else resume();
+        },
+        { threshold: 0.1 },
+      );
+      observer.observe(root);
+    }
+
+    mq.addEventListener("change", onReduceChange);
     document.addEventListener("visibilitychange", onVisibility);
 
-    const draw = (now: number, dt: number) => {
-      if (!w || !h) return;
-      ctx.clearRect(0, 0, w, h);
-
-      const cx = w / 2 + pointer.x * 9;
-      const cy = h * 0.5 + pointer.y * 6;
-      const rx = Math.min(w * 0.37, 150);
-      const ry = h * 0.24 * (1 + pointer.y * 0.1);
-
-      // background stars
-      ctx.save();
-      for (let i = 0; i < 18; i += 1) {
-        const sx = ((i * 67 + 23) % 100) / 100 * w;
-        const sy = ((i * 41 + 11) % 100) / 100 * h;
-        const twinkle = 0.15 + 0.35 * (0.5 + 0.5 * Math.sin(now / 700 + i));
-        ctx.fillStyle = `rgba(242,244,247,${twinkle})`;
-        ctx.beginPath();
-        ctx.arc(sx, sy, i % 5 === 0 ? 1.3 : 0.8, 0, TAU);
-        ctx.fill();
-      }
-      ctx.restore();
-
-      // faint dashed outer orbit
-      ctx.save();
-      ctx.setLineDash([3, 7]);
-      ctx.strokeStyle = "rgba(201,206,214,0.18)";
-      ctx.lineWidth = 1;
-      ctx.beginPath();
-      ctx.ellipse(cx, cy, rx * 1.16, ry * 1.18, 0, 0, TAU);
-      ctx.stroke();
-      ctx.restore();
-
-      // ring back / front halves
-      ctx.save();
-      ctx.lineWidth = 2;
-      ctx.strokeStyle = "rgba(46,197,255,0.18)";
-      ctx.beginPath();
-      ctx.ellipse(cx, cy, rx, ry, 0, Math.PI, TAU);
-      ctx.stroke();
-      ctx.strokeStyle = "rgba(46,197,255,0.55)";
-      ctx.shadowColor = tokens.accent;
-      ctx.shadowBlur = 10;
-      ctx.beginPath();
-      ctx.ellipse(cx, cy, rx, ry, 0, 0, Math.PI);
-      ctx.stroke();
-      ctx.restore();
-
-      // glowing accent arc from phase 1 up to the active phase
-      const activeIndex = phaseRef.current;
-      const arcStart = mod(BASE_ANGLES[0] + rotation);
-      const arcEnd = FRONT_ANGLE;
-      if (activeIndex > 0) {
-        ctx.save();
-        ctx.lineWidth = 3;
-        ctx.strokeStyle = tokens.accent;
-        ctx.shadowColor = tokens.accent;
-        ctx.shadowBlur = 16;
-        ctx.beginPath();
-        ctx.ellipse(cx, cy, rx, ry, 0, arcStart, arcEnd);
-        ctx.stroke();
-        ctx.restore();
-      }
-
-      // ring flash when a packet is gated
-      const flashAge = now - flashAt;
-      if (flashAge >= 0 && flashAge < 900) {
-        const p = flashAge / 900;
-        ctx.save();
-        ctx.strokeStyle = `rgba(46,197,255,${(1 - p) * 0.7})`;
-        ctx.lineWidth = 2;
-        ctx.beginPath();
-        ctx.ellipse(cx, cy, rx * (1 + p * 0.28), ry * (1 + p * 0.28), 0, 0, TAU);
-        ctx.stroke();
-        ctx.restore();
-      }
-
-      const nodePos = BASE_ANGLES.map((base) => {
-        const a = base + rotation;
-        return {
-          a,
-          x: cx + rx * Math.cos(a),
-          y: cy + ry * Math.sin(a),
-          depth: (Math.sin(a) + 1) / 2,
-        };
-      });
-      nodesRef.current = nodePos.map((n) => ({ x: n.x, y: n.y }));
-
-      // dotted beam from hub to the active node
-      const target = nodePos[activeIndex];
-      ctx.save();
-      ctx.setLineDash([3, 5]);
-      ctx.lineWidth = 1.5;
-      ctx.strokeStyle = tokens.accent;
-      ctx.beginPath();
-      ctx.moveTo(cx, cy);
-      ctx.lineTo(target.x, target.y);
-      ctx.stroke();
-      ctx.restore();
-
-      // hub with slow pulse
-      const pulse = reduce.matches ? 0.5 : 0.5 + 0.5 * Math.sin(now / 900);
-      ctx.save();
-      ctx.strokeStyle = `rgba(46,197,255,${0.25 + pulse * 0.25})`;
-      ctx.lineWidth = 1;
-      ctx.beginPath();
-      ctx.arc(cx, cy, 30 + pulse * 8, 0, TAU);
-      ctx.stroke();
-      ctx.fillStyle = "rgba(12,16,22,0.92)";
-      ctx.shadowColor = tokens.accent;
-      ctx.shadowBlur = 18;
-      ctx.beginPath();
-      ctx.arc(cx, cy, 28, 0, TAU);
-      ctx.fill();
-      ctx.shadowBlur = 0;
-      ctx.strokeStyle = tokens.accent;
-      ctx.lineWidth = 1.5;
-      ctx.stroke();
-      ctx.fillStyle = tokens.text;
-      ctx.textAlign = "center";
-      ctx.textBaseline = "middle";
-      ctx.font = `${tokens.labelWeight} 12px ${tokens.fontFamily}`;
-      ctx.fillText("FDE", cx, cy - 5);
-      ctx.fillStyle = tokens.accent;
-      ctx.font = `${tokens.labelWeight} 10px ${tokens.fontFamily}`;
-      ctx.fillText("loop", cx, cy + 9);
-      ctx.restore();
-
-      // nodes, back ones first
-      const order = [0, 1, 2, 3].sort((a, b) => nodePos[a].depth - nodePos[b].depth);
-      for (const i of order) {
-        const n = nodePos[i];
-        const isActive = i === activeIndex;
-        const isDone = i < activeIndex;
-        const r = 13 + n.depth * 5 + (isActive ? 3 : 0);
-        ctx.save();
-        ctx.globalAlpha = 0.45 + n.depth * 0.55;
-        ctx.fillStyle = isActive || isDone ? "rgba(46,197,255,0.22)" : "rgba(242,244,247,0.08)";
-        ctx.strokeStyle = isActive ? tokens.accent : "rgba(201,206,214,0.6)";
-        ctx.lineWidth = isActive ? 2 : 1;
-        if (isActive) {
-          ctx.shadowColor = tokens.accent;
-          ctx.shadowBlur = 14;
-        }
-        ctx.beginPath();
-        ctx.arc(n.x, n.y, r, 0, TAU);
-        ctx.fill();
-        ctx.stroke();
-        ctx.shadowBlur = 0;
-        ctx.fillStyle = isActive ? tokens.text : tokens.muted;
-        ctx.textAlign = "center";
-        ctx.textBaseline = "middle";
-        ctx.font = `${tokens.labelWeight} ${11 + n.depth * 2}px ${tokens.fontFamily}`;
-        ctx.fillText(isDone ? "✓" : String(i + 1), n.x, n.y + 0.5);
-        // label under the node
-        ctx.font = `${tokens.labelWeight} 10px ${tokens.fontFamily}`;
-        ctx.fillStyle = isActive ? tokens.accent : tokens.muted;
-        ctx.fillText(FDE_PHASES[i].node, n.x, n.y + r + 11);
-        if (hoverNodeRef.current === i) {
-          ctx.strokeStyle = tokens.accent;
-          ctx.lineWidth = 1;
-          ctx.beginPath();
-          ctx.arc(n.x, n.y, r + 6, 0, TAU);
-          ctx.stroke();
-        }
-        ctx.restore();
-      }
-
-      // packets with comet trails
-      if (!reduce.matches) {
-        for (const packet of packets) {
-          const a = mod(packet.angle);
-          const px = cx + rx * Math.cos(a);
-          const py = cy + ry * Math.sin(a);
-          ctx.save();
-          for (let t = 1; t <= 8; t += 1) {
-            const ta = a - t * 0.05;
-            const tx = cx + rx * Math.cos(ta);
-            const ty = cy + ry * Math.sin(ta);
-            ctx.fillStyle = `rgba(46,197,255,${0.45 * (1 - t / 9)})`;
-            ctx.beginPath();
-            ctx.arc(tx, ty, 3.2 - t * 0.25, 0, TAU);
-            ctx.fill();
-          }
-          ctx.fillStyle = "#8FE1FF";
-          ctx.shadowColor = tokens.accent;
-          ctx.shadowBlur = 14;
-          ctx.beginPath();
-          ctx.arc(px, py, 3.4, 0, TAU);
-          ctx.fill();
-          ctx.restore();
-        }
-      }
-
-      // gate badge above the Verify node
-      if (gateBadge && now < badgeUntil) {
-        const v = nodePos[2];
-        const text = gateBadge.text;
-        ctx.save();
-        ctx.font = `${tokens.labelWeight} 10px ${tokens.fontFamily}`;
-        const tw = ctx.measureText(text).width + 16;
-        const bx = v.x - tw / 2;
-        const by = v.y - 42;
-        ctx.fillStyle = gateBadge.kind === "good" ? "rgba(76,175,125,0.9)" : "rgba(245,158,11,0.9)";
-        ctx.fillRect(bx, by, tw, 20);
-        ctx.fillStyle = "#0C1016";
-        ctx.textAlign = "center";
-        ctx.textBaseline = "middle";
-        ctx.fillText(text, v.x, by + 10);
-        ctx.restore();
-      }
-    };
-
-    const tick = (now: number) => {
-      const dt = Math.min((now - last) / 1000, 0.1);
-      last = now;
-
-      if (activeRef.current && visibleRef.current && !pausedRef.current) {
-        if (!reduce.matches) {
-          // rotation eases to the shortest path so the active node leads at front-bottom
-          const targetRotation = FRONT_ANGLE - BASE_ANGLES[phaseRef.current];
-          rotation += shortest(targetRotation - rotation) * Math.min(1, dt * 4);
-
-          for (const packet of packets) {
-            if (now < packet.pauseUntil) continue;
-            const prev = packet.angle;
-            const next = prev + PACKET_SPEED * dt;
-            const verifyAngle = BASE_ANGLES[2] + rotation;
-            const specifyAngle = BASE_ANGLES[0] + rotation;
-            if (crossed(prev, next, verifyAngle)) {
-              packet.angle = next;
-              packet.pauseUntil = now + 1500;
-              flashAt = now;
-              const human = Math.random() < 0.5;
-              gateBadge = {
-                text: human ? "Human approves" : "Gate passed",
-                kind: human ? "human" : "good",
-              };
-              badgeUntil = now + 1500;
-            } else if (crossed(prev, next, specifyAngle)) {
-              setLoops((n) => n + 1);
-              packet.angle = next;
-            } else {
-              packet.angle = next;
-            }
-          }
-
-          phaseElapsed += dt * 1000;
-          if (phaseElapsed >= PHASE_MS) {
-            phaseElapsed = 0;
-            setPhase(phaseRef.current + 1);
-          }
-        } else {
-          rotation = FRONT_ANGLE - BASE_ANGLES[phaseRef.current];
-        }
-      }
-
-      pointer.tx = parallaxRef.current.x;
-      pointer.ty = parallaxRef.current.y;
-      pointer.x = lerp(pointer.x, pointer.tx, Math.min(1, dt * 6));
-      pointer.y = lerp(pointer.y, pointer.ty, Math.min(1, dt * 6));
-
-      barRefs.current.forEach((bar, i) => {
-        if (!bar) return;
-        const fill =
-          i < phaseRef.current ? 1 : i === phaseRef.current ? (reduce.matches ? 1 : phaseElapsed / PHASE_MS) : 0;
-        bar.style.transform = `scaleX(${Math.max(0, Math.min(1, fill))})`;
-      });
-
-      draw(now, dt);
-      if (activeRef.current && visibleRef.current) raf = requestAnimationFrame(tick);
-    };
-
-    if (activeRef.current && visibleRef.current) raf = requestAnimationFrame(tick);
-
     return () => {
-      cancelAnimationFrame(raf);
-      ro.disconnect();
-      io.disconnect();
+      apiRef.current = null;
+      clearTimer();
+      if (raf !== null) cancelAnimationFrame(raf);
+      raf = null;
+      observer?.disconnect();
+      mq.removeEventListener("change", onReduceChange);
       document.removeEventListener("visibilitychange", onVisibility);
     };
-  }, [active, setPhase]);
-
-  /* ---- interaction ------------------------------------------------------ */
-  const onPointerMove = useCallback((e: React.PointerEvent<HTMLDivElement>) => {
-    const panel = panelRef.current;
-    if (!panel) return;
-    const r = panel.getBoundingClientRect();
-    parallaxRef.current = {
-      x: ((e.clientX - r.left) / r.width) * 2 - 1,
-      y: ((e.clientY - r.top) / r.height) * 2 - 1,
-    };
   }, []);
 
-  const onCanvasClick = useCallback(
-    (e: React.MouseEvent<HTMLCanvasElement>) => {
-      const rect = e.currentTarget.getBoundingClientRect();
-      const x = e.clientX - rect.left;
-      const y = e.clientY - rect.top;
-      const hit = nodesRef.current.findIndex(
-        (n) => Math.hypot(n.x - x, n.y - y) <= 30,
-      );
-      if (hit >= 0) setPhase(hit);
-    },
-    [setPhase],
-  );
-
-  const onCanvasMove = useCallback((e: React.PointerEvent<HTMLCanvasElement>) => {
-    const rect = e.currentTarget.getBoundingClientRect();
-    const x = e.clientX - rect.left;
-    const y = e.clientY - rect.top;
-    const hit = nodesRef.current.findIndex((n) => Math.hypot(n.x - x, n.y - y) <= 30);
-    hoverNodeRef.current = hit >= 0 ? hit : null;
-    e.currentTarget.style.cursor = hit >= 0 ? "pointer" : "default";
-  }, []);
-
-  const onKeyDown = useCallback(
-    (e: React.KeyboardEvent) => {
-      if (e.key === "ArrowLeft") {
-        e.preventDefault();
-        setPhase(phaseRef.current - 1);
-      } else if (e.key === "ArrowRight") {
-        e.preventDefault();
-        setPhase(phaseRef.current + 1);
-      }
-    },
-    [setPhase],
-  );
-
-  const current = FDE_PHASES[phase];
+  useEffect(() => {
+    apiRef.current?.setActive(active);
+  }, [active]);
 
   return (
-    <div
-      ref={panelRef}
-      className={styles.roadmap}
-      role="tabpanel"
-      aria-label="FDE delivery roadmap"
-      tabIndex={0}
-      onKeyDown={onKeyDown}
-      onPointerEnter={() => (pausedRef.current = true)}
-      onPointerLeave={() => (pausedRef.current = false)}
-      onFocusCapture={() => (pausedRef.current = true)}
-      onBlurCapture={() => (pausedRef.current = false)}
-      onPointerMove={onPointerMove}
+    <section
+      ref={rootRef}
+      className={styles.rm}
+      aria-label="FDE roadmap"
+      onMouseEnter={() => apiRef.current?.setHover(true)}
+      onMouseLeave={() => apiRef.current?.setHover(false)}
+      onFocusCapture={(e) => {
+        // Pointer clicks focus the slider too; only keyboard focus pauses.
+        if ((e.target as HTMLElement | null)?.matches(":focus-visible")) {
+          apiRef.current?.setFocus(true);
+        }
+      }}
+      onBlurCapture={(e) => {
+        if (e.currentTarget.contains(e.relatedTarget as Node | null)) return;
+        apiRef.current?.setFocus(false);
+      }}
     >
-      {/* HUD */}
-      <div className={styles.loopHud}>
-        <span className={styles.loopHudLeft}>
-          <span className={styles.loopDot} aria-hidden="true" />
-          FDE loop running
-        </span>
-        <span className={styles.loopHudRight}>
-          Loops completed <span className={styles.loopCount}>{loops}</span>
-        </span>
+      <div className={styles.hd}>
+        <h2>FDE Roadmap</h2>
+        <span>Drag to follow one sentence from idea to live worker</span>
       </div>
 
-      {/* Canvas scene */}
-      <canvas
-        ref={canvasRef}
-        className={styles.loopCanvas}
-        aria-label="Animated FDE loop with four phases: Specify, Build, Verify and Deploy. Select a node or use the phase buttons below."
-        onClick={onCanvasClick}
-        onPointerMove={onCanvasMove}
-        onPointerLeave={() => (hoverNodeRef.current = null)}
-      />
+      <div className={styles.bench} aria-hidden="true">
+        <div
+          className={styles.L}
+          ref={(el) => {
+            layerRefs.current[0] = el;
+          }}
+          style={{ opacity: 1, visibility: "visible" }}
+        >
+          <p className={styles.big}>
+            Handle our <mark>refund tickets</mark>.
+          </p>
+          <div className={styles.ann}>
+            <b>Done when:</b> reopen rate stays under 2%
+          </div>
+          <div className={`${styles.ann} ${styles.ghost}`}>
+            <b>Human gate:</b> refunds above $200
+          </div>
+        </div>
 
-      {/* Copy block */}
-      <div key={phase} className={styles.loopCopy} aria-live="polite">
-        <span ref={labelRef} className={styles.loopEyebrow}>
-          Phase {phase + 1} of {FDE_PHASES.length}
-        </span>
-        <h3 className={styles.loopTitle}>{current.title}</h3>
-        <p className={styles.loopTagline}>{current.tagline}</p>
-        <p className={styles.loopDesc}>{current.description}</p>
-        <div className={styles.loopCtaRow}>
-          <button type="button" className={cn(buttonVariants({ variant: "ghost", size: "sm" }), styles.loopGhost)}>
-            {current.cta}
-          </button>
-          <Link href="/book-a-call" className={cn(buttonVariants({ variant: "secondary", size: "sm" }), styles.loopPrimary)}>
-            Book a call
-            <ArrowUpRight size={14} strokeWidth={2} aria-hidden="true" />
-          </Link>
+        <div
+          className={styles.L}
+          ref={(el) => {
+            layerRefs.current[1] = el;
+          }}
+          style={{ opacity: 0, visibility: "hidden" }}
+        >
+          <p className={styles.big}>
+            Handle our refund tickets
+            <span className={styles.cur}>
+              &nbsp;<i>You</i>
+            </span>
+            , but only within 30 days of the order
+            <span className={`${styles.cur} ${styles.f}`}>
+              &nbsp;<i>FDE</i>
+            </span>
+          </p>
+        </div>
+
+        <div
+          className={styles.L}
+          ref={(el) => {
+            layerRefs.current[2] = el;
+          }}
+          style={{ opacity: 0, visibility: "hidden" }}
+        >
+          <div className={styles.flow}>
+            <div className={styles.nd}>
+              Intake<small>ticket in</small>
+            </div>
+            <span className={styles.ar}>&rarr;</span>
+            <div className={styles.nd}>
+              Decide<small>policy</small>
+            </div>
+            <span className={styles.ar}>&rarr;</span>
+            <div className={styles.nd}>
+              Act<small>your tools</small>
+            </div>
+            <span className={styles.ar}>&rarr;</span>
+            <div className={`${styles.nd} ${styles.v}`}>
+              Verify<small>eval gate</small>
+            </div>
+          </div>
+          <div className={styles.gate}>
+            over $200<span className={styles.ar}>&darr;</span>
+            <b>Human approval</b>
+          </div>
+        </div>
+
+        <div
+          className={styles.L}
+          ref={(el) => {
+            layerRefs.current[3] = el;
+          }}
+          style={{ opacity: 0, visibility: "hidden" }}
+        >
+          <pre className={styles.code}>
+            <span className={styles.m}># agent.py</span>
+            {`\n`}
+            <span className={styles.k}>def</span> handle(ticket):
+            {`\n    plan = agent.plan(ticket, spec)\n    `}
+            <span className={styles.k}>if</span> plan.amount &gt; <span className={styles.s}>200</span>:
+            {`\n        `}
+            <span className={styles.k}>return</span> human.review(plan)
+            {`\n    `}
+            <span className={styles.k}>return</span> checker.verify(plan)
+          </pre>
+        </div>
+
+        <div
+          className={`${styles.L} ${styles.msgs}`}
+          ref={(el) => {
+            layerRefs.current[4] = el;
+          }}
+          style={{ opacity: 0, visibility: "hidden" }}
+        >
+          <div className={styles.msg}>
+            <small>Maker agent</small>Refund $42 for order 1182.
+          </div>
+          <div className={`${styles.msg} ${styles.r}`}>
+            <small>Checker agent</small>Matches policy. Approved.
+          </div>
+          <div className={`${styles.msg} ${styles.h}`}>
+            <small>Human</small>Refund $480 is waiting for you.
+          </div>
+        </div>
+
+        <div
+          className={styles.L}
+          ref={(el) => {
+            layerRefs.current[5] = el;
+          }}
+          style={{ opacity: 0, visibility: "hidden" }}
+        >
+          <div className={styles.hrs}>
+            <strong>168</strong>
+            <span>hours a week, under human oversight</span>
+          </div>
+          <div className={styles.feed}>
+            <div className={styles.fr}>
+              <span>Refund 1182</span>
+              <b>Resolved</b>
+            </div>
+            <div className={styles.fr}>
+              <span>Refund 1183</span>
+              <b>Resolved</b>
+            </div>
+            <div className={`${styles.fr} ${styles.w}`}>
+              <span>Refund 1184</span>
+              <b>Waiting for approval</b>
+            </div>
+          </div>
         </div>
       </div>
 
-      {/* Phase progress buttons */}
-      <div className={styles.loopBars}>
-        {FDE_PHASES.map((p, i) => (
-          <button
-            key={p.node}
-            type="button"
-            className={styles.loopBar}
-            onClick={() => setPhase(i)}
-            aria-label={`Show phase ${i + 1}: ${p.title}`}
-            aria-current={i === phase ? "step" : undefined}
-          >
-            <span
-              ref={(el) => {
-                barRefs.current[i] = el;
-              }}
-              className={styles.loopBarFill}
-            />
-          </button>
-        ))}
+      <div className={styles.cap} aria-live="polite">
+        <h3>
+          <em ref={numRef}>1</em>
+          <span ref={titleRef}>{STAGES[0].title}</span>
+        </h3>
+        <p ref={subRef}>{STAGES[0].subtitle}</p>
       </div>
-    </div>
+
+      <div className={styles.sc}>
+        <input
+          ref={rangeRef}
+          className={styles.range}
+          type="range"
+          min={0}
+          max={5}
+          step={0.01}
+          defaultValue={0}
+          aria-label="Roadmap stage"
+          onPointerDown={() => apiRef.current?.pause()}
+          onKeyDown={() => apiRef.current?.pause()}
+          onInput={() => {
+            const api = apiRef.current;
+            const range = rangeRef.current;
+            if (!api || !range) return;
+            const value = Number.parseFloat(range.value);
+            api.drawValue(Number.isFinite(value) ? Math.max(0, Math.min(5, value)) : 0);
+          }}
+          onPointerUp={() => {
+            const api = apiRef.current;
+            if (!api) return;
+            api.animateTo(Math.round(api.getPos()), 240);
+            api.resume();
+          }}
+          onKeyUp={() => {
+            const api = apiRef.current;
+            if (!api) return;
+            api.animateTo(Math.round(api.getPos()), 240);
+            api.resume();
+          }}
+        />
+        <div className={styles.tk}>
+          {STAGES.map((stage, i) => (
+            <button
+              key={stage.title}
+              ref={(el) => {
+                tickRefs.current[i] = el;
+              }}
+              type="button"
+              aria-label={stage.title}
+              className={i === 0 ? styles.on : undefined}
+              onClick={() => {
+                const api = apiRef.current;
+                if (!api) return;
+                api.pause();
+                api.animateTo(i, 500);
+                api.resume();
+              }}
+            >
+              {i + 1}
+            </button>
+          ))}
+        </div>
+        <div className={styles.ends}>
+          <span>Your sentence</span>
+          <span>Live worker</span>
+        </div>
+      </div>
+    </section>
   );
 }

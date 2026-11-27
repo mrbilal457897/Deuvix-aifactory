@@ -300,6 +300,14 @@
   display: none !important;
 }
 
+/* The FDE widget fills the whole stage; Sara panel keeps its normal flow. */
+.roadmapPanel {
+  position: absolute;
+  inset: 0;
+  min-width: 0;
+  min-height: 0;
+}
+
 /* ============================================================
    SARA — chat panel
    ============================================================ */

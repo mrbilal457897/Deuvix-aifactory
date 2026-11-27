@@ -1,0 +1,538 @@
+/* Scoped FDE Roadmap widget. Every selector here is hashed by CSS Modules and
+   every custom property is prefixed --fde- so nothing leaks into the site. */
+
+.rm {
+  --fde-bg: #f3f2fb;
+  --fde-surf: #ffffff;
+  --fde-paper: #fbfaff;
+  --fde-surf2: #e9e8f7;
+  --fde-ink: #14123a;
+  --fde-mute: #5d5b86;
+  --fde-line: #d3d1ee;
+  --fde-blue: #3d5afe;
+  --fde-amber: #d98200;
+  --fde-green: #0a8f5a;
+  --fde-code: #14123a;
+  --fde-codeink: #dcdcff;
+
+  container-type: size;
+  container-name: fde;
+  width: 100%;
+  height: 100%;
+  min-width: 0;
+  min-height: 0;
+  display: flex;
+  flex-direction: column;
+  box-sizing: border-box;
+  overflow: hidden;
+  background: var(--fde-bg);
+  color: var(--fde-ink);
+  font-family: var(--font-sans), ui-sans-serif, system-ui, sans-serif;
+  font-size: clamp(11px, 3.2cqw, 15px);
+  line-height: 1.5;
+  padding: clamp(10px, 4cqw, 22px);
+}
+
+:global(.dark) .rm {
+  --fde-bg: #0f0d2a;
+  --fde-surf: #181540;
+  --fde-paper: #120f33;
+  --fde-surf2: #211d55;
+  --fde-ink: #ecebff;
+  --fde-mute: #9a98c9;
+  --fde-line: #2e2a6b;
+  --fde-blue: #6f86ff;
+  --fde-amber: #ffb547;
+  --fde-green: #5fe0a6;
+  --fde-code: #0a0920;
+  --fde-codeink: #cfd0ff;
+}
+
+.rm *,
+.rm *::before,
+.rm *::after {
+  box-sizing: border-box;
+}
+
+.rm :focus-visible {
+  outline: 2px solid var(--fde-blue);
+  outline-offset: 3px;
+}
+
+.hd {
+  flex: none;
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+  gap: 8px;
+  min-width: 0;
+  margin-bottom: clamp(6px, 3cqh, 14px);
+}
+
+.hd h2 {
+  margin: 0;
+  min-width: 0;
+  font-family: var(--font-heading), ui-sans-serif, system-ui, sans-serif;
+  font-weight: 800;
+  font-size: clamp(14px, 5.4cqw, 22px);
+  letter-spacing: -0.02em;
+  line-height: 1.1;
+}
+
+.hd span {
+  min-width: 0;
+  font-size: clamp(10px, 3cqw, 13px);
+  color: var(--fde-mute);
+  text-align: right;
+}
+
+.bench {
+  position: relative;
+  flex: 1 1 0;
+  min-height: 0;
+  min-width: 0;
+  overflow: hidden;
+  background: var(--fde-paper);
+  border: 1px solid var(--fde-line);
+  border-radius: clamp(10px, 4cqw, 18px);
+}
+
+.bench::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background-image: radial-gradient(var(--fde-line) 1px, transparent 1px);
+  background-size: 18px 18px;
+  opacity: 0.7;
+}
+
+.L {
+  position: absolute;
+  inset: 0;
+  min-width: 0;
+  overflow: hidden;
+  padding: clamp(12px, 5cqw, 26px) clamp(12px, 6cqw, 24px);
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  gap: clamp(8px, 4cqh, 16px);
+  will-change: transform, opacity, filter;
+}
+
+.big {
+  margin: 0;
+  min-width: 0;
+  overflow-wrap: anywhere;
+  font-family: var(--font-heading), ui-sans-serif, system-ui, sans-serif;
+  font-weight: 800;
+  font-size: clamp(17px, 8cqw, 31px);
+  line-height: 1.18;
+  letter-spacing: -0.025em;
+}
+
+.big mark {
+  background: color-mix(in srgb, var(--fde-blue) 24%, transparent);
+  color: inherit;
+  border-radius: 6px;
+  padding: 0 5px;
+}
+
+.ann {
+  min-width: 0;
+  border-left: 3px solid var(--fde-blue);
+  padding: 2px 0 2px 12px;
+  font-size: clamp(11px, 3.4cqw, 14px);
+  color: var(--fde-mute);
+  overflow-wrap: anywhere;
+}
+
+.ann.ghost {
+  border-color: var(--fde-amber);
+}
+
+.ann b {
+  color: var(--fde-ink);
+  font-weight: 600;
+}
+
+.cur {
+  position: relative;
+  display: inline;
+  border-right: 2px solid var(--fde-blue);
+  padding-right: 1px;
+}
+
+.cur.f {
+  border-color: var(--fde-amber);
+}
+
+.cur i {
+  position: absolute;
+  top: 100%;
+  right: -2px;
+  margin-top: 3px;
+  font-family: var(--font-heading), ui-sans-serif, system-ui, sans-serif;
+  font-size: 11px;
+  font-weight: 600;
+  font-style: normal;
+  color: var(--fde-surf);
+  background: var(--fde-blue);
+  padding: 1px 7px;
+  border-radius: 6px 0 6px 6px;
+  white-space: nowrap;
+}
+
+.cur.f i {
+  background: var(--fde-amber);
+  color: #1b1200;
+}
+
+.flow {
+  display: flex;
+  align-items: center;
+  gap: clamp(4px, 2cqw, 8px);
+  min-width: 0;
+}
+
+.nd {
+  flex: 1;
+  min-width: 0;
+  background: var(--fde-surf);
+  border: 1px solid var(--fde-line);
+  border-radius: 12px;
+  padding: clamp(6px, 3cqw, 12px) 4px;
+  text-align: center;
+  font-family: var(--font-heading), ui-sans-serif, system-ui, sans-serif;
+  font-weight: 700;
+  font-size: clamp(11px, 3.4cqw, 14px);
+  overflow-wrap: anywhere;
+}
+
+.nd small {
+  display: block;
+  font-family: var(--font-sans), ui-sans-serif, system-ui, sans-serif;
+  font-weight: 400;
+  font-size: clamp(9px, 2.8cqw, 11px);
+  color: var(--fde-mute);
+  margin-top: 2px;
+}
+
+.nd.v {
+  border-color: var(--fde-amber);
+}
+
+.ar {
+  color: var(--fde-mute);
+  font-size: clamp(11px, 3.4cqw, 14px);
+  flex: none;
+}
+
+.gate {
+  align-self: flex-end;
+  display: flex;
+  gap: 8px;
+  align-items: center;
+  min-width: 0;
+  font-size: clamp(10px, 3.2cqw, 13px);
+  color: var(--fde-mute);
+}
+
+.gate b {
+  border: 1px dashed var(--fde-amber);
+  color: var(--fde-amber);
+  border-radius: 10px;
+  padding: 5px 12px;
+  font-family: var(--font-heading), ui-sans-serif, system-ui, sans-serif;
+  font-weight: 700;
+  font-size: clamp(10px, 3.2cqw, 13px);
+  white-space: nowrap;
+}
+
+.code {
+  margin: 0;
+  min-width: 0;
+  max-height: 100%;
+  background: var(--fde-code);
+  color: var(--fde-codeink);
+  border-radius: 14px;
+  padding: clamp(10px, 4cqw, 16px);
+  font-family: var(--font-mono), ui-monospace, monospace;
+  font-size: clamp(10px, 3.1cqw, 13px);
+  line-height: 1.7;
+  overflow-x: auto;
+  overflow-y: hidden;
+}
+
+.code .k {
+  color: var(--fde-amber);
+}
+
+.code .m {
+  opacity: 0.55;
+}
+
+.code .s {
+  color: #7be0b0;
+}
+
+.msgs {
+  gap: clamp(5px, 2.6cqh, 10px);
+}
+
+.msg {
+  max-width: 84%;
+  min-width: 0;
+  padding: 9px 13px;
+  border-radius: 14px;
+  font-size: clamp(11px, 3.4cqw, 14px);
+  background: var(--fde-surf);
+  border: 1px solid var(--fde-line);
+  overflow-wrap: anywhere;
+}
+
+.msg small {
+  display: block;
+  font-family: var(--font-heading), ui-sans-serif, system-ui, sans-serif;
+  font-weight: 700;
+  font-size: 11px;
+  color: var(--fde-blue);
+  margin-bottom: 1px;
+}
+
+.msg.r {
+  align-self: flex-end;
+  background: var(--fde-blue);
+  border-color: var(--fde-blue);
+  color: #ffffff;
+}
+
+.msg.r small {
+  color: #ffffff;
+  opacity: 0.8;
+}
+
+.msg.h {
+  border-style: dashed;
+  border-color: var(--fde-amber);
+}
+
+.msg.h small {
+  color: var(--fde-amber);
+}
+
+.feed {
+  display: grid;
+  gap: clamp(5px, 2cqh, 8px);
+  min-width: 0;
+}
+
+.fr {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 8px;
+  min-width: 0;
+  background: var(--fde-surf);
+  border: 1px solid var(--fde-line);
+  border-radius: 12px;
+  padding: clamp(6px, 2.4cqh, 9px) clamp(10px, 3.4cqw, 14px);
+  font-size: clamp(11px, 3.4cqw, 14px);
+}
+
+.fr b {
+  font-family: var(--font-heading), ui-sans-serif, system-ui, sans-serif;
+  font-weight: 700;
+  font-size: clamp(10px, 3cqw, 12px);
+  color: var(--fde-green);
+  white-space: nowrap;
+}
+
+.fr.w b {
+  color: var(--fde-amber);
+}
+
+.hrs {
+  display: flex;
+  align-items: baseline;
+  gap: 8px;
+  min-width: 0;
+}
+
+.hrs strong {
+  font-family: var(--font-heading), ui-sans-serif, system-ui, sans-serif;
+  font-weight: 800;
+  font-size: clamp(26px, 10cqw, 40px);
+  line-height: 1;
+  letter-spacing: -0.03em;
+}
+
+.hrs span {
+  color: var(--fde-mute);
+  font-size: clamp(11px, 3.4cqw, 14px);
+  overflow-wrap: anywhere;
+}
+
+.cap {
+  flex: none;
+  min-width: 0;
+  margin: clamp(8px, 4cqh, 18px) 4px clamp(4px, 2cqh, 6px);
+  min-height: clamp(42px, 13cqh, 62px);
+}
+
+.cap h3 {
+  margin: 0;
+  font-family: var(--font-heading), ui-sans-serif, system-ui, sans-serif;
+  font-weight: 800;
+  font-size: clamp(15px, 5cqw, 20px);
+  line-height: 1.2;
+  letter-spacing: -0.015em;
+  overflow-wrap: anywhere;
+}
+
+.cap h3 em {
+  font-style: normal;
+  color: var(--fde-blue);
+  margin-right: 8px;
+}
+
+.cap p {
+  margin: 4px 0 0;
+  color: var(--fde-mute);
+  font-size: clamp(10px, 3.2cqw, 14px);
+  overflow-wrap: anywhere;
+}
+
+.sc {
+  flex: none;
+  position: relative;
+  min-width: 0;
+  padding: clamp(6px, 2cqh, 10px) 4px 0;
+}
+
+.range {
+  -webkit-appearance: none;
+  appearance: none;
+  display: block;
+  width: 100%;
+  height: 34px;
+  margin: 0;
+  background: transparent;
+  cursor: grab;
+  touch-action: pan-y;
+  --f: 0%;
+}
+
+.range:active {
+  cursor: grabbing;
+}
+
+.range::-webkit-slider-runnable-track {
+  height: 6px;
+  border-radius: 6px;
+  background: linear-gradient(90deg, var(--fde-blue) var(--f), var(--fde-surf2) var(--f));
+}
+
+.range::-moz-range-track {
+  height: 6px;
+  border-radius: 6px;
+  background: linear-gradient(90deg, var(--fde-blue) var(--f), var(--fde-surf2) var(--f));
+}
+
+.range::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  appearance: none;
+  width: 28px;
+  height: 28px;
+  border-radius: 50%;
+  background: var(--fde-surf);
+  border: 3px solid var(--fde-blue);
+  margin-top: -11px;
+  box-shadow: 0 0 0 5px color-mix(in srgb, var(--fde-blue) 20%, transparent);
+}
+
+.range::-moz-range-thumb {
+  width: 28px;
+  height: 28px;
+  border-radius: 50%;
+  background: var(--fde-surf);
+  border: 3px solid var(--fde-blue);
+  box-shadow: 0 0 0 5px color-mix(in srgb, var(--fde-blue) 20%, transparent);
+}
+
+.tk {
+  display: flex;
+  justify-content: space-between;
+  padding: 0 3px;
+  margin-top: 2px;
+  min-width: 0;
+}
+
+.tk button {
+  min-width: 36px;
+  min-height: 36px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  background: none;
+  border: 0;
+  color: var(--fde-mute);
+  font-family: var(--font-heading), ui-sans-serif, system-ui, sans-serif;
+  font-weight: 700;
+  font-size: clamp(10px, 3cqw, 12px);
+  cursor: pointer;
+  padding: 6px 8px;
+  border-radius: 8px;
+}
+
+.tk button.on {
+  color: var(--fde-ink);
+  background: var(--fde-surf2);
+}
+
+.ends {
+  display: flex;
+  justify-content: space-between;
+  gap: 8px;
+  font-size: 12px;
+  color: var(--fde-mute);
+  margin-top: 6px;
+  padding: 0 4px;
+}
+
+@container fde (max-width: 320px) {
+  .hd span {
+    display: none;
+  }
+  .hd h2 {
+    font-size: 14px;
+  }
+  .L {
+    padding: 8px;
+    gap: 6px;
+  }
+  .cap {
+    min-height: 40px;
+  }
+}
+
+@container fde (max-height: 380px) {
+  .hd {
+    margin-bottom: 4px;
+  }
+  .hd span,
+  .cap p,
+  .ends {
+    display: none;
+  }
+  .cap {
+    min-height: 40px;
+    margin: 4px 2px;
+  }
+  .L {
+    padding: 8px 10px;
+    gap: 6px;
+  }
+  .sc {
+    padding-top: 4px;
+  }
+}
